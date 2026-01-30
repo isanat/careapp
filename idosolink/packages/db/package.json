@@ -1,0 +1,21 @@
+{
+  "name": "@idosolink/db",
+  "private": true,
+  "type": "module",
+  "main": "src/client.ts",
+  "scripts": {
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node --transpile-only prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.7.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2"
+  }
+}
