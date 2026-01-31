@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: idosolink
+      POSTGRES_PASSWORD: idosolink
+      POSTGRES_DB: idosolink
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://idosolink:idosolink@db:5432/idosolink
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: changeme
+      STRIPE_SECRET_KEY: sk_test_replace
+      STRIPE_WEBHOOK_SECRET: whsec_replace
+      STRIPE_PUBLISHABLE_KEY: pk_test_replace
+      TOKEN_RATE: "10"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+volumes:
+  db_data:

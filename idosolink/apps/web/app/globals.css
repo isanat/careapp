@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f7faf9;
+  color: #1f2933;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Poppins', sans-serif;
+}
+
+.container-page {
+  @apply max-w-6xl mx-auto px-6;
+}
+
+.card-base {
+  @apply bg-surface border border-border rounded-xl shadow-soft;
+}
+
+.button-base {
+  @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold transition;
+}
+
+.input-base {
+  @apply w-full rounded-lg border border-border bg-white px-4 py-3 text-textPrimary focus:outline-none focus:ring-2 focus:ring-secondary/40;
+}
+
+.glass-card {
+  @apply rounded-2xl border border-white/60 bg-white/70 shadow-soft backdrop-blur-md;
+}
