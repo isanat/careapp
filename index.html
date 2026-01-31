@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="meta.title"></title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="logo" href="#home">
+          <img src="assets/logo.svg" alt="" data-i18n-alt="nav.logoAlt" />
+          <span class="logo-text" data-i18n="nav.brand"></span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="sr-only" data-i18n="nav.menu"></span>
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a href="#home" data-i18n="nav.home"></a>
+          <a href="#how" data-i18n="nav.how"></a>
+          <a href="#families" data-i18n="nav.families"></a>
+          <a href="#caregivers" data-i18n="nav.caregivers"></a>
+          <a href="#token" data-i18n="nav.token"></a>
+          <a href="#investors" data-i18n="nav.investors"></a>
+          <a href="#about" data-i18n="nav.about"></a>
+          <a href="#contact" data-i18n="nav.contact"></a>
+        </div>
+        <div class="lang-switch" aria-label="Language selector">
+          <select id="language-select" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="it">IT</option>
+            <option value="pt">PT</option>
+          </select>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="hero-content">
+          <div class="hero-text">
+            <p class="eyebrow" data-i18n="hero.eyebrow"></p>
+            <h1 data-i18n="hero.title"></h1>
+            <p class="subtitle" data-i18n="hero.subtitle"></p>
+            <div class="hero-actions">
+              <a class="btn primary" href="#families" data-i18n="hero.ctaFamilies"></a>
+              <a class="btn secondary" href="#caregivers" data-i18n="hero.ctaCaregivers"></a>
+              <a class="btn ghost" href="#investors" data-i18n="hero.ctaInvestors"></a>
+            </div>
+            <ul class="hero-bullets" id="hero-bullets"></ul>
+          </div>
+          <div class="hero-media">
+            <div class="token-card">
+              <img src="assets/token.svg" alt="" data-i18n-alt="hero.tokenAlt" />
+              <div class="token-glow"></div>
+              <p data-i18n="hero.tokenCaption"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how" class="section">
+        <div class="section-header">
+          <h2 data-i18n="howItWorks.title"></h2>
+          <p data-i18n="howItWorks.subtitle"></p>
+        </div>
+        <div class="card-grid" id="how-steps"></div>
+      </section>
+
+      <section id="families" class="section highlight">
+        <div class="section-header">
+          <h2 data-i18n="families.title"></h2>
+          <p data-i18n="families.subtitle"></p>
+        </div>
+        <div class="split">
+          <div>
+            <h3 data-i18n="families.benefitsTitle"></h3>
+            <ul class="list" id="families-benefits"></ul>
+          </div>
+          <div>
+            <h3 data-i18n="families.flowTitle"></h3>
+            <ol class="flow" id="families-flow"></ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="caregivers" class="section">
+        <div class="section-header">
+          <h2 data-i18n="caregivers.title"></h2>
+          <p data-i18n="caregivers.subtitle"></p>
+        </div>
+        <div class="split">
+          <div>
+            <h3 data-i18n="caregivers.benefitsTitle"></h3>
+            <ul class="list" id="caregivers-benefits"></ul>
+            <div class="pill-group" id="caregivers-pill-group"></div>
+          </div>
+          <div>
+            <h3 data-i18n="caregivers.requirementsTitle"></h3>
+            <ul class="list" id="caregivers-requirements"></ul>
+            <h3 data-i18n="caregivers.servicesTitle"></h3>
+            <ul class="list" id="caregivers-services"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="token" class="section highlight">
+        <div class="section-header">
+          <h2 data-i18n="token.title"></h2>
+          <p data-i18n="token.subtitle"></p>
+        </div>
+        <div class="token-layout">
+          <div class="token-visual">
+            <img src="assets/token.svg" alt="" data-i18n-alt="token.tokenAlt" />
+            <p class="caption" data-i18n="token.caption"></p>
+          </div>
+          <div class="card-grid" id="token-utility"></div>
+        </div>
+        <div class="card-grid" id="token-cycle"></div>
+        <div class="token-practice">
+          <h3 data-i18n="token.practiceTitle"></h3>
+          <div class="practice-grid" id="token-practice"></div>
+        </div>
+      </section>
+
+      <section id="investors" class="section">
+        <div class="section-header">
+          <h2 data-i18n="investors.title"></h2>
+          <p data-i18n="investors.subtitle"></p>
+        </div>
+        <div class="split">
+          <div>
+            <h3 data-i18n="investors.thesisTitle"></h3>
+            <ul class="list" id="investors-thesis"></ul>
+          </div>
+          <div>
+            <h3 data-i18n="investors.metricsTitle"></h3>
+            <ul class="list" id="investors-metrics"></ul>
+            <div class="info-card" id="investors-token"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section highlight">
+        <div class="section-header">
+          <h2 data-i18n="about.title"></h2>
+          <p data-i18n="about.subtitle"></p>
+        </div>
+        <div class="about-grid" id="about-values"></div>
+      </section>
+
+      <section id="contact" class="section">
+        <div class="section-header">
+          <h2 data-i18n="contact.title"></h2>
+          <p data-i18n="contact.subtitle"></p>
+        </div>
+        <form class="contact-form" id="contact-form" novalidate>
+          <label>
+            <span data-i18n="contact.nameLabel"></span>
+            <input type="text" name="name" data-i18n-placeholder="contact.namePlaceholder" required />
+          </label>
+          <label>
+            <span data-i18n="contact.emailLabel"></span>
+            <input type="email" name="email" data-i18n-placeholder="contact.emailPlaceholder" required />
+          </label>
+          <label>
+            <span data-i18n="contact.messageLabel"></span>
+            <textarea name="message" rows="5" data-i18n-placeholder="contact.messagePlaceholder" required></textarea>
+          </label>
+          <button class="btn primary" type="submit" data-i18n="contact.submit"></button>
+          <p class="form-note" data-i18n="contact.note"></p>
+          <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-content">
+        <p data-i18n="footer.tagline"></p>
+        <p data-i18n="footer.rights"></p>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
