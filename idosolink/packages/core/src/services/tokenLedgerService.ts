@@ -1,11 +1,12 @@
 import { prisma } from '@idosolink/db/src/client';
+import type { TokenLedger } from '@prisma/client';
 
 export class TokenLedgerService {
   async getBalance(userId: string): Promise<number> {
     const entries = await prisma.tokenLedger.findMany({
       where: { userId }
     });
-    return entries.reduce((sum: number, entry) => {
+    return entries.reduce((sum: number, entry: TokenLedger) => {
       return entry.type === 'CREDIT' ? sum + entry.amountToken : sum - entry.amountToken;
     }, 0);
   }
