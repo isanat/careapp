@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --font-inter: 'Inter';
+  --font-poppins: 'Poppins';
+
+  --color-bg: 247 250 249;
+  --color-surface: 255 255 255;
+  --color-primary: 47 111 109;
+  --color-secondary: 111 168 163;
+  --color-accent: 168 218 220;
+  --color-warm: 241 194 125;
+  --color-text: 31 41 51;
+  --color-text2: 107 114 128;
+  --color-success: 53 163 112;
+  --color-warning: 216 140 66;
+  --color-danger: 198 69 69;
+  --color-border: 229 231 235;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-soft: 0 14px 35px rgba(31, 41, 51, 0.12);
+
+  --spacing-page: 1.5rem;
+  --spacing-section: 2.5rem;
+  --focus-ring: 0 0 0 3px rgba(111, 168, 163, 0.35);
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-bg text-text font-sans antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-heading text-text;
+}
+
+a {
+  @apply text-primary;
+}
+
+.container-page {
+  @apply mx-auto w-full max-w-6xl px-page;
+}
+
+.surface-card {
+  @apply rounded-lg bg-surface shadow-soft border border-border;
+}
+
+.glass-card {
+  @apply rounded-xl border border-border bg-surface/80 shadow-soft;
+}
+
+.button-base {
+  @apply inline-flex items-center justify-center rounded-lg font-semibold transition focus-ring;
+}
+
+.input-base {
+  @apply h-11 w-full rounded-md border border-border bg-surface px-4 text-base text-text placeholder:text-text2 focus-ring;
+}
+
+.focus-ring {
+  @apply focus-visible:outline-none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.section-title {
+  @apply text-2xl md:text-3xl font-semibold;
+}
+
+.section-subtitle {
+  @apply text-base md:text-lg text-text2;
+}
