@@ -1,10 +1,22 @@
 import { ButtonHTMLAttributes } from 'react';
 
-export const Button = ({ className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => {
+type Variant = 'primary' | 'secondary' | 'ghost';
+
+export const Button = ({
+  className = '',
+  variant = 'primary',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) => {
+  const styles = {
+    primary: 'bg-primary text-white hover:bg-[#255a58]',
+    secondary: 'bg-secondary text-white hover:bg-[#5b9994]',
+    ghost: 'bg-transparent text-primary border border-primary hover:bg-accent/40'
+  };
+
   return (
     <button
       {...props}
-      className={`rounded-full bg-accent px-6 py-2 text-slate-900 font-semibold transition hover:opacity-90 ${className}`}
+      className={`button-base ${styles[variant]} ${className}`}
     />
   );
 };
