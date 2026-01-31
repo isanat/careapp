@@ -5,7 +5,7 @@ export class TokenLedgerService {
     const entries = await prisma.tokenLedger.findMany({
       where: { userId }
     });
-    return entries.reduce((sum, entry) => {
+    return entries.reduce((sum: number, entry) => {
       return entry.type === 'CREDIT' ? sum + entry.amountToken : sum - entry.amountToken;
     }, 0);
   }
