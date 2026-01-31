@@ -1,0 +1,11 @@
+{
+  "name": "@idosolink/core",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@idosolink/db": "*",
+    "@idosolink/web3": "*",
+    "crypto-js": "^4.2.0"
+  }
+}

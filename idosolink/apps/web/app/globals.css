@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top, #0a1436 0%, #050b1f 65%);
+  color: #e5eefc;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Poppins', sans-serif;
+}
+
+.glass-card {
+  @apply bg-card/80 border border-white/10 rounded-2xl shadow-xl backdrop-blur;
+}
+
+.section-title {
+  @apply text-2xl md:text-3xl font-semibold text-white;
+}
+
+.subtle-text {
+  @apply text-slate-300;
+}
