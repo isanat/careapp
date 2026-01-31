@@ -4,6 +4,7 @@
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev:web": "npm --workspace apps/web run dev",
+    "build": "npm --workspace apps/web run build",
     "build:web": "npm --workspace apps/web run build",
     "start:web": "npm --workspace apps/web run start",
     "lint:web": "npm --workspace apps/web run lint",
