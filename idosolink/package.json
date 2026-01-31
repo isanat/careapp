@@ -9,6 +9,7 @@
     "start:web": "npm --workspace apps/web run start",
     "lint:web": "npm --workspace apps/web run lint",
     "db:push": "npm --workspace packages/db run db:push",
-    "db:seed": "npm --workspace packages/db run db:seed"
+    "db:seed": "npm --workspace packages/db run db:seed",
+    "postinstall": "npm --workspace packages/db run prisma:generate"
   }
 }

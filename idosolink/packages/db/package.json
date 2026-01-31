@@ -4,6 +4,7 @@
   "type": "module",
   "main": "src/client.ts",
   "scripts": {
+    "prisma:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed"
   },
