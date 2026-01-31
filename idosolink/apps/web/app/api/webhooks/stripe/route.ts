@@ -5,7 +5,7 @@ import { logError, logInfo } from '../../utils/logger';
 
 export async function POST(request: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? 'sk_test_stub', {
-    apiVersion: '2023-10-16'
+    apiVersion: '2023-08-16'
   });
   const signature = request.headers.get('stripe-signature');
   const body = await request.text();

@@ -5,7 +5,7 @@ import { ActivationService } from '@idosolink/core';
 const stripeKey = process.env.STRIPE_SECRET_KEY ?? 'sk_test_stub';
 
 const stripe = new Stripe(stripeKey, {
-  apiVersion: '2023-10-16'
+  apiVersion: '2023-08-16'
 });
 
 export class StripeService {
