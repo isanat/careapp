@@ -1,25 +1,39 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        primary: '#2F6F6D',
-        secondary: '#6FA8A3',
-        accent: '#A8DADC',
-        warm: '#F1C27D',
-        background: '#F7FAF9',
-        surface: '#FFFFFF',
-        textPrimary: '#1F2933',
-        textSecondary: '#6B7280',
-        border: '#E5E7EB'
+        bg: 'rgb(var(--color-bg) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface) / <alpha-value>)',
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
+        warm: 'rgb(var(--color-warm) / <alpha-value>)',
+        text: 'rgb(var(--color-text) / <alpha-value>)',
+        text2: 'rgb(var(--color-text2) / <alpha-value>)',
+        success: 'rgb(var(--color-success) / <alpha-value>)',
+        warning: 'rgb(var(--color-warning) / <alpha-value>)',
+        danger: 'rgb(var(--color-danger) / <alpha-value>)',
+        border: 'rgb(var(--color-border) / <alpha-value>)'
       },
       borderRadius: {
-        xl: '1.25rem'
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)'
       },
       boxShadow: {
-        soft: '0 10px 30px rgba(31, 41, 51, 0.08)'
+        soft: 'var(--shadow-soft)'
+      },
+      spacing: {
+        page: 'var(--spacing-page)',
+        section: 'var(--spacing-section)'
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-poppins)', 'Poppins', 'system-ui', 'sans-serif']
       }
     }
   },

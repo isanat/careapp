@@ -1,22 +1,36 @@
-import { ButtonHTMLAttributes } from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
+import type { ButtonHTMLAttributes } from 'react';
+import { cn } from 'lib/cn';
 
-type Variant = 'primary' | 'secondary' | 'ghost';
+const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded-lg font-semibold transition focus-ring disabled:pointer-events-none disabled:opacity-60',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-primary text-white hover:bg-primary/90',
+        secondary: 'bg-secondary text-white hover:bg-secondary/90',
+        outline: 'border border-primary text-primary hover:bg-primary/10',
+        ghost: 'text-primary hover:bg-primary/10'
+      },
+      size: {
+        sm: 'h-9 px-4 text-sm',
+        md: 'h-11 px-6 text-base',
+        lg: 'h-12 px-7 text-lg'
+      }
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md'
+    }
+  }
+);
 
-export const Button = ({
-  className = '',
-  variant = 'primary',
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) => {
-  const styles = {
-    primary: 'bg-primary text-white hover:bg-[#255a58]',
-    secondary: 'bg-secondary text-white hover:bg-[#5b9994]',
-    ghost: 'bg-transparent text-primary border border-primary hover:bg-accent/40'
-  };
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & { asChild?: boolean };
 
-  return (
-    <button
-      {...props}
-      className={`button-base ${styles[variant]} ${className}`}
-    />
-  );
-};
+export function Button({ className, variant, size, asChild, ...props }: ButtonProps) {
+  const Component = asChild ? Slot : 'button';
+
+  return <Component className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}

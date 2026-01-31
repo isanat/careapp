@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import './globals.css';
+import '../styles/globals.css';
 import { ServiceWorker } from '../components/ServiceWorker';
 
 export const metadata: Metadata = {
-  title: 'IdosoLink | PWA Marketplace',
-  description: 'Marketplace de cuidados com contratos digitais e token utilitário',
+  title: 'IdosoLink | Senior Care',
+  description: 'Plataforma de cuidado e bem-estar com experiência PWA clara e confiável.',
   manifest: '/manifest.json',
   icons: {
     icon: '/assets/logo.svg'

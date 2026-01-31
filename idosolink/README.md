@@ -1,66 +1,67 @@
-# IdosoLink PWA Marketplace
+# IdosoLink UI Kit
 
-IdosoLink é um marketplace web (PWA) para cuidados de idosos com contratos digitais, pagamentos em euro via Stripe e uma camada de token utilitário pronta para Web3.
+UI Kit completo para o PWA **IdosoLink** (senior care / healthtech), com foco em cuidado, bem-estar e confiança.
 
-## ✅ Como rodar com Docker
+## Stack
+- Next.js (App Router)
+- TypeScript
+- TailwindCSS
+- class-variance-authority (cva)
+- clsx + tailwind-merge
+- Radix UI (Dialog + Tabs)
 
+## Rodando o projeto
 ```bash
-docker compose up --build
+npm install
+npm run dev:web
 ```
-
 Acesse: `http://localhost:3000`.
 
-## Variáveis de ambiente
+## UI Kit / Storybook-lite
+As páginas do UI Kit estão em `/ui`:
+- `/ui` → hub
+- `/ui/tokens` → cores, tipografia, espaçamento e foco
+- `/ui/icons` → pack de ícones
+- `/ui/components` → componentes e variações
+- `/ui/screens` → telas mock (Dashboard, Wallet, Contracts, Onboarding)
 
-Crie `.env` (ou edite no `docker-compose.yml`):
-
+## Estrutura principal
 ```
-DATABASE_URL=postgresql://idosolink:idosolink@localhost:5432/idosolink
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=changeme
-STRIPE_SECRET_KEY=sk_test_replace
-STRIPE_WEBHOOK_SECRET=whsec_replace
-STRIPE_PUBLISHABLE_KEY=pk_test_replace
-TOKEN_RATE=10
-```
-
-## Fluxos do sistema
-
-1. **Login** → OTP/magic link.
-2. **Onboarding** → escolha perfil Familiar ou Cuidador.
-3. **Ativação (€25)** → Stripe → créditos em tokens na carteira.
-4. **Contrato** → criação, aceite e hash on-chain (stub).
-5. **Pagamentos** → comissão 15% e taxas de contrato em tokens.
-6. **Gorjetas/Bonus** → tokens e possibilidade de conversão (burn).
-
-## Onde integrar Web3 real
-
-- `packages/web3/src/*` contém stubs (WalletService, TokenService, ContractOnchainService).
-- Substitua pelos contratos ERC-20 e contrato de registro, mantendo a mesma interface.
-
-## Banco de dados
-
-Prisma schema: `packages/db/prisma/schema.prisma`
-
-### Seed
-
-```bash
-npm run db:seed
+apps/web
+  app/
+    ui/
+      page.tsx
+      tokens/page.tsx
+      icons/page.tsx
+      components/page.tsx
+      screens/page.tsx
+    layout.tsx
+    page.tsx
+  components/
+    icons/
+    ui/
+  lib/
+    cn.ts
+  styles/
+    globals.css
 ```
 
-Cria:
-- 1 Familiar demo
-- 3 Cuidadores demo
-- 1 Contrato demo
+## Componentes disponíveis
+- Button (variants + sizes)
+- Card (Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter)
+- Input + Label + HelperText + ErrorText
+- Select (nativo estilizado)
+- Badge (success/info/warning/danger/neutral)
+- Alert
+- Tabs (Radix)
+- Modal + Drawer
+- BottomNav
+- StatCard
+- ListRow
+- TokenAmount
+- Stepper
+- Skeleton
 
-## Estrutura
-
-```
-/idosolink
-  /apps/web
-  /packages/db
-  /packages/core
-  /packages/web3
-  /packages/payments
-```
-
+## Observações
+- Design tokens via CSS variables em `styles/globals.css`.
+- Paleta care-first com foco em acessibilidade e legibilidade.
