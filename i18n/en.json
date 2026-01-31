@@ -1,0 +1,235 @@
+{
+  "nav": {
+    "home": "Home",
+    "how": "How it Works",
+    "families": "For Families",
+    "caregivers": "For Caregivers",
+    "token": "Token",
+    "investors": "Investors",
+    "about": "About",
+    "contact": "Contact",
+    "menu": "Menu",
+    "logoAlt": "IdosoLink logo",
+    "brand": "IdosoLink"
+  },
+  "meta": {
+    "title": "IdosoLink | Care marketplace with utility token"
+  },
+  "hero": {
+    "eyebrow": "Trusted care marketplace + invisible blockchain",
+    "title": "IdosoLink connects families to trusted caregivers with digital contracts and a utility token that rewards quality care.",
+    "subtitle": "An investor-ready platform built to professionalize elder care with reputation, transparency, and long-term incentives — without overwhelming users.",
+    "ctaFamilies": "For Families",
+    "ctaCaregivers": "For Caregivers",
+    "ctaInvestors": "Investors",
+    "bullets": [
+      "Auditable trust: verified profiles, history, and contract integrity.",
+      "Protection for both sides with clear rules and safe payments.",
+      "Sustainable value: token incentives with deflationary burn."
+    ],
+    "tokenAlt": "IdosoLink token highlighted",
+    "tokenCaption": "The IdosoLink token powers contracts, reputation, and rewards."
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "subtitle": "A simple flow for families and caregivers, with blockchain running quietly in the background.",
+    "steps": [
+      {
+        "title": "1. Download and choose a profile",
+        "text": "Families and caregivers pick their role and follow a tailored onboarding journey."
+      },
+      {
+        "title": "2. Fast onboarding",
+        "text": "Essential data and preferences in a clean, human-friendly flow."
+      },
+      {
+        "title": "3. Secure activation (€25)",
+        "text": "Activation via Stripe converts euros into tokens and credits the embedded wallet automatically."
+      },
+      {
+        "title": "4. Wallet always visible",
+        "text": "Balance and history are shown in plain language, with simple and advanced views."
+      },
+      {
+        "title": "5. Digital contract (€5 + €5)",
+        "text": "Each new contract requires €5 from the family and €5 from the caregiver in tokens. Missing tokens? Pay in euros and convert instantly."
+      },
+      {
+        "title": "6. Blockchain record",
+        "text": "When accepted, we store a hash and metadata on-chain to ensure integrity and traceability."
+      },
+      {
+        "title": "7. Payment and commission",
+        "text": "The platform retains 15% of the contract value to fund growth and support."
+      },
+      {
+        "title": "8. Tips and bonuses",
+        "text": "Tips are paid in tokens; caregivers can cash out to euros. Sold tokens are burned to create scarcity."
+      }
+    ]
+  },
+  "families": {
+    "title": "For families who demand trust",
+    "subtitle": "More confidence in hiring and more peace of mind for those you love.",
+    "benefitsTitle": "Key benefits",
+    "benefits": [
+      "Verified profiles with visible reputation and history.",
+      "Clear digital contracts that protect both parties.",
+      "Secure payments with transparent fees.",
+      "Access to caregivers specialized in specific needs.",
+      "Human support and continuous quality monitoring."
+    ],
+    "flowTitle": "Family flow",
+    "flow": [
+      "Choose the Family profile and describe the care needs.",
+      "Activate your account with €25 and receive tokens in your wallet.",
+      "Compare caregivers by reputation, skills, and availability.",
+      "Create a contract with hours, tasks, and pricing expectations.",
+      "Track care history with full transparency."
+    ]
+  },
+  "caregivers": {
+    "title": "For caregivers building a career",
+    "subtitle": "We elevate caregiving into a respected profession with real reputation and long-term rewards.",
+    "benefitsTitle": "What caregivers gain",
+    "benefits": [
+      "Professional profile with verifiable reputation and history.",
+      "Control over schedule, services, and hourly rate.",
+      "Fast payments plus token bonuses and tips.",
+      "Visibility to trustworthy, recurring families.",
+      "Career growth through feedback and certifications."
+    ],
+    "highlights": ["Career growth", "Token bonuses", "Public reputation", "Embedded wallet"],
+    "requirementsTitle": "Verification and requirements",
+    "requirements": [
+      "Professional documentation and identification.",
+      "Proven experience or healthcare training.",
+      "Reference and background checks.",
+      "Alignment with safety and ethics protocols."
+    ],
+    "servicesTitle": "Define your services",
+    "services": [
+      "Select the tasks you provide (hygiene, mobility, medication, companionship).",
+      "Set your hourly rate and weekly availability.",
+      "Create clear contracts for each family with aligned expectations."
+    ]
+  },
+  "token": {
+    "title": "A utility token that powers the ecosystem",
+    "subtitle": "The IdosoLink token is the economic layer that incentivizes quality, trust, and sustainable growth.",
+    "tokenAlt": "IdosoLink token with neon glow",
+    "caption": "A circular economy that rewards care and transparency.",
+    "utilities": [
+      {
+        "title": "Smart activation",
+        "text": "€25 via Stripe converts into tokens that unlock premium visibility and access."
+      },
+      {
+        "title": "Commitment contracts",
+        "text": "Every contract uses tokens from both sides, aligning incentives and reducing fraud."
+      },
+      {
+        "title": "Tips and bonuses",
+        "text": "Token rewards boost retention, recognition, and family loyalty."
+      },
+      {
+        "title": "Deflationary burn",
+        "text": "Tokens cashed out by caregivers are burned, linking usage to scarcity."
+      }
+    ],
+    "cycle": [
+      {
+        "title": "Entry",
+        "text": "Activations and euro purchases replenish the token pool."
+      },
+      {
+        "title": "Usage",
+        "text": "Tokens circulate through contracts, fees, and bonuses."
+      },
+      {
+        "title": "Exit",
+        "text": "Caregivers convert tokens to euros whenever they choose."
+      },
+      {
+        "title": "Burn",
+        "text": "Converted tokens are burned, creating a deflationary loop."
+      }
+    ],
+    "practiceTitle": "Token in practice",
+    "practice": [
+      {
+        "title": "Embedded wallet",
+        "text": "Blockchain stays invisible: users see balance and history in human language."
+      },
+      {
+        "title": "Simple and advanced modes",
+        "text": "Power users can inspect on-chain details; everyone else sees only what matters."
+      },
+      {
+        "title": "Automatic conversion",
+        "text": "No tokens? Pay in euros and we convert instantly."
+      }
+    ]
+  },
+  "investors": {
+    "title": "For investors who want impact and scale",
+    "subtitle": "A growing market, recurring revenue, and a token layer that amplifies adoption.",
+    "thesisTitle": "Investment thesis",
+    "thesis": [
+      "Elder care demand is rising fast and remains fragmented.",
+      "Revenue streams: activation fees, contract fees, and 15% commission.",
+      "Utility token creates stickiness and recurring usage.",
+      "On-chain reputation builds trust and defensibility."
+    ],
+    "metricsTitle": "Metrics that matter",
+    "metrics": [
+      "Activation-to-contract conversion rate.",
+      "Gross marketplace volume per family and caregiver.",
+      "Caregiver retention and family NPS.",
+      "Token velocity, burn rate, and tip volume."
+    ],
+    "tokenConnection": {
+      "title": "Token + growth",
+      "text": "More contracts mean more circulating tokens and more burns. The ecosystem value grows with real usage."
+    }
+  },
+  "about": {
+    "title": "About IdosoLink",
+    "subtitle": "A mission rooted in honor, wisdom, and protection — the pillars of excellent care.",
+    "values": [
+      {
+        "title": "Mission",
+        "text": "Protect elders and families through technology, trust, and human-centered care."
+      },
+      {
+        "title": "Vision",
+        "text": "Become the most trusted global platform for long-term care, merging health and tech."
+      },
+      {
+        "title": "Values",
+        "text": "Honor, wisdom, and protection guide every decision and every interaction."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Let’s talk",
+    "subtitle": "Whether you’re an investor, caregiver, or family member, we’re ready to help.",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
+    "namePlaceholder": "Your full name",
+    "emailPlaceholder": "you@email.com",
+    "messagePlaceholder": "Tell us how we can help or the partnership you want to build.",
+    "submit": "Send message",
+    "note": "We’ll reply by email within 48 business hours.",
+    "validation": {
+      "required": "Please complete all fields.",
+      "email": "Please enter a valid email address.",
+      "success": "Thank you! We received your message and will reply soon."
+    }
+  },
+  "footer": {
+    "tagline": "IdosoLink — trust, technology, and care that becomes value.",
+    "rights": "© 2024 IdosoLink. All rights reserved."
+  }
+}
