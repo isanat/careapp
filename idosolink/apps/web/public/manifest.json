@@ -1,0 +1,15 @@
+{
+  "name": "IdosoLink",
+  "short_name": "IdosoLink",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#050b1f",
+  "theme_color": "#050b1f",
+  "icons": [
+    {
+      "src": "/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
