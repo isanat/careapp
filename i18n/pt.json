@@ -1,0 +1,235 @@
+{
+  "nav": {
+    "home": "Home",
+    "how": "Como Funciona",
+    "families": "Para Famílias",
+    "caregivers": "Para Cuidadores",
+    "token": "Token",
+    "investors": "Investidores",
+    "about": "Sobre",
+    "contact": "Contato",
+    "menu": "Menu",
+    "logoAlt": "Logo da IdosoLink",
+    "brand": "IdosoLink"
+  },
+  "meta": {
+    "title": "IdosoLink | Marketplace de cuidadores com token utilitário"
+  },
+  "hero": {
+    "eyebrow": "Marketplace de confiança + blockchain invisível",
+    "title": "IdosoLink conecta famílias a cuidadores confiáveis com contratos digitais e um token utilitário que valoriza o cuidado.",
+    "subtitle": "Uma plataforma investor-ready para profissionalizar o mercado de cuidados a idosos, garantindo reputação, transparência e incentivos de longo prazo — sem complicar a experiência do usuário.",
+    "ctaFamilies": "Para Famílias",
+    "ctaCaregivers": "Para Cuidadores",
+    "ctaInvestors": "Para Investidores",
+    "bullets": [
+      "Confiança auditável: histórico, verificações e contratos rastreáveis.",
+      "Proteção jurídica e operacional com regras claras e pagamentos seguros.",
+      "Valor sustentável: token utilitário com incentivos e queima deflacionária."
+    ],
+    "tokenAlt": "Token IdosoLink em destaque",
+    "tokenCaption": "O token IdosoLink alimenta contratos, reputação e recompensas."
+  },
+  "howItWorks": {
+    "title": "Como funciona na prática",
+    "subtitle": "Um fluxo simples para quem cuida e para quem contrata, com blockchain invisível e transparência real.",
+    "steps": [
+      {
+        "title": "1. Baixe e escolha o perfil",
+        "text": "Famílias e cuidadores escolhem seu perfil ao entrar, recebendo uma jornada personalizada para cada necessidade."
+      },
+      {
+        "title": "2. Cadastro rápido",
+        "text": "Dados básicos, preferências e validações essenciais. Nada de burocracia, tudo com linguagem humana."
+      },
+      {
+        "title": "3. Ativação segura (€25)",
+        "text": "Ativação obrigatória via Stripe: o valor é convertido em tokens e creditado automaticamente na carteira integrada."
+      },
+      {
+        "title": "4. Carteira sempre visível",
+        "text": "Saldo, histórico e conversões apresentados em português claro, sem termos técnicos e com modo simples/avançado."
+      },
+      {
+        "title": "5. Contrato digital (€5 + €5)",
+        "text": "Cada novo contrato exige €5 do familiar e €5 do cuidador em tokens. Se faltar token, paga em euro e converte automaticamente."
+      },
+      {
+        "title": "6. Registro blockchain",
+        "text": "Ao aceitar o contrato, registramos hash e metadados para garantir integridade e prova de histórico."
+      },
+      {
+        "title": "7. Pagamento e comissão",
+        "text": "A plataforma retém 15% do valor do contrato, garantindo sustentabilidade e evolução do serviço."
+      },
+      {
+        "title": "8. Gorjetas e bônus",
+        "text": "Pagos em tokens; o cuidador pode vender e receber em euro. Tokens vendidos são queimados, tornando o sistema deflacionário."
+      }
+    ]
+  },
+  "families": {
+    "title": "Para famílias que exigem confiança",
+    "subtitle": "Mais segurança para quem contrata e mais tranquilidade para quem ama.",
+    "benefitsTitle": "Benefícios principais",
+    "benefits": [
+      "Perfis verificados com histórico e reputação visível.",
+      "Contratos digitais claros que protegem família e cuidador.",
+      "Pagamentos seguros com garantias e transparência.",
+      "Acesso a cuidadores especializados em necessidades específicas.",
+      "Suporte humano e monitoramento contínuo de qualidade."
+    ],
+    "flowTitle": "Fluxo rápido para famílias",
+    "flow": [
+      "Escolha o perfil Familiar e descreva o cuidado necessário.",
+      "Ative sua conta com €25 e receba tokens na carteira.",
+      "Compare cuidadores por reputação, habilidades e disponibilidade.",
+      "Crie um contrato com carga horária, tarefas e expectativa de valor.",
+      "Acompanhe o histórico do cuidado com total transparência."
+    ]
+  },
+  "caregivers": {
+    "title": "Para cuidadores que querem carreira",
+    "subtitle": "Construímos uma carreira valorizada, com reputação real e incentivos de longo prazo.",
+    "benefitsTitle": "O que o cuidador ganha",
+    "benefits": [
+      "Perfil profissional com reputação e histórico comprovável.",
+      "Mais controle sobre agenda, funções e preço/hora.",
+      "Pagamentos rápidos com bônus e gorjetas em token.",
+      "Visibilidade para famílias confiáveis e recorrentes.",
+      "Crescimento de carreira com feedbacks e certificações."
+    ],
+    "highlights": ["Carreira sólida", "Bônus em token", "Reputação pública", "Carteira integrada"],
+    "requirementsTitle": "Verificação e requisitos",
+    "requirements": [
+      "Documentação profissional e identificação.",
+      "Experiência comprovada ou formação em saúde/cuidados.",
+      "Checagens de referências e antecedentes.",
+      "Aderência a protocolos de segurança e ética."
+    ],
+    "servicesTitle": "Defina seus serviços",
+    "services": [
+      "Escolha funções que executa (higiene, mobilidade, medicação, companhia).",
+      "Defina preço por hora e disponibilidade semanal.",
+      "Crie contratos claros para cada família, com expectativa alinhada."
+    ]
+  },
+  "token": {
+    "title": "Token utilitário que move o ecossistema",
+    "subtitle": "O token IdosoLink é a camada econômica que incentiva qualidade, confiança e crescimento sustentável.",
+    "tokenAlt": "Token IdosoLink com brilho azul",
+    "caption": "Economia circular que recompensa quem cuida e quem contrata com transparência.",
+    "utilities": [
+      {
+        "title": "Ativação inteligente",
+        "text": "€25 via Stripe convertem em tokens e desbloqueiam recursos premium e visibilidade no marketplace."
+      },
+      {
+        "title": "Contratos com compromisso",
+        "text": "Cada contrato exige tokens dos dois lados, alinhando interesse, evitando fraudes e elevando qualidade."
+      },
+      {
+        "title": "Gorjetas e bônus",
+        "text": "Recompensas em token criam reconhecimento, retenção de talentos e fidelização das famílias."
+      },
+      {
+        "title": "Burn deflacionário",
+        "text": "Tokens vendidos por cuidadores são queimados, criando escassez e conectando uso real ao valor."
+      }
+    ],
+    "cycle": [
+      {
+        "title": "Entrada",
+        "text": "Ativações e compras em euro alimentam o pool de tokens." 
+      },
+      {
+        "title": "Uso",
+        "text": "Tokens circulam em contratos, taxas e bônus dentro da plataforma." 
+      },
+      {
+        "title": "Saída",
+        "text": "Cuidador converte tokens em euros quando desejar." 
+      },
+      {
+        "title": "Queima",
+        "text": "Tokens convertidos são queimados, reforçando o mecanismo deflacionário." 
+      }
+    ],
+    "practiceTitle": "Token na prática",
+    "practice": [
+      {
+        "title": "Carteira embutida",
+        "text": "A blockchain fica invisível: a carteira aparece com saldo e histórico em linguagem humana."
+      },
+      {
+        "title": "Modo simples e avançado",
+        "text": "Usuários avançados veem detalhes on-chain; iniciantes veem apenas o essencial."
+      },
+      {
+        "title": "Conversão automática",
+        "text": "Sem tokens? Pague em euro e a conversão acontece imediatamente."
+      }
+    ]
+  },
+  "investors": {
+    "title": "Para investidores que buscam impacto e escala",
+    "subtitle": "Um mercado crescente, receita recorrente e uma camada tokenizada que potencializa o crescimento.",
+    "thesisTitle": "Tese de investimento",
+    "thesis": [
+      "Mercado de cuidado a idosos em expansão acelerada e fragmentado.",
+      "Modelo de receita diversificado: ativação, taxas de contrato e comissão de 15%.",
+      "Token utilitário cria barreira de saída e incentiva uso recorrente.",
+      "Dados e reputação on-chain geram confiança e defensibilidade."
+    ],
+    "metricsTitle": "Métricas que importam",
+    "metrics": [
+      "Taxa de ativação e conversão em contratos.",
+      "Volume transacionado por família e por cuidador.",
+      "Retenção de cuidadores e NPS de famílias.",
+      "Token velocity, burn rate e volume de gorjetas."
+    ],
+    "tokenConnection": {
+      "title": "Token + crescimento",
+      "text": "Mais contratos significam mais tokens circulando e mais queima. O valor do ecossistema cresce com o uso real da plataforma."
+    }
+  },
+  "about": {
+    "title": "Sobre a IdosoLink",
+    "subtitle": "Uma missão de proteção, sabedoria e honra — os pilares de quem cuida com excelência.",
+    "values": [
+      {
+        "title": "Missão",
+        "text": "Proteger idosos e famílias com tecnologia, confiança e cuidado humanizado."
+      },
+      {
+        "title": "Visão",
+        "text": "Ser a plataforma mais confiável do mundo para cuidados de longo prazo, combinando saúde e tecnologia."
+      },
+      {
+        "title": "Valores",
+        "text": "Honra, sabedoria e proteção em cada decisão, inspirando respeito e responsabilidade."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Vamos conversar",
+    "subtitle": "Seja você investidor, cuidador ou familiar, estamos prontos para apresentar a IdosoLink.",
+    "nameLabel": "Nome",
+    "emailLabel": "Email",
+    "messageLabel": "Mensagem",
+    "namePlaceholder": "Seu nome completo",
+    "emailPlaceholder": "voce@email.com",
+    "messagePlaceholder": "Conte como podemos ajudar ou qual parceria deseja construir.",
+    "submit": "Enviar mensagem",
+    "note": "Responderemos por email em até 48 horas úteis.",
+    "validation": {
+      "required": "Por favor, preencha todos os campos.",
+      "email": "Informe um email válido.",
+      "success": "Obrigado! Recebemos sua mensagem e retornaremos em breve."
+    }
+  },
+  "footer": {
+    "tagline": "IdosoLink — confiança, tecnologia e cuidado que se tornam valor.",
+    "rights": "© 2024 IdosoLink. Todos os direitos reservados."
+  }
+}
