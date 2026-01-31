@@ -1,0 +1,9 @@
+{
+  "name": "@idosolink/web3",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "ethers": "^6.8.1"
+  }
+}
