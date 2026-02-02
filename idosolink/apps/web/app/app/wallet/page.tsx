@@ -80,7 +80,7 @@ export default function WalletPage() {
             <div className="space-y-4">
               <Select value={tipContractId} onChange={(event) => setTipContractId(event.target.value)}>
                 {contractOptions.length === 0 ? (
-                  <option value=\"\">Nenhum contrato disponível</option>
+                  <option value="">Nenhum contrato disponível</option>
                 ) : (
                   contractOptions.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -98,9 +98,9 @@ export default function WalletPage() {
                 Enviar gorjeta
               </Button>
               {!tipContractId ? (
-                <p className=\"text-sm text-warning\">Crie um contrato para enviar gorjetas.</p>
+                <p className="text-sm text-warning">Crie um contrato para enviar gorjetas.</p>
               ) : !canTip ? (
-                <p className=\"text-sm text-warning\">Saldo insuficiente para enviar gorjeta.</p>
+                <p className="text-sm text-warning">Saldo insuficiente para enviar gorjeta.</p>
               ) : null}
             </div>
           </ModalContent>
@@ -124,7 +124,7 @@ export default function WalletPage() {
                 <Button onClick={() => redeemTokens(redeemValue)} disabled={!canRedeem}>
                   Solicitar conversão
                 </Button>
-                {!canRedeem ? <p className=\"text-sm text-warning\">Saldo insuficiente para converter.</p> : null}
+                {!canRedeem ? <p className="text-sm text-warning">Saldo insuficiente para converter.</p> : null}
               </div>
             </ModalContent>
           </Modal>
