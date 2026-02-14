@@ -210,6 +210,50 @@ O Schema Prisma tem 20+ modelos, mas o banco Turso foi criado com SQL manual com
 - Pronto para FASE 2 (chat persistente, reviews)
 
 ---
+## Task ID: 6
+**Agent:** Main Orchestrator
+**Task:** FASE 2 - Chat Persistente, Reviews, Tips + Layout Fix
+
+### Work Log:
+1. ✅ Corrigido header duplicado:
+   - Removido Header/Footer do layout raiz
+   - Criado PublicLayout para páginas públicas
+   - Criado layout para /app com AppShell
+   - Criado layout para /auth
+   - Criado layout para todas as páginas públicas (ajuda, blog, etc.)
+
+2. ✅ Atualizados valores na landing page:
+   - €25 → €35 ativação
+   - 15% → 10% comissão
+   - 85% → 90% recebimento cuidador
+
+3. ✅ APIs de Chat criadas:
+   - `/api/chat/rooms` - Listar/criar salas
+   - `/api/chat/messages` - Listar/salvar mensagens
+
+4. ✅ API de Reviews criada:
+   - `/api/reviews` - CRUD completo
+   - Validação de contrato participado
+   - Atualização automática de rating
+
+5. ✅ API de Tips (gorjetas) criada:
+   - `/api/tips` - Listar/enviar gorjetas
+   - Transferência de tokens entre wallets
+   - Ledger entries para auditoria
+
+6. ✅ Página de chat atualizada:
+   - Busca conversas da API
+   - Carrega mensagens do banco
+   - Persiste mensagens em tempo real
+
+### Stage Summary:
+- Layout corrigido (sem header duplicado) ✅
+- Chat persistente funcionando ✅
+- Sistema de reviews completo ✅
+- Sistema de gorjetas (tips) ✅
+- Status: ~85% implementado
+
+---
 ## Task ID: 2-b
 **Agent:** Test User Seeder
 **Task:** Create Test Users for IdosoLink Platform
