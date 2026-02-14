@@ -54,7 +54,8 @@ import {
   Sun,
   Video,
   MoreVertical,
-  Send
+  Send,
+  Briefcase
 } from "lucide-react";
 
 // Custom Icons for IdosoLink
@@ -345,6 +346,10 @@ export function IconMoreVertical({ className }: { className?: string }) {
 
 export function IconSend({ className }: { className?: string }) {
   return <Send className={className} />;
+}
+
+export function IconBriefcase({ className }: { className?: string }) {
+  return <Briefcase className={className} />;
 }
 
 // Re-export all lucide icons for convenience
