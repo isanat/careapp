@@ -4,28 +4,24 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PublicLayout } from "@/components/layout/public-layout";
 import { 
-  IconLogo, 
   IconToken, 
   IconCare, 
-  IconFamily, 
-  IconCaregiver, 
-  IconTrust, 
-  IconReputation,
+  IconTrust,
   IconWallet,
   IconChevronRight,
   IconArrowUp,
   IconEuro,
   IconCoins,
   IconShield,
-  IconClock,
   IconStar
 } from "@/components/icons";
-import { APP_NAME, APP_TAGLINE, TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen flex flex-col">
+    <PublicLayout>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background">
         <div className="container px-4 py-16 md:py-24 mx-auto">
@@ -139,7 +135,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Cadastro & Ativação</h3>
               <p className="text-muted-foreground">
-                Crie sua conta como família ou cuidador. Pague a ativação de €25 e receba seus primeiros tokens automaticamente.
+                Crie sua conta como família ou cuidador. Pague a ativação de €35 e receba seus primeiros tokens automaticamente.
               </p>
             </div>
 
@@ -225,7 +221,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Ativação da conta</span>
-                  <Badge>€25 (em tokens)</Badge>
+                  <Badge>€35 (em tokens)</Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Taxa por contrato</span>
@@ -233,7 +229,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Comissão da plataforma</span>
-                  <Badge>15%</Badge>
+                  <Badge>10%</Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Gorjetas em tokens</span>
@@ -260,7 +256,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Ativação da conta</span>
-                  <Badge>€25 (em tokens)</Badge>
+                  <Badge>€35 (em tokens)</Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Taxa por contrato</span>
@@ -268,7 +264,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                   <span>Recebimento de serviços</span>
-                  <Badge>85% do valor</Badge>
+                  <Badge>90% do valor</Badge>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-primary/10 rounded-lg border border-primary/20">
                   <span>Gorjetas em tokens</span>
@@ -438,6 +434,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-    </main>
+    </PublicLayout>
   );
 }
