@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,19 +25,74 @@ import {
 } from "@/components/icons";
 import { TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
 
+interface Wallet {
+  id: string;
+  address: string;
+  balanceTokens: number;
+  balanceEurCents: number;
+}
+
+interface Transaction {
+  id: string;
+  type: string;
+  reason: string;
+  tokens: number;
+  eurCents: number;
+  description: string;
+  date: string;
+}
+
 export default function WalletPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [purchaseAmount, setPurchaseAmount] = useState(50);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
+    }
+  }, [status, router]);
 
-  if (status === "loading") {
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchWallet();
+    }
+  }, [status]);
+
+  const fetchWallet = async () => {
+    try {
+      const response = await fetch('/api/user/wallet');
+      if (response.ok) {
+        const data = await response.json();
+        setWallet(data.wallet);
+        setTransactions(data.transactions || []);
+      }
+    } catch (error) {
+      console.error('Error fetching wallet:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const copyAddress = () => {
+    if (wallet?.address) {
+      navigator.clipboard.writeText(wallet.address);
+    }
+  };
+
+  const handlePurchase = async () => {
+    setIsProcessing(true);
+    // In real app, call API to create Stripe checkout
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 1000);
+  };
+
+  if (status === "loading" || isLoading) {
     return (
       <AppShell>
         <div className="animate-pulse space-y-6">
@@ -48,36 +103,24 @@ export default function WalletPage() {
     );
   }
 
-  // Mock data
-  const wallet = {
-    address: "0x7a3d...9f2e",
-    fullAddress: "0x7a3d2c4e8f1b5a6d9c3e7f2a4b8d1c6e5f9a2b3c",
-    balanceTokens: 2500,
-    balanceEur: 25.0,
-    tokenPrice: 0.01, // €0.01 per token
-  };
+  if (!wallet) {
+    return (
+      <AppShell>
+        <div className="text-center py-16">
+          <IconWallet className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h2 className="text-xl font-semibold mb-2">Carteira não encontrada</h2>
+          <p className="text-muted-foreground mb-4">
+            Sua carteira será criada após a ativação da conta.
+          </p>
+          <Button asChild>
+            <Link href="/auth/payment">Ativar Conta</Link>
+          </Button>
+        </div>
+      </AppShell>
+    );
+  }
 
-  const transactions = [
-    { id: 1, type: "credit", reason: "Ativação de conta", tokens: 2500, date: "2024-01-15" },
-    { id: 2, type: "debit", reason: "Taxa de contrato #1234", tokens: -500, date: "2024-01-14" },
-    { id: 3, type: "credit", reason: "Gorjeta recebida", tokens: 200, date: "2024-01-13" },
-    { id: 4, type: "debit", reason: "Taxa de contrato #1235", tokens: -500, date: "2024-01-12" },
-    { id: 5, type: "credit", reason: "Bônus de indicação", tokens: 100, date: "2024-01-10" },
-  ];
-
-  const copyAddress = () => {
-    navigator.clipboard.writeText(wallet.fullAddress);
-    // Show toast
-  };
-
-  const handlePurchase = async () => {
-    setIsProcessing(true);
-    // In real app, call API to create Stripe checkout
-    setTimeout(() => {
-      setIsProcessing(false);
-      // Redirect to Stripe
-    }, 1000);
-  };
+  const balanceEur = (wallet.balanceTokens * 0.01).toFixed(2);
 
   return (
     <AppShell>
@@ -100,21 +143,21 @@ export default function WalletPage() {
                   <div>
                     <p className="text-sm text-muted-foreground">Saldo {TOKEN_SYMBOL}</p>
                     <p className="text-4xl font-bold">{wallet.balanceTokens.toLocaleString()}</p>
-                    <p className="text-sm text-muted-foreground">≈ €{wallet.balanceEur.toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground">≈ €{balanceEur}</p>
                   </div>
                 </div>
 
                 {/* Wallet Address */}
                 <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
                   <code className="text-xs text-muted-foreground flex-1 truncate">
-                    {wallet.fullAddress}
+                    {wallet.address}
                   </code>
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyAddress}>
                     <IconCopy className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                     <a 
-                      href={`https://polygonscan.com/address/${wallet.fullAddress}`}
+                      href={`https://polygonscan.com/address/${wallet.address}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -200,41 +243,50 @@ export default function WalletPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {transactions.map((tx) => (
-                    <div
-                      key={tx.id}
-                      className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`p-2 rounded-full ${
-                            tx.type === "credit"
-                              ? "bg-green-500/10 text-green-500"
-                              : "bg-red-500/10 text-red-500"
-                          }`}
-                        >
-                          {tx.type === "credit" ? (
-                            <IconArrowUp className="h-4 w-4" />
-                          ) : (
-                            <IconArrowDown className="h-4 w-4" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{tx.reason}</p>
-                          <p className="text-xs text-muted-foreground">{tx.date}</p>
-                        </div>
-                      </div>
-                      <Badge
-                        variant={tx.type === "credit" ? "default" : "secondary"}
-                        className={tx.type === "credit" ? "bg-green-500" : ""}
+                {transactions.length > 0 ? (
+                  <div className="space-y-3">
+                    {transactions.map((tx) => (
+                      <div
+                        key={tx.id}
+                        className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
                       >
-                        {tx.type === "credit" ? "+" : ""}
-                        {tx.tokens} {TOKEN_SYMBOL}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`p-2 rounded-full ${
+                              tx.type === "credit"
+                                ? "bg-green-500/10 text-green-500"
+                                : "bg-red-500/10 text-red-500"
+                            }`}
+                          >
+                            {tx.type === "credit" ? (
+                              <IconArrowUp className="h-4 w-4" />
+                            ) : (
+                              <IconArrowDown className="h-4 w-4" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium">{tx.description || tx.reason}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(tx.date).toLocaleDateString('pt-PT')}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant={tx.type === "credit" ? "default" : "secondary"}
+                          className={tx.type === "credit" ? "bg-green-500" : ""}
+                        >
+                          {tx.type === "credit" ? "+" : ""}
+                          {tx.tokens} {TOKEN_SYMBOL}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <IconWallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Nenhuma transação encontrada</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

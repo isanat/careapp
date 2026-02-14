@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,9 +23,28 @@ import {
 } from "@/components/icons";
 import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
 
+interface Stats {
+  tokenBalance: number;
+  tokenValueEur: number;
+  activeContracts: number;
+  totalHours: number;
+  rating: number;
+  totalReviews: number;
+}
+
+interface Activity {
+  type: string;
+  description: string;
+  amount: number;
+  date: string;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -33,7 +52,37 @@ export default function DashboardPage() {
     }
   }, [status, router]);
 
-  if (status === "loading") {
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchStats();
+    }
+  }, [status]);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/user/stats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data.stats);
+        setRecentActivity(data.recentActivity || []);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      // Fallback to defaults
+      setStats({
+        tokenBalance: 0,
+        tokenValueEur: 0,
+        activeContracts: 0,
+        totalHours: 0,
+        rating: 0,
+        totalReviews: 0,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container px-4 py-8 mx-auto">
@@ -52,22 +101,6 @@ export default function DashboardPage() {
 
   const isFamily = session?.user?.role === "FAMILY";
   const isCaregiver = session?.user?.role === "CAREGIVER";
-
-  // Mock data - in real app, fetch from API
-  const stats = {
-    tokenBalance: 2500,
-    tokenValueEur: 25.0,
-    activeContracts: 2,
-    totalHours: 48,
-    rating: 4.9,
-    totalReviews: 23,
-  };
-
-  const recentActivity = [
-    { type: "credit", description: "Ativação de conta", amount: 2500, date: "2024-01-15" },
-    { type: "debit", description: "Taxa de contrato", amount: -500, date: "2024-01-14" },
-    { type: "credit", description: "Gorjeta recebida", amount: 200, date: "2024-01-13" },
-  ];
 
   return (
     <AppShell>
@@ -98,8 +131,8 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Saldo {TOKEN_SYMBOL}</p>
-                  <p className="text-2xl font-bold">{stats.tokenBalance.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">≈ €{stats.tokenValueEur.toFixed(2)}</p>
+                  <p className="text-2xl font-bold">{stats?.tokenBalance?.toLocaleString() || 0}</p>
+                  <p className="text-xs text-muted-foreground">≈ €{(stats?.tokenValueEur || 0).toFixed(2)}</p>
                 </div>
               </div>
             </CardContent>
@@ -114,7 +147,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Contratos Ativos</p>
-                  <p className="text-2xl font-bold">{stats.activeContracts}</p>
+                  <p className="text-2xl font-bold">{stats?.activeContracts || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -129,7 +162,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Horas Trabalhadas</p>
-                  <p className="text-2xl font-bold">{stats.totalHours}h</p>
+                  <p className="text-2xl font-bold">{stats?.totalHours || 0}h</p>
                 </div>
               </div>
             </CardContent>
@@ -144,8 +177,10 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Avaliação</p>
-                  <p className="text-2xl font-bold">{stats.rating}</p>
-                  <p className="text-xs text-muted-foreground">{stats.totalReviews} avaliações</p>
+                  <p className="text-2xl font-bold">{stats?.rating?.toFixed(1) || '-'}</p>
+                  {stats?.totalReviews ? (
+                    <p className="text-xs text-muted-foreground">{stats.totalReviews} avaliações</p>
+                  ) : null}
                 </div>
               </div>
             </CardContent>
@@ -219,35 +254,44 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {recentActivity.map((activity, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-full ${
-                      activity.type === "credit" 
-                        ? "bg-green-500/10 text-green-500" 
-                        : "bg-red-500/10 text-red-500"
-                    }`}>
-                      {activity.type === "credit" ? (
-                        <IconArrowUp className="h-4 w-4" />
-                      ) : (
-                        <IconArrowDown className="h-4 w-4" />
-                      )}
+            {recentActivity.length > 0 ? (
+              <div className="space-y-3">
+                {recentActivity.map((activity, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-full ${
+                        activity.type === "credit" 
+                          ? "bg-green-500/10 text-green-500" 
+                          : "bg-red-500/10 text-red-500"
+                      }`}>
+                        {activity.type === "credit" ? (
+                          <IconArrowUp className="h-4 w-4" />
+                        ) : (
+                          <IconArrowDown className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium">{activity.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(activity.date).toLocaleDateString('pt-PT')}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{activity.description}</p>
-                      <p className="text-xs text-muted-foreground">{activity.date}</p>
-                    </div>
+                    <Badge variant={activity.type === "credit" ? "default" : "secondary"}>
+                      {activity.type === "credit" ? "+" : ""}{activity.amount} {TOKEN_SYMBOL}
+                    </Badge>
                   </div>
-                  <Badge variant={activity.type === "credit" ? "default" : "secondary"}>
-                    {activity.type === "credit" ? "+" : ""}{activity.amount} {TOKEN_SYMBOL}
-                  </Badge>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <IconWallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhuma atividade recente</p>
+              </div>
+            )}
             <div className="mt-4 pt-4 border-t">
               <Button asChild variant="ghost" className="w-full">
                 <Link href="/app/wallet">Ver Histórico Completo</Link>
