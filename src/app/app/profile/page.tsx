@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,15 +36,10 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
-
   const isFamily = session?.user?.role === "FAMILY";
 
-  // Mock profile data
-  const profile = isFamily ? {
+  // Profile data based on role - memoized to avoid recalculation
+  const profile = useMemo(() => isFamily ? {
     address: "Rua das Flores, 123",
     city: "Lisboa",
     postalCode: "1250-096",
@@ -66,14 +61,19 @@ export default function ProfilePage() {
     totalHours: 1200,
     averageRating: 4.9,
     totalReviews: 32,
-  };
+  }, [isFamily]);
 
   const [formData, setFormData] = useState({
     name: session?.user?.name || "",
     email: session?.user?.email || "",
     phone: "",
-    ...profile,
   });
+
+  // Early return AFTER all hooks
+  if (status === "unauthenticated") {
+    router.push("/auth/login");
+    return null;
+  }
 
   const handleSave = async () => {
     setIsLoading(true);

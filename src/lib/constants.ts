@@ -10,9 +10,9 @@ export const TOKEN_SYMBOL = "SENT";
 export const TOKEN_DECIMALS = 18;
 
 // Activation Costs (in cents)
-export const ACTIVATION_COST_EUR_CENTS = 2500; // €25
+export const ACTIVATION_COST_EUR_CENTS = 3500; // €35 (updated from €25)
 export const CONTRACT_FEE_EUR_CENTS = 500; // €5 per side
-export const PLATFORM_FEE_PERCENT = 15; // 15%
+export const PLATFORM_FEE_PERCENT = 10; // 10% (updated from 15%)
 
 // Token Price (initial: 1 SENT = €0.01)
 export const INITIAL_TOKEN_PRICE_EUR_CENTS = 1; // 1 cent per token
