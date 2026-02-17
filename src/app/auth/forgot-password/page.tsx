@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { IconLogo, IconMail, IconAlert, IconCheck } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 export default function ForgotPasswordPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -25,7 +27,7 @@ export default function ForgotPasswordPage() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setIsSuccess(true);
     } catch {
-      setErrorMessage("Erro ao enviar email. Tente novamente.");
+      setErrorMessage(t.forgotPassword.sendError);
     } finally {
       setIsLoading(false);
     }
@@ -39,9 +41,9 @@ export default function ForgotPasswordPage() {
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">Recuperar Senha</CardTitle>
+            <CardTitle className="text-2xl">{t.forgotPassword.title}</CardTitle>
             <CardDescription>
-              Digite seu email para receber instruções de recuperação
+              {t.forgotPassword.description}
             </CardDescription>
           </div>
         </CardHeader>
@@ -59,20 +61,19 @@ export default function ForgotPasswordPage() {
                 <IconCheck className="h-8 w-8 text-green-500" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">Email Enviado!</h2>
+                <h2 className="font-semibold text-lg">{t.forgotPassword.emailSent}</h2>
                 <p className="text-muted-foreground text-sm mt-2">
-                  Se uma conta com o email <strong>{email}</strong> existir, 
-                  você receberá instruções para redefinir sua senha.
+                  {t.forgotPassword.checkInbox}
                 </p>
               </div>
               <Button asChild className="w-full">
-                <Link href="/auth/login">Voltar para Login</Link>
+                <Link href="/auth/login">{t.forgotPassword.backToLogin}</Link>
               </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t.forgotPassword.emailLabel}</Label>
                 <div className="relative">
                   <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -88,13 +89,13 @@ export default function ForgotPasswordPage() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Enviando..." : "Enviar Instruções"}
+                {isLoading ? t.forgotPassword.sending : t.forgotPassword.sendReset}
               </Button>
 
               <div className="text-center text-sm text-muted-foreground">
-                Lembrou sua senha?{" "}
+                {t.forgotPassword.rememberedPassword}{" "}
                 <Link href="/auth/login" className="text-primary hover:underline font-medium">
-                  Fazer login
+                  {t.forgotPassword.loginLink}
                 </Link>
               </div>
             </form>

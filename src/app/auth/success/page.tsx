@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconLogo, IconCheck, IconWallet, IconToken, IconArrowUp } from "@/components/icons";
 import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 function SuccessPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const { t } = useI18n();
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
@@ -20,13 +22,13 @@ function SuccessPageContent() {
             <IconCheck className="h-8 w-8 text-green-500" />
           </div>
           <div>
-            <CardTitle className="text-2xl">Conta Ativada!</CardTitle>
+            <CardTitle className="text-2xl">{t.success.title}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center text-muted-foreground">
-            <p>Parabéns! Sua conta foi ativada com sucesso.</p>
-            <p>Você está pronto para começar a usar o {APP_NAME}.</p>
+            <p>{t.success.message}</p>
+            <p>{t.success.readyToStart} {APP_NAME}.</p>
           </div>
 
           {/* What happened */}
@@ -34,38 +36,38 @@ function SuccessPageContent() {
             <div className="flex items-center gap-3">
               <IconWallet className="h-5 w-5 text-green-500" />
               <div>
-                <p className="font-medium">Carteira Criada</p>
-                <p className="text-sm text-muted-foreground">Sua carteira digital foi criada automaticamente</p>
+                <p className="font-medium">{t.success.walletCreated}</p>
+                <p className="text-sm text-muted-foreground">{t.success.walletCreatedDesc}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <IconToken className="h-5 w-5 text-primary" />
               <div>
-                <p className="font-medium">Tokens Creditados</p>
-                <p className="text-sm text-muted-foreground">Você recebeu seus primeiros {TOKEN_SYMBOL} tokens</p>
+                <p className="font-medium">{t.success.tokensCredited}</p>
+                <p className="text-sm text-muted-foreground">{t.success.tokensCreditedDesc}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <IconArrowUp className="h-5 w-5 text-primary" />
               <div>
-                <p className="font-medium">Valorização Potencial</p>
-                <p className="text-sm text-muted-foreground">Seus tokens podem valorizar com o crescimento da plataforma</p>
+                <p className="font-medium">{t.success.potentialAppreciation}</p>
+                <p className="text-sm text-muted-foreground">{t.success.potentialAppreciationDesc}</p>
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
-            <p className="text-sm font-medium">Próximos passos:</p>
+            <p className="text-sm font-medium">{t.success.nextSteps}</p>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-              <li>Complete seu perfil</li>
-              <li>Verifique sua conta para mais credibilidade</li>
-              <li>Comece a buscar cuidadores ou receba propostas</li>
+              <li>{t.success.completeProfile}</li>
+              <li>{t.success.verifyAccount}</li>
+              <li>{t.success.startSearching}</li>
             </ul>
           </div>
 
           <Button asChild className="w-full" size="lg">
             <Link href="/app/dashboard">
-              Ir para o Dashboard
+              {t.success.goToDashboard}
             </Link>
           </Button>
         </CardContent>
@@ -75,12 +77,14 @@ function SuccessPageContent() {
 }
 
 export default function SuccessPage() {
+  const { t } = useI18n();
+  
   return (
     <Suspense fallback={
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
         <Card className="w-full max-w-lg">
           <CardContent className="py-12 text-center">
-            <p>Carregando...</p>
+            <p>{t.loading}</p>
           </CardContent>
         </Card>
       </main>

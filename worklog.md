@@ -290,6 +290,133 @@ Create an API route to seed test users (caregiver and family) with hashed passwo
 - Verified working: Both users created successfully with 100 SENT tokens each
 
 ---
+## Task ID: 8
+**Agent:** Main Orchestrator
+**Task:** AUDITORIA COMPLETA DO FLUXO (Cadastro, KYC, i18n)
+
+### 📋 RELATÓRIO CONSOLIDADO DA AUDITORIA
+
+---
+
+## 1. FLUXO DE CADASTRO
+
+### Dados CAPTURADOS Atualmente:
+| Campo | Tipo | Obrigatório | Status |
+|-------|------|-------------|--------|
+| `role` | Enum | ✅ | FAMILY/CAREGIVER |
+| `name` | Text | ✅ | Nome completo |
+| `email` | Email | ✅ | Validação HTML5 apenas |
+| `phone` | Tel | ❌ | Opcional |
+| `password` | Password | ✅ | Min 8 chars |
+
+### Dados SALVOS no Banco:
+- User: id, name, email (lowercase), phone, password_hash, role, status=PENDING
+- Wallet: Ethereum address, encrypted private key, balance=0
+- Profile: Criado com dados mínimos (country=PT)
+
+### ❌ FALTANDO (Crítico):
+1. **Checkbox de Termos** - GDPR exige consentimento explícito
+2. **Checkbox de Privacidade** - GDPR obrigatório
+3. **Data de Nascimento** - Verificação 18+ para cuidadores
+4. **Página `/termos`** - Link quebrado (404)
+5. **Verificação de Email** - Não implementada
+6. **CAPTCHA** - Sem proteção contra bots
+7. **Validação de senha backend** - Apenas frontend
+
+### 🔴 Bugs Encontrados:
+- `/termos` retorna 404 (linkado no payment)
+- Texto "Ao continuar, você concorda..." não é checkbox
+- Email nunca verificado (emailVerified = null)
+- Senha aceita "12345678" (fraca)
+
+---
+
+## 2. SISTEMA KYC
+
+### Estado Atual: ❌ NÃO IMPLEMENTADO
+
+### Schema Preparado (ProfileCaregiver):
+```prisma
+verificationStatus    VerificationStatus @default(UNVERIFIED)
+documentType          String?   // Tipo de documento
+documentNumber        String?   // Número do documento
+documentVerified      Boolean  @default(false)
+backgroundCheckStatus String?   // Verificação de antecedentes
+```
+
+### Faltando Implementar:
+1. ❌ Página de verificação KYC
+2. ❌ Upload de documento (RG/CPF/Passaporte)
+3. ❌ Selfie de verificação
+4. ❌ Integração com serviço de validação
+5. ❌ Workflow de aprovação manual
+6. ❌ Status de verificação visível para família
+
+---
+
+## 3. SISTEMA i18n (TRADUÇÕES)
+
+### Cobertura Atual:
+| Categoria | Total | Com i18n | Hardcoded | Cobertura |
+|-----------|-------|----------|-----------|-----------|
+| Públicas | 10 | 0 | 10 | **0%** |
+| Auth | 5 | 2 | 3 | **40%** |
+| App | 8 | 2 | 6 | **25%** |
+| **TOTAL** | **26** | **7** | **19** | **27%** |
+
+### ✅ Páginas COM Tradução:
+- `/auth/login`
+- `/auth/register`
+- `/app/settings`
+- `/app/wallet`
+- Header, AppShell, LanguageSelector
+
+### ❌ Páginas SEM Tradução (Hardcoded):
+**CRÍTICAS (Fluxo Principal):**
+- `/auth/payment` - Página de pagamento
+- `/auth/success` - Confirmação pós-pagamento
+- `/auth/forgot-password` - Recuperação de senha
+- `/app/dashboard` - Dashboard principal
+- `/app/contracts` - Lista de contratos
+- `/app/contracts/new` - Criar contrato
+
+**Públicas (Marketing):**
+- `/` (Landing)
+- `/como-funciona`
+- `/familias`
+- `/cuidadores`
+- `/token`
+- `/ajuda`
+- `/contato`
+- `/blog`
+- `/sobre`
+- `/privacidade`
+
+---
+
+## PRIORIDADES DE CORREÇÃO
+
+### P0 - Crítico (Imediato):
+1. ✅ Criar página `/termos` 
+2. ⏳ Adicionar checkbox de termos no cadastro
+3. ⏳ Traduzir `/auth/payment`
+4. ⏳ Traduzir `/auth/success`
+5. ⏳ Traduzir `/app/dashboard`
+
+### P1 - Alto (Esta semana):
+6. ⏳ Traduzir `/app/contracts` e `/app/contracts/new`
+7. ⏳ Adicionar validação de senha (frontend + backend)
+8. ⏳ Implementar verificação de email
+9. ⏳ Adicionar CAPTCHA
+
+### P2 - Médio (Próxima sprint):
+10. ⏳ Criar página KYC para cuidadores
+11. ⏳ Traduzir todas as páginas públicas
+12. ⏳ Adicionar data de nascimento no cadastro
+
+---
+
+---
 ## Task ID: 7
 **Agent:** Main Orchestrator
 **Task:** AUDITORIA COMPLETA E CORREÇÃO DA ARQUITETURA

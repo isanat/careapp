@@ -24,6 +24,7 @@ import {
   IconShield,
   IconWallet
 } from "@/components/icons";
+import { Checkbox } from "@/components/ui/checkbox";
 import { APP_NAME, TOKEN_SYMBOL, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
@@ -46,6 +47,7 @@ function RegisterPageContent() {
     confirmPassword: "",
   });
 
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -61,6 +63,12 @@ function RegisterPageContent() {
     setErrorMessage("");
 
     // Validation
+    if (!acceptTerms) {
+      setErrorMessage(t.register?.termsRequired || "Você deve aceitar os termos para continuar");
+      setIsLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage(t.error);
       setIsLoading(false);
@@ -298,6 +306,30 @@ function RegisterPageContent() {
                 <p className="text-xs text-muted-foreground">
                   {TOKEN_SYMBOL} tokens
                 </p>
+              </div>
+
+              {/* Terms Checkbox */}
+              <div className="flex items-start space-x-3 p-3 bg-muted/50 rounded-lg">
+                <Checkbox
+                  id="terms"
+                  checked={acceptTerms}
+                  onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <label
+                    htmlFor="terms"
+                    className="text-sm text-muted-foreground cursor-pointer leading-relaxed"
+                  >
+                    {t.register?.acceptTerms || "Li e aceito os"}{" "}
+                    <Link href="/termos" className="text-primary hover:underline font-medium" target="_blank">
+                      {t.register?.termsOfUse || "Termos de Uso"}
+                    </Link>{" "}
+                    {t.register?.and || "e a"}{" "}
+                    <Link href="/privacidade" className="text-primary hover:underline font-medium" target="_blank">
+                      {t.register?.privacyPolicy || "Política de Privacidade"}
+                    </Link>
+                  </label>
+                </div>
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>

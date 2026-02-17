@@ -16,15 +16,17 @@ import {
   IconExternalLink
 } from "@/components/icons";
 import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 function PaymentPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
   const cancelled = searchParams.get("cancelled");
+  const { t } = useI18n();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(cancelled ? "Pagamento cancelado. Tente novamente." : "");
+  const [error, setError] = useState(cancelled ? t.payment.paymentCancelled : "");
 
   useEffect(() => {
     if (!userId) {
@@ -48,13 +50,13 @@ function PaymentPageContent() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao criar sessão de pagamento");
+        throw new Error(data.error || t.payment.paymentError);
       }
 
       // Redirect to Stripe Checkout
       window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao processar pagamento");
+      setError(err instanceof Error ? err.message : t.payment.genericError);
     } finally {
       setIsLoading(false);
     }
@@ -70,9 +72,9 @@ function PaymentPageContent() {
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">Ativar sua Conta</CardTitle>
+            <CardTitle className="text-2xl">{t.payment.title}</CardTitle>
             <CardDescription>
-              Complete o pagamento para ativar sua conta e receber seus tokens
+              {t.payment.description}
             </CardDescription>
           </div>
         </CardHeader>
@@ -87,11 +89,11 @@ function PaymentPageContent() {
           {/* Payment Summary */}
           <div className="p-4 bg-muted rounded-lg space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Taxa de Ativação</span>
+              <span className="text-muted-foreground">{t.payment.activationFee}</span>
               <Badge variant="secondary">€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Tokens Recebidos</span>
+              <span className="text-muted-foreground">{t.payment.tokensReceived}</span>
               <Badge className="bg-primary">
                 <IconToken className="h-3 w-3 mr-1" />
                 {tokensReceived} {TOKEN_SYMBOL}
@@ -101,27 +103,27 @@ function PaymentPageContent() {
 
           {/* What you get */}
           <div className="space-y-3">
-            <p className="font-medium">O que você recebe:</p>
+            <p className="font-medium">{t.payment.features}</p>
             <div className="space-y-2">
               <div className="flex items-start gap-3">
                 <IconCheck className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">Conta Ativada</p>
-                  <p className="text-sm text-muted-foreground">Acesso completo à plataforma</p>
+                  <p className="font-medium">{t.payment.accountActivated}</p>
+                  <p className="text-sm text-muted-foreground">{t.payment.accountActivatedDesc}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <IconWallet className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">Carteira Digital</p>
-                  <p className="text-sm text-muted-foreground">Criada automaticamente com seu saldo inicial</p>
+                  <p className="font-medium">{t.payment.walletCreated}</p>
+                  <p className="text-sm text-muted-foreground">{t.payment.walletCreatedDesc}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <IconToken className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
                   <p className="font-medium">{tokensReceived} {TOKEN_SYMBOL} Tokens</p>
-                  <p className="text-sm text-muted-foreground">Para usar em contratos e gorjetas</p>
+                  <p className="text-sm text-muted-foreground">{t.payment.tokensForUse}</p>
                 </div>
               </div>
             </div>
@@ -131,8 +133,8 @@ function PaymentPageContent() {
           <div className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
             <IconShield className="h-5 w-5 text-primary shrink-0" />
             <div className="text-sm">
-              <p className="font-medium">Pagamento Seguro</p>
-              <p className="text-muted-foreground">Processado por Stripe</p>
+              <p className="font-medium">{t.payment.securePayment}</p>
+              <p className="text-muted-foreground">{t.payment.processedByStripe}</p>
             </div>
           </div>
 
@@ -143,17 +145,17 @@ function PaymentPageContent() {
             onClick={handlePayment}
             disabled={isLoading}
           >
-            {isLoading ? "Processando..." : `Pagar €${ACTIVATION_COST_EUR_CENTS / 100} e Ativar`}
+            {isLoading ? t.payment.processing : `${t.payment.proceed} €${ACTIVATION_COST_EUR_CENTS / 100}`}
           </Button>
 
           <div className="text-center text-xs text-muted-foreground">
-            Ao continuar, você concorda com nossos{" "}
+            {t.payment.terms}{" "}
             <Link href="/termos" className="underline hover:text-foreground">
-              Termos de Uso
+              {t.footer.terms}
             </Link>{" "}
-            e{" "}
+            {t.payment.and}{" "}
             <Link href="/privacidade" className="underline hover:text-foreground">
-              Política de Privacidade
+              {t.footer.privacy}
             </Link>
           </div>
         </CardContent>
@@ -163,12 +165,14 @@ function PaymentPageContent() {
 }
 
 export default function PaymentPage() {
+  const { t } = useI18n();
+  
   return (
     <Suspense fallback={
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
         <Card className="w-full max-w-lg">
           <CardContent className="py-12 text-center">
-            <p>Carregando...</p>
+            <p>{t.loading}</p>
           </CardContent>
         </Card>
       </main>
