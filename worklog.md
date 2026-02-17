@@ -417,6 +417,37 @@ backgroundCheckStatus String?   // Verificação de antecedentes
 ---
 
 ---
+## Task ID: 9
+**Agent:** Main Orchestrator
+**Task:** Implementar KYC com Didit
+
+### Work Log:
+1. ✅ Criado serviço Didit (`src/lib/services/didit.ts`)
+   - createKycSession() - Cria sessão de verificação
+   - getSessionStatus() - Consulta status da sessão
+   - verifyWebhookSignature() - Verifica assinatura do webhook
+   - parseVerificationResult() - Processa resultado da verificação
+
+2. ✅ Criadas APIs de KYC:
+   - `/api/kyc/route.ts` - POST: Cria sessão, GET: Consulta status
+   - `/api/kyc/webhook/route.ts` - Recebe callbacks do Didit
+
+3. ✅ Criada migração SQL:
+   - `sql/migrations/add_kyc_fields.sql` - Adiciona campos de sessão KYC
+
+4. ✅ Fluxo de verificação:
+   - Cuidador solicita verificação → API cria sessão → Redireciona para Didit
+   - Didit processa documentos → Webhook atualiza status
+   - Status: UNVERIFIED → PENDING → VERIFIED/REJECTED
+
+### Próximos passos:
+- Criar página de verificação KYC no frontend
+- Adicionar traduções para o fluxo KYC
+- Configurar variáveis de ambiente (DIDIT_API_KEY, DIDIT_API_SECRET)
+
+---
+
+---
 ## Task ID: 7
 **Agent:** Main Orchestrator
 **Task:** AUDITORIA COMPLETA E CORREÇÃO DA ARQUITETURA
