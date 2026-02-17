@@ -21,6 +21,7 @@ import {
   IconRefresh
 } from "@/components/icons";
 import { CONTRACT_STATUS } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 interface Contract {
   id: string;
@@ -55,6 +56,7 @@ const statusColors: Record<string, string> = {
 export default function ContractsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,13 +73,13 @@ export default function ContractsPage() {
     try {
       const response = await fetch('/api/contracts');
       if (!response.ok) {
-        throw new Error('Falha ao carregar contratos');
+        throw new Error(t.error);
       }
       const data = await response.json();
       setContracts(data.contracts || []);
     } catch (err: any) {
       console.error('Error fetching contracts:', err);
-      setError(err.message || 'Erro ao carregar contratos');
+      setError(err.message || t.error);
     } finally {
       setIsLoading(false);
     }
@@ -104,21 +106,21 @@ export default function ContractsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Meus Contratos</h1>
+            <h1 className="text-2xl font-bold">{t.contracts.title}</h1>
             <p className="text-muted-foreground">
-              Gerencie seus contratos de cuidado
+              {t.dashboard.viewAll}
             </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={fetchContracts} disabled={isLoading}>
               <IconRefresh className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Atualizar
+              {t.search.filters}
             </Button>
             {isFamily && (
               <Button asChild>
                 <Link href="/app/contracts/new">
                   <IconPlus className="h-4 w-4 mr-2" />
-                  Novo Contrato
+                  {t.contracts.new}
                 </Link>
               </Button>
             )}
@@ -131,7 +133,7 @@ export default function ContractsPage() {
             <CardContent className="pt-6">
               <p className="text-red-500">{error}</p>
               <Button variant="outline" onClick={fetchContracts} className="mt-2">
-                Tentar novamente
+                {t.submit}
               </Button>
             </CardContent>
           </Card>
@@ -161,26 +163,26 @@ export default function ContractsPage() {
           <Tabs defaultValue="active">
             <TabsList>
               <TabsTrigger value="active">
-                Ativos ({activeContracts.length})
+                {t.contracts.active} ({activeContracts.length})
               </TabsTrigger>
               <TabsTrigger value="pending">
-                Pendentes ({pendingContracts.length})
+                {t.contracts.pending} ({pendingContracts.length})
               </TabsTrigger>
               <TabsTrigger value="completed">
-                Histórico ({completedContracts.length})
+                {t.contracts.completed} ({completedContracts.length})
               </TabsTrigger>
             </TabsList>
 
             {/* Active Contracts */}
             <TabsContent value="active" className="mt-6 space-y-4">
               {activeContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} />
+                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
               ))}
               {activeContracts.length === 0 && (
                 <Card>
                   <CardContent className="py-12 text-center">
                     <IconContract className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">Nenhum contrato ativo</p>
+                    <p className="text-muted-foreground">{t.contracts.noContracts}</p>
                   </CardContent>
                 </Card>
               )}
@@ -189,13 +191,13 @@ export default function ContractsPage() {
             {/* Pending Contracts */}
             <TabsContent value="pending" className="mt-6 space-y-4">
               {pendingContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} />
+                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
               ))}
               {pendingContracts.length === 0 && (
                 <Card>
                   <CardContent className="py-12 text-center">
                     <IconClock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">Nenhum contrato pendente</p>
+                    <p className="text-muted-foreground">{t.contracts.noContracts}</p>
                   </CardContent>
                 </Card>
               )}
@@ -204,13 +206,13 @@ export default function ContractsPage() {
             {/* Completed Contracts */}
             <TabsContent value="completed" className="mt-6 space-y-4">
               {completedContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} />
+                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
               ))}
               {completedContracts.length === 0 && (
                 <Card>
                   <CardContent className="py-12 text-center">
                     <IconCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">Nenhum contrato no histórico</p>
+                    <p className="text-muted-foreground">{t.contracts.noContracts}</p>
                   </CardContent>
                 </Card>
               )}
@@ -222,7 +224,7 @@ export default function ContractsPage() {
   );
 }
 
-function ContractCard({ contract, isFamily }: { contract: Contract; isFamily: boolean }) {
+function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily: boolean; t: any }) {
   const statusLabel = CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status;
   const totalEur = contract.totalEurCents ? contract.totalEurCents / 100 : 0;
   const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
@@ -233,7 +235,7 @@ function ContractCard({ contract, isFamily }: { contract: Contract; isFamily: bo
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-lg">{contract.title || 'Contrato sem título'}</h3>
+              <h3 className="font-semibold text-lg">{contract.title || t.contracts.title}</h3>
               <Badge className={statusColors[contract.status]}>
                 {statusLabel}
               </Badge>
@@ -241,7 +243,7 @@ function ContractCard({ contract, isFamily }: { contract: Contract; isFamily: bo
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <IconUser className="h-4 w-4" />
-                <span>{contract.otherParty?.name || 'Não definido'}</span>
+                <span>{contract.otherParty?.name || t.none}</span>
               </div>
               {contract.startDate && (
                 <div className="flex items-center gap-1">
@@ -252,7 +254,7 @@ function ContractCard({ contract, isFamily }: { contract: Contract; isFamily: bo
               {hourlyRate > 0 && (
                 <div className="flex items-center gap-1">
                   <IconEuro className="h-4 w-4" />
-                  <span>€{hourlyRate.toFixed(0)}/hora</span>
+                  <span>€{hourlyRate.toFixed(0)}{t.search.perHour}</span>
                 </div>
               )}
             </div>
@@ -281,13 +283,13 @@ function ContractCard({ contract, isFamily }: { contract: Contract; isFamily: bo
           <div className="flex items-center gap-3">
             {contract.status === "PENDING_ACCEPTANCE" && !isFamily && (
               <div className="flex gap-2">
-                <Button size="sm">Aceitar</Button>
-                <Button size="sm" variant="outline">Recusar</Button>
+                <Button size="sm">{t.yes}</Button>
+                <Button size="sm" variant="outline">{t.no}</Button>
               </div>
             )}
             <Button variant="outline" asChild>
               <Link href={`/app/contracts/${contract.id}`}>
-                Ver Detalhes
+                {t.edit}
               </Link>
             </Button>
           </div>

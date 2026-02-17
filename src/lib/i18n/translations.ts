@@ -293,6 +293,136 @@ export const translations = {
       privacyPolicy: "Política de Privacidade",
       termsRequired: "Você deve aceitar os termos para continuar",
     },
+    
+    kyc: {
+      title: "Verificação de Identidade",
+      description: "Verifique sua identidade para aumentar sua credibilidade e receber mais contratos",
+      status: {
+        unverified: "Não Verificado",
+        pending: "Em Verificação",
+        verified: "Verificado",
+        rejected: "Rejeitado",
+      },
+      benefits: {
+        title: "Por que verificar?",
+        item1: "Maior credibilidade com famílias",
+        item2: "Aparece primeiro nas buscas",
+        item3: "Pode receber contratos de maior valor",
+        item4: "Selo de verificado no perfil",
+      },
+      requirements: {
+        title: "O que você precisa",
+        item1: "Documento de identidade válido (BI, Passaporte ou Carta de Condução)",
+        item2: "Câmera para foto de selfie",
+        item3: "Ambiente bem iluminado",
+      },
+      startVerification: "Iniciar Verificação",
+      startNewVerification: "Iniciar Nova Verificação",
+      processing: "Processando...",
+      checkingStatus: "Verificando status...",
+      inProgress: "Verificação em Andamento",
+      inProgressDesc: "Sua verificação está sendo processada. Você receberá uma notificação quando for concluída.",
+      verifiedTitle: "Identidade Verificada!",
+      verifiedDesc: "Sua identidade foi verificada com sucesso. Agora você tem mais credibilidade na plataforma.",
+      rejectedTitle: "Verificação Rejeitada",
+      rejectedDesc: "Não foi possível verificar sua identidade. Por favor, tente novamente com documentos mais claros.",
+      sessionExpired: "Sessão expirada. Por favor, inicie uma nova verificação.",
+      error: "Erro ao iniciar verificação. Tente novamente.",
+      onlyCaregivers: "Apenas cuidadores podem verificar sua identidade.",
+      completedAt: "Verificado em",
+      sessionId: "ID da Sessão",
+    },
+    
+    profile: {
+      title: "Meu Perfil",
+      description: "Gerencie suas informações públicas",
+      verification: "Verificação",
+      verified: "Verificado",
+      notVerified: "Não verificado",
+      editProfile: "Editar Perfil",
+      hourlyRate: "Valor por Hora",
+      radius: "Raio de Atendimento",
+      services: "Serviços Oferecidos",
+      experience: "Experiência",
+      about: "Sobre",
+      documents: "Documentos",
+      languages: "Idiomas",
+    },
+    
+    search: {
+      title: "Buscar Cuidadores",
+      placeholder: "Buscar por nome ou serviço...",
+      filters: "Filtros",
+      noResults: "Nenhum cuidador encontrado",
+      verified: "Verificado",
+      rating: "Avaliação",
+      hourlyRate: "Valor/hora",
+      distance: "Distância",
+      perHour: "/hora",
+    },
+    
+    landing: {
+      hero: {
+        title: "Cuidado de Qualidade para quem você ama",
+        subtitle: "Conectamos famílias a cuidadores de idosos verificados, com contratos seguros e pagamentos transparentes via blockchain.",
+        cta: "Começar Agora",
+        ctaFamily: "Sou Família",
+        ctaCaregiver: "Sou Cuidador",
+      },
+      stats: {
+        caregivers: "Cuidadores Verificados",
+        families: "Famílias Atendidas",
+        contracts: "Contratos Realizados",
+        hours: "Horas de Cuidado",
+      },
+      howItWorks: {
+        title: "Como Funciona",
+        subtitle: "Simples, seguro e transparente",
+        step1: {
+          title: "Cadastre-se",
+          description: "Crie sua conta em minutos e escolha se você é família ou cuidador.",
+        },
+        step2: {
+          title: "Encontre ou Seja Encontrado",
+          description: "Famílias buscam cuidadores verificados. Cuidadores recebem propostas.",
+        },
+        step3: {
+          title: "Contrate com Segurança",
+          description: "Contratos digitais com pagamentos transparentes via tokens.",
+        },
+        step4: {
+          title: "Avalie e Recomende",
+          description: "Ao final, avalie o serviço e ajude outros usuários.",
+        },
+      },
+      features: {
+        title: "Por que IdosoLink?",
+        verified: {
+          title: "Cuidadores Verificados",
+          description: "Todos os cuidadores passam por verificação de identidade e documentos.",
+        },
+        blockchain: {
+          title: "Pagamentos Transparentes",
+          description: "Tokens SeniorToken garantem segurança e transparência nos pagamentos.",
+        },
+        contracts: {
+          title: "Contratos Digitais",
+          description: "Contratos claros com todas as condições definidas e aceitas.",
+        },
+        support: {
+          title: "Suporte Dedicado",
+          description: "Equipe pronta para ajudar em caso de dúvidas ou problemas.",
+        },
+      },
+      testimonials: {
+        title: "O que dizem sobre nós",
+      },
+      cta: {
+        title: "Pronto para começar?",
+        subtitle: "Junte-se a milhares de famílias e cuidadores que confiam no IdosoLink",
+        button: "Criar Conta Gratuita",
+      },
+    },
   },
   
   en: {
@@ -589,6 +719,136 @@ export const translations = {
       privacyPolicy: "Privacy Policy",
       termsRequired: "You must accept the terms to continue",
     },
+    
+    kyc: {
+      title: "Identity Verification",
+      description: "Verify your identity to increase your credibility and receive more contracts",
+      status: {
+        unverified: "Unverified",
+        pending: "In Verification",
+        verified: "Verified",
+        rejected: "Rejected",
+      },
+      benefits: {
+        title: "Why verify?",
+        item1: "Higher credibility with families",
+        item2: "Appears first in searches",
+        item3: "Can receive higher value contracts",
+        item4: "Verified badge on profile",
+      },
+      requirements: {
+        title: "What you need",
+        item1: "Valid identity document (ID, Passport or Driver's License)",
+        item2: "Camera for selfie photo",
+        item3: "Well-lit environment",
+      },
+      startVerification: "Start Verification",
+      startNewVerification: "Start New Verification",
+      processing: "Processing...",
+      checkingStatus: "Checking status...",
+      inProgress: "Verification in Progress",
+      inProgressDesc: "Your verification is being processed. You will receive a notification when it's complete.",
+      verifiedTitle: "Identity Verified!",
+      verifiedDesc: "Your identity has been successfully verified. You now have more credibility on the platform.",
+      rejectedTitle: "Verification Rejected",
+      rejectedDesc: "We could not verify your identity. Please try again with clearer documents.",
+      sessionExpired: "Session expired. Please start a new verification.",
+      error: "Error starting verification. Please try again.",
+      onlyCaregivers: "Only caregivers can verify their identity.",
+      completedAt: "Verified on",
+      sessionId: "Session ID",
+    },
+    
+    profile: {
+      title: "My Profile",
+      description: "Manage your public information",
+      verification: "Verification",
+      verified: "Verified",
+      notVerified: "Not verified",
+      editProfile: "Edit Profile",
+      hourlyRate: "Hourly Rate",
+      radius: "Service Radius",
+      services: "Services Offered",
+      experience: "Experience",
+      about: "About",
+      documents: "Documents",
+      languages: "Languages",
+    },
+    
+    search: {
+      title: "Find Caregivers",
+      placeholder: "Search by name or service...",
+      filters: "Filters",
+      noResults: "No caregivers found",
+      verified: "Verified",
+      rating: "Rating",
+      hourlyRate: "Hourly rate",
+      distance: "Distance",
+      perHour: "/hour",
+    },
+    
+    landing: {
+      hero: {
+        title: "Quality Care for Those You Love",
+        subtitle: "We connect families to verified senior caregivers, with secure contracts and transparent payments via blockchain.",
+        cta: "Get Started",
+        ctaFamily: "I'm a Family",
+        ctaCaregiver: "I'm a Caregiver",
+      },
+      stats: {
+        caregivers: "Verified Caregivers",
+        families: "Families Served",
+        contracts: "Contracts Completed",
+        hours: "Hours of Care",
+      },
+      howItWorks: {
+        title: "How It Works",
+        subtitle: "Simple, secure and transparent",
+        step1: {
+          title: "Sign Up",
+          description: "Create your account in minutes and choose if you're a family or caregiver.",
+        },
+        step2: {
+          title: "Find or Be Found",
+          description: "Families search for verified caregivers. Caregivers receive proposals.",
+        },
+        step3: {
+          title: "Hire Safely",
+          description: "Digital contracts with transparent payments via tokens.",
+        },
+        step4: {
+          title: "Rate and Recommend",
+          description: "At the end, rate the service and help other users.",
+        },
+      },
+      features: {
+        title: "Why IdosoLink?",
+        verified: {
+          title: "Verified Caregivers",
+          description: "All caregivers go through identity and document verification.",
+        },
+        blockchain: {
+          title: "Transparent Payments",
+          description: "SeniorToken tokens ensure security and transparency in payments.",
+        },
+        contracts: {
+          title: "Digital Contracts",
+          description: "Clear contracts with all conditions defined and accepted.",
+        },
+        support: {
+          title: "Dedicated Support",
+          description: "Team ready to help with questions or issues.",
+        },
+      },
+      testimonials: {
+        title: "What They Say About Us",
+      },
+      cta: {
+        title: "Ready to Start?",
+        subtitle: "Join thousands of families and caregivers who trust IdosoLink",
+        button: "Create Free Account",
+      },
+    },
   },
   
   es: {
@@ -884,6 +1144,136 @@ export const translations = {
       and: "y la",
       privacyPolicy: "Política de Privacidad",
       termsRequired: "Debes aceptar los términos para continuar",
+    },
+    
+    kyc: {
+      title: "Verificación de Identidad",
+      description: "Verifica tu identidad para aumentar tu credibilidad y recibir más contratos",
+      status: {
+        unverified: "No Verificado",
+        pending: "En Verificación",
+        verified: "Verificado",
+        rejected: "Rechazado",
+      },
+      benefits: {
+        title: "¿Por qué verificar?",
+        item1: "Mayor credibilidad con familias",
+        item2: "Aparece primero en búsquedas",
+        item3: "Puede recibir contratos de mayor valor",
+        item4: "Sello de verificado en perfil",
+      },
+      requirements: {
+        title: "Qué necesitas",
+        item1: "Documento de identidad válido (DNI, Pasaporte o Licencia de Conducir)",
+        item2: "Cámara para foto selfie",
+        item3: "Ambiente bien iluminado",
+      },
+      startVerification: "Iniciar Verificación",
+      startNewVerification: "Iniciar Nueva Verificación",
+      processing: "Procesando...",
+      checkingStatus: "Verificando estado...",
+      inProgress: "Verificación en Progreso",
+      inProgressDesc: "Tu verificación está siendo procesada. Recibirás una notificación cuando se complete.",
+      verifiedTitle: "¡Identidad Verificada!",
+      verifiedDesc: "Tu identidad ha sido verificada exitosamente. Ahora tienes más credibilidad en la plataforma.",
+      rejectedTitle: "Verificación Rechazada",
+      rejectedDesc: "No fue posible verificar tu identidad. Por favor, intenta de nuevo con documentos más claros.",
+      sessionExpired: "Sesión expirada. Por favor, inicia una nueva verificación.",
+      error: "Error al iniciar verificación. Intenta de nuevo.",
+      onlyCaregivers: "Solo cuidadores pueden verificar su identidad.",
+      completedAt: "Verificado el",
+      sessionId: "ID de Sesión",
+    },
+    
+    profile: {
+      title: "Mi Perfil",
+      description: "Gestiona tu información pública",
+      verification: "Verificación",
+      verified: "Verificado",
+      notVerified: "No verificado",
+      editProfile: "Editar Perfil",
+      hourlyRate: "Tarifa por Hora",
+      radius: "Radio de Atención",
+      services: "Servicios Ofrecidos",
+      experience: "Experiencia",
+      about: "Acerca de",
+      documents: "Documentos",
+      languages: "Idiomas",
+    },
+    
+    search: {
+      title: "Buscar Cuidadores",
+      placeholder: "Buscar por nombre o servicio...",
+      filters: "Filtros",
+      noResults: "Ningún cuidador encontrado",
+      verified: "Verificado",
+      rating: "Calificación",
+      hourlyRate: "Tarifa/hora",
+      distance: "Distancia",
+      perHour: "/hora",
+    },
+    
+    landing: {
+      hero: {
+        title: "Cuidado de Calidad para Quienes Amas",
+        subtitle: "Conectamos familias con cuidadores de ancianos verificados, con contratos seguros y pagos transparentes vía blockchain.",
+        cta: "Comenzar Ahora",
+        ctaFamily: "Soy Familia",
+        ctaCaregiver: "Soy Cuidador",
+      },
+      stats: {
+        caregivers: "Cuidadores Verificados",
+        families: "Familias Atendidas",
+        contracts: "Contratos Realizados",
+        hours: "Horas de Cuidado",
+      },
+      howItWorks: {
+        title: "Cómo Funciona",
+        subtitle: "Simple, seguro y transparente",
+        step1: {
+          title: "Regístrate",
+          description: "Crea tu cuenta en minutos y elige si eres familia o cuidador.",
+        },
+        step2: {
+          title: "Encuentra o Sé Encontrado",
+          description: "Las familias buscan cuidadores verificados. Los cuidadores reciben propuestas.",
+        },
+        step3: {
+          title: "Contrata con Seguridad",
+          description: "Contratos digitales con pagos transparentes vía tokens.",
+        },
+        step4: {
+          title: "Califica y Recomienda",
+          description: "Al final, califica el servicio y ayuda a otros usuarios.",
+        },
+      },
+      features: {
+        title: "¿Por qué IdosoLink?",
+        verified: {
+          title: "Cuidadores Verificados",
+          description: "Todos los cuidadores pasan por verificación de identidad y documentos.",
+        },
+        blockchain: {
+          title: "Pagos Transparentes",
+          description: "Los tokens SeniorToken garantizan seguridad y transparencia en los pagos.",
+        },
+        contracts: {
+          title: "Contratos Digitales",
+          description: "Contratos claros con todas las condiciones definidas y aceptadas.",
+        },
+        support: {
+          title: "Soporte Dedicado",
+          description: "Equipo listo para ayudar con dudas o problemas.",
+        },
+      },
+      testimonials: {
+        title: "Lo que Dicen de Nosotros",
+      },
+      cta: {
+        title: "¿Listo para Comenzar?",
+        subtitle: "Únete a miles de familias y cuidadores que confían en IdosoLink",
+        button: "Crear Cuenta Gratis",
+      },
     },
   },
 } as const;

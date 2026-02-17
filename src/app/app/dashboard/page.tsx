@@ -22,6 +22,7 @@ import {
   IconArrowDown
 } from "@/components/icons";
 import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 interface Stats {
   tokenBalance: number;
@@ -42,6 +43,7 @@ interface Activity {
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -109,14 +111,14 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">
-              Olá, {session?.user?.name?.split(" ")[0] || "Usuário"}!
+              {t.dashboard.welcome}, {session?.user?.name?.split(" ")[0] || "Usuário"}!
             </h1>
             <p className="text-muted-foreground">
-              {isFamily ? "Painel Familiar" : "Painel do Cuidador"}
+              {isFamily ? t.dashboard.familyPanel : t.dashboard.caregiverPanel}
             </p>
           </div>
           <Badge variant={session?.user?.status === "ACTIVE" ? "default" : "secondary"}>
-            {session?.user?.status === "ACTIVE" ? "Ativo" : "Pendente"}
+            {session?.user?.status === "ACTIVE" ? t.dashboard.status.active : t.dashboard.status.pending}
           </Badge>
         </div>
 
@@ -130,7 +132,7 @@ export default function DashboardPage() {
                   <IconToken className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Saldo {TOKEN_SYMBOL}</p>
+                  <p className="text-sm text-muted-foreground">{t.dashboard.tokenBalance} {TOKEN_SYMBOL}</p>
                   <p className="text-2xl font-bold">{stats?.tokenBalance?.toLocaleString() || 0}</p>
                   <p className="text-xs text-muted-foreground">≈ €{(stats?.tokenValueEur || 0).toFixed(2)}</p>
                 </div>
@@ -146,7 +148,7 @@ export default function DashboardPage() {
                   <IconContract className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Contratos Ativos</p>
+                  <p className="text-sm text-muted-foreground">{t.dashboard.activeContracts}</p>
                   <p className="text-2xl font-bold">{stats?.activeContracts || 0}</p>
                 </div>
               </div>
@@ -161,7 +163,7 @@ export default function DashboardPage() {
                   <IconClock className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Horas Trabalhadas</p>
+                  <p className="text-sm text-muted-foreground">{t.dashboard.hoursWorked}</p>
                   <p className="text-2xl font-bold">{stats?.totalHours || 0}h</p>
                 </div>
               </div>
@@ -176,10 +178,10 @@ export default function DashboardPage() {
                   <IconStar className="h-5 w-5 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Avaliação</p>
+                  <p className="text-sm text-muted-foreground">{t.dashboard.rating}</p>
                   <p className="text-2xl font-bold">{stats?.rating?.toFixed(1) || '-'}</p>
                   {stats?.totalReviews ? (
-                    <p className="text-xs text-muted-foreground">{stats.totalReviews} avaliações</p>
+                    <p className="text-xs text-muted-foreground">{stats.totalReviews} {t.dashboard.reviews}</p>
                   ) : null}
                 </div>
               </div>
@@ -194,15 +196,15 @@ export default function DashboardPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <IconSearch className="h-5 w-5" />
-                  Buscar Cuidadores
+                  {t.nav.searchCaregivers}
                 </CardTitle>
                 <CardDescription>
-                  Encontre profissionais verificados na sua região
+                  {t.search.placeholder}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href="/app/search">Buscar Agora</Link>
+                  <Link href="/app/search">{t.search.title}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -213,15 +215,15 @@ export default function DashboardPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <IconCaregiver className="h-5 w-5" />
-                  Meu Perfil
+                  {t.nav.profile}
                 </CardTitle>
                 <CardDescription>
-                  Mantenha seu perfil atualizado para mais propostas
+                  {t.profile.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href="/app/profile">Editar Perfil</Link>
+                  <Link href="/app/profile">{t.profile.editProfile}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -231,15 +233,15 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <IconContract className="h-5 w-5" />
-                Meus Contratos
+                {t.contracts.title}
               </CardTitle>
               <CardDescription>
-                Gerencie contratos ativos e histórico
+                {t.dashboard.viewAll}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/app/contracts">Ver Contratos</Link>
+                <Link href="/app/contracts">{t.contracts.title}</Link>
               </Button>
             </CardContent>
           </Card>
@@ -250,7 +252,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <IconWallet className="h-5 w-5" />
-              Atividade Recente
+              {t.dashboard.recentActivity}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -289,12 +291,12 @@ export default function DashboardPage() {
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 <IconWallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhuma atividade recente</p>
+                <p>{t.dashboard.noActivity}</p>
               </div>
             )}
             <div className="mt-4 pt-4 border-t">
               <Button asChild variant="ghost" className="w-full">
-                <Link href="/app/wallet">Ver Histórico Completo</Link>
+                <Link href="/app/wallet">{t.dashboard.viewAll}</Link>
               </Button>
             </div>
           </CardContent>

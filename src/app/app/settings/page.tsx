@@ -23,7 +23,9 @@ import {
   IconExternalLink,
   IconCopy,
   IconCheck,
-  IconLoader2
+  IconLoader2,
+  IconShield,
+  IconAlert
 } from "@/components/icons";
 import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -41,6 +43,11 @@ interface UserWallet {
   balanceTokens: number;
 }
 
+interface KycStatus {
+  verification_status: "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
+  session_id?: string;
+}
+
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -48,6 +55,7 @@ export default function SettingsPage() {
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [wallet, setWallet] = useState<UserWallet | null>(null);
+  const [kycStatus, setKycStatus] = useState<KycStatus | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -75,6 +83,15 @@ export default function SettingsPage() {
         setProfile(data.user);
         setWallet(data.wallet);
         setName(data.user.name || "");
+      }
+      
+      // Fetch KYC status for caregivers
+      if (profile?.role === "CAREGIVER" || session?.user?.role === "CAREGIVER") {
+        const kycResponse = await fetch("/api/kyc");
+        if (kycResponse.ok) {
+          const kycData = await kycResponse.json();
+          setKycStatus(kycData);
+        }
       }
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -284,6 +301,80 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* KYC Verification - Only for Caregivers */}
+        {isCaregiver && (
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <IconShield className="h-5 w-5" />
+                {t.kyc.title}
+              </CardTitle>
+              <CardDescription>{t.kyc.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">{t.profile.verification}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {kycStatus?.verification_status === "VERIFIED" 
+                      ? t.kyc.status.verified 
+                      : kycStatus?.verification_status === "PENDING"
+                      ? t.kyc.status.pending
+                      : kycStatus?.verification_status === "REJECTED"
+                      ? t.kyc.status.rejected
+                      : t.kyc.status.unverified}
+                  </p>
+                </div>
+                <Badge 
+                  variant={
+                    kycStatus?.verification_status === "VERIFIED" 
+                      ? "default" 
+                      : kycStatus?.verification_status === "PENDING"
+                      ? "secondary"
+                      : kycStatus?.verification_status === "REJECTED"
+                      ? "destructive"
+                      : "outline"
+                  }
+                  className={
+                    kycStatus?.verification_status === "VERIFIED" 
+                      ? "bg-green-500" 
+                      : ""
+                  }
+                >
+                  {kycStatus?.verification_status === "VERIFIED" && (
+                    <IconCheck className="h-3 w-3 mr-1" />
+                  )}
+                  {kycStatus?.verification_status === "VERIFIED" 
+                    ? t.kyc.status.verified 
+                    : kycStatus?.verification_status === "PENDING"
+                    ? t.kyc.status.pending
+                    : kycStatus?.verification_status === "REJECTED"
+                    ? t.kyc.status.rejected
+                    : t.kyc.status.unverified}
+                </Badge>
+              </div>
+              
+              {kycStatus?.verification_status !== "VERIFIED" && (
+                <Button asChild className="w-full">
+                  <Link href="/app/verify">
+                    <IconShield className="h-4 w-4 mr-2" />
+                    {kycStatus?.verification_status === "REJECTED" 
+                      ? t.kyc.startNewVerification 
+                      : t.kyc.startVerification}
+                  </Link>
+                </Button>
+              )}
+              
+              {kycStatus?.verification_status === "VERIFIED" && (
+                <div className="p-3 bg-green-500/10 text-green-700 rounded-lg text-sm flex items-center gap-2">
+                  <IconCheck className="h-4 w-4" />
+                  {t.kyc.verifiedDesc}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Logout */}
         <Card className="border-destructive/20">
