@@ -115,7 +115,7 @@
   --color-error-foreground: #FFFFFF;
   --color-error-light: #F0C8C8;
   
-  /* Background & Surface */
+  /* Background & Surface - Light Mode */
   --color-background: #F7FAF9;
   --color-surface: #FFFFFF;
   --color-foreground: #1F2933;
@@ -130,11 +130,57 @@
   --color-ring: #2F6F6D;
 }
 
-/* 
- * IMPORTANT: IdosoLink does NOT use dark mode
- * This is intentional for accessibility with seniors
- * All colors are light-themed for better readability
- */
+/* Dark Mode */
+.dark {
+  /* Primary stays the same */
+  --color-primary: #3D9996;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-light: #4A8A87;
+  --color-primary-dark: #2F6F6D;
+  
+  /* Secondary */
+  --color-secondary: #5A9894;
+  --color-secondary-foreground: #FFFFFF;
+  --color-secondary-light: #6FA8A3;
+  
+  /* Accent */
+  --color-accent: #4A8A87;
+  --color-accent-foreground: #FFFFFF;
+  
+  /* Warm */
+  --color-warm: #D4A85A;
+  --color-warm-foreground: #1F2933;
+  --color-warm-light: #E8C07A;
+  
+  /* Success */
+  --color-success: #4A8A5B;
+  --color-success-foreground: #FFFFFF;
+  --color-success-light: #5B9A6F;
+  
+  /* Warning */
+  --color-warning: #D4944A;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #E8A65D;
+  
+  /* Error */
+  --color-error: #A85A5A;
+  --color-error-foreground: #FFFFFF;
+  --color-error-light: #C96B6B;
+  
+  /* Background & Surface - Dark Mode */
+  --color-background: #0F1419;
+  --color-surface: #1A2128;
+  --color-foreground: #E8ECEF;
+  
+  /* Muted */
+  --color-muted: #252D35;
+  --color-muted-foreground: #9CA3AF;
+  
+  /* Border & Input */
+  --color-border: #2F3A45;
+  --color-input: #2F3A45;
+  --color-ring: #3D9996;
+}
 
 @layer base {
   * {
@@ -190,5 +236,14 @@
   
   .scrollbar-soft::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-primary);
+  }
+  
+  /* Mobile-first responsive utilities */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
   }
 }
