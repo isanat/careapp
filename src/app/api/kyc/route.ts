@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-turso";
 import { createKycSession } from "@/lib/services/didit";
-import { turso } from "@/lib/db-turso";
+import { db } from "@/lib/db-turso";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is a caregiver
-    const userResult = await turso.execute({
+    const userResult = await db.execute({
       sql: `SELECT u.id, u.email, u.name, u.role, pc.verification_status 
             FROM users u 
             LEFT JOIN profiles_caregiver pc ON u.id = pc.user_id 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Store session ID in database
-    await turso.execute({
+    await db.execute({
       sql: `UPDATE profiles_caregiver 
             SET verification_status = 'PENDING',
                 kyc_session_id = ?,
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get KYC status
-    const result = await turso.execute({
+    const result = await db.execute({
       sql: `SELECT 
               verification_status,
               document_type,

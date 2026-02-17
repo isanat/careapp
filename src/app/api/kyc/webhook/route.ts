@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { turso } from "@/lib/db-turso";
+import { db } from "@/lib/db-turso";
 import { parseVerificationResult, DiditWebhookPayload } from "@/lib/services/didit";
 
 export async function POST(request: NextRequest) {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     console.log("KYC Webhook received:", data.event, data.session_id, data.status);
 
     // Find the user by session ID
-    const profileResult = await turso.execute({
+    const profileResult = await db.execute({
       sql: `SELECT user_id FROM profiles_caregiver WHERE kyc_session_id = ?`,
       args: [data.session_id]
     });
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Update profile based on verification result
     if (verification.status === "approved") {
-      await turso.execute({
+      await db.execute({
         sql: `UPDATE profiles_caregiver 
               SET verification_status = 'VERIFIED',
                   document_type = ?,
@@ -52,14 +52,14 @@ export async function POST(request: NextRequest) {
       });
 
       // Also update user's verification status
-      await turso.execute({
+      await db.execute({
         sql: `UPDATE users SET verification_status = 'VERIFIED' WHERE id = ?`,
         args: [userId]
       });
 
       console.log(`KYC approved for user ${userId}`);
     } else if (verification.status === "rejected") {
-      await turso.execute({
+      await db.execute({
         sql: `UPDATE profiles_caregiver 
               SET verification_status = 'REJECTED',
                   kyc_completed_at = ?,
@@ -68,14 +68,14 @@ export async function POST(request: NextRequest) {
         args: [new Date().toISOString(), verification.confidence, userId]
       });
 
-      await turso.execute({
+      await db.execute({
         sql: `UPDATE users SET verification_status = 'REJECTED' WHERE id = ?`,
         args: [userId]
       });
 
       console.log(`KYC rejected for user ${userId}`);
     } else if (verification.status === "needs_review") {
-      await turso.execute({
+      await db.execute({
         sql: `UPDATE profiles_caregiver 
               SET verification_status = 'PENDING',
                   kyc_confidence = ?
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create notification for the user
-    await turso.execute({
+    await db.execute({
       sql: `INSERT INTO notifications (id, user_id, type, title, message, created_at)
             VALUES (?, ?, ?, ?, ?, ?)`,
       args: [
