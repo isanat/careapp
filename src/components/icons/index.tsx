@@ -19,6 +19,7 @@ import {
   Lock,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   Menu,
   X,
   Check,
@@ -178,6 +179,10 @@ export function IconChevronRight({ className }: { className?: string }) {
 
 export function IconChevronLeft({ className }: { className?: string }) {
   return <ChevronLeft className={className} />;
+}
+
+export function IconChevronDown({ className }: { className?: string }) {
+  return <ChevronDown className={className} />;
 }
 
 export function IconMenu({ className }: { className?: string }) {
