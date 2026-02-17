@@ -56,7 +56,8 @@ import {
   Video,
   MoreVertical,
   Send,
-  Briefcase
+  Briefcase,
+  Loader2
 } from "lucide-react";
 
 // Custom Icons for IdosoLink
@@ -312,6 +313,10 @@ export function IconRefresh({ className }: { className?: string }) {
   return <RefreshCw className={className} />;
 }
 
+export function IconLoader2({ className }: { className?: string }) {
+  return <Loader2 className={className} />;
+}
+
 export function IconFilter({ className }: { className?: string }) {
   return <Filter className={className} />;
 }
@@ -413,4 +418,5 @@ export {
   Video,
   MoreVertical,
   Send,
+  Loader2,
 };
