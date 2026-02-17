@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { 
   IconLogo, 
-  IconToken, 
   IconMail, 
   IconLock, 
   IconUser,
@@ -25,12 +24,14 @@ import {
   IconShield,
   IconWallet
 } from "@/components/icons";
-import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
+import { APP_NAME, TOKEN_SYMBOL, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 function RegisterPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedRole = searchParams.get("role");
+  const { t } = useI18n();
 
   const [step, setStep] = useState(preselectedRole ? 2 : 1);
   const [role, setRole] = useState<"FAMILY" | "CAREGIVER">(
@@ -61,13 +62,13 @@ function RegisterPageContent() {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("As senhas não coincidem");
+      setErrorMessage(t.error);
       setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 8) {
-      setErrorMessage("A senha deve ter pelo menos 8 caracteres");
+      setErrorMessage(t.error);
       setIsLoading(false);
       return;
     }
@@ -88,13 +89,13 @@ function RegisterPageContent() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao criar conta");
+        throw new Error(data.error || t.error);
       }
 
       // Redirect to payment page
       router.push(`/auth/payment?userId=${data.userId}`);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Erro ao criar conta");
+      setErrorMessage(error instanceof Error ? error.message : t.error);
     } finally {
       setIsLoading(false);
     }
@@ -108,9 +109,9 @@ function RegisterPageContent() {
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">Criar Conta no {APP_NAME}</CardTitle>
+            <CardTitle className="text-2xl">{t.auth.register} - {APP_NAME}</CardTitle>
             <CardDescription>
-              {step === 1 ? "Como você quer usar a plataforma?" : "Preencha seus dados"}
+              {step === 1 ? t.auth.role : t.auth.name}
             </CardDescription>
           </div>
         </CardHeader>
@@ -139,11 +140,11 @@ function RegisterPageContent() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold">Sou Familiar</span>
+                      <span className="font-semibold">{t.auth.family}</span>
                       {role === "FAMILY" && <IconCheck className="h-4 w-4 text-primary" />}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Procuro cuidadores para um ente querido idoso
+                      {t.dashboard.familyPanel}
                     </p>
                   </div>
                 </div>
@@ -163,18 +164,18 @@ function RegisterPageContent() {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold">Sou Cuidador</span>
+                      <span className="font-semibold">{t.auth.caregiver}</span>
                       {role === "CAREGIVER" && <IconCheck className="h-4 w-4 text-primary" />}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Sou profissional e quero oferecer meus serviços
+                      {t.dashboard.caregiverPanel}
                     </p>
                   </div>
                 </div>
               </div>
 
               <Button className="w-full" onClick={() => setStep(2)}>
-                Continuar
+                {t.next}
               </Button>
             </div>
           )}
@@ -185,21 +186,21 @@ function RegisterPageContent() {
               <div className="flex items-center gap-2 p-3 bg-muted rounded-lg mb-4">
                 {role === "FAMILY" ? <IconFamily className="h-5 w-5" /> : <IconCaregiver className="h-5 w-5" />}
                 <span className="text-sm font-medium">
-                  {role === "FAMILY" ? "Conta Familiar" : "Conta Cuidador"}
+                  {role === "FAMILY" ? t.auth.family : t.auth.caregiver}
                 </span>
                 <Button variant="ghost" size="sm" className="ml-auto text-xs" onClick={() => setStep(1)}>
-                  Alterar
+                  {t.edit}
                 </Button>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="name">Nome completo</Label>
+                <Label htmlFor="name">{t.auth.name}</Label>
                 <div className="relative">
                   <IconUser className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="name"
                     name="name"
-                    placeholder="Seu nome"
+                    placeholder={t.auth.name}
                     value={formData.name}
                     onChange={handleInputChange}
                     className="pl-10"
@@ -210,14 +211,14 @@ function RegisterPageContent() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t.auth.email}</Label>
                   <div className="relative">
                     <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="seu@email.com"
+                      placeholder="email@example.com"
                       value={formData.email}
                       onChange={handleInputChange}
                       className="pl-10"
@@ -227,7 +228,7 @@ function RegisterPageContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
+                  <Label htmlFor="phone">{t.auth.phone}</Label>
                   <div className="relative">
                     <IconPhone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -244,14 +245,14 @@ function RegisterPageContent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password">{t.auth.password}</Label>
                 <div className="relative">
                   <IconLock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Mínimo 8 caracteres"
+                    placeholder="********"
                     value={formData.password}
                     onChange={handleInputChange}
                     className="pl-10 pr-10"
@@ -268,14 +269,14 @@ function RegisterPageContent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar senha</Label>
+                <Label htmlFor="confirmPassword">{t.auth.confirmPassword}</Label>
                 <div className="relative">
                   <IconLock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
-                    placeholder="Repita a senha"
+                    placeholder="********"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className="pl-10"
@@ -288,28 +289,27 @@ function RegisterPageContent() {
               <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
                 <div className="flex items-center gap-3 mb-3">
                   <IconShield className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Taxa de Ativação</span>
+                  <span className="font-medium">{t.wallet.value}</span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">Valor da ativação</span>
+                  <span className="text-sm text-muted-foreground">{t.wallet.value}</span>
                   <Badge>€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Após o cadastro, você será redirecionado para pagamento. 
-                  O valor é convertido em {TOKEN_SYMBOL} tokens na sua carteira automática.
+                  {TOKEN_SYMBOL} tokens
                 </p>
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Criando conta..." : "Criar conta e pagar ativação"}
+                {isLoading ? t.loading : t.auth.register}
               </Button>
             </form>
           )}
 
           <div className="text-center text-sm text-muted-foreground">
-            Já tem uma conta?{" "}
+            {t.auth.hasAccount}{" "}
             <Link href="/auth/login" className="text-primary hover:underline font-medium">
-              Entrar
+              {t.auth.login}
             </Link>
           </div>
 
@@ -317,7 +317,7 @@ function RegisterPageContent() {
           <div className="pt-4 border-t">
             <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
               <IconWallet className="h-4 w-4" />
-              <span>Carteira digital criada automaticamente</span>
+              <span>{t.wallet.title}</span>
             </div>
           </div>
         </CardContent>
@@ -327,12 +327,14 @@ function RegisterPageContent() {
 }
 
 export default function RegisterPage() {
+  const { t } = useI18n();
+  
   return (
     <Suspense fallback={
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
         <Card className="w-full max-w-lg">
           <CardContent className="py-12 text-center">
-            <p>Carregando...</p>
+            <p>{t.loading}</p>
           </CardContent>
         </Card>
       </main>
