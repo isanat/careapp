@@ -1,0 +1,249 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-poppins);
+  
+  /* Primary (Teal - Trust, Health) */
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+  
+  /* Secondary (Lighter Teal) */
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-secondary-light: var(--color-secondary-light);
+  
+  /* Accent (Soft Cyan) */
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  
+  /* Warm (Gold - Care, Warmth) */
+  --color-warm: var(--color-warm);
+  --color-warm-foreground: var(--color-warm-foreground);
+  --color-warm-light: var(--color-warm-light);
+  
+  /* Semantic colors */
+  --color-success: var(--color-success);
+  --color-success-foreground: var(--color-success-foreground);
+  --color-success-light: var(--color-success-light);
+  
+  --color-warning: var(--color-warning);
+  --color-warning-foreground: var(--color-warning-foreground);
+  --color-warning-light: var(--color-warning-light);
+  
+  --color-error: var(--color-error);
+  --color-error-foreground: var(--color-error-foreground);
+  --color-error-light: var(--color-error-light);
+  
+  /* Base */
+  --color-surface: var(--color-surface);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-border: var(--color-border);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
+  
+  /* Sidebar */
+  --color-sidebar: var(--color-surface);
+  --color-sidebar-foreground: var(--color-foreground);
+  --color-sidebar-primary: var(--color-primary);
+  --color-sidebar-primary-foreground: var(--color-primary-foreground);
+  --color-sidebar-accent: var(--color-muted);
+  --color-sidebar-accent-foreground: var(--color-foreground);
+  --color-sidebar-border: var(--color-border);
+  --color-sidebar-ring: var(--color-ring);
+  
+  /* Chart */
+  --color-chart-1: var(--color-primary);
+  --color-chart-2: var(--color-secondary);
+  --color-chart-3: var(--color-accent);
+  --color-chart-4: var(--color-warm);
+  --color-chart-5: var(--color-success);
+  
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+:root {
+  /* Border radius base */
+  --radius: 0.875rem;
+  
+  /* Primary - Teal (#2F6F6D) - Trust, Health */
+  --color-primary: #2F6F6D;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-light: #4A8A87;
+  --color-primary-dark: #245856;
+  
+  /* Secondary - Lighter Teal (#6FA8A3) */
+  --color-secondary: #6FA8A3;
+  --color-secondary-foreground: #FFFFFF;
+  --color-secondary-light: #8FBDB9;
+  
+  /* Accent - Soft Cyan (#A8DADC) */
+  --color-accent: #A8DADC;
+  --color-accent-foreground: #1F2933;
+  
+  /* Warm - Gold (#F1C27D) - Care, Warmth */
+  --color-warm: #F1C27D;
+  --color-warm-foreground: #1F2933;
+  --color-warm-light: #F7DDAF;
+  
+  /* Success - Soft Green */
+  --color-success: #5B9A6F;
+  --color-success-foreground: #FFFFFF;
+  --color-success-light: #A8D5B8;
+  
+  /* Warning - Soft Orange */
+  --color-warning: #E8A65D;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #F5D4A8;
+  
+  /* Error - Soft Red */
+  --color-error: #C96B6B;
+  --color-error-foreground: #FFFFFF;
+  --color-error-light: #F0C8C8;
+  
+  /* Background & Surface - Light Mode */
+  --color-background: #F7FAF9;
+  --color-surface: #FFFFFF;
+  --color-foreground: #1F2933;
+  
+  /* Muted */
+  --color-muted: #EEF3F2;
+  --color-muted-foreground: #6B7280;
+  
+  /* Border & Input */
+  --color-border: #E0E7E5;
+  --color-input: #E0E7E5;
+  --color-ring: #2F6F6D;
+}
+
+/* Dark Mode */
+.dark {
+  /* Primary stays the same */
+  --color-primary: #3D9996;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-light: #4A8A87;
+  --color-primary-dark: #2F6F6D;
+  
+  /* Secondary */
+  --color-secondary: #5A9894;
+  --color-secondary-foreground: #FFFFFF;
+  --color-secondary-light: #6FA8A3;
+  
+  /* Accent */
+  --color-accent: #4A8A87;
+  --color-accent-foreground: #FFFFFF;
+  
+  /* Warm */
+  --color-warm: #D4A85A;
+  --color-warm-foreground: #1F2933;
+  --color-warm-light: #E8C07A;
+  
+  /* Success */
+  --color-success: #4A8A5B;
+  --color-success-foreground: #FFFFFF;
+  --color-success-light: #5B9A6F;
+  
+  /* Warning */
+  --color-warning: #D4944A;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #E8A65D;
+  
+  /* Error */
+  --color-error: #A85A5A;
+  --color-error-foreground: #FFFFFF;
+  --color-error-light: #C96B6B;
+  
+  /* Background & Surface - Dark Mode */
+  --color-background: #0F1419;
+  --color-surface: #1A2128;
+  --color-foreground: #E8ECEF;
+  
+  /* Muted */
+  --color-muted: #252D35;
+  --color-muted-foreground: #9CA3AF;
+  
+  /* Border & Input */
+  --color-border: #2F3A45;
+  --color-input: #2F3A45;
+  --color-ring: #3D9996;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 17px; /* Larger base for accessibility */
+    line-height: 1.6;
+  }
+  
+  /* Improve focus visibility for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+  
+  /* Minimum touch target size */
+  button, 
+  a, 
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Ensure readable text */
+  p, li, span, label {
+    @apply text-foreground;
+  }
+}
+
+/* Custom scrollbar styling for long lists */
+@layer utilities {
+  .scrollbar-soft {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-secondary) transparent;
+  }
+  
+  .scrollbar-soft::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scrollbar-soft::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-soft::-webkit-scrollbar-thumb {
+    background-color: var(--color-secondary);
+    border-radius: 4px;
+  }
+  
+  .scrollbar-soft::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-primary);
+  }
+  
+  /* Mobile-first responsive utilities */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+}
