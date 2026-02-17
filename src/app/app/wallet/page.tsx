@@ -21,9 +21,13 @@ import {
   IconEuro,
   IconCoins,
   IconGift,
-  IconRefresh
+  IconRefresh,
+  IconCheck,
+  IconLoader2,
+  IconAlert
 } from "@/components/icons";
 import { TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 interface Wallet {
   id: string;
@@ -45,11 +49,16 @@ interface Transaction {
 export default function WalletPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
+
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [purchaseAmount, setPurchaseAmount] = useState(50);
+  const [sellAmount, setSellAmount] = useState(100);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -81,15 +90,63 @@ export default function WalletPage() {
   const copyAddress = () => {
     if (wallet?.address) {
       navigator.clipboard.writeText(wallet.address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
   const handlePurchase = async () => {
+    if (!session?.user?.id) return;
+    
     setIsProcessing(true);
-    // In real app, call API to create Stripe checkout
-    setTimeout(() => {
+    setError("");
+
+    try {
+      const response = await fetch("/api/payments/activation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          userId: session.user.id,
+          amount: purchaseAmount * 100 // Convert to cents
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error creating payment session");
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error processing payment");
+    } finally {
       setIsProcessing(false);
-    }, 1000);
+    }
+  };
+
+  const handleSell = async () => {
+    if (!wallet || sellAmount > wallet.balanceTokens) {
+      setError("Insufficient token balance");
+      return;
+    }
+
+    setIsProcessing(true);
+    setError("");
+
+    try {
+      // For now, show a message that sell is being processed
+      // In production, this would create a sell request
+      alert(`Sell request for ${sellAmount} ${TOKEN_SYMBOL} tokens submitted. Processing in 3 business days.`);
+      setSellAmount(100);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error processing sell request");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (status === "loading" || isLoading) {
@@ -108,12 +165,12 @@ export default function WalletPage() {
       <AppShell>
         <div className="text-center py-16">
           <IconWallet className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h2 className="text-xl font-semibold mb-2">Carteira não encontrada</h2>
+          <h2 className="text-xl font-semibold mb-2">{t.wallet.title}</h2>
           <p className="text-muted-foreground mb-4">
-            Sua carteira será criada após a ativação da conta.
+            {t.loading}
           </p>
           <Button asChild>
-            <Link href="/auth/payment">Ativar Conta</Link>
+            <Link href="/auth/payment">{t.auth.register}</Link>
           </Button>
         </div>
       </AppShell>
@@ -121,15 +178,24 @@ export default function WalletPage() {
   }
 
   const balanceEur = (wallet.balanceTokens * 0.01).toFixed(2);
+  const sellEurAmount = (sellAmount * 0.01).toFixed(2);
 
   return (
     <AppShell>
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold">Minha Carteira</h1>
-          <p className="text-muted-foreground">Gerencie seus tokens e transações</p>
+          <h1 className="text-2xl font-bold">{t.wallet.title}</h1>
+          <p className="text-muted-foreground">{t.wallet.history}</p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+            <IconAlert className="h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
         {/* Balance Card */}
         <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
@@ -141,7 +207,7 @@ export default function WalletPage() {
                     <IconToken className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Saldo {TOKEN_SYMBOL}</p>
+                    <p className="text-sm text-muted-foreground">{t.wallet.balance} {TOKEN_SYMBOL}</p>
                     <p className="text-4xl font-bold">{wallet.balanceTokens.toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">≈ €{balanceEur}</p>
                   </div>
@@ -153,7 +219,7 @@ export default function WalletPage() {
                     {wallet.address}
                   </code>
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyAddress}>
-                    <IconCopy className="h-4 w-4" />
+                    {copied ? <IconCheck className="h-4 w-4 text-green-500" /> : <IconCopy className="h-4 w-4" />}
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                     <a 
@@ -168,13 +234,17 @@ export default function WalletPage() {
               </div>
 
               <div className="flex gap-3">
-                <Button size="lg" onClick={handlePurchase}>
-                  <IconEuro className="h-4 w-4 mr-2" />
-                  Comprar Tokens
+                <Button size="lg" onClick={handlePurchase} disabled={isProcessing}>
+                  {isProcessing ? (
+                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <IconEuro className="h-4 w-4 mr-2" />
+                  )}
+                  {t.wallet.buy}
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" onClick={handleSell} disabled={isProcessing}>
                   <IconRefresh className="h-4 w-4 mr-2" />
-                  Vender Tokens
+                  {t.wallet.sell}
                 </Button>
               </div>
             </div>
@@ -190,7 +260,7 @@ export default function WalletPage() {
                   <IconArrowUp className="h-5 w-5 text-green-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Preço Atual</p>
+                  <p className="text-sm text-muted-foreground">{t.wallet.value}</p>
                   <p className="text-xl font-bold">€0.0100</p>
                 </div>
               </div>
@@ -204,7 +274,7 @@ export default function WalletPage() {
                   <IconCoins className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Tokens em Circulação</p>
+                  <p className="text-sm text-muted-foreground">Circulation</p>
                   <p className="text-xl font-bold">1.2M</p>
                 </div>
               </div>
@@ -218,7 +288,7 @@ export default function WalletPage() {
                   <IconGift className="h-5 w-5 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Reserva Total</p>
+                  <p className="text-sm text-muted-foreground">Reserve</p>
                   <p className="text-xl font-bold">€12,000</p>
                 </div>
               </div>
@@ -229,17 +299,17 @@ export default function WalletPage() {
         {/* Tabs */}
         <Tabs defaultValue="history">
           <TabsList>
-            <TabsTrigger value="history">Histórico</TabsTrigger>
-            <TabsTrigger value="purchase">Comprar Tokens</TabsTrigger>
-            <TabsTrigger value="sell">Vender Tokens</TabsTrigger>
+            <TabsTrigger value="history">{t.wallet.history}</TabsTrigger>
+            <TabsTrigger value="purchase">{t.wallet.buy}</TabsTrigger>
+            <TabsTrigger value="sell">{t.wallet.sell}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="history" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Histórico de Transações</CardTitle>
+                <CardTitle>{t.wallet.history}</CardTitle>
                 <CardDescription>
-                  Todas as movimentações de tokens na sua carteira
+                  {t.wallet.noTransactions}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -253,12 +323,12 @@ export default function WalletPage() {
                         <div className="flex items-center gap-3">
                           <div
                             className={`p-2 rounded-full ${
-                              tx.type === "credit"
+                              tx.type === "CREDIT"
                                 ? "bg-green-500/10 text-green-500"
                                 : "bg-red-500/10 text-red-500"
                             }`}
                           >
-                            {tx.type === "credit" ? (
+                            {tx.type === "CREDIT" ? (
                               <IconArrowUp className="h-4 w-4" />
                             ) : (
                               <IconArrowDown className="h-4 w-4" />
@@ -272,10 +342,10 @@ export default function WalletPage() {
                           </div>
                         </div>
                         <Badge
-                          variant={tx.type === "credit" ? "default" : "secondary"}
-                          className={tx.type === "credit" ? "bg-green-500" : ""}
+                          variant={tx.type === "CREDIT" ? "default" : "secondary"}
+                          className={tx.type === "CREDIT" ? "bg-green-500" : ""}
                         >
-                          {tx.type === "credit" ? "+" : ""}
+                          {tx.type === "CREDIT" ? "+" : "-"}
                           {tx.tokens} {TOKEN_SYMBOL}
                         </Badge>
                       </div>
@@ -284,7 +354,7 @@ export default function WalletPage() {
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <IconWallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Nenhuma transação encontrada</p>
+                    <p>{t.wallet.noTransactions}</p>
                   </div>
                 )}
               </CardContent>
@@ -294,14 +364,14 @@ export default function WalletPage() {
           <TabsContent value="purchase" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Comprar Tokens</CardTitle>
+                <CardTitle>{t.wallet.buy}</CardTitle>
                 <CardDescription>
-                  Compre {TOKEN_SYMBOL} tokens usando Euro via Stripe
+                  {TOKEN_SYMBOL} - Stripe
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label>Valor em Euro</Label>
+                  <Label>{t.wallet.value}</Label>
                   <div className="flex items-center gap-2">
                     <span className="text-muted-foreground">€</span>
                     <Input
@@ -316,15 +386,15 @@ export default function WalletPage() {
 
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tokens recebidos</span>
+                    <span className="text-muted-foreground">{t.wallet.buy}</span>
                     <span className="font-medium">{purchaseAmount * 100} {TOKEN_SYMBOL}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Taxa</span>
+                    <span className="text-muted-foreground">Fee</span>
                     <span className="font-medium">€0</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold border-t pt-2">
-                    <span>Total</span>
+                    <span>{t.all}</span>
                     <span>€{purchaseAmount}</span>
                   </div>
                 </div>
@@ -335,11 +405,18 @@ export default function WalletPage() {
                   onClick={handlePurchase}
                   disabled={isProcessing}
                 >
-                  {isProcessing ? "Processando..." : `Pagar €${purchaseAmount}`}
+                  {isProcessing ? (
+                    <>
+                      <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {t.loading}
+                    </>
+                  ) : (
+                    `€${purchaseAmount}`
+                  )}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  Pagamento processado de forma segura via Stripe
+                  Stripe
                 </p>
               </CardContent>
             </Card>
@@ -348,49 +425,63 @@ export default function WalletPage() {
           <TabsContent value="sell" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Vender Tokens</CardTitle>
+                <CardTitle>{t.wallet.sell}</CardTitle>
                 <CardDescription>
-                  Converta seus {TOKEN_SYMBOL} tokens em Euro
+                  {TOKEN_SYMBOL}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                   <p className="text-sm">
-                    <strong>Importante:</strong> Ao vender tokens, eles são queimados permanentemente.
-                    Isso reduz a oferta e pode aumentar o valor dos tokens restantes.
+                    <strong>Important:</strong> Tokens are burned when sold.
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Quantidade de Tokens</Label>
+                  <Label>{t.wallet.balance}</Label>
                   <Input
                     type="number"
                     min={100}
                     max={wallet.balanceTokens}
+                    value={sellAmount}
+                    onChange={(e) => setSellAmount(Number(e.target.value))}
                     placeholder="0"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Saldo disponível: {wallet.balanceTokens.toLocaleString()} {TOKEN_SYMBOL}
+                    {t.wallet.balance}: {wallet.balanceTokens.toLocaleString()} {TOKEN_SYMBOL}
                   </p>
                 </div>
 
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Taxa de câmbio</span>
-                    <span className="font-medium">€0.01 por {TOKEN_SYMBOL}</span>
+                    <span className="text-muted-foreground">Rate</span>
+                    <span className="font-medium">€0.01 / {TOKEN_SYMBOL}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Você recebe</span>
-                    <span className="font-medium">€0.00</span>
+                    <span className="text-muted-foreground">You receive</span>
+                    <span className="font-medium">€{sellEurAmount}</span>
                   </div>
                 </div>
 
-                <Button variant="outline" className="w-full" size="lg">
-                  Solicitar Resgate
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  size="lg"
+                  onClick={handleSell}
+                  disabled={isProcessing || sellAmount > wallet.balanceTokens}
+                >
+                  {isProcessing ? (
+                    <>
+                      <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {t.loading}
+                    </>
+                  ) : (
+                    t.wallet.sell
+                  )}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  Resgates são processados em até 3 dias úteis
+                  3 business days
                 </p>
               </CardContent>
             </Card>

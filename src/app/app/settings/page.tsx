@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,71 +13,148 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/layout/app-shell";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSelector } from "@/components/ui/language-selector";
 import { 
   IconUser, 
-  IconMail, 
-  IconPhone, 
-  IconLock,
-  IconBell,
-  IconGlobe,
-  IconMoon,
+  IconPhone,
   IconWallet,
   IconLogout,
   IconExternalLink,
-  IconCopy
+  IconCopy,
+  IconCheck,
+  IconLoader2
 } from "@/components/icons";
 import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
+
+interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  phone?: string;
+}
+
+interface UserWallet {
+  address: string;
+  balanceTokens: number;
+}
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
 
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [wallet, setWallet] = useState<UserWallet | null>(null);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const isFamily = session?.user?.role === "FAMILY";
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
+    }
+  }, [status, router]);
 
-  // Mock wallet data
-  const wallet = {
-    address: "0x7a3d2c4e8f1b5a6d9c3e7f2a4b8d1c6e5f9a2b3c",
-    balance: 2500,
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchProfile();
+    }
+  }, [status]);
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch("/api/user/profile");
+      if (response.ok) {
+        const data = await response.json();
+        setProfile(data.user);
+        setWallet(data.wallet);
+        setName(data.user.name || "");
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveSuccess(false);
+
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone }),
+      });
+
+      if (response.ok) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(wallet.address);
+    if (wallet?.address) {
+      navigator.clipboard.writeText(wallet.address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
+
+  if (status === "loading" || isLoading) {
+    return (
+      <AppShell>
+        <div className="animate-pulse space-y-6 max-w-2xl">
+          <div className="h-32 bg-muted rounded-lg" />
+          <div className="h-64 bg-muted rounded-lg" />
+        </div>
+      </AppShell>
+    );
+  }
+
+  const isFamily = profile?.role === "FAMILY";
 
   return (
     <AppShell>
       <div className="space-y-6 max-w-2xl">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold">Configurações</h1>
+          <h1 className="text-2xl font-bold">{t.settings.title}</h1>
           <p className="text-muted-foreground">
-            Gerencie sua conta e preferências
+            {t.settings.account}
           </p>
         </div>
 
         {/* Profile Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Perfil</CardTitle>
-            <CardDescription>Informações da sua conta</CardDescription>
+            <CardTitle>{t.settings.profile}</CardTitle>
+            <CardDescription>{t.settings.account}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
                 <AvatarFallback className="text-xl bg-primary/10 text-primary">
-                  {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
+                  {profile?.name?.split(" ").map((n) => n[0]).join("") || "U"}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold text-lg">{session?.user?.name}</p>
-                <p className="text-sm text-muted-foreground">{session?.user?.email}</p>
+                <p className="font-semibold text-lg">{profile?.name}</p>
+                <p className="text-sm text-muted-foreground">{profile?.email}</p>
                 <Badge variant="secondary" className="mt-1">
-                  {isFamily ? "Família" : "Cuidador"}
+                  {isFamily ? t.auth.family : t.auth.caregiver}
                 </Badge>
               </div>
             </div>
@@ -85,154 +163,125 @@ export default function SettingsPage() {
 
             <div className="grid gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nome completo</Label>
-                <Input id="name" defaultValue={session?.user?.name} />
+                <Label htmlFor="name">{t.auth.name}</Label>
+                <Input 
+                  id="name" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t.auth.name}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue={session?.user?.email} />
+                  <Label htmlFor="email">{t.auth.email}</Label>
+                  <Input id="email" type="email" value={profile?.email || ""} disabled />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input id="phone" type="tel" placeholder="+351 912 345 678" />
+                  <Label htmlFor="phone">{t.auth.phone}</Label>
+                  <Input 
+                    id="phone" 
+                    type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+351 912 345 678" 
+                  />
                 </div>
               </div>
             </div>
 
-            <Button>Salvar alterações</Button>
+            <div className="flex items-center gap-3">
+              <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? (
+                  <>
+                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {t.loading}
+                  </>
+                ) : (
+                  t.settings.saveChanges
+                )}
+              </Button>
+              {saveSuccess && (
+                <span className="text-sm text-green-600 flex items-center gap-1">
+                  <IconCheck className="h-4 w-4" />
+                  {t.settings.saved}
+                </span>
+              )}
+            </div>
           </CardContent>
         </Card>
 
         {/* Wallet Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconWallet className="h-5 w-5" />
-              Carteira Digital
-            </CardTitle>
-            <CardDescription>Sua carteira {TOKEN_SYMBOL}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 bg-muted/50 rounded-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Endereço</span>
-                <div className="flex items-center gap-2">
-                  <code className="text-xs bg-background px-2 py-1 rounded">
-                    {wallet.address.slice(0, 10)}...{wallet.address.slice(-8)}
-                  </code>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyAddress}>
-                    <IconCopy className="h-4 w-4" />
-                  </Button>
+        {wallet && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <IconWallet className="h-5 w-5" />
+                {t.wallet.title}
+              </CardTitle>
+              <CardDescription>{TOKEN_SYMBOL}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Address</span>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs bg-background px-2 py-1 rounded">
+                      {wallet.address.slice(0, 10)}...{wallet.address.slice(-8)}
+                    </code>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyAddress}>
+                      {copied ? <IconCheck className="h-4 w-4 text-green-500" /> : <IconCopy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">{t.wallet.balance}</span>
+                  <span className="font-medium">{wallet.balanceTokens.toLocaleString()} {TOKEN_SYMBOL}</span>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Saldo</span>
-                <span className="font-medium">{wallet.balance.toLocaleString()} {TOKEN_SYMBOL}</span>
-              </div>
-            </div>
 
-            <div className="flex gap-3">
-              <Button variant="outline" asChild>
-                <Link href="/app/wallet">
-                  Ver Carteira
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <a 
-                  href={`https://polygonscan.com/address/${wallet.address}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2"
-                >
-                  <IconExternalLink className="h-4 w-4" />
-                  Ver na Blockchain
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Notifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconBell className="h-5 w-5" />
-              Notificações
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Notificações por email</p>
-                <p className="text-sm text-muted-foreground">Receba atualizações por email</p>
+              <div className="flex gap-3">
+                <Button variant="outline" asChild>
+                  <Link href="/app/wallet">
+                    {t.wallet.title}
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <a 
+                    href={`https://polygonscan.com/address/${wallet.address}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <IconExternalLink className="h-4 w-4" />
+                    Blockchain
+                  </a>
+                </Button>
               </div>
-              <Switch defaultChecked />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Notificações push</p>
-                <p className="text-sm text-muted-foreground">Receba alertas no navegador</p>
-              </div>
-              <Switch />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Lembretes de contrato</p>
-                <p className="text-sm text-muted-foreground">Avisos antes dos horários</p>
-              </div>
-              <Switch defaultChecked />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Preferences */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconGlobe className="h-5 w-5" />
-              Preferências
-            </CardTitle>
+            <CardTitle>{t.settings.theme}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Idioma</p>
-                <p className="text-sm text-muted-foreground">Português (PT)</p>
+                <p className="font-medium">{t.theme.light}/{t.theme.dark}</p>
+                <p className="text-sm text-muted-foreground">{t.theme.system}</p>
               </div>
-              <Button variant="outline" size="sm">Alterar</Button>
+              <ThemeToggle />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Tema escuro</p>
-                <p className="text-sm text-muted-foreground">Alternar entre tema claro e escuro</p>
+                <p className="font-medium">{t.language.select}</p>
+                <p className="text-sm text-muted-foreground">PT, EN, ES</p>
               </div>
-              <Switch />
+              <LanguageSelector />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Security */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconLock className="h-5 w-5" />
-              Segurança
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full justify-start">
-              Alterar senha
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              Autenticação de dois fatores
-            </Button>
-            <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive">
-              Exportar chave privada da carteira
-            </Button>
           </CardContent>
         </Card>
 
@@ -241,15 +290,15 @@ export default function SettingsPage() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Sair da conta</p>
-                <p className="text-sm text-muted-foreground">Encerrar sessão no {APP_NAME}</p>
+                <p className="font-medium">{t.auth.logout}</p>
+                <p className="text-sm text-muted-foreground">{APP_NAME}</p>
               </div>
               <Button 
                 variant="destructive" 
                 onClick={() => signOut({ callbackUrl: "/" })}
               >
                 <IconLogout className="h-4 w-4 mr-2" />
-                Sair
+                {t.auth.logout}
               </Button>
             </div>
           </CardContent>
