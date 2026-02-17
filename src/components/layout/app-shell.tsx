@@ -31,7 +31,7 @@ import {
   IconLogout,
   IconChevronDown,
 } from "@/components/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -39,6 +39,29 @@ import { LanguageSelector } from "@/components/ui/language-selector";
 
 interface AppShellProps {
   children: React.ReactNode;
+}
+
+// Hook to fetch user wallet data
+function useUserWallet() {
+  const { data: session } = useSession();
+  const [wallet, setWallet] = useState<{ balance: number } | null>(null);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch("/api/user/wallet")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.balance !== undefined) {
+            setWallet({ balance: data.balance });
+          }
+        })
+        .catch(() => {
+          // Silently fail, show default
+        });
+    }
+  }, [session?.user?.id]);
+
+  return wallet;
 }
 
 // Navigation links component (defined outside to avoid ESLint error)
@@ -85,8 +108,13 @@ export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
   const { t } = useI18n();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const wallet = useUserWallet();
 
   const isFamily = session?.user?.role === "FAMILY";
+
+  // Format token balance
+  const tokenBalance = wallet?.balance ?? 0;
+  const formattedBalance = tokenBalance.toLocaleString("pt-PT", { maximumFractionDigits: 0 });
 
   const navItems = isFamily
     ? [
@@ -156,20 +184,17 @@ export function AppShell({ children }: AppShellProps) {
                 <LanguageSelector />
               </div>
 
-              {/* Token Balance */}
+              {/* Token Balance - Dynamic */}
               <Link href="/app/wallet">
                 <Badge variant="secondary" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5">
                   <IconToken className="h-3.5 w-3.5 text-primary" />
-                  <span>2.500 {TOKEN_SYMBOL}</span>
+                  <span>{formattedBalance} {TOKEN_SYMBOL}</span>
                 </Badge>
               </Link>
 
               {/* Notifications */}
               <Button variant="ghost" size="icon" className="relative">
                 <IconBell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
-                  3
-                </span>
               </Button>
 
               {/* User Menu with Logout */}

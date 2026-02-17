@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
-import { db } from "@/lib/db";
+import { db } from "@/lib/db-turso";
 
 const ENCRYPTION_KEY = process.env.WALLET_ENCRYPTION_KEY || "default-encryption-key-change-in-production";
 
@@ -8,6 +8,20 @@ export interface WalletData {
   address: string;
   encryptedPrivateKey: string;
   salt: string;
+}
+
+export interface WalletRecord {
+  id: string;
+  userId: string;
+  address: string;
+  encryptedPrivateKey: string | null;
+  salt: string | null;
+  balanceTokens: number;
+  balanceEurCents: number;
+  walletType: string;
+  isExported: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
@@ -48,6 +62,15 @@ export function decryptPrivateKey(
 }
 
 /**
+ * Generate a unique CUID-like ID
+ */
+function generateId(): string {
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `c${timestamp}${randomPart}`;
+}
+
+/**
  * Create wallet for user in database
  */
 export async function createUserWallet(userId: string): Promise<{
@@ -55,47 +78,100 @@ export async function createUserWallet(userId: string): Promise<{
   address: string;
 }> {
   // Check if user already has wallet
-  const existingWallet = await db.wallet.findUnique({
-    where: { userId },
+  const existingWalletResult = await db.execute({
+    sql: `SELECT id, address FROM wallets WHERE user_id = ?`,
+    args: [userId],
   });
 
-  if (existingWallet) {
+  if (existingWalletResult.rows.length > 0) {
+    const existingWallet = existingWalletResult.rows[0];
     return {
-      id: existingWallet.id,
-      address: existingWallet.address,
+      id: existingWallet.id as string,
+      address: existingWallet.address as string,
     };
   }
 
   // Generate new wallet
   const walletData = generateWallet();
+  const walletId = generateId();
+  const now = new Date().toISOString();
 
   // Create wallet in database
-  const wallet = await db.wallet.create({
-    data: {
+  await db.execute({
+    sql: `INSERT INTO wallets (
+      id, 
+      user_id, 
+      address, 
+      encrypted_private_key, 
+      salt, 
+      balance_tokens, 
+      balance_eur_cents, 
+      wallet_type, 
+      is_exported, 
+      created_at, 
+      updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [
+      walletId,
       userId,
-      address: walletData.address,
-      encryptedPrivateKey: walletData.encryptedPrivateKey,
-      salt: walletData.salt,
-      balanceTokens: 0,
-      balanceEurCents: 0,
-      walletType: "custodial",
-      isExported: false,
-    },
+      walletData.address,
+      walletData.encryptedPrivateKey,
+      walletData.salt,
+      0,
+      0,
+      "custodial",
+      0, // SQLite uses 0/1 for boolean
+      now,
+      now,
+    ],
   });
 
   return {
-    id: wallet.id,
-    address: wallet.address,
+    id: walletId,
+    address: walletData.address,
   };
 }
 
 /**
  * Get user wallet
  */
-export async function getUserWallet(userId: string) {
-  return db.wallet.findUnique({
-    where: { userId },
+export async function getUserWallet(userId: string): Promise<WalletRecord | null> {
+  const result = await db.execute({
+    sql: `SELECT 
+      id, 
+      user_id, 
+      address, 
+      encrypted_private_key, 
+      salt, 
+      balance_tokens, 
+      balance_eur_cents, 
+      wallet_type, 
+      is_exported, 
+      created_at, 
+      updated_at
+    FROM wallets 
+    WHERE user_id = ?`,
+    args: [userId],
   });
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  const row = result.rows[0];
+  return {
+    id: row.id as string,
+    userId: row.user_id as string,
+    address: row.address as string,
+    encryptedPrivateKey: row.encrypted_private_key as string | null,
+    salt: row.salt as string | null,
+    balanceTokens: Number(row.balance_tokens) || 0,
+    balanceEurCents: Number(row.balance_eur_cents) || 0,
+    walletType: row.wallet_type as string,
+    isExported: Boolean(row.is_exported),
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
 }
 
 /**
@@ -105,22 +181,75 @@ export async function updateWalletBalance(
   walletId: string,
   tokensDelta: number,
   eurCentsDelta: number
-) {
-  const wallet = await db.wallet.findUnique({
-    where: { id: walletId },
+): Promise<WalletRecord> {
+  // First check if wallet exists
+  const walletResult = await db.execute({
+    sql: `SELECT 
+      id, 
+      user_id, 
+      address, 
+      encrypted_private_key, 
+      salt, 
+      balance_tokens, 
+      balance_eur_cents, 
+      wallet_type, 
+      is_exported, 
+      created_at, 
+      updated_at
+    FROM wallets 
+    WHERE id = ?`,
+    args: [walletId],
   });
 
-  if (!wallet) {
+  if (walletResult.rows.length === 0) {
     throw new Error("Wallet not found");
   }
 
-  return db.wallet.update({
-    where: { id: walletId },
-    data: {
-      balanceTokens: wallet.balanceTokens + tokensDelta,
-      balanceEurCents: wallet.balanceEurCents + eurCentsDelta,
-    },
+  const now = new Date().toISOString();
+
+  // Update the wallet balance
+  await db.execute({
+    sql: `UPDATE wallets 
+    SET balance_tokens = balance_tokens + ?, 
+        balance_eur_cents = balance_eur_cents + ?, 
+        updated_at = ? 
+    WHERE id = ?`,
+    args: [tokensDelta, eurCentsDelta, now, walletId],
   });
+
+  // Fetch the updated wallet
+  const updatedResult = await db.execute({
+    sql: `SELECT 
+      id, 
+      user_id, 
+      address, 
+      encrypted_private_key, 
+      salt, 
+      balance_tokens, 
+      balance_eur_cents, 
+      wallet_type, 
+      is_exported, 
+      created_at, 
+      updated_at
+    FROM wallets 
+    WHERE id = ?`,
+    args: [walletId],
+  });
+
+  const row = updatedResult.rows[0];
+  return {
+    id: row.id as string,
+    userId: row.user_id as string,
+    address: row.address as string,
+    encryptedPrivateKey: row.encrypted_private_key as string | null,
+    salt: row.salt as string | null,
+    balanceTokens: Number(row.balance_tokens) || 0,
+    balanceEurCents: Number(row.balance_eur_cents) || 0,
+    walletType: row.wallet_type as string,
+    isExported: Boolean(row.is_exported),
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
 }
 
 /**
@@ -131,11 +260,12 @@ export async function getWalletBalanceEur(userId: string): Promise<{
   eurCents: number;
   tokenPriceEurCents: number;
 }> {
-  const wallet = await db.wallet.findUnique({
-    where: { userId },
+  const walletResult = await db.execute({
+    sql: `SELECT balance_tokens, balance_eur_cents FROM wallets WHERE user_id = ?`,
+    args: [userId],
   });
 
-  if (!wallet) {
+  if (walletResult.rows.length === 0) {
     return {
       tokens: 0,
       eurCents: 0,
@@ -143,13 +273,21 @@ export async function getWalletBalanceEur(userId: string): Promise<{
     };
   }
 
+  const wallet = walletResult.rows[0];
+
   // Get current token price from platform settings
-  const settings = await db.platformSettings.findFirst();
-  const tokenPriceEurCents = settings?.tokenPriceEurCents || 100;
+  const settingsResult = await db.execute({
+    sql: `SELECT token_price_eur_cents FROM platform_settings LIMIT 1`,
+    args: [],
+  });
+
+  const tokenPriceEurCents = settingsResult.rows.length > 0
+    ? Number(settingsResult.rows[0].token_price_eur_cents) || 100
+    : 100;
 
   return {
-    tokens: wallet.balanceTokens,
-    eurCents: wallet.balanceEurCents,
+    tokens: Number(wallet.balance_tokens) || 0,
+    eurCents: Number(wallet.balance_eur_cents) || 0,
     tokenPriceEurCents,
   };
 }
