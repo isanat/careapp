@@ -57,7 +57,8 @@ import {
   MoreVertical,
   Send,
   Briefcase,
-  Loader2
+  Loader2,
+  IdCard
 } from "lucide-react";
 
 // Custom Icons for IdosoLink
@@ -362,6 +363,10 @@ export function IconBriefcase({ className }: { className?: string }) {
   return <Briefcase className={className} />;
 }
 
+export function IconId({ className }: { className?: string }) {
+  return <IdCard className={className} />;
+}
+
 // Re-export all lucide icons for convenience
 export {
   Heart,
@@ -419,4 +424,5 @@ export {
   MoreVertical,
   Send,
   Loader2,
+  IdCard,
 };
