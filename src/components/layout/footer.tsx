@@ -3,34 +3,36 @@
 import Link from "next/link";
 import { IconLogo, IconToken } from "@/components/icons";
 import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useI18n();
 
   const footerLinks = {
-    plataforma: [
-      { href: "/como-funciona", label: "Como Funciona" },
-      { href: "/familias", label: "Para Famílias" },
-      { href: "/cuidadores", label: "Para Cuidadores" },
-      { href: "/token", label: "SeniorToken" },
+    platform: [
+      { href: "/como-funciona", label: t.nav.howItWorks },
+      { href: "/familias", label: t.nav.forFamilies },
+      { href: "/cuidadores", label: t.nav.forCaregivers },
+      { href: "/token", label: t.nav.token },
     ],
-    empresa: [
-      { href: "/sobre", label: "Sobre Nós" },
-      { href: "/blog", label: "Blog" },
-      { href: "/carreiras", label: "Carreiras" },
-      { href: "/imprensa", label: "Imprensa" },
+    company: [
+      { href: "/sobre", label: t.footer.about },
+      { href: "/blog", label: t.footer.blog },
+      { href: "/carreiras", label: t.footer.careers },
+      { href: "/imprensa", label: t.footer.press },
     ],
     legal: [
-      { href: "/privacidade", label: "Política de Privacidade" },
-      { href: "/termos", label: "Termos de Uso" },
-      { href: "/cookies", label: "Política de Cookies" },
-      { href: "/gdpr", label: "GDPR" },
+      { href: "/privacidade", label: t.footer.privacy },
+      { href: "/termos", label: t.footer.terms },
+      { href: "/cookies", label: t.footer.cookies },
+      { href: "/gdpr", label: t.footer.gdpr },
     ],
-    suporte: [
-      { href: "/ajuda", label: "Central de Ajuda" },
-      { href: "/contato", label: "Contato" },
-      { href: "/faq", label: "FAQ" },
-      { href: "/seguranca", label: "Segurança" },
+    support: [
+      { href: "/ajuda", label: t.footer.help },
+      { href: "/contato", label: t.footer.contact },
+      { href: "/faq", label: t.footer.faq },
+      { href: "/seguranca", label: t.footer.security },
     ],
   };
 
@@ -48,15 +50,15 @@ export function Footer() {
             <p className="text-sm text-muted-foreground mb-4">{APP_TAGLINE}</p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <IconToken className="h-4 w-4 text-primary" />
-              <span>Powered by SeniorToken</span>
+              <span>{t.footer.poweredBy}</span>
             </div>
           </div>
 
           {/* Platform Links */}
           <div>
-            <h4 className="font-semibold mb-4">Plataforma</h4>
+            <h4 className="font-semibold mb-4">{t.footer.platform}</h4>
             <ul className="space-y-2">
-              {footerLinks.plataforma.map((link) => (
+              {footerLinks.platform.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -71,9 +73,9 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h4 className="font-semibold mb-4">Empresa</h4>
+            <h4 className="font-semibold mb-4">{t.footer.company}</h4>
             <ul className="space-y-2">
-              {footerLinks.empresa.map((link) => (
+              {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -88,7 +90,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-semibold mb-4">{t.footer.legal}</h4>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.href}>
@@ -105,9 +107,9 @@ export function Footer() {
 
           {/* Support Links */}
           <div>
-            <h4 className="font-semibold mb-4">Suporte</h4>
+            <h4 className="font-semibold mb-4">{t.footer.support}</h4>
             <ul className="space-y-2">
-              {footerLinks.suporte.map((link) => (
+              {footerLinks.support.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -124,7 +126,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} {APP_NAME}. Todos os direitos reservados.
+            © {currentYear} {APP_NAME}. {t.footer.rights}
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span>🇵🇹 Portugal</span>

@@ -371,12 +371,28 @@ export const translations = {
     },
     
     landing: {
+      badge: "Senior Care · PWA Acessível",
       hero: {
         title: "Cuidado de Qualidade para quem você ama",
         subtitle: "Conectamos famílias a cuidadores de idosos verificados, com contratos seguros e pagamentos transparentes via blockchain.",
         cta: "Começar Agora",
         ctaFamily: "Sou Família",
         ctaCaregiver: "Sou Cuidador",
+      },
+      token: {
+        title: "Token que valoriza quem cuida",
+        appreciation: {
+          title: "Valorização Natural",
+          description: "Quanto mais contratos, mais valoriza",
+        },
+        backed: {
+          title: "Backed em Euro",
+          description: "Cada token tem €1 de reserva",
+        },
+        deflationary: {
+          title: "Mecanismo Deflacionário",
+          description: "Tokens queimados em cada resgate",
+        },
       },
       stats: {
         caregivers: "Cuidadores Verificados",
@@ -806,12 +822,28 @@ export const translations = {
     },
     
     landing: {
+      badge: "Senior Care · Accessible PWA",
       hero: {
         title: "Quality Care for Those You Love",
         subtitle: "We connect families to verified senior caregivers, with secure contracts and transparent payments via blockchain.",
         cta: "Get Started",
         ctaFamily: "I'm a Family",
         ctaCaregiver: "I'm a Caregiver",
+      },
+      token: {
+        title: "Token that values those who care",
+        appreciation: {
+          title: "Natural Appreciation",
+          description: "More contracts, more value",
+        },
+        backed: {
+          title: "Euro Backed",
+          description: "Each token has €1 reserve",
+        },
+        deflationary: {
+          title: "Deflationary Mechanism",
+          description: "Tokens burned on each withdrawal",
+        },
       },
       stats: {
         caregivers: "Verified Caregivers",
@@ -1241,12 +1273,28 @@ export const translations = {
     },
     
     landing: {
+      badge: "Cuidado Senior · PWA Accesible",
       hero: {
         title: "Cuidado de Calidad para Quienes Amas",
         subtitle: "Conectamos familias con cuidadores de ancianos verificados, con contratos seguros y pagos transparentes vía blockchain.",
         cta: "Comenzar Ahora",
         ctaFamily: "Soy Familia",
         ctaCaregiver: "Soy Cuidador",
+      },
+      token: {
+        title: "Token que valora quien cuida",
+        appreciation: {
+          title: "Valorización Natural",
+          description: "Más contratos, más valor",
+        },
+        backed: {
+          title: "Respaldado en Euro",
+          description: "Cada token tiene €1 de reserva",
+        },
+        deflationary: {
+          title: "Mecanismo Deflacionario",
+          description: "Tokens quemados en cada retiro",
+        },
       },
       stats: {
         caregivers: "Cuidadores Verificados",

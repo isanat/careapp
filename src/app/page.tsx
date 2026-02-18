@@ -32,7 +32,7 @@ export default function LandingPage() {
             {/* Left Content */}
             <div className="space-y-6">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                🇪🇺 Senior Care · PWA Acessível
+                🇪🇺 {t.landing.badge}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
@@ -84,7 +84,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <CardTitle className="text-2xl">{TOKEN_NAME} ({TOKEN_SYMBOL})</CardTitle>
-                    <CardDescription>Token que valoriza quem cuida</CardDescription>
+                    <CardDescription>{t.landing.token.title}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -92,22 +92,22 @@ export default function LandingPage() {
                 <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
                   <IconArrowUp className="h-5 w-5 text-green-500" />
                   <div>
-                    <p className="font-medium">Valorização Natural</p>
-                    <p className="text-sm text-muted-foreground">Quanto mais contratos, mais valoriza</p>
+                    <p className="font-medium">{t.landing.token.appreciation.title}</p>
+                    <p className="text-sm text-muted-foreground">{t.landing.token.appreciation.description}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
                   <IconShield className="h-5 w-5 text-primary" />
                   <div>
-                    <p className="font-medium">Backed em Euro</p>
-                    <p className="text-sm text-muted-foreground">Cada token tem €1 de reserva</p>
+                    <p className="font-medium">{t.landing.token.backed.title}</p>
+                    <p className="text-sm text-muted-foreground">{t.landing.token.backed.description}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
                   <IconCoins className="h-5 w-5 text-yellow-500" />
                   <div>
-                    <p className="font-medium">Mecanismo Deflacionário</p>
-                    <p className="text-sm text-muted-foreground">Tokens queimados em cada resgate</p>
+                    <p className="font-medium">{t.landing.token.deflationary.title}</p>
+                    <p className="text-sm text-muted-foreground">{t.landing.token.deflationary.description}</p>
                   </div>
                 </div>
               </CardContent>
