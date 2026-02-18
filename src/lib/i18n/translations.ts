@@ -448,6 +448,128 @@ export const translations = {
         button: "Criar Conta Gratuita",
       },
     },
+    
+    tokenPage: {
+      badge: "Tokenomics",
+      heroDescription: "Um token utilitário com economia real, backing em euro e mecanismo deflacionário. Não é especulação, é valorização baseada em uso real.",
+      metrics: {
+        initialValue: "Valor Inicial por Token",
+        euroBacked: "Backed em Euro",
+        blockchain: "Blockchain Segura",
+        burn: "Em cada resgate",
+      },
+      whyDifferent: {
+        title: "Por que o SENT é diferente?",
+        description: "Não é um token especulativo. É uma ferramenta prática que facilita pagamentos, recompensa cuidadores e valoriza com o uso real da plataforma.",
+        backed: {
+          title: "Backed em Euro",
+          description: "Cada token tem €1 de reserva. Você sempre pode vender pelo valor base.",
+        },
+        deflationary: {
+          title: "Mecanismo Deflacionário",
+          description: "Tokens são queimados em cada resgate. Menos oferta = mais valor.",
+        },
+        blockchain: {
+          title: "Blockchain Segura",
+          description: "Roda na Polygon - rápida, barata e ecologicamente eficiente.",
+        },
+      },
+      comparison: {
+        title: "Comparação",
+        speculative: "Criptos especulativas",
+        volatile: "Voláteis",
+        stablecoins: "Stablecoins tradicionais",
+        noAppreciation: "Sem valorização",
+        sent: "Estável + Valoriza",
+      },
+      flow: {
+        title: "Fluxo Econômico do Token",
+        description: "Entenda como os tokens circulam na plataforma e porque tendem a valorizar.",
+        entry: {
+          title: "Entrada",
+          description: "€ via Stripe → Tokens emitidos → Carteira do usuário",
+        },
+        use: {
+          title: "Uso",
+          description: "Taxas de contrato, gorjetas, pagamentos de serviços",
+        },
+        exit: {
+          title: "Saída",
+          description: "Tokens vendidos por € → Tokens queimados → Oferta diminui",
+        },
+        conclusion: "Mais uso = mais queima = menos oferta = valor tende a subir ↑",
+      },
+      useCases: {
+        title: "Para que servem os tokens?",
+        contractFees: {
+          title: "Taxas de Contrato",
+          description: "Pague €5 em tokens por cada contrato criado na plataforma.",
+        },
+        payments: {
+          title: "Pagamento de Serviços",
+          description: "Pague cuidadores diretamente com tokens ou cartão.",
+        },
+        tips: {
+          title: "Gorjetas",
+          description: "Recompense cuidadores com tokens que valorizam.",
+        },
+      },
+      cta: {
+        title: "Comece a usar SENT hoje",
+        description: "Crie sua conta e receba seus primeiros tokens automaticamente.",
+      },
+    },
+    
+    howItWorksPage: {
+      badge: "Guia Completo",
+      heroDescription: "Uma plataforma simples e segura que conecta famílias a cuidadores de idosos, usando tecnologia blockchain para garantir transparência e confiança.",
+      steps: {
+        signup: {
+          title: "Cadastro & Escolha de Perfil",
+          description: "Crie sua conta em menos de 2 minutos. Escolha se você é uma família buscando cuidados ou um cuidador oferecendo serviços.",
+          family: "Família",
+          familyDesc: "Busca cuidadores",
+          caregiver: "Cuidador",
+          caregiverDesc: "Oferece serviços",
+        },
+        activation: {
+          title: "Ativação da Conta",
+          description: "Pague a taxa única de ativação de €25 e receba automaticamente seus primeiros tokens na sua carteira digital integrada.",
+          fee: "Taxa de Ativação: €25",
+          feeDesc: "Você recebe 25 SENT tokens na sua carteira",
+        },
+        match: {
+          title: "Match & Conexão",
+          description: "Famílias buscam cuidadores por localização, especialidade e preço. Cuidadores recebem propostas e podem aceitar ou recusar.",
+          features: [
+            "Busca por distância e disponibilidade",
+            "Filtro por especialidades (Alzheimer, Paliativos, etc.)",
+            "Verificação de qualificações e antecedentes",
+            "Sistema de avaliações e reputação"
+          ],
+        },
+        contract: {
+          title: "Contrato Digital",
+          description: "Crie contratos claros e registrados na blockchain. Taxa de €5 por contrato, garantindo segurança jurídica para ambas as partes.",
+          immutable: "Contratos Imutáveis",
+          immutableDesc: "Registrados na blockchain Polygon para máxima segurança",
+        },
+        payments: {
+          title: "Pagamentos & Valorização",
+          description: "Pague serviços com segurança usando tokens ou cartão. Cuidadores acumulam tokens que valorizam com o crescimento da plataforma.",
+          wallet: "Carteira Digital",
+          walletDesc: "Tokens backed em Euro",
+          tips: "Gorjetas",
+          tipsDesc: "Valorizam cuidadores",
+          security: "Segurança",
+          securityDesc: "100% garantido",
+        },
+      },
+      cta: {
+        title: "Pronto para começar?",
+        description: "Junte-se a milhares de famílias e cuidadores que já confiam no IdosoLink.",
+      },
+    },
   },
   
   en: {
@@ -899,6 +1021,128 @@ export const translations = {
         button: "Create Free Account",
       },
     },
+    
+    tokenPage: {
+      badge: "Tokenomics",
+      heroDescription: "A utility token with real economy, euro backing and deflationary mechanism. Not speculation, it's value based on real usage.",
+      metrics: {
+        initialValue: "Initial Value per Token",
+        euroBacked: "Euro Backed",
+        blockchain: "Secure Blockchain",
+        burn: "On each withdrawal",
+      },
+      whyDifferent: {
+        title: "Why is SENT different?",
+        description: "Not a speculative token. It's a practical tool that facilitates payments, rewards caregivers and appreciates with real platform usage.",
+        backed: {
+          title: "Euro Backed",
+          description: "Each token has €1 reserve. You can always sell at base value.",
+        },
+        deflationary: {
+          title: "Deflationary Mechanism",
+          description: "Tokens are burned on each withdrawal. Less supply = more value.",
+        },
+        blockchain: {
+          title: "Secure Blockchain",
+          description: "Runs on Polygon - fast, cheap and ecologically efficient.",
+        },
+      },
+      comparison: {
+        title: "Comparison",
+        speculative: "Speculative cryptos",
+        volatile: "Volatile",
+        stablecoins: "Traditional stablecoins",
+        noAppreciation: "No appreciation",
+        sent: "Stable + Appreciates",
+      },
+      flow: {
+        title: "Token Economic Flow",
+        description: "Understand how tokens circulate on the platform and why they tend to appreciate.",
+        entry: {
+          title: "Entry",
+          description: "€ via Stripe → Tokens issued → User wallet",
+        },
+        use: {
+          title: "Use",
+          description: "Contract fees, tips, service payments",
+        },
+        exit: {
+          title: "Exit",
+          description: "Tokens sold for € → Tokens burned → Supply decreases",
+        },
+        conclusion: "More use = more burning = less supply = value tends to rise ↑",
+      },
+      useCases: {
+        title: "What are tokens for?",
+        contractFees: {
+          title: "Contract Fees",
+          description: "Pay €5 in tokens for each contract created on the platform.",
+        },
+        payments: {
+          title: "Service Payments",
+          description: "Pay caregivers directly with tokens or card.",
+        },
+        tips: {
+          title: "Tips",
+          description: "Reward caregivers with tokens that appreciate.",
+        },
+      },
+      cta: {
+        title: "Start using SENT today",
+        description: "Create your account and receive your first tokens automatically.",
+      },
+    },
+    
+    howItWorksPage: {
+      badge: "Complete Guide",
+      heroDescription: "A simple and secure platform that connects families to senior caregivers, using blockchain technology to ensure transparency and trust.",
+      steps: {
+        signup: {
+          title: "Sign Up & Choose Profile",
+          description: "Create your account in less than 2 minutes. Choose if you're a family seeking care or a caregiver offering services.",
+          family: "Family",
+          familyDesc: "Searches caregivers",
+          caregiver: "Caregiver",
+          caregiverDesc: "Offers services",
+        },
+        activation: {
+          title: "Account Activation",
+          description: "Pay the one-time activation fee of €25 and automatically receive your first tokens in your integrated digital wallet.",
+          fee: "Activation Fee: €25",
+          feeDesc: "You receive 25 SENT tokens in your wallet",
+        },
+        match: {
+          title: "Match & Connection",
+          description: "Families search caregivers by location, specialty and price. Caregivers receive proposals and can accept or decline.",
+          features: [
+            "Search by distance and availability",
+            "Filter by specialties (Alzheimer, Palliative, etc.)",
+            "Verification of qualifications and background",
+            "Reviews and reputation system"
+          ],
+        },
+        contract: {
+          title: "Digital Contract",
+          description: "Create clear contracts registered on blockchain. €5 fee per contract, ensuring legal security for both parties.",
+          immutable: "Immutable Contracts",
+          immutableDesc: "Registered on Polygon blockchain for maximum security",
+        },
+        payments: {
+          title: "Payments & Appreciation",
+          description: "Pay services securely using tokens or card. Caregivers accumulate tokens that appreciate with platform growth.",
+          wallet: "Digital Wallet",
+          walletDesc: "Euro-backed tokens",
+          tips: "Tips",
+          tipsDesc: "Reward caregivers",
+          security: "Security",
+          securityDesc: "100% guaranteed",
+        },
+      },
+      cta: {
+        title: "Ready to start?",
+        description: "Join thousands of families and caregivers who already trust IdosoLink.",
+      },
+    },
   },
   
   es: {
@@ -1348,6 +1592,128 @@ export const translations = {
         title: "¿Listo para Comenzar?",
         subtitle: "Únete a miles de familias y cuidadores que confían en IdosoLink",
         button: "Crear Cuenta Gratis",
+      },
+    },
+    
+    tokenPage: {
+      badge: "Tokenomics",
+      heroDescription: "Un token utilitario con economía real, respaldo en euro y mecanismo deflacionario. No es especulación, es valorización basada en uso real.",
+      metrics: {
+        initialValue: "Valor Inicial por Token",
+        euroBacked: "Respaldado en Euro",
+        blockchain: "Blockchain Segura",
+        burn: "En cada retiro",
+      },
+      whyDifferent: {
+        title: "¿Por qué SENT es diferente?",
+        description: "No es un token especulativo. Es una herramienta práctica que facilita pagos, recompensa cuidadores y valoriza con el uso real de la plataforma.",
+        backed: {
+          title: "Respaldado en Euro",
+          description: "Cada token tiene €1 de reserva. Siempre puedes vender al valor base.",
+        },
+        deflationary: {
+          title: "Mecanismo Deflacionario",
+          description: "Tokens son quemados en cada retiro. Menos oferta = más valor.",
+        },
+        blockchain: {
+          title: "Blockchain Segura",
+          description: "Funciona en Polygon - rápida, barata y ecológicamente eficiente.",
+        },
+      },
+      comparison: {
+        title: "Comparación",
+        speculative: "Criptos especulativas",
+        volatile: "Volátiles",
+        stablecoins: "Stablecoins tradicionales",
+        noAppreciation: "Sin valorización",
+        sent: "Estable + Valoriza",
+      },
+      flow: {
+        title: "Flujo Económico del Token",
+        description: "Entiende cómo los tokens circulan en la plataforma y por qué tienden a valorizar.",
+        entry: {
+          title: "Entrada",
+          description: "€ vía Stripe → Tokens emitidos → Cartera del usuario",
+        },
+        use: {
+          title: "Uso",
+          description: "Tarifas de contrato, propinas, pagos de servicios",
+        },
+        exit: {
+          title: "Salida",
+          description: "Tokens vendidos por € → Tokens quemados → Oferta disminuye",
+        },
+        conclusion: "Más uso = más quema = menos oferta = valor tiende a subir ↑",
+      },
+      useCases: {
+        title: "¿Para qué sirven los tokens?",
+        contractFees: {
+          title: "Tarifas de Contrato",
+          description: "Paga €5 en tokens por cada contrato creado en la plataforma.",
+        },
+        payments: {
+          title: "Pagos de Servicios",
+          description: "Paga cuidadores directamente con tokens o tarjeta.",
+        },
+        tips: {
+          title: "Propinas",
+          description: "Recompensa cuidadores con tokens que valorizan.",
+        },
+      },
+      cta: {
+        title: "Comienza a usar SENT hoy",
+        description: "Crea tu cuenta y recibe tus primeros tokens automáticamente.",
+      },
+    },
+    
+    howItWorksPage: {
+      badge: "Guía Completa",
+      heroDescription: "Una plataforma simple y segura que conecta familias con cuidadores de ancianos, usando tecnología blockchain para garantizar transparencia y confianza.",
+      steps: {
+        signup: {
+          title: "Registro y Elección de Perfil",
+          description: "Crea tu cuenta en menos de 2 minutos. Elige si eres una familia buscando cuidados o un cuidador ofreciendo servicios.",
+          family: "Familia",
+          familyDesc: "Busca cuidadores",
+          caregiver: "Cuidador",
+          caregiverDesc: "Ofrece servicios",
+        },
+        activation: {
+          title: "Activación de Cuenta",
+          description: "Paga la tarifa única de activación de €25 y recibe automáticamente tus primeros tokens en tu cartera digital integrada.",
+          fee: "Tarifa de Activación: €25",
+          feeDesc: "Recibes 25 SENT tokens en tu cartera",
+        },
+        match: {
+          title: "Match y Conexión",
+          description: "Las familias buscan cuidadores por ubicación, especialidad y precio. Los cuidadores reciben propuestas y pueden aceptar o rechazar.",
+          features: [
+            "Búsqueda por distancia y disponibilidad",
+            "Filtro por especialidades (Alzheimer, Paliativos, etc.)",
+            "Verificación de calificaciones y antecedentes",
+            "Sistema de calificaciones y reputación"
+          ],
+        },
+        contract: {
+          title: "Contrato Digital",
+          description: "Crea contratos claros registrados en blockchain. Tarifa de €5 por contrato, garantizando seguridad jurídica para ambas partes.",
+          immutable: "Contratos Inmutables",
+          immutableDesc: "Registrados en blockchain Polygon para máxima seguridad",
+        },
+        payments: {
+          title: "Pagos y Valorización",
+          description: "Paga servicios de forma segura usando tokens o tarjeta. Los cuidadores acumulan tokens que valorizan con el crecimiento de la plataforma.",
+          wallet: "Cartera Digital",
+          walletDesc: "Tokens respaldados en Euro",
+          tips: "Propinas",
+          tipsDesc: "Recompensan cuidadores",
+          security: "Seguridad",
+          securityDesc: "100% garantizado",
+        },
+      },
+      cta: {
+        title: "¿Listo para comenzar?",
+        description: "Únete a miles de familias y cuidadores que ya confían en IdosoLink.",
       },
     },
   },
