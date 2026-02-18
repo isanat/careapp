@@ -22,6 +22,7 @@ import {
   IconSearch,
   IconRefresh
 } from "@/components/icons";
+import { useI18n } from "@/lib/i18n";
 
 // Chat service port
 const CHAT_PORT = 3003;
@@ -55,6 +56,7 @@ interface Conversation {
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
   
   const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
@@ -225,7 +227,7 @@ export default function ChatPage() {
           <Card className="hidden lg:block">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Mensagens</CardTitle>
+                <CardTitle className="text-lg">{t.chat.title}</CardTitle>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon" onClick={fetchConversations}>
                     <IconRefresh className="h-4 w-4" />
@@ -235,7 +237,7 @@ export default function ChatPage() {
               </div>
               <div className="relative mt-2">
                 <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Buscar conversas..." className="pl-10" />
+                <Input placeholder={t.search.placeholder} className="pl-10" />
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -276,7 +278,7 @@ export default function ChatPage() {
                             </div>
                             <div className="flex items-center justify-between">
                               <p className="text-sm text-muted-foreground truncate">
-                                {conv.lastMessage?.content || "Sem mensagens"}
+                                {conv.lastMessage?.content || t.chat.noMessages}
                               </p>
                               {conv.unreadCount > 0 && (
                                 <Badge className="h-5 w-5 p-0 flex items-center justify-center text-xs">
@@ -292,7 +294,7 @@ export default function ChatPage() {
                     {conversations.length === 0 && (
                       <div className="p-4 text-center text-muted-foreground">
                         <IconChat className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">Nenhuma conversa ainda</p>
+                        <p className="text-sm">{t.chat.noChats}</p>
                       </div>
                     )}
                   </div>
@@ -377,7 +379,7 @@ export default function ChatPage() {
                         <div className="flex justify-start">
                           <div className="bg-muted rounded-lg px-4 py-2">
                             <p className="text-sm text-muted-foreground">
-                              {typingUser} está digitando...
+                              {typingUser}...
                             </p>
                           </div>
                         </div>
@@ -399,7 +401,7 @@ export default function ChatPage() {
                         handleTyping();
                       }}
                       onKeyDown={handleKeyPress}
-                      placeholder="Digite sua mensagem..."
+                      placeholder={t.chat.placeholder}
                       className="flex-1"
                     />
                     <Button onClick={handleSend} disabled={!newMessage.trim()}>
@@ -412,9 +414,9 @@ export default function ChatPage() {
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
                   <IconChat className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Selecione uma conversa</h3>
+                  <h3 className="font-semibold mb-2">{t.chat.new}</h3>
                   <p className="text-muted-foreground">
-                    Escolha uma conversa na lista para começar
+                    {t.chat.noChats}
                   </p>
                 </div>
               </div>

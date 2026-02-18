@@ -29,10 +29,12 @@ import {
   IconCaregiver
 } from "@/components/icons";
 import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 export default function ProfilePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -113,16 +115,16 @@ export default function ProfilePage() {
               disabled={isLoading}
             >
               {isLoading ? (
-                "Salvando..."
+                t.loading
               ) : isEditing ? (
                 <>
                   <IconCheck className="h-4 w-4 mr-2" />
-                  Salvar
+                  {t.save}
                 </>
               ) : (
                 <>
                   <IconEdit className="h-4 w-4 mr-2" />
-                  Editar Perfil
+                  {t.profile.editProfile}
                 </>
               )}
             </Button>
@@ -135,14 +137,14 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold">{session?.user?.name}</h1>
             <Badge className={isFamily ? "bg-blue-500" : "bg-green-500"}>
               {isFamily ? (
-                <><IconFamily className="h-3 w-3 mr-1" /> Família</>
+                <><IconFamily className="h-3 w-3 mr-1" /> {t.auth.family}</>
               ) : (
-                <><IconCaregiver className="h-3 w-3 mr-1" /> Cuidador</>
+                <><IconCaregiver className="h-3 w-3 mr-1" /> {t.auth.caregiver}</>
               )}
             </Badge>
             {session?.user?.status === "ACTIVE" && (
               <Badge variant="outline" className="text-green-600 border-green-600">
-                Verificado
+                {t.profile.verified}
               </Badge>
             )}
           </div>
@@ -156,10 +158,10 @@ export default function ProfilePage() {
         {/* Tabs */}
         <Tabs defaultValue="about" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="about">Sobre</TabsTrigger>
-            <TabsTrigger value="contact">Contato</TabsTrigger>
-            {!isFamily && <TabsTrigger value="reviews">Avaliações</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder">Idoso</TabsTrigger>}
+            <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
+            <TabsTrigger value="contact">{t.profile.editProfile}</TabsTrigger>
+            {!isFamily && <TabsTrigger value="reviews">{t.dashboard.rating}</TabsTrigger>}
+            {isFamily && <TabsTrigger value="elder">{t.auth.family}</TabsTrigger>}
           </TabsList>
 
           {/* About Tab */}
@@ -167,12 +169,12 @@ export default function ProfilePage() {
             {isFamily ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>Informações Pessoais</CardTitle>
+                  <CardTitle>{t.profile.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Nome completo</Label>
+                      <Label htmlFor="name">{t.auth.name}</Label>
                       <Input 
                         id="name" 
                         value={formData.name}
@@ -182,7 +184,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="address">Morada</Label>
+                        <Label htmlFor="address">{t.profile.about}</Label>
                         <Input 
                           id="address" 
                           value={formData.address}
@@ -207,11 +209,11 @@ export default function ProfilePage() {
               <>
                 <Card>
                   <CardHeader>
-                    <CardTitle>Sobre Mim</CardTitle>
+                    <CardTitle>{t.profile.about}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="bio">Descrição</Label>
+                      <Label htmlFor="bio">{t.profile.description}</Label>
                       <Textarea 
                         id="bio" 
                         value={(formData as any).bio}
@@ -221,7 +223,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="title">Título Profissional</Label>
+                        <Label htmlFor="title">{t.profile.experience}</Label>
                         <Input 
                           id="title" 
                           value={(formData as any).title}
@@ -229,7 +231,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="experience">Anos de Experiência</Label>
+                        <Label htmlFor="experience">{t.profile.experience}</Label>
                         <Input 
                           id="experience" 
                           value={(formData as any).experienceYears}
@@ -242,7 +244,7 @@ export default function ProfilePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Serviços Oferecidos</CardTitle>
+                    <CardTitle>{t.profile.services}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
@@ -257,28 +259,28 @@ export default function ProfilePage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Estatísticas</CardTitle>
+                    <CardTitle>{t.dashboard.recentActivity}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center p-4 bg-muted/50 rounded-lg">
                         <p className="text-2xl font-bold text-primary">{(profile as any).totalContracts}</p>
-                        <p className="text-sm text-muted-foreground">Contratos</p>
+                        <p className="text-sm text-muted-foreground">{t.contracts.title}</p>
                       </div>
                       <div className="text-center p-4 bg-muted/50 rounded-lg">
                         <p className="text-2xl font-bold text-primary">{(profile as any).totalHours}h</p>
-                        <p className="text-sm text-muted-foreground">Trabalhadas</p>
+                        <p className="text-sm text-muted-foreground">{t.dashboard.hoursWorked}</p>
                       </div>
                       <div className="text-center p-4 bg-muted/50 rounded-lg">
                         <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
                           <IconStar className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                           {(profile as any).averageRating}
                         </p>
-                        <p className="text-sm text-muted-foreground">Avaliação</p>
+                        <p className="text-sm text-muted-foreground">{t.dashboard.rating}</p>
                       </div>
                       <div className="text-center p-4 bg-muted/50 rounded-lg">
                         <p className="text-2xl font-bold text-primary">{(profile as any).totalReviews}</p>
-                        <p className="text-sm text-muted-foreground">Avaliações</p>
+                        <p className="text-sm text-muted-foreground">{t.dashboard.reviews}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -291,11 +293,11 @@ export default function ProfilePage() {
           <TabsContent value="contact" className="space-y-6 mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>Informações de Contato</CardTitle>
+                <CardTitle>{t.profile.editProfile}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t.auth.email}</Label>
                   <div className="relative">
                     <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
@@ -309,7 +311,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
+                  <Label htmlFor="phone">{t.auth.phone}</Label>
                   <div className="relative">
                     <IconPhone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
@@ -323,16 +325,16 @@ export default function ProfilePage() {
                 </div>
                 <Separator />
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContact">Contato de Emergência</Label>
+                  <Label htmlFor="emergencyContact">{t.profile.emergency}</Label>
                   <Input 
                     id="emergencyContact" 
                     value={isFamily ? (profile as any).emergencyContact : ""}
-                    placeholder="Nome do contato"
+                    placeholder={t.auth.name}
                     disabled={!isEditing}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyPhone">Telefone de Emergência</Label>
+                  <Label htmlFor="emergencyPhone">{t.auth.phone}</Label>
                   <Input 
                     id="emergencyPhone" 
                     value={isFamily ? (profile as any).emergencyPhone : ""}
@@ -349,15 +351,15 @@ export default function ProfilePage() {
             <TabsContent value="elder" className="space-y-6 mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Informações do Idoso</CardTitle>
+                  <CardTitle>{t.auth.family}</CardTitle>
                   <CardDescription>
-                    Dados sobre a pessoa que receberá os cuidados
+                    {t.profile.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="elderName">Nome do Idoso</Label>
+                      <Label htmlFor="elderName">{t.auth.name}</Label>
                       <Input 
                         id="elderName" 
                         value={(profile as any).elderName}
@@ -365,7 +367,7 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="elderAge">Idade</Label>
+                      <Label htmlFor="elderAge">{t.profile.experience}</Label>
                       <Input 
                         id="elderAge" 
                         type="number"
@@ -375,7 +377,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="elderNeeds">Necessidades Especiais</Label>
+                    <Label htmlFor="elderNeeds">{t.profile.description}</Label>
                     <Textarea 
                       id="elderNeeds" 
                       value={(profile as any).elderNeeds}
@@ -393,7 +395,7 @@ export default function ProfilePage() {
             <TabsContent value="reviews" className="space-y-6 mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Avaliações Recentes</CardTitle>
+                  <CardTitle>{t.dashboard.rating}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Mock reviews */}
@@ -432,18 +434,18 @@ export default function ProfilePage() {
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" asChild>
                 <Link href="/app/settings">
-                  Configurações
+                  {t.settings.title}
                 </Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link href="/app/wallet">
-                  Minha Carteira
+                  {t.wallet.title}
                 </Link>
               </Button>
               {!isFamily && (
                 <Button variant="outline" asChild>
                   <Link href="/app/contracts">
-                    Meus Contratos
+                    {t.contracts.title}
                   </Link>
                 </Button>
               )}

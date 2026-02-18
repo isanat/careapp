@@ -19,9 +19,11 @@ import {
   IconMapPin, 
   IconStar, 
   IconClock, 
-  IconEuro
+  IconEuro,
+  IconShield
 } from "@/components/icons";
 import { SERVICE_TYPES } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 interface Caregiver {
   id: string;
@@ -36,11 +38,13 @@ interface Caregiver {
   totalContracts: number;
   experienceYears: number;
   profileImage: string | null;
+  verificationStatus?: string;
 }
 
 export default function SearchPage() {
   const { status } = useSession();
   const router = useRouter();
+  const { t } = useI18n();
   const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -115,9 +119,9 @@ export default function SearchPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold">Buscar Cuidadores</h1>
+          <h1 className="text-2xl font-bold">{t.search.title}</h1>
           <p className="text-muted-foreground">
-            Encontre profissionais verificados na sua região
+            {t.search.placeholder}
           </p>
         </div>
 
@@ -127,11 +131,11 @@ export default function SearchPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {/* Search */}
               <div className="lg:col-span-2">
-                <Label>Buscar</Label>
+                <Label>{t.search.title}</Label>
                 <div className="relative mt-1.5">
                   <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Nome, especialidade, cidade..."
+                    placeholder={t.search.placeholder}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -141,13 +145,13 @@ export default function SearchPage() {
 
               {/* Service Filter */}
               <div>
-                <Label>Serviço</Label>
+                <Label>{t.search.filters}</Label>
                 <Select value={selectedService} onValueChange={setSelectedService}>
                   <SelectTrigger className="mt-1.5">
-                    <SelectValue placeholder="Todos os serviços" />
+                    <SelectValue placeholder={t.all} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos os serviços</SelectItem>
+                    <SelectItem value="all">{t.all}</SelectItem>
                     {Object.entries(SERVICE_TYPES).map(([key, value]) => (
                       <SelectItem key={key} value={key}>
                         {value}
@@ -159,15 +163,15 @@ export default function SearchPage() {
 
               {/* Sort */}
               <div>
-                <Label>Ordenar por</Label>
+                <Label>{t.edit}</Label>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="mt-1.5">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="rating">Melhor avaliação</SelectItem>
-                    <SelectItem value="price">Menor preço</SelectItem>
-                    <SelectItem value="reviews">Mais avaliações</SelectItem>
+                    <SelectItem value="rating">{t.search.rating}</SelectItem>
+                    <SelectItem value="price">{t.search.hourlyRate}</SelectItem>
+                    <SelectItem value="reviews">{t.dashboard.reviews}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -176,7 +180,7 @@ export default function SearchPage() {
             {/* Price Slider */}
             <div className="mt-6">
               <div className="flex justify-between mb-2">
-                <Label>Preço máximo: €{maxPrice}/hora</Label>
+                <Label>€{maxPrice}{t.search.perHour}</Label>
               </div>
               <Slider
                 value={[maxPrice]}
@@ -192,7 +196,7 @@ export default function SearchPage() {
         {/* Results Count */}
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">
-            {filteredCaregivers.length} cuidadores encontrados
+            {filteredCaregivers.length} {t.search.noResults}
           </p>
         </div>
 
@@ -233,9 +237,12 @@ export default function SearchPage() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <h3 className="font-semibold text-lg">{caregiver.name}</h3>
-                            <Badge variant="secondary" className="text-xs">
-                              Verificado
-                            </Badge>
+                            {caregiver.verificationStatus === "VERIFIED" && (
+                              <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600">
+                                <IconShield className="h-3 w-3 mr-1" />
+                                {t.search.verified}
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-sm text-muted-foreground">{caregiver.title}</p>
                           <div className="flex items-center gap-3 text-sm">
@@ -281,15 +288,15 @@ export default function SearchPage() {
                         {caregiver.experienceYears && (
                           <div className="flex items-center gap-1">
                             <IconClock className="h-4 w-4 text-muted-foreground" />
-                            <span>{caregiver.experienceYears} anos exp.</span>
+                            <span>{caregiver.experienceYears} {t.profile.experience}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-1">
                           <IconEuro className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-semibold">€{(caregiver.hourlyRateEur / 100).toFixed(0)}/hora</span>
+                          <span className="font-semibold">€{(caregiver.hourlyRateEur / 100).toFixed(0)}{t.search.perHour}</span>
                         </div>
                         <div className="text-muted-foreground">
-                          {caregiver.totalContracts || 0} contratos
+                          {caregiver.totalContracts || 0} {t.contracts.title}
                         </div>
                       </div>
                     </div>
@@ -298,12 +305,12 @@ export default function SearchPage() {
                     <div className="p-6 flex flex-col justify-center gap-2 border-l bg-background">
                       <Button asChild>
                         <Link href={`/app/caregivers/${caregiver.id}`}>
-                          Ver Perfil
+                          {t.profile.title}
                         </Link>
                       </Button>
                       <Button variant="outline" asChild>
                         <Link href={`/app/contracts/new?caregiverId=${caregiver.id}`}>
-                          Criar Contrato
+                          {t.contracts.new}
                         </Link>
                       </Button>
                     </div>
@@ -316,9 +323,9 @@ export default function SearchPage() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <IconSearch className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Nenhum cuidador encontrado</h3>
+                  <h3 className="font-semibold mb-2">{t.search.noResults}</h3>
                   <p className="text-muted-foreground">
-                    Tente ajustar os filtros de busca
+                    {t.search.placeholder}
                   </p>
                 </CardContent>
               </Card>
