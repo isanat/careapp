@@ -159,9 +159,9 @@ export default function ProfilePage() {
         <Tabs defaultValue="about" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
-            <TabsTrigger value="contact">{t.profile.editProfile}</TabsTrigger>
+            <TabsTrigger value="contact">{t.profile.contactInfo}</TabsTrigger>
             {!isFamily && <TabsTrigger value="reviews">{t.dashboard.rating}</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder">{t.auth.family}</TabsTrigger>}
+            {isFamily && <TabsTrigger value="elder">{t.profile.elderInfo}</TabsTrigger>}
           </TabsList>
 
           {/* About Tab */}
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="address">{t.profile.about}</Label>
+                        <Label htmlFor="address">{t.profile.address}</Label>
                         <Input 
                           id="address" 
                           value={formData.address}
@@ -193,7 +193,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="city">Cidade</Label>
+                        <Label htmlFor="city">{t.profile.city}</Label>
                         <Input 
                           id="city" 
                           value={formData.city}
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="bio">{t.profile.description}</Label>
+                      <Label htmlFor="bio">{t.profile.bio}</Label>
                       <Textarea 
                         id="bio" 
                         value={(formData as any).bio}
@@ -223,7 +223,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="title">{t.profile.experience}</Label>
+                        <Label htmlFor="title">{t.profile.titleLabel}</Label>
                         <Input 
                           id="title" 
                           value={(formData as any).title}
@@ -351,7 +351,7 @@ export default function ProfilePage() {
             <TabsContent value="elder" className="space-y-6 mt-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t.auth.family}</CardTitle>
+                  <CardTitle>{t.profile.elderInfo}</CardTitle>
                   <CardDescription>
                     {t.profile.description}
                   </CardDescription>
@@ -367,7 +367,7 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="elderAge">{t.profile.experience}</Label>
+                      <Label htmlFor="elderAge">{t.profile.years}</Label>
                       <Input 
                         id="elderAge" 
                         type="number"
@@ -377,7 +377,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="elderNeeds">{t.profile.description}</Label>
+                    <Label htmlFor="elderNeeds">{t.profile.elderNeeds}</Label>
                     <Textarea 
                       id="elderNeeds" 
                       value={(profile as any).elderNeeds}

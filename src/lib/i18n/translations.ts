@@ -347,6 +347,15 @@ export const translations = {
       about: "Sobre",
       documents: "Documentos",
       languages: "Idiomas",
+      city: "Cidade",
+      address: "Endereço",
+      emergency: "Contato de Emergência",
+      contactInfo: "Informações de Contato",
+      elderInfo: "Informações do Idoso",
+      bio: "Biografia",
+      years: "anos",
+      elderNeeds: "Necessidades de Cuidado",
+      titleLabel: "Título Profissional",
     },
     
     search: {
@@ -773,6 +782,15 @@ export const translations = {
       about: "About",
       documents: "Documents",
       languages: "Languages",
+      city: "City",
+      address: "Address",
+      emergency: "Emergency Contact",
+      contactInfo: "Contact Information",
+      elderInfo: "Elder Information",
+      bio: "Biography",
+      years: "years",
+      elderNeeds: "Care Needs",
+      titleLabel: "Professional Title",
     },
     
     search: {
@@ -1199,6 +1217,15 @@ export const translations = {
       about: "Acerca de",
       documents: "Documentos",
       languages: "Idiomas",
+      city: "Ciudad",
+      address: "Dirección",
+      emergency: "Contacto de Emergencia",
+      contactInfo: "Información de Contacto",
+      elderInfo: "Información del Anciano",
+      bio: "Biografía",
+      years: "años",
+      elderNeeds: "Necesidades de Cuidado",
+      titleLabel: "Título Profesional",
     },
     
     search: {
