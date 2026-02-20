@@ -723,3 +723,445 @@ Create all required Admin API endpoints for the IdosoLink Admin Panel MVP, using
 - Linting passed ✅
 - Ready for frontend admin panel development
 
+---
+## Task ID: 2-3
+**Agent:** Payments API Developer
+**Task:** Create Payments Management Admin APIs
+
+### Work Task
+Create all required Admin API endpoints for payments management in the IdosoLink Admin Panel, including listing payments, payment details, refunds management, and escrow payments handling.
+
+### Work Summary
+
+#### 1. List Payments API (`/api/admin/payments/route.ts`)
+- **GET**: List payments with pagination and filters
+- **Filters**: type, status, provider, userId, search
+- **Payment Types**: ACTIVATION, TOKEN_PURCHASE, CONTRACT_FEE, SERVICE_PAYMENT, REDEMPTION
+- **Payment Statuses**: PENDING, PROCESSING, COMPLETED, FAILED, REFUNDED
+- **Providers**: STRIPE, BANK_TRANSFER, INTERNAL
+- **Features**:
+  - Returns paginated payments with user and contract info
+  - Summary stats (total revenue, pending, refunded counts)
+  - Role-based permission check (SUPER_ADMIN, ADMIN, SUPPORT, ANALYST)
+
+#### 2. Payment Detail API (`/api/admin/payments/[id]/route.ts`)
+- **GET**: Get complete payment details
+- **Returns**:
+  - Full payment info with Stripe data
+  - User info with wallet details
+  - Contract info (if related) with family/caregiver names
+  - Token ledger entries for this payment
+  - UI helpers (canRefund, isRefunded flags)
+
+#### 3. Refunds List API (`/api/admin/payments/refunds/route.ts`)
+- **GET**: List refund requests and completed refunds
+- **Status Filter**: 
+  - `REFUNDED` - Show completed refunds
+  - `PENDING` - Show payments that can be refunded
+- **Features**:
+  - Returns potential refunds (completed Stripe payments not yet refunded)
+  - Token deduction check (can user afford token deduction)
+  - Summary stats (total refunded, pending potential amounts)
+
+#### 4. Process Refund API (`/api/admin/payments/[id]/refund/route.ts`)
+- **POST**: Process a refund
+- **Body Parameters**:
+  - `amount?` - Partial refund in cents (omit for full refund)
+  - `reason` - Required, minimum 10 characters
+  - `notifyUser` - Send notification to user (default: true)
+- **Processing Flow**:
+  1. Validates payment can be refunded (COMPLETED, STRIPE, has PaymentIntent)
+  2. Checks user has enough tokens for deduction
+  3. Calls Stripe API (`stripe.refunds.create`)
+  4. Updates payment status to REFUNDED
+  5. Deducts tokens from user wallet (proportional to refund)
+  6. Creates TokenLedger DEBIT entry
+  7. Updates platform settings (tokens minted, reserve)
+  8. Logs action to AdminAction table
+  9. Creates notification for user
+
+#### 5. Escrow List API (`/api/admin/payments/escrow/route.ts`)
+- **GET**: List escrow payments
+- **Filters**: status (CREATED, HELD, RELEASED, CANCELLED, PARTIAL_REFUND), contractId
+- **Features**:
+  - Returns escrow with contract and user details
+  - Summary stats (total held, released, pending)
+  - UI helpers (canRelease, canRefund flags)
+  - Graceful handling if table doesn't exist
+
+#### 6. Escrow Detail API (`/api/admin/payments/escrow/[id]/route.ts`)
+- **GET**: Get complete escrow details
+  - Full escrow info with Stripe Connect data
+  - Contract details with family/caregiver info
+  - Related payments for the contract
+- **POST**: Release escrow manually
+  - Requires reason (min 10 characters)
+  - Processes Stripe transfer to caregiver (if Stripe Connect account exists)
+  - Updates escrow status to RELEASED
+  - Logs action and notifies caregiver
+
+#### 7. Migration SQL (`/sql/migrations/add_escrow_payments.sql`)
+- Creates `escrow_payments` table for contract escrow management
+- Fields: contract_id, payment_intent_id, amounts, status, Stripe Connect IDs
+- Indexes for efficient querying
+
+### Files Created:
+- `src/app/api/admin/payments/route.ts` - List payments
+- `src/app/api/admin/payments/[id]/route.ts` - Payment details
+- `src/app/api/admin/payments/refunds/route.ts` - Refunds list
+- `src/app/api/admin/payments/[id]/refund/route.ts` - Process refund
+- `src/app/api/admin/payments/escrow/route.ts` - Escrow list
+- `src/app/api/admin/payments/escrow/[id]/route.ts` - Escrow details/release
+- `sql/migrations/add_escrow_payments.sql` - Escrow table migration
+
+### Features Implemented:
+- ✅ All endpoints use Turso db (`@/lib/db-turso`)
+- ✅ All endpoints use NextAuth authOptions (`@/lib/auth-turso`)
+- ✅ Role-based permission checks
+- ✅ Stripe API integration for refunds and transfers
+- ✅ Token deduction on refunds
+- ✅ Actions logged to AdminAction table
+- ✅ IP address and user agent capture
+- ✅ User notifications for refunds
+- ✅ Graceful handling of missing tables
+
+### API Endpoints Summary:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/admin/payments` | GET | List payments with filters |
+| `/api/admin/payments/[id]` | GET | Payment details |
+| `/api/admin/payments/refunds` | GET | List refunds and potential refunds |
+| `/api/admin/payments/[id]/refund` | POST | Process refund |
+| `/api/admin/payments/escrow` | GET | List escrow payments |
+| `/api/admin/payments/escrow/[id]` | GET | Escrow details |
+| `/api/admin/payments/escrow/[id]` | POST | Release escrow |
+
+### Stage Summary:
+- All payments admin API endpoints created ✅
+- Stripe integration for refunds working ✅
+- Token deduction on refunds implemented ✅
+- Escrow management APIs complete ✅
+- Linting passed ✅
+- Ready for admin panel payments UI
+
+---
+## Task ID: complete-B
+**Agent:** Admin Pages Developer
+**Task:** Create Caregivers and Contracts Admin Pages
+
+### Work Task
+Create admin pages for caregivers and contracts management, including list pages with filters and detail pages with comprehensive information.
+
+### Work Summary
+
+#### 1. Caregivers List Page (`/app/admin/caregivers/page.tsx`)
+- **Enhanced UI** with stats cards (total, pending KYC, verified, featured)
+- **Filters**: search by name/email, KYC status filter, featured filter
+- **Data Table** with columns:
+  - Avatar, name, email
+  - Title, city
+  - KYC status badge
+  - Rating with review count
+  - Contract count badge
+  - Featured badge
+  - Actions: Verify/Reject KYC, Toggle featured, View details
+- **Features**:
+  - Real-time stats calculation
+  - Quick KYC verification/rejection
+  - Featured status toggle
+  - Pagination support
+
+#### 2. Caregiver Detail Page (`/app/admin/caregivers/[id]/page.tsx`)
+- **User Info Card**: Avatar, name, title, contact info, location, experience, hourly rate, bio, wallet address
+- **Stats Cards**: Contracts, hours worked, rating, token balance
+- **KYC Verification Panel**:
+  - Status badge with color coding
+  - Document info (type, number, verified status)
+  - Confidence score
+  - Background check status
+  - Approve/Reject actions with modal for rejection reason
+- **Featured Status Toggle**: Switch to toggle featured status
+- **Contracts List**: Title, family, status, value, dates, view action
+- **Reviews List**: From user, rating, comment, date
+- **Features**:
+  - Breadcrumb navigation
+  - Loading states
+  - Error handling
+  - Toast notifications
+
+#### 3. Contracts List Page (`/app/admin/contracts/page.tsx`)
+- **Enhanced UI** with stats cards (total, active, disputed, completed)
+- **Status Tabs**: All, Pending, Active, Disputes (with count badge), Completed, Cancelled
+- **Data Table** with columns:
+  - Contract ID (truncated)
+  - Title with disputed badge highlight
+  - Family with avatar
+  - Caregiver with avatar
+  - Status badge
+  - Value (EUR + tokens)
+  - Period dates
+  - Created date
+  - Actions: View, Cancel, Resolve dispute
+- **Features**:
+  - Row click navigation
+  - Disputed contracts highlighted
+  - Quick cancel action with reason
+  - Pagination support
+
+#### 4. Contract Detail Page (`/app/admin/contracts/[id]/page.tsx`)
+- **Tabs**: Overview, Parties, Payments, Dispute (conditional), Timeline
+- **Stats Cards**: Total value, tokens, platform fee, caregiver amount
+- **Overview Tab**:
+  - Contract details (description, dates, hours, location, notes)
+  - Financial breakdown with escrow info
+  - Cancel action with reason input
+- **Parties Tab**:
+  - Family info card with avatar, contact, profile link
+  - Caregiver info card with avatar, contact, profile link
+  - Acceptance logs with IP addresses and user agents
+- **Payments Tab**:
+  - Related payments list with type, amount, status, provider
+  - Reviews list with ratings and comments
+- **Dispute Tab** (shown only for disputed contracts):
+  - Resolution details input
+  - Decision buttons: Favor Family, Favor Caregiver, Split
+- **Timeline Tab**:
+  - Visual timeline of events (created, accepted, cancelled)
+- **Features**:
+  - URL parameter for default tab (?tab=dispute)
+  - Loading states
+  - Error handling
+  - Breadcrumb navigation
+
+### Files Created:
+- `src/app/admin/caregivers/page.tsx` - Enhanced caregivers list
+- `src/app/admin/caregivers/[id]/page.tsx` - Caregiver detail page
+- `src/app/admin/contracts/page.tsx` - Enhanced contracts list
+- `src/app/admin/contracts/[id]/page.tsx` - Contract detail page
+
+### Components Used:
+- `PageHeader` - Breadcrumbs and page titles
+- `DataTable` - Reusable table with pagination
+- `StatusBadge` - Status indicators with colors
+- `StatsCard` - KPI display cards
+
+### APIs Consumed:
+- `GET /api/admin/caregivers` - List caregivers with filters
+- `GET /api/admin/caregivers/[id]` - Caregiver details
+- `POST /api/admin/caregivers/verify` - Verify/reject KYC
+- `POST /api/admin/caregivers/[id]/feature` - Toggle featured
+- `GET /api/admin/contracts` - List contracts with filters
+- `GET /api/admin/contracts/[id]` - Contract details
+- `POST /api/admin/contracts/[id]/cancel` - Cancel contract
+- `POST /api/admin/contracts/[id]/resolve` - Resolve dispute
+
+### Features Implemented:
+- ✅ Responsive design (mobile-friendly)
+- ✅ Loading states with spinners
+- ✅ Error handling with toast notifications
+- ✅ Avatar generation with DiceBear
+- ✅ Currency formatting (EUR)
+- ✅ Date formatting (pt-PT locale)
+- ✅ Status badges with color coding
+- ✅ Quick actions (verify, feature, cancel, resolve)
+- ✅ Dispute resolution panel
+- ✅ Acceptance logs with IP tracking
+- ✅ Timeline visualization
+- ✅ Linting passed ✅
+
+### Stage Summary:
+- Caregivers management pages complete ✅
+- Contracts management pages complete ✅
+- KYC verification UI implemented ✅
+- Dispute resolution UI implemented ✅
+- Admin panel pages fully functional ✅
+
+---
+## Task ID: complete-A
+**Agent:** Admin APIs Developer
+**Task:** Create Complete Migration + All Admin APIs
+
+### Work Task
+Implement all remaining Admin APIs for the IdosoLink Admin Panel, including complete migration endpoint, token management, analytics, and notification endpoints.
+
+### Work Summary
+
+#### 1. Complete Migration Endpoint (`/api/admin/migrate-complete/route.ts`)
+Already exists with comprehensive migration:
+- **POST**: Creates all admin tables:
+  - AdminUser, AdminAction (audit log)
+  - SupportTicket, SupportTicketMessage
+  - FeatureFlag, AdminNotification
+  - ImpersonationLog, PlatformMetric
+  - ScheduledReport, ModerationQueue
+  - EmailTemplate, ApiKey
+- **GET**: Shows migration status
+- Adds KYC columns to User table (kycSessionId, kycSessionToken, kycSessionCreatedAt, kycCompletedAt, kycConfidence)
+- Creates default super admin user
+- Protected with x-admin-secret header
+
+#### 2. Token Statistics API (`/api/admin/tokens/stats/route.ts`) - NEW
+- **GET**: Comprehensive token statistics
+- Returns:
+  - Stats (minted, burned, inCirculation, reserve, price)
+  - Wallet statistics (total, holdingTokens)
+  - Distribution by reason/type
+  - Top 10 token holders
+  - Token activity over last 30 days
+- Proper AdminUser table verification for role-based access
+
+#### 3. Token Transactions API (`/api/admin/tokens/transactions/route.ts`) - NEW
+- **GET**: Token ledger with full filtering and pagination
+- Filters: userId, type (CREDIT/DEBIT), reason, search, date range, amount range
+- Returns:
+  - Paginated transactions with user info
+  - Summary stats (totalCredits, totalDebits, etc.)
+  - Available filters for dropdowns
+- Supports roles: ADMIN, SUPER_ADMIN, SUPPORT, ANALYST
+
+#### 4. Analytics Overview API (`/api/admin/analytics/overview/route.ts`) - NEW
+- **GET**: Comprehensive analytics dashboard data
+- Period support: 7d, 30d, 90d, 1y
+- Returns:
+  - KPIs: users, KYC, contracts, revenue, tokens, quality metrics
+  - Growth data: user growth timeline, revenue timeline
+  - Distribution: geographic, services
+  - Quality metrics: avgRating, disputeRate
+
+#### 5. Analytics Revenue API (`/api/admin/analytics/revenue/route.ts`) - NEW
+- **GET**: Revenue-specific analytics
+- Period and groupBy support (day, week, month)
+- Returns:
+  - Revenue over time (by type)
+  - Revenue by payment type and provider
+  - Monthly comparison (last 12 months)
+  - Refund analytics
+  - Top revenue generating contracts
+  - Platform fees collected
+  - Top revenue users
+
+#### 6. Analytics Users API (`/api/admin/analytics/users/route.ts`) - NEW
+- **GET**: User-specific analytics
+- Period and groupBy support
+- Returns:
+  - User growth timeline
+  - Cumulative user count by month
+  - Status distribution
+  - User activity buckets (today, last7days, last30days, etc.)
+  - Geographic distribution
+  - Caregiver stats and top performers
+  - Family engagement metrics
+  - Retention cohorts
+
+#### 7. Notification Read API (`/api/admin/notifications/[id]/read/route.ts`) - NEW
+- **POST**: Mark single notification as read
+  - Updates isRead, readAt, readBy
+  - Logs action to AdminAction
+- **DELETE**: Delete/dismiss notification
+  - Removes from AdminNotification table
+  - Logs action to AdminAction
+- Proper authorization via AdminUser table
+
+### Files Created:
+- `src/app/api/admin/tokens/stats/route.ts` - Token statistics
+- `src/app/api/admin/tokens/transactions/route.ts` - Token ledger
+- `src/app/api/admin/analytics/overview/route.ts` - Analytics overview
+- `src/app/api/admin/analytics/revenue/route.ts` - Revenue analytics
+- `src/app/api/admin/analytics/users/route.ts` - User analytics
+- `src/app/api/admin/notifications/[id]/read/route.ts` - Mark notification read
+
+### Features Implemented:
+- ✅ All endpoints use Turso db (`@/lib/db-turso`)
+- ✅ All endpoints use NextAuth authOptions (`@/lib/auth-turso`)
+- ✅ Role-based permission checks via AdminUser table
+- ✅ Helper function `verifyAdminAccess()` for consistent auth
+- ✅ Actions logged to AdminAction table
+- ✅ IP address capture for audit trail
+- ✅ Proper error handling and responses
+
+### API Endpoints Summary:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/admin/migrate-complete` | POST | Run complete migration |
+| `/api/admin/migrate-complete` | GET | Check migration status |
+| `/api/admin/tokens/stats` | GET | Token statistics |
+| `/api/admin/tokens/transactions` | GET | Token ledger with filters |
+| `/api/admin/analytics/overview` | GET | Analytics overview KPIs |
+| `/api/admin/analytics/revenue` | GET | Revenue analytics |
+| `/api/admin/analytics/users` | GET | User analytics |
+| `/api/admin/notifications/[id]/read` | POST | Mark notification read |
+| `/api/admin/notifications/[id]/read` | DELETE | Delete notification |
+
+### Complete Admin API Inventory:
+**Dashboard:**
+- GET `/api/admin/dashboard/stats` - Dashboard KPIs
+- GET `/api/admin/auth` - Admin auth check
+
+**Users:**
+- GET `/api/admin/users` - List users
+- POST `/api/admin/users` - Create user
+- GET `/api/admin/users/[id]` - User details
+- PATCH `/api/admin/users/[id]` - Update user
+- DELETE `/api/admin/users/[id]` - Delete user
+- POST `/api/admin/users/[id]/suspend` - Suspend user
+- POST `/api/admin/users/[id]/activate` - Activate user
+
+**Caregivers:**
+- GET `/api/admin/caregivers` - List caregivers
+- GET `/api/admin/caregivers/pending` - Pending KYC
+- GET `/api/admin/caregivers/[id]` - Caregiver details
+- POST `/api/admin/caregivers/[id]/verify` - Approve KYC
+- POST `/api/admin/caregivers/[id]/reject` - Reject KYC
+- POST `/api/admin/caregivers/[id]/feature` - Set featured
+
+**Contracts:**
+- GET `/api/admin/contracts` - List contracts
+- GET `/api/admin/contracts/disputes` - List disputes
+- GET `/api/admin/contracts/[id]` - Contract details
+- GET `/api/admin/contracts/[id]/timeline` - Contract timeline
+- POST `/api/admin/contracts/[id]/cancel` - Cancel contract
+- POST `/api/admin/contracts/[id]/resolve` - Resolve dispute
+
+**Payments:**
+- GET `/api/admin/payments` - List payments
+- GET `/api/admin/payments/refunds` - List refunds
+- GET `/api/admin/payments/escrow` - List escrow
+- GET `/api/admin/payments/[id]` - Payment details
+- POST `/api/admin/payments/[id]/refund` - Process refund
+- GET `/api/admin/payments/escrow/[id]` - Escrow details
+- POST `/api/admin/payments/escrow/[id]` - Release escrow
+
+**Tokens:**
+- GET `/api/admin/tokens` - Token overview
+- GET `/api/admin/tokens/stats` - Token statistics
+- GET `/api/admin/tokens/transactions` - Token ledger
+- POST `/api/admin/tokens/adjust` - Manual adjustment
+
+**Settings:**
+- GET `/api/admin/settings` - Platform settings
+- PATCH `/api/admin/settings` - Update settings
+
+**Analytics:**
+- GET `/api/admin/analytics` - General analytics
+- GET `/api/admin/analytics/overview` - Analytics overview
+- GET `/api/admin/analytics/revenue` - Revenue analytics
+- GET `/api/admin/analytics/users` - User analytics
+
+**Notifications:**
+- GET `/api/admin/notifications` - List notifications
+- PATCH `/api/admin/notifications` - Mark all read
+- POST `/api/admin/notifications/[id]/read` - Mark one read
+- DELETE `/api/admin/notifications/[id]/read` - Delete notification
+
+**Logs:**
+- GET `/api/admin/logs` - Audit logs
+
+### Stage Summary:
+- Complete migration endpoint verified ✅
+- All token management APIs created ✅
+- All analytics APIs created ✅
+- Notification management APIs created ✅
+- All endpoints use proper admin verification ✅
+- Linting passed ✅
+- Dev server running without errors ✅
+
