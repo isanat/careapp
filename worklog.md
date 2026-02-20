@@ -537,3 +537,189 @@ Wallet API ◄─────── Turso DB
 - Redirecionamento corrigido ✅
 - Banco Turso sincronizado ✅
 
+---
+## Task ID: 1-a
+**Agent:** Schema Update Agent
+**Task:** Update Prisma Schema for Admin Panel
+
+### Work Task
+Add AdminUser and AdminAction models to the Prisma schema for the Admin Panel MVP implementation.
+
+### Work Summary
+1. ✅ Added `AdminRole` enum with 5 roles:
+   - SUPER_ADMIN: Full access, can modify fees, manage admins
+   - ADMIN: Most operations
+   - SUPPORT: Read + user support
+   - MODERATOR: Content moderation only
+   - ANALYST: Read-only + analytics
+
+2. ✅ Added `AdminUser` model with:
+   - Role-based access control
+   - Custom permissions override (JSON)
+   - Two-Factor Authentication support
+   - isActive flag and lastAdminActionAt tracking
+   - Relation to User model (onDelete: Cascade)
+
+3. ✅ Added `AdminAction` model with:
+   - Action logging (CREATE, UPDATE, DELETE, VIEW, IMPERSONATE, SUSPEND, ACTIVATE, VERIFY_KYC, etc.)
+   - Entity tracking (USER, CONTRACT, PAYMENT, TOKEN, CAREGIVER, REVIEW, etc.)
+   - oldValue/newValue for audit trail (JSON strings)
+   - Context capture (ipAddress, userAgent, reason)
+   - Proper indexes for efficient querying
+
+4. ✅ Added `adminProfile` relation to User model
+
+5. ✅ Ran `bun run db:push` - Successfully synced local SQLite database
+
+6. ✅ Created migration endpoint at `/api/admin/migrate-admin`:
+   - POST endpoint to create AdminUser and AdminAction tables in Turso
+   - GET endpoint to check migration status
+   - Creates necessary indexes for performance
+   - Protected with x-admin-secret header authentication
+
+### Files Modified:
+- `prisma/schema.prisma` - Added AdminRole enum, AdminUser and AdminAction models
+- `src/app/api/admin/migrate-admin/route.ts` - New migration endpoint
+
+### Database Schema:
+```sql
+-- AdminUser table columns:
+id, userId, role, customPermissions, isActive, 
+lastAdminActionAt, twoFactorEnabled, twoFactorSecret, 
+createdAt, updatedAt
+
+-- AdminAction table columns:
+id, adminUserId, action, entityType, entityId, 
+oldValue, newValue, ipAddress, userAgent, reason, createdAt
+
+-- Indexes:
+idx_admin_user_role, idx_admin_user_is_active,
+idx_admin_action_user_date, idx_admin_action_entity, 
+idx_admin_action_created
+```
+
+### Stage Summary:
+- Prisma schema updated ✅
+- Local database synced ✅
+- Migration endpoint created ✅
+- Ready for admin panel UI development
+
+---
+## Task ID: 2-a
+**Agent:** Admin API Developer
+**Task:** Create Admin API Endpoints
+
+### Work Task
+Create all required Admin API endpoints for the IdosoLink Admin Panel MVP, using Turso database and NextAuth for authentication.
+
+### Work Summary
+
+#### 1. Dashboard Stats API (`/api/admin/dashboard/stats/route.ts`)
+- **Existing**: Updated GET endpoint returning KPIs using raw SQL queries
+- **Features**:
+  - Total users, caregivers, families count
+  - Revenue data (from TokenLedger)
+  - Tokens issued, pending KYC, active contracts
+  - Pending disputes count
+  - Revenue and user growth data for last 30 days
+  - Recent activity feed
+
+#### 2. Users List API (`/api/admin/users/route.ts`)
+- **Existing GET**: Updated with pagination and filters (search, role, status, kyc)
+- **NEW POST**: Created user creation endpoint with:
+  - Required fields validation (name, email, password)
+  - Role validation (FAMILY, CAREGIVER, ADMIN)
+  - Password strength validation (min 8 chars)
+  - Email uniqueness check
+  - Password hashing with bcrypt
+  - Automatic wallet creation
+  - Role-specific profile creation (ProfileFamily, ProfileCaregiver, AdminUser)
+  - Admin action logging
+
+#### 3. User Detail API (`/api/admin/users/[id]/route.ts`)
+- **Existing GET**: Returns detailed user info with wallet, profile, contracts, transactions
+- **UPDATED PATCH**: Now supports updating name, email, phone, role with:
+  - Dynamic update query building
+  - Audit logging before/after values
+  - Admin action logging
+- **NEW DELETE**: Soft delete with:
+  - Status set to INACTIVE
+  - Email anonymization (deleted_{id}@deleted.idosolink.pt)
+  - Phone and password cleared
+  - Active contracts check before deletion
+  - Admin users protection
+  - Full audit logging
+
+#### 4. User Suspend API (`/api/admin/users/[id]/suspend/route.ts`) - NEW
+- POST endpoint to suspend user with required reason
+- Minimum 10 characters for reason
+- Prevents suspending admin users
+- Checks if user already suspended
+- Logs action to AdminAction table
+- Captures IP and user agent
+
+#### 5. User Activate API (`/api/admin/users/[id]/activate/route.ts`) - NEW
+- POST endpoint to activate/unsuspend user
+- Optional reason parameter
+- Checks if user needs activation
+- Logs action to AdminAction table
+- Captures IP and user agent
+
+#### 6. Admin Auth Check (`/api/admin/auth/route.ts`) - NEW
+- GET endpoint to check if current user is admin
+- Returns user info and admin profile
+- Returns permissions based on role (SUPER_ADMIN, ADMIN, SUPPORT, MODERATOR, ANALYST)
+- Permission sets include:
+  - canManageUsers, canManageAdmins, canManageContracts
+  - canManagePayments, canManageSettings, canViewLogs
+  - canImpersonate, canModifyFees, canSuspendUsers
+  - canVerifyKyc, canAccessAnalytics
+
+#### 7. Audit Logs API (`/api/admin/logs/route.ts`) - NEW
+- GET endpoint with pagination and filters
+- Filters: action, entityType, adminUserId, startDate, endDate
+- Returns logs with admin info (name, email, role)
+- Parses oldValue/newValue JSON for easy consumption
+- Returns available action types and entity types for filter dropdowns
+
+### Files Created:
+- `src/app/api/admin/auth/route.ts` - Admin auth check
+- `src/app/api/admin/logs/route.ts` - Audit logs
+- `src/app/api/admin/users/[id]/suspend/route.ts` - Suspend user
+- `src/app/api/admin/users/[id]/activate/route.ts` - Activate user
+
+### Files Updated:
+- `src/app/api/admin/users/route.ts` - Added POST for user creation
+- `src/app/api/admin/users/[id]/route.ts` - Enhanced PATCH, added DELETE
+
+### Features Implemented:
+- ✅ All endpoints use Turso db (`@/lib/db-turso`)
+- ✅ All endpoints use NextAuth authOptions (`@/lib/auth-turso`)
+- ✅ Admin role check on all endpoints
+- ✅ Actions logged to AdminAction table
+- ✅ IP address and user agent capture
+- ✅ Reason tracking for destructive actions
+- ✅ oldValue/newValue for audit trail
+- ✅ lastAdminActionAt timestamp update
+
+### API Endpoints Summary:
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/admin/auth` | GET | Check admin status |
+| `/api/admin/dashboard/stats` | GET | Dashboard KPIs |
+| `/api/admin/users` | GET | List users with filters |
+| `/api/admin/users` | POST | Create new user |
+| `/api/admin/users/[id]` | GET | User details |
+| `/api/admin/users/[id]` | PATCH | Update user |
+| `/api/admin/users/[id]` | DELETE | Soft delete user |
+| `/api/admin/users/[id]/suspend` | POST | Suspend user |
+| `/api/admin/users/[id]/activate` | POST | Activate user |
+| `/api/admin/logs` | GET | Audit logs |
+
+### Stage Summary:
+- All admin API endpoints created ✅
+- Authentication and authorization implemented ✅
+- Audit logging implemented ✅
+- Linting passed ✅
+- Ready for frontend admin panel development
+

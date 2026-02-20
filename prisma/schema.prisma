@@ -18,6 +18,16 @@ enum UserRole {
   ADMIN       // Administrador da plataforma
 }
 
+// ==================== ADMIN SYSTEM ====================
+
+enum AdminRole {
+  SUPER_ADMIN    // Full access, can modify fees, manage admins
+  ADMIN          // Most operations
+  SUPPORT        // Read + user support
+  MODERATOR      // Content moderation only
+  ANALYST        // Read-only + analytics
+}
+
 enum UserStatus {
   PENDING       // Cadastro iniciado, aguardando pagamento
   ACTIVE        // Ativo, pode usar a plataforma
@@ -144,6 +154,7 @@ model User {
   // Relations
   profileFamily     ProfileFamily?
   profileCaregiver  ProfileCaregiver?
+  adminProfile      AdminUser?
   wallet            Wallet?
   ledgerEntries     TokenLedger[]
   payments          Payment[]
@@ -758,4 +769,61 @@ model EscrowPayment {
   updatedAt             DateTime @updatedAt
   
   @@index([contractId])
+}
+
+// ==================== ADMIN SYSTEM MODELS ====================
+
+model AdminUser {
+  id              String      @id @default(cuid())
+  userId          String      @unique
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  role            AdminRole   @default(ADMIN)
+  
+  // Permissions override (JSON)
+  customPermissions String?   // JSON object for specific permission overrides
+  
+  // Access
+  isActive        Boolean     @default(true)
+  lastAdminActionAt DateTime?
+  
+  // Two-Factor Authentication
+  twoFactorEnabled Boolean    @default(false)
+  twoFactorSecret  String?
+  
+  // Metadata
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Relations
+  adminActions    AdminAction[]
+  
+  @@index([role])
+  @@index([isActive])
+}
+
+model AdminAction {
+  id              String    @id @default(cuid())
+  adminUserId     String
+  adminUser       AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  
+  // Action Details
+  action          String    // CREATE, UPDATE, DELETE, VIEW, IMPERSONATE, SUSPEND, ACTIVATE, VERIFY_KYC, etc.
+  entityType      String    // USER, CONTRACT, PAYMENT, TOKEN, CAREGIVER, REVIEW, etc.
+  entityId        String?   // ID of affected entity
+  
+  // Data (JSON strings)
+  oldValue        String?   // JSON of previous state
+  newValue        String?   // JSON of new state
+  
+  // Context
+  ipAddress       String?
+  userAgent       String?
+  reason          String?   // Required for destructive actions
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([adminUserId, createdAt])
+  @@index([entityType, entityId])
+  @@index([createdAt])
 }
