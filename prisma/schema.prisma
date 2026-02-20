@@ -1,0 +1,761 @@
+// SeniorToken - IdosoLink Platform Schema
+// SQLite Database
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  FAMILY      // Familiar - quem contrata
+  CAREGIVER   // Cuidador - quem trabalha
+  ADMIN       // Administrador da plataforma
+}
+
+enum UserStatus {
+  PENDING       // Cadastro iniciado, aguardando pagamento
+  ACTIVE        // Ativo, pode usar a plataforma
+  SUSPENDED     // Suspenso por violação
+  INACTIVE      // Desativado pelo usuário
+}
+
+enum VerificationStatus {
+  UNVERIFIED    // Não verificado
+  PENDING       // Em verificação
+  VERIFIED      // Verificado
+  REJECTED      // Rejeitado
+}
+
+enum PaymentType {
+  ACTIVATION        // Pagamento de ativação (€25)
+  TOKEN_PURCHASE    // Compra adicional de tokens
+  CONTRACT_FEE      // Taxa de contrato (€5)
+  SERVICE_PAYMENT   // Pagamento de serviço
+  REDEMPTION        // Resgate de tokens por €
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+  BANK_TRANSFER
+  INTERNAL
+}
+
+enum ContractStatus {
+  DRAFT               // Em criação
+  PENDING_ACCEPTANCE  // Aguardando aceite do cuidador
+  PENDING_PAYMENT     // Aguardando pagamento
+  ACTIVE              // Ativo
+  COMPLETED           // Finalizado
+  CANCELLED           // Cancelado
+  DISPUTED            // Em disputa
+}
+
+enum LedgerType {
+  CREDIT    // Entrada de tokens
+  DEBIT     // Saída de tokens
+}
+
+enum TransactionReason {
+  ACTIVATION_BONUS     // Bônus de ativação
+  CONTRACT_FEE         // Taxa de contrato
+  SERVICE_PAYMENT      // Pagamento de serviço
+  TIP_RECEIVED         // Gorjeta recebida
+  TIP_SENT             // Gorjeta enviada
+  TOKEN_PURCHASE       // Compra de tokens
+  TOKEN_REDEMPTION     // Resgate de tokens
+  PLATFORM_FEE         // Taxa da plataforma
+  REFERRAL_BONUS       // Bônus de indicação
+  ADJUSTMENT           // Ajuste administrativo
+}
+
+enum ServiceType {
+  PERSONAL_CARE      // Cuidados pessoais (higiene, banho)
+  MEDICATION         // Administração de medicação
+  MOBILITY           // Ajuda com mobilidade
+  COMPANIONSHIP      // Companhia e conversa
+  MEAL_PREPARATION   // Preparo de refeições
+  LIGHT_HOUSEWORK    // Tarefas domésticas leves
+  TRANSPORTATION     // Transporte para consultas
+  COGNITIVE_SUPPORT  // Estimulação cognitiva
+  NIGHT_CARE         // Cuidados noturnos
+  PALLIATIVE_CARE    // Cuidados paliativos
+  PHYSIOTHERAPY      // Fisioterapia
+  NURSING_CARE       // Enfermagem
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+// ==================== USER & PROFILES ====================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  phone         String?  @unique
+  name          String
+  passwordHash  String?
+  
+  // Role e Status
+  role          UserRole   @default(FAMILY)
+  status        UserStatus @default(PENDING)
+  
+  // Verificação
+  emailVerified    DateTime?
+  phoneVerified    DateTime?
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  
+  // KYC (Didit)
+  kycSessionId        String?
+  kycSessionCreatedAt DateTime?
+  kycCompletedAt      DateTime?
+  kycConfidence       Int      @default(0)
+  
+  // Metadados
+  profileImage    String?
+  preferredLanguage String @default("pt")
+  timezone        String  @default("Europe/Lisbon")
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lastLoginAt     DateTime?
+  
+  // Relations
+  profileFamily     ProfileFamily?
+  profileCaregiver  ProfileCaregiver?
+  wallet            Wallet?
+  ledgerEntries     TokenLedger[]
+  payments          Payment[]
+  contractsAsFamily   Contract[]  @relation("FamilyContracts")
+  contractsAsCaregiver Contract[] @relation("CaregiverContracts")
+  tipsSent          Tip[]        @relation("TipsSent")
+  tipsReceived      Tip[]        @relation("TipsReceived")
+  reviewsGiven      Review[]     @relation("ReviewsGiven")
+  reviewsReceived   Review[]     @relation("ReviewsReceived")
+  chatMessages      ChatMessage[]
+  chatParticipations ChatParticipant[]
+  notifications     Notification[]
+  sessions          Session[]
+  accounts          Account[]
+}
+
+// Perfil do Familiar (contratante)
+model ProfileFamily {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Localização
+  address         String?
+  city            String?
+  postalCode      String?
+  country         String  @default("PT")
+  latitude        Float?
+  longitude       Float?
+  
+  // Informações do Idoso
+  elderName       String?
+  elderAge        Int?
+  elderNeeds      String?   // Descrição das necessidades
+  medicalConditions String? // Condições médicas relevantes
+  mobilityLevel   String?   // Nível de mobilidade
+  
+  // Contato de Emergência
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?
+  
+  // Preferências
+  preferredServices  String?  // Serviços desejados (JSON array)
+  preferredSchedule  String?  // Horários preferidos (JSON)
+  budgetRange        String?  // Faixa de orçamento
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Perfil do Cuidador (profissional)
+model ProfileCaregiver {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Informações Profissionais
+  title           String?   // Ex: "Enfermeira", "Cuidadora"
+  bio             String?   // Descrição pessoal
+  experienceYears Int?
+  education       String?   // Formação acadêmica
+  certifications  String?   // Certificações (JSON array)
+  languages       String?   // Idiomas falados (JSON array)
+  
+  // Localização e Disponibilidade
+  address         String?
+  city            String?
+  postalCode      String?
+  country         String  @default("PT")
+  latitude        Float?
+  longitude       Float?
+  radiusKm        Int     @default(20)  // Raio de atuação em km
+  
+  // Serviços e Preços
+  services        String?   // Serviços oferecidos (JSON array de ServiceType)
+  hourlyRateEur   Int       @default(15)  // Preço por hora em centavos
+  minimumHours    Int       @default(2)   // Mínimo de horas por serviço
+  
+  // Disponibilidade
+  availabilityJson  String? // Disponibilidade semanal (JSON)
+  availableNow      Boolean @default(false)
+  
+  // Verificação
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  documentType      String?   // Tipo de documento
+  documentNumber    String?   // Número do documento
+  documentVerified  Boolean  @default(false)
+  backgroundCheckStatus String? // Status da verificação de antecedentes
+  
+  // KYC Session (Didit)
+  kycSessionId        String?
+  kycSessionCreatedAt DateTime?
+  kycCompletedAt      DateTime?
+  kycConfidence       Int      @default(0)
+  
+  // Estatísticas
+  totalContracts    Int      @default(0)
+  totalHoursWorked  Int      @default(0)
+  averageRating     Float    @default(0)
+  totalReviews      Int      @default(0)
+  
+  // Portfolio
+  profileImage      String?
+  portfolioImages   String?   // JSON array de URLs
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== WALLET & TOKENS ====================
+
+model Wallet {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Endereço da carteira na blockchain
+  address         String  @unique  // Endereço público (0x...)
+  
+  // Chaves (encryptadas) - Account Abstraction
+  encryptedPrivateKey  String? // Chave privada encryptada
+  salt                String? // Salt para derivação
+  
+  // Balanços
+  balanceTokens    Int     @default(0)  // Saldo de SENT tokens
+  balanceEurCents  Int     @default(0)  // Saldo em centavos de euro (equivalente)
+  
+  // Metadados
+  walletType       String  @default("custodial") // custodial, non-custodial
+  isExported       Boolean @default(false) // Se o usuário exportou a chave
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// Livro-razão de tokens (histórico)
+model TokenLedger {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Tipo e Razão
+  type            LedgerType
+  reason          TransactionReason
+  
+  // Valores
+  amountTokens    Int       // Quantidade de tokens
+  amountEurCents  Int       // Equivalente em centavos de euro
+  
+  // Referências
+  referenceType   String?   // Contract, Payment, Tip, etc.
+  referenceId     String?   // ID da referência
+  
+  // Blockchain
+  txHash          String?   // Hash da transação on-chain
+  
+  // Descrição amigável
+  description     String    // Descrição legível para o usuário
+  
+  // Metadata
+  metadata        String?   // JSON adicional
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([userId, type])
+}
+
+// ==================== PAYMENTS ====================
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Tipo e Status
+  type            PaymentType
+  status          PaymentStatus @default(PENDING)
+  provider        PaymentProvider @default(STRIPE)
+  
+  // Valores
+  amountEurCents  Int       // Valor em centavos de euro
+  tokensAmount    Int       @default(0)  // Quantidade de tokens (se aplicável)
+  platformFee     Int       @default(0)  // Taxa da plataforma em centavos
+  
+  // Stripe
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  stripeCustomerId        String?
+  
+  // Referência
+  contractId      String?   // Se for pagamento de contrato
+  contract        Contract? @relation(fields: [contractId], references: [id])
+  
+  // Metadata
+  description     String?
+  metadata        String?   // JSON adicional
+  
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  paidAt          DateTime?
+  refundedAt      DateTime?
+  
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+// ==================== CONTRACTS ====================
+
+model Contract {
+  id                String          @id @default(cuid())
+  
+  // Partes
+  familyUserId      String
+  familyUser        User            @relation("FamilyContracts", fields: [familyUserId], references: [id])
+  caregiverUserId   String
+  caregiverUser     User            @relation("CaregiverContracts", fields: [caregiverUserId], references: [id])
+  
+  // Status
+  status            ContractStatus  @default(DRAFT)
+  
+  // Detalhes do Serviço
+  title             String?
+  description       String?
+  tasksJson         String?         // Lista de tarefas (JSON array)
+  serviceTypes      String?         // Tipos de serviço (JSON array)
+  
+  // Horários
+  hoursPerWeek      Int?
+  scheduleJson      String?         // Horários detalhados (JSON)
+  
+  // Valores
+  hourlyRateEur     Int             // Taxa por hora em centavos
+  totalHours        Int             // Total de horas
+  totalEurCents     Int             // Valor total em centavos
+  platformFeePct    Int             @default(15) // Percentual da plataforma
+  
+  // Datas
+  startDate         DateTime?
+  endDate           DateTime?
+  
+  // Taxa de contrato (tokens)
+  familyFeeTokens   Int             @default(0)
+  caregiverFeeTokens Int            @default(0)
+  familyFeePaid     Boolean         @default(false)
+  caregiverFeePaid  Boolean         @default(false)
+  
+  // Aceite
+  acceptedByFamilyAt    DateTime?
+  acceptedByCaregiverAt DateTime?
+  
+  // Blockchain
+  onchainHash       String?         // Hash do contrato gravado on-chain
+  onchainTxHash     String?         // Hash da transação
+  onchainCreatedAt  DateTime?
+  
+  // Pagamentos
+  totalPaidEurCents Int             @default(0)
+  
+  // Timestamps
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+  
+  // Relations
+  acceptance        ContractAcceptance?
+  payments          Payment[]
+  tips              Tip[]
+  reviews           Review[]
+  
+  @@index([familyUserId, status])
+  @@index([caregiverUserId, status])
+  @@index([status, createdAt])
+}
+
+model ContractAcceptance {
+  id                    String   @id @default(cuid())
+  contractId            String   @unique
+  contract              Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  
+  acceptedByFamilyAt    DateTime?
+  familyIpAddress       String?
+  familyUserAgent       String?
+  
+  acceptedByCaregiverAt DateTime?
+  caregiverIpAddress    String?
+  caregiverUserAgent    String?
+  
+  createdAt             DateTime @default(now())
+}
+
+// ==================== TIPS (GORJETAS) ====================
+
+model Tip {
+  id              String   @id @default(cuid())
+  
+  // Contrato e Usuários
+  contractId      String
+  contract        Contract @relation(fields: [contractId], references: [id])
+  fromUserId      String
+  fromUser        User     @relation("TipsSent", fields: [fromUserId], references: [id])
+  toUserId        String
+  toUser          User     @relation("TipsReceived", fields: [toUserId], references: [id])
+  
+  // Valores
+  amountTokens    Int
+  amountEurCents  Int       // Equivalente em euro no momento
+  
+  // Mensagem
+  message         String?
+  
+  // Blockchain
+  txHash          String?
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([toUserId, createdAt])
+  @@index([contractId])
+}
+
+// ==================== REVIEWS ====================
+
+model Review {
+  id              String   @id @default(cuid())
+  
+  // Contrato e Usuários
+  contractId      String
+  contract        Contract @relation(fields: [contractId], references: [id])
+  fromUserId      String
+  fromUser        User     @relation("ReviewsGiven", fields: [fromUserId], references: [id])
+  toUserId        String
+  toUser          User     @relation("ReviewsReceived", fields: [toUserId], references: [id])
+  
+  // Avaliação
+  rating          Int      // 1-5
+  comment         String?
+  
+  // Categorias específicas
+  punctualityRating   Int?  // 1-5
+  professionalismRating Int? // 1-5
+  communicationRating Int?  // 1-5
+  qualityRating       Int?  // 1-5
+  
+  // Status
+  isPublic        Boolean  @default(true)
+  isModerated     Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([toUserId, createdAt])
+}
+
+// ==================== CHAT ====================
+
+model ChatRoom {
+  id              String   @id @default(cuid())
+  
+  // Tipo de chat
+  type            String   @default("direct") // direct, contract, support
+  
+  // Referência (contrato, etc.)
+  referenceType   String?
+  referenceId     String?
+  
+  // Status
+  isActive        Boolean  @default(true)
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  participants    ChatParticipant[]
+  messages        ChatMessage[]
+}
+
+model ChatParticipant {
+  id              String   @id @default(cuid())
+  
+  chatRoomId      String
+  chatRoom        ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Status
+  lastReadAt      DateTime?
+  unreadCount     Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([chatRoomId, userId])
+}
+
+model ChatMessage {
+  id              String   @id @default(cuid())
+  
+  chatRoomId      String
+  chatRoom        ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  
+  senderId        String
+  sender          User     @relation(fields: [senderId], references: [id])
+  
+  // Conteúdo
+  content         String
+  messageType     String   @default("text") // text, image, file, system
+  
+  // Metadata
+  metadata        String?   // JSON (file url, image, etc.)
+  
+  // Status
+  isEdited        Boolean  @default(false)
+  isDeleted       Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([chatRoomId, createdAt])
+}
+
+// ==================== NOTIFICATIONS ====================
+
+model Notification {
+  id              String   @id @default(cuid())
+  
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Tipo e Conteúdo
+  type            String   // contract, payment, message, system, etc.
+  title           String
+  message         String
+  
+  // Referência
+  referenceType   String?
+  referenceId     String?
+  
+  // Status
+  isRead          Boolean  @default(false)
+  readAt          DateTime?
+  
+  // Entrega
+  emailSent       Boolean  @default(false)
+  pushSent        Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([userId, isRead, createdAt])
+}
+
+// ==================== SYSTEM SETTINGS ====================
+
+model PlatformSettings {
+  id              String   @id @default(cuid())
+  
+  // Token Economics
+  activationCostEurCents    Int     @default(2500)  // €25
+  contractFeeEurCents       Int     @default(500)   // €5
+  platformFeePercent        Int     @default(15)    // 15%
+  
+  // Token Price
+  tokenPriceEurCents        Int     @default(100)   // 1 token = €0.01 initially
+  
+  // Reserva
+  totalReserveEurCents      Int     @default(0)
+  totalTokensMinted         Int     @default(0)
+  totalTokensBurned         Int     @default(0)
+  
+  updatedAt       DateTime @updatedAt
+}
+
+// ==================== AUTH (NextAuth) ====================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  createdAt         DateTime @default(now())
+  
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  
+  @@unique([identifier, token])
+}
+
+// ==================== INTERVIEWS ====================
+
+model Interview {
+  id              String   @id @default(cuid())
+  
+  // Participants
+  familyUserId    String
+  caregiverUserId String
+  contractId      String?
+  
+  // Status
+  status          String   @default("SCHEDULED") // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
+  
+  // Scheduling
+  scheduledAt     DateTime
+  durationMinutes Int      @default(30)
+  
+  // Video
+  videoRoomUrl    String?
+  videoProvider   String   @default("jitsi")
+  
+  // Questionnaire (family fills after interview)
+  questionnaireJson String? // JSON with ratings and notes
+  familyCompletedAt DateTime?
+  
+  // Caregiver feedback
+  caregiverNotes    String?
+  caregiverCompletedAt DateTime?
+  
+  // Timestamps
+  startedAt       DateTime?
+  endedAt         DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([familyUserId, status])
+  @@index([caregiverUserId, status])
+}
+
+// ==================== TERMS ACCEPTANCE ====================
+
+model TermsAcceptance {
+  id            String   @id @default(cuid())
+  userId        String
+  termsType     String   // terms_of_use, privacy_policy, contract_template, mediation_policy
+  termsVersion  String   @default("1.0")
+  ipAddress     String?
+  userAgent     String?
+  acceptedAt    DateTime @default(now())
+  
+  @@index([userId, termsType])
+}
+
+// ==================== GUIDE ACCEPTANCE ====================
+
+model GuideAcceptance {
+  id            String   @id @default(cuid())
+  userId        String
+  guideType     String   @default("best_practices")
+  guideVersion  String   @default("1.0")
+  acknowledgedAt DateTime @default(now())
+  ipAddress     String?
+  userAgent     String?
+  
+  @@index([userId])
+}
+
+// ==================== ESCROW PAYMENTS ====================
+
+model EscrowPayment {
+  id                    String   @id @default(cuid())
+  contractId            String
+  paymentIntentId       String   @unique // Stripe PaymentIntent ID
+  
+  // Amounts
+  totalAmountCents      Int
+  platformFeeCents      Int
+  caregiverAmountCents  Int
+  
+  // Status
+  status                String   @default("HELD") // HELD, RELEASED, REFUNDED, PARTIAL_REFUND
+  
+  // Stripe Connect
+  familyCustomerId      String?
+  caregiverAccountId    String?  // Stripe Connect account
+  transferId            String?  // Transfer to caregiver
+  platformTransferId    String?  // Transfer to platform
+  
+  // Timestamps
+  capturedAt            DateTime?
+  releasedAt            DateTime?
+  refundedAt            DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([contractId])
+}
