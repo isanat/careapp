@@ -5,6 +5,7 @@ import {
   Users, 
   Shield, 
   Star, 
+  StarOff,
   Wallet, 
   FileText, 
   MessageSquare, 
@@ -12,6 +13,8 @@ import {
   Search, 
   Home,
   User,
+  UserCheck,
+  UserX,
   Clock,
   MapPin,
   Phone,
@@ -20,10 +23,13 @@ import {
   ChevronRight,
   ChevronLeft,
   ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
   Menu,
   X,
   Check,
   AlertCircle,
+  AlertTriangle,
   Info,
   HelpCircle,
   ExternalLink,
@@ -55,16 +61,31 @@ import {
   Sun,
   Video,
   MoreVertical,
+  MoreHorizontal,
   Send,
   Briefcase,
   Loader2,
   IdCard,
   Handshake,
+  HeartHandshake,
   Book,
   Smartphone,
   Building,
   CreditCard,
-  Pill
+  Pill,
+  LayoutDashboard,
+  BarChart3,
+  BarChart2,
+  FileSearch,
+  Headphones,
+  TrendingUp,
+  TrendingDown,
+  Download,
+  Activity,
+  Percent,
+  Flag,
+  Server,
+  SlidersHorizontal,
 } from "lucide-react";
 
 // Custom Icons for IdosoLink
@@ -113,6 +134,10 @@ export function IconToken({ className }: { className?: string }) {
   );
 }
 
+// ============================================
+// BASIC ICONS - Direct mappings from Lucide
+// ============================================
+
 export function IconCare({ className }: { className?: string }) {
   return <Heart className={className} />;
 }
@@ -145,6 +170,10 @@ export function IconChat({ className }: { className?: string }) {
   return <MessageSquare className={className} />;
 }
 
+export function IconMessageSquare({ className }: { className?: string }) {
+  return <MessageSquare className={className} />;
+}
+
 export function IconSettings({ className }: { className?: string }) {
   return <Settings className={className} />;
 }
@@ -159,6 +188,14 @@ export function IconHome({ className }: { className?: string }) {
 
 export function IconUser({ className }: { className?: string }) {
   return <User className={className} />;
+}
+
+export function IconUserCheck({ className }: { className?: string }) {
+  return <UserCheck className={className} />;
+}
+
+export function IconUserOff({ className }: { className?: string }) {
+  return <UserX className={className} />;
 }
 
 export function IconClock({ className }: { className?: string }) {
@@ -193,6 +230,14 @@ export function IconChevronDown({ className }: { className?: string }) {
   return <ChevronDown className={className} />;
 }
 
+export function IconChevronsLeft({ className }: { className?: string }) {
+  return <ChevronsLeft className={className} />;
+}
+
+export function IconChevronsRight({ className }: { className?: string }) {
+  return <ChevronsRight className={className} />;
+}
+
 export function IconMenu({ className }: { className?: string }) {
   return <Menu className={className} />;
 }
@@ -201,17 +246,14 @@ export function IconClose({ className }: { className?: string }) {
   return <X className={className} />;
 }
 
-// Alias for IconClose (common naming pattern)
 export function IconX({ className }: { className?: string }) {
   return <X className={className} />;
 }
 
-// IconHeart alias
 export function IconHeart({ className }: { className?: string }) {
   return <Heart className={className} />;
 }
 
-// IconMapPin alias
 export function IconMapPin({ className }: { className?: string }) {
   return <MapPin className={className} />;
 }
@@ -268,6 +310,10 @@ export function IconCoins({ className }: { className?: string }) {
   return <Coins className={className} />;
 }
 
+export function IconCoin({ className }: { className?: string }) {
+  return <Coins className={className} />;
+}
+
 export function IconGift({ className }: { className?: string }) {
   return <Gift className={className} />;
 }
@@ -320,6 +366,10 @@ export function IconRefresh({ className }: { className?: string }) {
   return <RefreshCw className={className} />;
 }
 
+export function IconLoader({ className }: { className?: string }) {
+  return <Loader2 className={className} />;
+}
+
 export function IconLoader2({ className }: { className?: string }) {
   return <Loader2 className={className} />;
 }
@@ -344,7 +394,6 @@ export function IconSun({ className }: { className?: string }) {
   return <Sun className={className} />;
 }
 
-// Additional aliases for common usage patterns
 export function IconShield({ className }: { className?: string }) {
   return <Shield className={className} />;
 }
@@ -353,12 +402,20 @@ export function IconStar({ className }: { className?: string }) {
   return <Star className={className} />;
 }
 
+export function IconStarOff({ className }: { className?: string }) {
+  return <StarOff className={className} />;
+}
+
 export function IconVideo({ className }: { className?: string }) {
   return <Video className={className} />;
 }
 
 export function IconMoreVertical({ className }: { className?: string }) {
   return <MoreVertical className={className} />;
+}
+
+export function IconMoreHorizontal({ className }: { className?: string }) {
+  return <MoreHorizontal className={className} />;
 }
 
 export function IconSend({ className }: { className?: string }) {
@@ -377,8 +434,16 @@ export function IconFile({ className }: { className?: string }) {
   return <FileText className={className} />;
 }
 
+export function IconFileText({ className }: { className?: string }) {
+  return <FileText className={className} />;
+}
+
 export function IconHandshake({ className }: { className?: string }) {
   return <Handshake className={className} />;
+}
+
+export function IconHeartHandshake({ className }: { className?: string }) {
+  return <HeartHandshake className={className} />;
 }
 
 export function IconBook({ className }: { className?: string }) {
@@ -405,12 +470,137 @@ export function IconAlertCircle({ className }: { className?: string }) {
   return <AlertCircle className={className} />;
 }
 
+export function IconAlertTriangle({ className }: { className?: string }) {
+  return <AlertTriangle className={className} />;
+}
+
+export function IconUsers({ className }: { className?: string }) {
+  return <Users className={className} />;
+}
+
+export function IconLayoutDashboard({ className }: { className?: string }) {
+  return <LayoutDashboard className={className} />;
+}
+
+export function IconBarChart({ className }: { className?: string }) {
+  return <BarChart3 className={className} />;
+}
+
+export function IconFileSearch({ className }: { className?: string }) {
+  return <FileSearch className={className} />;
+}
+
+export function IconHeadphones({ className }: { className?: string }) {
+  return <Headphones className={className} />;
+}
+
+export function IconTrendingUp({ className }: { className?: string }) {
+  return <TrendingUp className={className} />;
+}
+
+export function IconTrendingDown({ className }: { className?: string }) {
+  return <TrendingDown className={className} />;
+}
+
+export function IconDownload({ className }: { className?: string }) {
+  return <Download className={className} />;
+}
+
+export function IconActivity({ className }: { className?: string }) {
+  return <Activity className={className} />;
+}
+
+export function IconPercentage({ className }: { className?: string }) {
+  return <Percent className={className} />;
+}
+
+export function IconFlag({ className }: { className?: string }) {
+  return <Flag className={className} />;
+}
+
+export function IconServer({ className }: { className?: string }) {
+  return <Server className={className} />;
+}
+
+export function IconAdjustments({ className }: { className?: string }) {
+  return <SlidersHorizontal className={className} />;
+}
+
+// ============================================
+// HEALTH ICONS - Custom icons for healthcare
+// ============================================
+
+export function IconHealthCare({ className }: { className?: string }) {
+  return <Heart className={className} />;
+}
+
+export function IconHealthFamily({ className }: { className?: string }) {
+  return <Users className={className} />;
+}
+
+export function IconHealthCaregiver({ className }: { className?: string }) {
+  return <User className={className} />;
+}
+
+export function IconHealthContract({ className }: { className?: string }) {
+  return <FileText className={className} />;
+}
+
+export function IconHealthPayment({ className }: { className?: string }) {
+  return <CreditCard className={className} />;
+}
+
+export function IconHealthToken({ className }: { className?: string }) {
+  return <Coins className={className} />;
+}
+
+export function IconHealthWallet({ className }: { className?: string }) {
+  return <Wallet className={className} />;
+}
+
+export function IconHealthTrust({ className }: { className?: string }) {
+  return <Shield className={className} />;
+}
+
+export function IconHealthReputation({ className }: { className?: string }) {
+  return <Star className={className} />;
+}
+
+export function IconHealthSchedule({ className }: { className?: string }) {
+  return <Calendar className={className} />;
+}
+
+export function IconHealthSupport({ className }: { className?: string }) {
+  return <Headphones className={className} />;
+}
+
+export function IconHealthBurn({ className }: { className?: string }) {
+  return <Activity className={className} />;
+}
+
+export function IconHealthWellness({ className }: { className?: string }) {
+  return <Heart className={className} />;
+}
+
+export function IconHealthMedication({ className }: { className?: string }) {
+  return <Pill className={className} />;
+}
+
+export function IconHealthHomeCare({ className }: { className?: string }) {
+  return <Home className={className} />;
+}
+
+export function IconHealthElder({ className }: { className?: string }) {
+  return <User className={className} />;
+}
+
 // Re-export all lucide icons for convenience
 export {
   Heart,
   Users,
   Shield,
   Star,
+  StarOff,
   Wallet,
   FileText,
   MessageSquare,
@@ -418,6 +608,8 @@ export {
   Search,
   Home,
   User,
+  UserCheck,
+  UserX,
   Clock,
   MapPin,
   Phone,
@@ -425,10 +617,14 @@ export {
   Lock,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
   Menu,
   X,
   Check,
   AlertCircle,
+  AlertTriangle,
   Info,
   HelpCircle,
   ExternalLink,
@@ -460,13 +656,27 @@ export {
   Sun,
   Video,
   MoreVertical,
+  MoreHorizontal,
   Send,
   Loader2,
   IdCard,
   Handshake,
+  HeartHandshake,
   Book,
   Smartphone,
   Building,
   CreditCard,
   Pill,
+  LayoutDashboard,
+  BarChart3,
+  FileSearch,
+  Headphones,
+  TrendingUp,
+  TrendingDown,
+  Download,
+  Activity,
+  Percent,
+  Flag,
+  Server,
+  SlidersHorizontal,
 };
