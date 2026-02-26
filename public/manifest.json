@@ -1,0 +1,20 @@
+{
+  "name": "IdosoLink - Cuidados para Idosos",
+  "short_name": "IdosoLink",
+  "description": "Plataforma de cuidados para idosos com tokens blockchain",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2F6F6D",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "lifestyle", "social"],
+  "lang": "pt-BR"
+}
