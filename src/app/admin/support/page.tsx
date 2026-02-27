@@ -1,12 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect, useCallback } from "react";
+import { PageHeader } from "@/components/admin/common/page-header";
+import { StatsCard } from "@/components/admin/common/stats-card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   IconHeadphones,
   IconRefresh,
@@ -14,12 +33,11 @@ import {
   IconClock,
   IconUser,
   IconMail,
-  IconAlertCircle,
+  IconAlertTriangle,
   IconCheck,
+  IconMessage,
 } from "@/components/icons";
-import { AdminLayout } from "@/components/admin/layout/admin-layout";
-import { format } from "date-fns";
-import { pt } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 interface SupportTicket {
   id: string;
@@ -27,82 +45,126 @@ interface SupportTicket {
   userName: string;
   userEmail: string;
   subject: string;
+  description: string;
+  category: string;
   status: string;
   priority: string;
   createdAt: string;
   updatedAt: string;
+  resolvedAt?: string;
+}
+
+interface TicketStats {
+  total: number;
+  open: number;
+  inProgress: number;
+  resolved: number;
+  urgent: number;
 }
 
 export default function AdminSupportPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { toast } = useToast();
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<TicketStats>({
+    total: 0,
+    open: 0,
+    inProgress: 0,
+    resolved: 0,
+    urgent: 0,
+  });
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  
+  // Dialog states
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [resolveDialogOpen, setResolveDialogOpen] = useState(false);
+  const [resolution, setResolution] = useState("");
+  const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
-    fetchTickets();
-  }, []);
-
-  const fetchTickets = async () => {
-    setIsLoading(true);
+  const fetchTickets = useCallback(async () => {
+    setLoading(true);
     try {
-      // Mock data for now since we don't have a tickets table
-      setTickets([
-        {
-          id: "1",
-          userId: "user1",
-          userName: "João Silva",
-          userEmail: "joao@email.com",
-          subject: "Problema com pagamento",
-          status: "open",
-          priority: "high",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        {
-          id: "2",
-          userId: "user2",
-          userName: "Maria Santos",
-          userEmail: "maria@email.com",
-          subject: "Dúvida sobre contrato",
-          status: "pending",
-          priority: "medium",
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          updatedAt: new Date(Date.now() - 86400000).toISOString(),
-        },
-      ]);
+      const params = new URLSearchParams();
+      if (statusFilter !== "all") params.set("status", statusFilter);
+      if (priorityFilter !== "all") params.set("priority", priorityFilter);
+
+      const response = await fetch(`/api/admin/support?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setTickets(data.tickets || []);
+        setStats(data.stats || { total: 0, open: 0, inProgress: 0, resolved: 0, urgent: 0 });
+      }
     } catch (error) {
       console.error("Error fetching tickets:", error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
+    }
+  }, [statusFilter, priorityFilter]);
+
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
+
+  const handleUpdateStatus = async (ticketId: string, newStatus: string) => {
+    setUpdating(true);
+    try {
+      const response = await fetch(`/api/admin/support/${ticketId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus, resolution }),
+      });
+
+      if (response.ok) {
+        toast({ title: "Sucesso", description: "Status atualizado" });
+        setResolveDialogOpen(false);
+        setDetailsOpen(false);
+        setResolution("");
+        fetchTickets();
+      } else {
+        toast({ title: "Erro", description: "Falha ao atualizar", variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Erro", description: "Falha ao atualizar", variant: "destructive" });
+    } finally {
+      setUpdating(false);
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
+    const config: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string; className?: string }> = {
       open: { variant: "destructive", label: "Aberto" },
-      pending: { variant: "secondary", label: "Pendente" },
-      resolved: { variant: "default", label: "Resolvido" },
+      in_progress: { variant: "secondary", label: "Em Progresso", className: "bg-blue-100 text-blue-700" },
+      waiting_user: { variant: "outline", label: "Aguardando Usuário" },
+      resolved: { variant: "default", label: "Resolvido", className: "bg-green-100 text-green-700" },
       closed: { variant: "outline", label: "Fechado" },
     };
-    const config = variants[status] || variants.open;
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    const c = config[status] || config.open;
+    return <Badge variant={c.variant} className={c.className}>{c.label}</Badge>;
   };
 
   const getPriorityBadge = (priority: string) => {
-    const colors: Record<string, string> = {
-      high: "text-red-500",
-      medium: "text-yellow-500",
-      low: "text-green-500",
+    const config: Record<string, { className: string; label: string }> = {
+      urgent: { className: "bg-red-100 text-red-700", label: "URGENTE" },
+      high: { className: "bg-orange-100 text-orange-700", label: "Alta" },
+      normal: { className: "bg-yellow-100 text-yellow-700", label: "Normal" },
+      low: { className: "bg-gray-100 text-gray-700", label: "Baixa" },
     };
-    return <span className={colors[priority] || ""}>{priority.toUpperCase()}</span>;
+    const c = config[priority] || config.normal;
+    return <Badge variant="outline" className={c.className}>{c.label}</Badge>;
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      general: "Geral",
+      payment: "Pagamento",
+      contract: "Contrato",
+      technical: "Técnico",
+      complaint: "Reclamação",
+    };
+    return labels[category] || category;
   };
 
   const filteredTickets = tickets.filter(
@@ -112,140 +174,301 @@ export default function AdminSupportPage() {
       ticket.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (status === "loading" || !session) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Suporte</h1>
-            <p className="text-muted-foreground">Gerenciar tickets de suporte</p>
-          </div>
-          <Button onClick={fetchTickets} variant="outline">
+    <div className="space-y-6">
+      <PageHeader
+        title="Suporte"
+        description="Gerenciar tickets de suporte"
+        actions={
+          <Button variant="outline" onClick={fetchTickets}>
             <IconRefresh className="h-4 w-4 mr-2" />
             Atualizar
           </Button>
-        </div>
+        }
+      />
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Tickets Abertos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-500">
-                {tickets.filter((t) => t.status === "open").length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-500">
-                {tickets.filter((t) => t.status === "pending").length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Resolvidos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-500">
-                {tickets.filter((t) => t.status === "resolved").length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Total</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{tickets.length}</div>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Stats */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <StatsCard
+          title="Total"
+          value={stats.total}
+          icon={<IconHeadphones className="h-5 w-5" />}
+          loading={loading}
+        />
+        <StatsCard
+          title="Abertos"
+          value={stats.open}
+          description="Aguardando atendimento"
+          icon={<IconAlertTriangle className="h-5 w-5" />}
+          loading={loading}
+          className="border-red-200"
+        />
+        <StatsCard
+          title="Em Progresso"
+          value={stats.inProgress}
+          icon={<IconClock className="h-5 w-5" />}
+          loading={loading}
+          className="border-blue-200"
+        />
+        <StatsCard
+          title="Resolvidos"
+          value={stats.resolved}
+          icon={<IconCheck className="h-5 w-5" />}
+          loading={loading}
+          className="border-green-200"
+        />
+        <StatsCard
+          title="Urgentes"
+          value={stats.urgent}
+          icon={<IconAlertTriangle className="h-5 w-5" />}
+          loading={loading}
+          className="border-orange-200"
+        />
+      </div>
 
-        {/* Search */}
-        <div className="relative">
-          <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar tickets..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+      {/* Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="relative flex-1">
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                placeholder="Buscar por assunto, nome ou email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="open">Abertos</SelectItem>
+                <SelectItem value="in_progress">Em Progresso</SelectItem>
+                <SelectItem value="waiting_user">Aguardando</SelectItem>
+                <SelectItem value="resolved">Resolvidos</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Prioridade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="urgent">Urgente</SelectItem>
+                <SelectItem value="high">Alta</SelectItem>
+                <SelectItem value="normal">Normal</SelectItem>
+                <SelectItem value="low">Baixa</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Tickets List */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconHeadphones className="h-5 w-5" />
-              Tickets de Suporte
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              </div>
-            ) : filteredTickets.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <IconHeadphones className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhum ticket encontrado</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredTickets.map((ticket) => (
-                  <div
-                    key={ticket.id}
-                    className="border rounded-lg p-4 hover:bg-muted/50 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+      {/* Tickets List */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Tickets de Suporte</CardTitle>
+          <CardDescription>
+            {filteredTickets.length} ticket(s) encontrado(s)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="p-4 space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 p-4 border-b">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredTickets.length === 0 ? (
+            <div className="text-center py-12 text-slate-500">
+              <IconHeadphones className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Nenhum ticket encontrado</p>
+              <p className="text-sm mt-2">Os tickets de suporte aparecerão aqui quando os usuários os criarem.</p>
+            </div>
+          ) : (
+            <div className="divide-y">
+              {filteredTickets.map((ticket) => (
+                <div
+                  key={ticket.id}
+                  className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                  onClick={() => {
+                    setSelectedTicket(ticket);
+                    setDetailsOpen(true);
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-cyan-100 text-cyan-700">
+                          {ticket.userName?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
                           {getStatusBadge(ticket.status)}
                           {getPriorityBadge(ticket.priority)}
+                          <Badge variant="outline" className="text-xs">
+                            {getCategoryLabel(ticket.category)}
+                          </Badge>
                         </div>
                         <h3 className="font-medium">{ticket.subject}</h3>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                        <p className="text-sm text-slate-500 line-clamp-1">{ticket.description}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
                           <span className="flex items-center gap-1">
-                            <IconUser className="h-4 w-4" />
+                            <IconUser className="h-3 w-3" />
                             {ticket.userName}
                           </span>
                           <span className="flex items-center gap-1">
-                            <IconMail className="h-4 w-4" />
+                            <IconMail className="h-3 w-3" />
                             {ticket.userEmail}
                           </span>
                           <span className="flex items-center gap-1">
-                            <IconClock className="h-4 w-4" />
-                            {format(new Date(ticket.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}
+                            <IconClock className="h-3 w-3" />
+                            {new Date(ticket.createdAt).toLocaleDateString("pt-PT")}
                           </span>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">
-                        Ver Detalhes
-                      </Button>
                     </div>
+                    <Button variant="outline" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedTicket(ticket);
+                      setDetailsOpen(true);
+                    }}>
+                      Ver Detalhes
+                    </Button>
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Ticket Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selectedTicket?.subject}</DialogTitle>
+            <DialogDescription>
+              Ticket #{selectedTicket?.id}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedTicket && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                {getStatusBadge(selectedTicket.status)}
+                {getPriorityBadge(selectedTicket.priority)}
+                <Badge variant="outline">{getCategoryLabel(selectedTicket.category)}</Badge>
               </div>
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-slate-500">Utilizador</p>
+                  <p className="font-medium">{selectedTicket.userName}</p>
+                  <p className="text-slate-500">{selectedTicket.userEmail}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500">Criado em</p>
+                  <p className="font-medium">
+                    {new Date(selectedTicket.createdAt).toLocaleString("pt-PT")}
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-slate-500 text-sm mb-2">Descrição</p>
+                <p className="text-sm bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                  {selectedTicket.description}
+                </p>
+              </div>
+              
+              {selectedTicket.resolvedAt && (
+                <div>
+                  <p className="text-slate-500 text-sm mb-2">Resolução</p>
+                  <p className="text-sm bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-green-700 dark:text-green-400">
+                    Resolvido em {new Date(selectedTicket.resolvedAt).toLocaleString("pt-PT")}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <DialogFooter className="flex gap-2">
+            {selectedTicket?.status !== "resolved" && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    handleUpdateStatus(selectedTicket.id, "in_progress");
+                  }}
+                  disabled={updating}
+                >
+                  Em Progresso
+                </Button>
+                <Button
+                  onClick={() => {
+                    setDetailsOpen(false);
+                    setResolveDialogOpen(true);
+                  }}
+                  disabled={updating}
+                >
+                  <IconCheck className="h-4 w-4 mr-2" />
+                  Resolver
+                </Button>
+              </>
             )}
-          </CardContent>
-        </Card>
-      </div>
-    </AdminLayout>
+            <Button variant="ghost" onClick={() => setDetailsOpen(false)}>
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Resolve Dialog */}
+      <Dialog open={resolveDialogOpen} onOpenChange={setResolveDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Resolver Ticket</DialogTitle>
+            <DialogDescription>
+              Adicione uma resolução para este ticket
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Resolução</Label>
+              <Textarea
+                value={resolution}
+                onChange={(e) => setResolution(e.target.value)}
+                placeholder="Descreva como o ticket foi resolvido..."
+                rows={4}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setResolveDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => handleUpdateStatus(selectedTicket?.id || "", "resolved")}
+              disabled={updating || !resolution.trim()}
+            >
+              {updating ? "A resolver..." : "Resolver Ticket"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

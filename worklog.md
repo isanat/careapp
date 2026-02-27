@@ -724,6 +724,204 @@ Create all required Admin API endpoints for the IdosoLink Admin Panel MVP, using
 - Ready for frontend admin panel development
 
 ---
+## Task ID: admin-uiux-audit
+**Agent:** Agente 2 - UI/UX Auditor
+
+### Work Log:
+
+#### Página: /admin/dashboard
+**Status:** ✅ BOM
+- Usa componentes comuns (PageHeader, StatsCard)
+- Layout responsivo com grid
+- Loading states implementados
+- Links para alertas pendentes funcionais
+- **Problema:** Textos hardcoded (sem i18n)
+- **Problema:** Link "/admin/users/new" pode não existir
+
+#### Página: /admin/users (Famílias)
+**Status:** ✅ BOM
+- DataTable com paginação e filtros
+- Filtros responsivos (flex-col mobile)
+- Ações via DropdownMenu
+- Row click navigation
+- **Problema:** prompt() nativo para suspensão (UX ruim)
+- **Problema:** Textos hardcoded
+
+#### Página: /admin/users/[id]
+**Status:** ✅ BOM
+- Layout em grid responsivo
+- Tabs para organizar conteúdo
+- Breadcrumbs funcionais
+- Loading skeleton
+- **Problema:** prompt() nativo para ações
+- **Problema:** Aba "Contratos" não lista contratos reais
+
+#### Página: /admin/caregivers
+**Status:** ✅ BOM
+- Stats Cards com variantes
+- Filtros bem organizados
+- Ações inline (verify/reject/feature)
+- Toast notifications
+- **Problema:** Badge "12" no sidebar é hardcoded
+
+#### Página: /admin/caregivers/[id]
+**Status:** ✅ EXCELENTE
+- Layout em 3 colunas
+- Modal de rejeição customizado
+- Switch para featured
+- DataTables para contracts/reviews
+- Loading states completos
+
+#### Página: /admin/contracts
+**Status:** ✅ BOM
+- Status tabs como filtros
+- Badge de disputa destacado
+- Row click navigation
+- **Problema:** prompt() nativo para cancelamento
+
+#### Página: /admin/contracts/[id]
+**Status:** ✅ EXCELENTE
+- Tabs organizadas (overview, parties, payments, dispute, timeline)
+- Dispute resolution com botões claros
+- Acceptance logs com IP/user agent
+- Timeline visual
+
+#### Página: /admin/payments
+**Status:** ✅ BOM
+- Filtros bem organizados
+- Tabela com ações
+- Link externo para Stripe
+- **Problema:** prompt() nativo para refund
+
+#### Página: /admin/moderation
+**Status:** ✅ BOM
+- Tabs por tipo de conteúdo
+- Cards de item com ações
+- Status badges coloridos
+- **Problema:** API endpoint pode não existir
+
+#### Página: /admin/settings
+**Status:** ✅ EXCELENTE
+- Tabs por categoria (taxas, kyc, pagamentos, vídeo)
+- Formulários bem organizados
+- Switches para toggles
+- Status de integrações
+
+#### Página: /admin/analytics
+**Status:** ✅ BOM
+- Seletor de período
+- Charts simples (CSS bars)
+- Export CSV funcional
+- **Problema:** Charts deveriam usar biblioteca (Recharts)
+
+#### Página: /admin/logs
+**Status:** ✅ BOM
+- Filtros por ação e entidade
+- Tabela com cores por ação
+- Paginação manual
+- **Problema:** Badge de entidade sem ícone
+
+#### Página: /admin/notifications
+**Status:** ✅ BOM
+- Tabs (todas/não lidas)
+- Cards com severidade visual
+- Marcar como lida funcional
+- Stats cards
+
+#### Página: /admin/support
+**Status:** ⚠️ PROBLEMAS
+- Usa AdminLayout internamente (duplica layout)
+- Dados mockados hardcoded
+- Não usa PageHeader comum
+- **CRÍTICO:** Estrutura diferente das outras páginas
+
+### Consistência Visual:
+| Aspecto | Status |
+|---------|--------|
+| PageHeader | ✅ Usado em 10/11 páginas |
+| StatsCard | ✅ Usado consistentemente |
+| DataTable | ✅ Usado para listas |
+| StatusBadge | ✅ Usado para status |
+| Loading states | ✅ Skeletons em todas |
+| Error handling | ✅ Toast notifications |
+
+### Fluxo de Navegação:
+| Link | Status |
+|------|--------|
+| Sidebar → Pages | ✅ Funcional |
+| Breadcrumbs | ✅ Implementado |
+| Row click → Details | ✅ Funcional |
+| Back buttons | ✅ Presentes |
+| Dashboard alerts | ✅ Links corretos |
+
+### Responsividade:
+| Breakpoint | Status |
+|------------|--------|
+| Desktop (lg) | ✅ Grid 3-4 colunas |
+| Tablet (md) | ✅ Grid 2 colunas |
+| Mobile | ✅ Grid 1 coluna, filtros stacked |
+| Sidebar mobile | ✅ Sheet drawer |
+
+### Componentes UI (shadcn/ui):
+✅ Todos os componentes usam shadcn/ui corretamente:
+- Card, Button, Badge, Avatar
+- Table, Tabs, Dialog, Sheet
+- Select, Input, Textarea, Switch
+- Skeleton, DropdownMenu, Separator
+
+### Traduções (i18n):
+| Página | i18n | Hardcoded |
+|--------|------|-----------|
+| dashboard | ❌ | 100% |
+| users | ❌ | 100% |
+| caregivers | ❌ | 100% |
+| contracts | ❌ | 100% |
+| payments | ❌ | 100% |
+| moderation | ❌ | 100% |
+| settings | ❌ | 100% |
+| analytics | ❌ | 100% |
+| logs | ❌ | 100% |
+| notifications | ❌ | 100% |
+| support | ❌ | 100% |
+
+**CRÍTICO:** Nenhuma página do admin usa o sistema de traduções!
+
+### Problemas de UX Identificados:
+1. **prompt() nativo** - Usado em users, contracts, payments para ações críticas
+   - Recomendação: Criar Dialog/Modal de confirmação
+2. **Badge hardcoded** - Sidebar mostra "12" e "3" estáticos
+   - Recomendação: Buscar dados reais da API
+3. **Notificação "3"** - Header mostra contador fixo
+   - Recomendação: Buscar notificações reais
+4. **Support page** - Usa AdminLayout internamente (duplicação)
+   - Recomendação: Remover AdminLayout da página
+5. **Charts CSS** - Analytics usa barras CSS simples
+   - Recomendação: Usar Recharts para gráficos interativos
+
+### Stage Summary:
+
+**Pontos Fortes:**
+- ✅ Consistência visual excelente (10/11 páginas seguem padrão)
+- ✅ Componentes shadcn/ui usados corretamente
+- ✅ Layout responsivo implementado
+- ✅ Loading states e error handling
+- ✅ Navegação intuitiva com breadcrumbs
+- ✅ Ações inline bem implementadas
+
+**Problemas Críticos:**
+- ❌ NENHUMA página usa i18n (100% hardcoded em português)
+- ❌ prompt() nativo para ações críticas (UX ruim)
+- ❌ Badges de notificação hardcoded no sidebar/header
+- ⚠️ Página /admin/support com estrutura diferente
+
+**Recomendações:**
+1. Implementar i18n em todas as páginas do admin
+2. Substituir prompt() por Dialog de confirmação
+3. Buscar badges de notificação dinamicamente
+4. Corrigir estrutura da página /admin/support
+5. Implementar Recharts para analytics
+
+---
 ## Task ID: 2-3
 **Agent:** Payments API Developer
 **Task:** Create Payments Management Admin APIs

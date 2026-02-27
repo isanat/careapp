@@ -827,3 +827,77 @@ model AdminAction {
   @@index([entityType, entityId])
   @@index([createdAt])
 }
+
+// ==================== SUPPORT TICKETS ====================
+
+model SupportTicket {
+  id              String   @id @default(cuid())
+  userId          String
+  
+  // Ticket Info
+  subject         String
+  description     String
+  category        String   @default("general") // general, payment, contract, technical, complaint
+  
+  // Status
+  status          String   @default("open") // open, in_progress, waiting_user, resolved, closed
+  priority        String   @default("normal") // low, normal, high, urgent
+  
+  // Assignment
+  assignedToId    String?  // Admin user ID
+  assignedAt      DateTime?
+  
+  // Resolution
+  resolution      String?
+  resolvedAt      DateTime?
+  resolvedById    String?
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  messages        SupportTicketMessage[]
+  
+  @@index([userId, status])
+  @@index([status, priority])
+  @@index([assignedToId])
+}
+
+model SupportTicketMessage {
+  id              String   @id @default(cuid())
+  ticketId        String
+  ticket          SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  // Sender
+  senderId        String   // User ID or Admin ID
+  senderType      String   // "user" or "admin"
+  senderName      String
+  
+  // Content
+  content         String
+  attachments     String?  // JSON array of file URLs
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  
+  @@index([ticketId, createdAt])
+}
+
+// ==================== FEATURE FLAGS ====================
+
+model FeatureFlag {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  name            String
+  description     String?
+  enabled         Boolean  @default(false)
+  rolloutPercent  Int      @default(100) // Percentage of users to show feature
+  targetRoles     String?  // JSON array of roles (e.g., ["FAMILY", "CAREGIVER"])
+  metadata        String?  // JSON for additional config
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([enabled])
+}
