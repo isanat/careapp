@@ -263,17 +263,6 @@ export default function SettingsPage() {
                     {t.wallet.title}
                   </Link>
                 </Button>
-                <Button variant="outline" asChild>
-                  <a 
-                    href={`https://polygonscan.com/address/${wallet.address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
-                  >
-                    <IconExternalLink className="h-4 w-4" />
-                    Blockchain
-                  </a>
-                </Button>
               </div>
             </CardContent>
           </Card>

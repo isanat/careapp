@@ -50,11 +50,11 @@ Como Cuidador:
 - Prestar serviços com profissionalismo e ética
 - Cumprir os horários e tarefas acordadas
 
-## 5. Sistema de Tokens
-A plataforma utiliza um sistema de tokens (SENT) para facilitar pagamentos:
-- 1 SENT = €0.01 (um centavo de euro)
-- Tokens são adquiridos através de pagamento seguro
-- Tokens podem ser resgatados por cuidadores após conclusão de serviços
+## 5. Sistema de Pagamentos
+A plataforma utiliza um sistema de pagamentos seguro:
+- Pagamentos processados através de parceiros certificados
+- Proteção de dados financeiros conforme RGPD
+- Cuidadores recebem pagamentos após conclusão de serviços
 
 ## 6. Taxas
 - Taxa de ativação: €25 (única)
@@ -77,7 +77,7 @@ Cuidadores devem passar por verificação de identidade (Know Your Customer) atr
 - Usar a plataforma para atividades ilegais
 - Fornecer informações falsas
 - Assediar ou discriminar outros usuários
-- Tentar fraudar o sistema de tokens
+- Tentar fraudar o sistema de pagamentos
 
 ## 10. Limitação de Responsabilidade
 O IdosoLink não se responsabiliza por:
@@ -244,7 +244,7 @@ Todo o processo de mediação é confidencial. As partes não podem divulgar inf
 ## 9. Decisões Finais
 As decisões do mediador são:
 - Baseadas em evidências e termos da plataforma
-- Registradas com timestamp e hash na blockchain
+- Registradas com timestamp e identificador único
 - Vinculantes para ambas as partes
 
 ## 10. Recursos Legais

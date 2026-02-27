@@ -36,12 +36,12 @@ export default function SegurancaPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <IconShield className="h-5 w-5 text-primary" />
-                Blockchain Segura
+                Pagamentos Seguros
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Tokens na blockchain Polygon, uma das redes mais seguras e eficientes.
+                Todos os pagamentos são processados por parceiros certificados com total proteção.
               </p>
             </CardContent>
           </Card>
@@ -64,12 +64,12 @@ export default function SegurancaPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <IconAlert className="h-5 w-5 text-primary" />
-                Contratos Imutáveis
+                Contratos Protegidos
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Contratos digitais registrados na blockchain para segurança jurídica.
+                Contratos digitais com registo seguro para proteção jurídica de ambas as partes.
               </p>
             </CardContent>
           </Card>

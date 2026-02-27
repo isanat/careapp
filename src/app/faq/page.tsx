@@ -14,10 +14,6 @@ const faqs = [
     answer: "O IdosoLink conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Você pode buscar cuidadores, ver perfis detalhados, e criar contratos digitais seguros.",
   },
   {
-    question: "O que é o SeniorToken (SENT)?",
-    answer: "O SeniorToken é nosso token utilitário que facilita pagamentos na plataforma. Cada token tem backing de €1, e pode valorizar com o crescimento da plataforma através do mecanismo deflacionário.",
-  },
-  {
     question: "Quanto custa usar a plataforma?",
     answer: "A ativação da conta custa €35 (única vez). Cada contrato criado tem uma taxa de €5. A plataforma retém 10% sobre os pagamentos de serviços.",
   },
@@ -27,7 +23,7 @@ const faqs = [
   },
   {
     question: "Como funcionam os pagamentos?",
-    answer: "Aceitamos Stripe (cartão de crédito) e Easypay (Multibanco, MB Way). Os pagamentos são processados de forma segura e os tokens são creditados automaticamente.",
+    answer: "Aceitamos Stripe (cartão de crédito) e Easypay (Multibanco, MB Way). Os pagamentos são processados de forma segura e o saldo é creditado automaticamente.",
   },
   {
     question: "Posso cancelar um contrato?",

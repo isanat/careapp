@@ -20,8 +20,8 @@ export default function ImprensaPage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              O IdosoLink é a primeira plataforma de cuidado de idosos com tokens blockchain 
-              na Europa. Conectamos famílias a cuidadores verificados, com pagamentos transparentes 
+              O IdosoLink é uma plataforma de cuidado de idosos líder em Portugal. 
+              Conectamos famílias a cuidadores verificados, com pagamentos transparentes 
               e contratos digitais seguros.
             </p>
           </CardContent>
@@ -66,9 +66,9 @@ export default function ImprensaPage() {
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
               <li>Fundado em 2024</li>
               <li>Sede em Lisboa, Portugal</li>
-              <li>Operando em Portugal e Itália</li>
-              <li>Token próprio: SeniorToken (SENT)</li>
-              <li>Blockchain: Polygon</li>
+              <li>Operando em Portugal e Europa</li>
+              <li>Sistema de pagamentos seguro</li>
+              <li>Verificação de identidade KYC</li>
               <li>Mais de 500 cuidadores cadastrados</li>
             </ul>
           </CardContent>

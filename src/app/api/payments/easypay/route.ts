@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         tokensAmount = Math.floor(amount); // 1 token per euro
         break;
       case 'tokens':
-        description = `Compra de ${Math.floor(amount)} tokens SeniorToken`;
+        description = `Carregamento de saldo - €${Math.floor(amount)}`;
         tokensAmount = Math.floor(amount);
         break;
       case 'contract':

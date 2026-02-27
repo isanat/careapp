@@ -50,8 +50,8 @@ export default function SobrePage() {
                 ou valorização adequada.
               </p>
               <p className="text-muted-foreground mb-6">
-                Usamos tecnologia blockchain de forma invisível para resolver problemas humanos: 
-                garantir que contratos sejam imutáveis, pagamentos sejam seguros e cuidadores 
+                Usamos tecnologia de ponta para resolver problemas humanos: 
+                garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores 
                 sejam valorizados a longo prazo.
               </p>
               
@@ -126,8 +126,8 @@ export default function SobrePage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Transparência</h3>
                 <p className="text-muted-foreground">
-                  Contratos imutáveis, taxas claras, sem surpresas. Tudo registrado 
-                  e verificável na blockchain.
+                  Contratos claros, taxas transparentes, sem surpresas. Tudo registado 
+                  de forma segura e auditável.
                 </p>
               </CardContent>
             </Card>
@@ -139,8 +139,8 @@ export default function SobrePage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Valorização</h3>
                 <p className="text-muted-foreground">
-                  Cuidadores merecem reconhecimento. Nossos tokens permitem que 
-                  ganhem e valorizem seu trabalho.
+                  Cuidadores merecem reconhecimento. Nossa plataforma permite que 
+                  ganhem e valorizem seu trabalho com justiça.
                 </p>
               </CardContent>
             </Card>

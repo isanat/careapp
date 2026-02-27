@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconLogo, IconFamily, IconCaregiver, IconToken, IconShield } from "@/components/icons";
+import { IconLogo, IconFamily, IconCaregiver, IconShield } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -48,21 +48,7 @@ const faqs = [
     ]
   },
   {
-    category: "Tokens e Blockchain",
-    icon: IconToken,
-    questions: [
-      {
-        q: "O que são os tokens SENT?",
-        a: "SENT (SeniorToken) é o token nativo da plataforma. Ele é usado para taxas de contrato, gorjetas e recompensas. Pode valorizar com o crescimento da plataforma."
-      },
-      {
-        q: "Como ganho tokens?",
-        a: "Você recebe tokens ao ativar sua conta. Também pode ganhar através de bônus por indicação, gorjetas e participando do programa de fidelidade."
-      }
-    ]
-  },
-  {
-    category: "Segurança",
+    category: "Segurança e Privacidade",
     icon: IconShield,
     questions: [
       {
@@ -71,7 +57,7 @@ const faqs = [
       },
       {
         q: "Meus dados estão seguros?",
-        a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD/LGPD e não vendemos seus dados. Seus contratos são registrados na blockchain para garantir transparência."
+        a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD/LGPD e não vendemos seus dados. Seus contratos são registrados de forma segura para garantir transparência."
       }
     ]
   }

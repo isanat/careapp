@@ -392,7 +392,7 @@ function NewContractContent() {
                 <Link href="/privacidade" className="text-primary underline">
                   Política de Privacidade
                 </Link>
-                . Entendo que este contrato será registrado na blockchain.
+                . Entendo que este contrato será registrado de forma segura.
               </Label>
             </div>
 
@@ -431,7 +431,7 @@ function NewContractContent() {
                 Status: Aguardando aceite do cuidador
               </p>
               <p className="text-sm text-muted-foreground">
-                Registrado na blockchain: Pendente (será gravado após aceite)
+                Registro seguro: Será gravado após aceite de ambas as partes
               </p>
             </div>
 
