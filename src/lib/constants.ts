@@ -1,28 +1,16 @@
-// SeniorToken (SENT) Constants
+// IdosoLink Platform Constants
 
 export const APP_NAME = "IdosoLink";
-export const APP_TAGLINE = "Care, Trust & Value on-chain";
-export const APP_DESCRIPTION = "O primeiro ecossistema global de cuidados para idosos que une família, cuidador e tecnologia.";
-
-// Token Economics
-export const TOKEN_NAME = "SeniorToken";
-export const TOKEN_SYMBOL = "SENT";
-export const TOKEN_DECIMALS = 18;
+export const APP_TAGLINE = "Cuidado de Qualidade para quem ama";
+export const APP_DESCRIPTION = "O primeiro ecossistema português de cuidados para idosos que une família e cuidador com segurança e confiança.";
 
 // Activation Costs (in cents)
-export const ACTIVATION_COST_EUR_CENTS = 3500; // €35 (updated from €25)
-export const CONTRACT_FEE_EUR_CENTS = 500; // €5 per side
-export const PLATFORM_FEE_PERCENT = 10; // 10% (updated from 15%)
-
-// Token Price (initial: 1 SENT = €0.01)
-export const INITIAL_TOKEN_PRICE_EUR_CENTS = 1; // 1 cent per token
-
-// Blockchain
-export const POLYGON_CHAIN_ID = 137; // Mainnet
-export const POLYGON_MUMBAI_CHAIN_ID = 80001; // Testnet
+export const ACTIVATION_COST_EUR_CENTS = 3500; // €35
+export const CONTRACT_FEE_EUR_CENTS = 500; // €5 per contract
+export const PLATFORM_FEE_PERCENT = 10; // 10%
 
 // Supported Languages
-export const SUPPORTED_LANGUAGES = ["pt", "en", "it"] as const;
+export const SUPPORTED_LANGUAGES = ["pt", "en", "it", "es"] as const;
 export const DEFAULT_LANGUAGE = "pt";
 
 // Service Types (for caregivers)
@@ -59,13 +47,13 @@ export const CONTRACT_STATUS = {
   DISPUTED: "Em Disputa",
 } as const;
 
-// Navigation Links
+// Navigation Links (Public)
 export const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/como-funciona", label: "Como Funciona" },
   { href: "/familias", label: "Para Famílias" },
   { href: "/cuidadores", label: "Para Cuidadores" },
-  { href: "/token", label: "SeniorToken" },
+  { href: "/precos", label: "Preços" },
   { href: "/sobre", label: "Sobre" },
 ] as const;
 
@@ -74,7 +62,6 @@ export const APP_NAV_LINKS_FAMILY = [
   { href: "/app/dashboard", label: "Dashboard", icon: "home" },
   { href: "/app/search", label: "Buscar Cuidadores", icon: "search" },
   { href: "/app/contracts", label: "Meus Contratos", icon: "file" },
-  { href: "/app/wallet", label: "Carteira", icon: "wallet" },
   { href: "/app/chat", label: "Mensagens", icon: "chat" },
   { href: "/app/settings", label: "Configurações", icon: "settings" },
 ] as const;
@@ -82,7 +69,6 @@ export const APP_NAV_LINKS_FAMILY = [
 export const APP_NAV_LINKS_CAREGIVER = [
   { href: "/app/dashboard", label: "Dashboard", icon: "home" },
   { href: "/app/contracts", label: "Meus Contratos", icon: "file" },
-  { href: "/app/wallet", label: "Carteira", icon: "wallet" },
   { href: "/app/chat", label: "Mensagens", icon: "chat" },
   { href: "/app/profile", label: "Meu Perfil", icon: "user" },
   { href: "/app/settings", label: "Configurações", icon: "settings" },

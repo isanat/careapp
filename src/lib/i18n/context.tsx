@@ -46,6 +46,7 @@ const LANGUAGE_KEY = "idosolink-language";
 const availableLanguages: { code: Language; name: string }[] = [
   { code: "pt", name: "Português" },
   { code: "en", name: "English" },
+  { code: "it", name: "Italiano" },
   { code: "es", name: "Español" },
 ];
 

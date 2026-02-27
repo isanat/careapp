@@ -40,7 +40,7 @@ export function Header() {
       t.nav.howItWorks,
       t.nav.forFamilies,
       t.nav.forCaregivers,
-      t.nav.token,
+      t.nav.pricing,
       t.nav.about,
     ][index] || link.label,
   }));

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { IconLogo, IconToken } from "@/components/icons";
+import { IconLogo, IconCare } from "@/components/icons";
 import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
@@ -14,7 +14,7 @@ export function Footer() {
       { href: "/como-funciona", label: t.nav.howItWorks },
       { href: "/familias", label: t.nav.forFamilies },
       { href: "/cuidadores", label: t.nav.forCaregivers },
-      { href: "/token", label: t.nav.token },
+      { href: "/precos", label: t.nav.pricing },
     ],
     company: [
       { href: "/sobre", label: t.footer.about },
@@ -49,7 +49,7 @@ export function Footer() {
             </Link>
             <p className="text-sm text-muted-foreground mb-4">{APP_TAGLINE}</p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <IconToken className="h-4 w-4 text-primary" />
+              <span>❤️</span>
               <span>{t.footer.poweredBy}</span>
             </div>
           </div>
@@ -132,6 +132,8 @@ export function Footer() {
             <span>🇵🇹 Portugal</span>
             <span>•</span>
             <span>🇮🇹 Italia</span>
+            <span>•</span>
+            <span>🇪🇸 España</span>
             <span>•</span>
             <span>🇪🇺 Europa</span>
           </div>

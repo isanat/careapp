@@ -2,22 +2,18 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PublicLayout } from "@/components/layout/public-layout";
 import { 
-  IconToken, 
   IconCare, 
   IconTrust,
-  IconWallet,
   IconChevronRight,
-  IconArrowUp,
-  IconEuro,
-  IconCoins,
   IconShield,
-  IconStar
+  IconStar,
+  IconContract
 } from "@/components/icons";
-import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 export default function LandingPage() {
@@ -32,7 +28,7 @@ export default function LandingPage() {
             {/* Left Content */}
             <div className="space-y-6">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                🇪🇺 {t.landing.badge}
+                🇵🇹 {t.landing.badge}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
@@ -75,39 +71,38 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Content - Feature Card */}
+            {/* Right Content - Trust Card */}
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-primary/20 rounded-full">
-                    <IconToken className="h-8 w-8 text-primary" />
+              <CardContent className="p-8">
+                <div className="text-center mb-6">
+                  <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <IconTrust className="h-10 w-10 text-primary" />
                   </div>
-                  <div>
-                    <CardTitle className="text-2xl">{TOKEN_NAME} ({TOKEN_SYMBOL})</CardTitle>
-                    <CardDescription>{t.landing.token.title}</CardDescription>
-                  </div>
+                  <h3 className="text-2xl font-bold mb-2">{t.landing.features.title}</h3>
+                  <p className="text-muted-foreground">{t.landing.features.verified.title}</p>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
-                  <IconArrowUp className="h-5 w-5 text-green-500" />
-                  <div>
-                    <p className="font-medium">{t.landing.token.appreciation.title}</p>
-                    <p className="text-sm text-muted-foreground">{t.landing.token.appreciation.description}</p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
+                    <IconShield className="h-5 w-5 text-green-500 shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">{t.landing.features.verified.title}</p>
+                      <p className="text-xs text-muted-foreground">{t.landing.features.verified.description}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
-                  <IconShield className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">{t.landing.token.backed.title}</p>
-                    <p className="text-sm text-muted-foreground">{t.landing.token.backed.description}</p>
+                  <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
+                    <IconContract className="h-5 w-5 text-primary shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">{t.landing.features.contracts.title}</p>
+                      <p className="text-xs text-muted-foreground">{t.landing.features.contracts.description}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
-                  <IconCoins className="h-5 w-5 text-yellow-500" />
-                  <div>
-                    <p className="font-medium">{t.landing.token.deflationary.title}</p>
-                    <p className="text-sm text-muted-foreground">{t.landing.token.deflationary.description}</p>
+                  <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
+                    <IconCare className="h-5 w-5 text-yellow-600 shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">{t.landing.features.support.title}</p>
+                      <p className="text-xs text-muted-foreground">{t.landing.features.support.description}</p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -198,11 +193,11 @@ export default function LandingPage() {
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-primary/10 rounded-lg">
-                    <IconWallet className="h-6 w-6 text-primary" />
+                    <IconContract className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold">{t.landing.features.blockchain.title}</h3>
+                  <h3 className="font-semibold">{t.landing.features.contracts.title}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t.landing.features.blockchain.description}</p>
+                <p className="text-sm text-muted-foreground">{t.landing.features.contracts.description}</p>
               </CardContent>
             </Card>
 
@@ -212,9 +207,9 @@ export default function LandingPage() {
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <IconTrust className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold">{t.landing.features.contracts.title}</h3>
+                  <h3 className="font-semibold">{t.landing.features.security.title}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t.landing.features.contracts.description}</p>
+                <p className="text-sm text-muted-foreground">{t.landing.features.security.description}</p>
               </CardContent>
             </Card>
 

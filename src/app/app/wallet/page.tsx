@@ -26,7 +26,7 @@ import {
   IconLoader2,
   IconAlert
 } from "@/components/icons";
-import { TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 interface Wallet {
@@ -140,7 +140,7 @@ export default function WalletPage() {
     try {
       // For now, show a message that sell is being processed
       // In production, this would create a sell request
-      alert(`Sell request for ${sellAmount} ${TOKEN_SYMBOL} tokens submitted. Processing in 3 business days.`);
+      alert(`Sell request for ${sellAmount} credits submitted. Processing in 3 business days.`);
       setSellAmount(100);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error processing sell request");
@@ -207,7 +207,7 @@ export default function WalletPage() {
                     <IconToken className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{t.wallet.balance} {TOKEN_SYMBOL}</p>
+                    <p className="text-sm text-muted-foreground">{t.wallet.balance}</p>
                     <p className="text-4xl font-bold">{wallet.balanceTokens.toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">≈ €{balanceEur}</p>
                   </div>
@@ -221,15 +221,7 @@ export default function WalletPage() {
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={copyAddress}>
                     {copied ? <IconCheck className="h-4 w-4 text-green-500" /> : <IconCopy className="h-4 w-4" />}
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                    <a 
-                      href={`https://polygonscan.com/address/${wallet.address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <IconExternalLink className="h-4 w-4" />
-                    </a>
-                  </Button>
+                  {/* Blockchain explorer link removed */}
                 </div>
               </div>
 

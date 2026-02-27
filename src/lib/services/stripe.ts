@@ -55,7 +55,7 @@ export class StripeService {
             unit_amount: ACTIVATION_COST_EUR_CENTS,
             product_data: {
               name: "Ativação IdosoLink",
-              description: `Ativação de conta com ${ACTIVATION_COST_EUR_CENTS / 100} tokens SENT`,
+              description: `Ativação de conta IdosoLink`,
             },
           },
           quantity: 1,
@@ -101,7 +101,7 @@ export class StripeService {
     await db.execute({
       sql: `INSERT INTO Payment (id, userId, type, provider, amountEurCents, tokensAmount, status, description, createdAt)
             VALUES (?, ?, 'TOKEN_PURCHASE', 'STRIPE', ?, ?, 'PENDING', ?, datetime('now'))`,
-      args: [paymentId, userId, eurAmount, eurAmount, `Compra de ${eurAmount} tokens SENT`],
+      args: [paymentId, userId, eurAmount, eurAmount, `Compra de créditos IdosoLink`],
     });
 
     // Create Stripe checkout session
@@ -116,8 +116,8 @@ export class StripeService {
             currency: "eur",
             unit_amount: eurAmount,
             product_data: {
-              name: "Tokens SeniorToken (SENT)",
-              description: `${eurAmount / 100} tokens SENT`,
+              name: "Créditos IdosoLink",
+              description: `${eurAmount / 100} créditos`,
             },
           },
           quantity: 1,
