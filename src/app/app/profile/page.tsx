@@ -114,7 +114,7 @@ export default function ProfilePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const { t } = useI18n();
-  const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported } = useNotifications();
+  const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported, pushError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isLoading, setIsLoading] = useState(true);
@@ -125,6 +125,7 @@ export default function ProfilePage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
   
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [formData, setFormData] = useState<ProfileData>({
@@ -212,8 +213,21 @@ export default function ProfilePage() {
   };
 
   const handleEnablePush = async () => {
-    const granted = await requestPushPermission();
-    if (granted) await subscribeToPush();
+    setPushLoading(true);
+    setError(null);
+    try {
+      const granted = await requestPushPermission();
+      if (granted) {
+        const success = await subscribeToPush();
+        if (!success && pushError) {
+          setError(pushError);
+        } else if (success) {
+          setSuccess("Notificações ativadas!");
+        }
+      }
+    } finally {
+      setPushLoading(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -668,22 +682,38 @@ export default function ProfilePage() {
           {/* Settings Tab */}
           <TabsContent value="settings" className="mt-3 space-y-1">
             {/* Notificações */}
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center gap-2">
-                <IconBell className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">Notificações Push</p>
-                  <p className="text-[10px] text-muted-foreground">Alertas em tempo real</p>
+            <div className="p-3 border rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <IconBell className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm font-medium">Notificações Push</p>
+                    <p className="text-[10px] text-muted-foreground">Alertas em tempo real</p>
+                  </div>
                 </div>
-              </div>
-              {isPushSupported ? (
-                isPushEnabled ? (
-                  <Badge variant="outline" className="text-green-600 border-green-600 text-xs">Ativo</Badge>
+                {isPushSupported ? (
+                  isPushEnabled ? (
+                    <Badge variant="outline" className="text-green-600 border-green-600 text-xs">Ativo</Badge>
+                  ) : (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={handleEnablePush} 
+                      className="h-7 text-xs"
+                      disabled={pushLoading}
+                    >
+                      {pushLoading ? (
+                        <IconLoader2 className="h-3 w-3 animate-spin mr-1" />
+                      ) : null}
+                      Ativar
+                    </Button>
+                  )
                 ) : (
-                  <Button size="sm" variant="outline" onClick={handleEnablePush} className="h-7 text-xs">Ativar</Button>
-                )
-              ) : (
-                <span className="text-xs text-muted-foreground">N/A</span>
+                  <span className="text-xs text-muted-foreground">N/A</span>
+                )}
+              </div>
+              {pushError && !isPushEnabled && (
+                <p className="text-[10px] text-red-500 mt-2">{pushError}</p>
               )}
             </div>
 

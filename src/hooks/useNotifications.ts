@@ -26,6 +26,7 @@ export interface UseNotificationsReturn {
   subscribeToPush: () => Promise<boolean>;
   isPushSupported: boolean;
   isPushEnabled: boolean;
+  pushError: string | null;
 }
 
 export function useNotifications(): UseNotificationsReturn {
@@ -34,8 +35,11 @@ export function useNotifications(): UseNotificationsReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPushEnabled, setIsPushEnabled] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
 
+  // Check if push is supported (requires HTTPS and service worker)
   const isPushSupported = typeof window !== 'undefined' && 
+    window.location.protocol === 'https:' &&
     'serviceWorker' in navigator && 
     'PushManager' in window;
 
@@ -109,25 +113,43 @@ export function useNotifications(): UseNotificationsReturn {
 
   const requestPushPermission = useCallback(async (): Promise<boolean> => {
     if (!isPushSupported) {
-      console.log('Push notifications are not supported');
+      setPushError('Notificações push não são suportadas neste navegador ou requerem HTTPS');
       return false;
     }
 
     try {
       const permission = await Notification.requestPermission();
-      return permission === 'granted';
+      if (permission === 'granted') {
+        return true;
+      } else if (permission === 'denied') {
+        setPushError('Permissão de notificação negada. Habilite nas configurações do navegador.');
+      }
+      return false;
     } catch (err) {
       console.error('Error requesting push permission:', err);
+      setPushError('Erro ao solicitar permissão de notificação');
       return false;
     }
   }, [isPushSupported]);
 
   const subscribeToPush = useCallback(async (): Promise<boolean> => {
     if (!isPushSupported) {
+      setPushError('Notificações push não são suportadas');
       return false;
     }
 
+    setPushError(null);
+
     try {
+      // First check if VAPID keys are configured
+      const vapidResponse = await fetch('/api/push/subscribe');
+      const vapidData = await vapidResponse.json();
+      
+      if (!vapidData.publicKey) {
+        setPushError('Notificações push não estão configuradas no servidor');
+        return false;
+      }
+
       // Request permission first
       const permissionGranted = await requestPushPermission();
       if (!permissionGranted) {
@@ -141,16 +163,6 @@ export function useNotifications(): UseNotificationsReturn {
       let subscription = await registration.pushManager.getSubscription();
       
       if (!subscription) {
-        // Get VAPID public key from server
-        const vapidResponse = await fetch('/api/push/subscribe');
-        const vapidData = await vapidResponse.json();
-        
-        if (!vapidData.publicKey) {
-          console.log('VAPID key not configured, using basic subscription');
-          // For development without VAPID keys
-          return false;
-        }
-
         // Create new subscription
         subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
@@ -168,11 +180,13 @@ export function useNotifications(): UseNotificationsReturn {
       if (response.ok) {
         setIsPushEnabled(true);
         return true;
+      } else {
+        setPushError('Erro ao registrar notificação no servidor');
+        return false;
       }
-      
-      return false;
     } catch (err) {
       console.error('Error subscribing to push:', err);
+      setPushError('Erro ao ativar notificações push. Tente novamente.');
       return false;
     }
   }, [isPushSupported, requestPushPermission]);
@@ -252,5 +266,6 @@ export function useNotifications(): UseNotificationsReturn {
     subscribeToPush,
     isPushSupported,
     isPushEnabled,
+    pushError,
   };
 }
