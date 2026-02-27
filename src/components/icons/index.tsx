@@ -91,7 +91,7 @@ import {
   MicOff,
 } from "lucide-react";
 
-// Custom Icons for IdosoLink
+// Senior Care App - Custom Icons
 export function IconLogo({ className }: { className?: string }) {
   return (
     <svg
@@ -100,17 +100,45 @@ export function IconLogo({ className }: { className?: string }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="2" fill="none" />
+      {/* Outer circle with gradient */}
+      <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#2F6F6D" />
+          <stop offset="100%" stopColor="#1a4f4d" />
+        </linearGradient>
+      </defs>
+      <circle cx="20" cy="20" r="19" fill="url(#logoGradient)" />
+      {/* Heart shape */}
       <path
-        d="M20 8C13.373 8 8 13.373 8 20s5.373 12 12 12 12-5.373 12-12S26.627 8 20 8zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10z"
-        fill="currentColor"
-        opacity="0.2"
+        d="M20 30 C10 22 6 16 6 12 C6 8 9 5 13 5 C16 5 18 7 20 10 C22 7 24 5 27 5 C31 5 34 8 34 12 C34 16 30 22 20 30Z"
+        fill="white"
+        opacity="0.95"
+      />
+      {/* Small caring hands icon inside */}
+      <path
+        d="M16 16 C16 14 18 12.5 20 13.5 L20 18 L14 18 C14 16.5 15 15.5 16 16Z"
+        fill="#2F6F6D"
+        opacity="0.7"
       />
       <path
-        d="M20 14c-1.105 0-2 .895-2 2v2h-2c-1.105 0-2 .895-2 2s.895 2 2 2h2v2c0 1.105.895 2 2 2s2-.895 2-2v-2h2c1.105 0 2-.895 2-2s-.895-2-2-2h-2v-2c0-1.105-.895-2-2-2z"
-        fill="currentColor"
+        d="M24 16 C24 14 22 12.5 20 13.5 L20 18 L26 18 C26 16.5 25 15.5 24 16Z"
+        fill="#2F6F6D"
+        opacity="0.7"
       />
     </svg>
+  );
+}
+
+// Logo with text for headers
+export function IconLogoFull({ className }: { className?: string }) {
+  return (
+    <div className={`flex items-center gap-2 ${className || ""}`}>
+      <IconLogo className="h-8 w-8 text-primary" />
+      <span className="font-bold text-xl">
+        <span className="text-primary">Senior</span>
+        <span className="text-foreground"> Care</span>
+      </span>
+    </div>
   );
 }
 

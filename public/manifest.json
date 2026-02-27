@@ -1,20 +1,87 @@
 {
-  "name": "IdosoLink - Cuidados para Idosos",
-  "short_name": "IdosoLink",
-  "description": "Plataforma de cuidados para idosos com tokens blockchain",
+  "name": "Senior Care App",
+  "short_name": "Senior Care",
+  "description": "Plataforma de cuidados para idosos - Conectando famílias e cuidadores",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2F6F6D",
   "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
-      "src": "/assets/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
     }
   ],
-  "categories": ["health", "lifestyle", "social"],
-  "lang": "pt-BR"
+  "categories": ["health", "lifestyle", "social", "medical"],
+  "lang": "pt-PT",
+  "shortcuts": [
+    {
+      "name": "Buscar Cuidadores",
+      "short_name": "Buscar",
+      "description": "Encontrar cuidadores disponíveis",
+      "url": "/app/search",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Meus Contratos",
+      "short_name": "Contratos",
+      "description": "Ver meus contratos ativos",
+      "url": "/app/contracts",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Tela inicial do Senior Care"
+    }
+  ]
 }

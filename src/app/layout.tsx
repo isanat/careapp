@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -12,6 +12,17 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: {
     default: `${APP_NAME} - Senior Care Platform`,
@@ -24,7 +35,7 @@ export const metadata: Metadata = {
     "cuidados paliativos",
     "enfermagem",
     "cuidadores",
-    "IdosoLink",
+    "Senior Care",
     "Portugal",
     "Europa",
     "caregiver",
@@ -34,13 +45,16 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/assets/logo.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-512x512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/icons/icon-192x192.png", type: "image/png", sizes: "192x192" },
     ],
   },
   openGraph: {
     title: APP_NAME,
     description: APP_DESCRIPTION,
-    url: "https://idosolink.com",
+    url: "https://seniorcare.app",
     siteName: APP_NAME,
     type: "website",
     locale: "pt_PT",
@@ -51,6 +65,14 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
   },
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_NAME,
+  },
+  formatDetection: {
+    telephone: true,
+  },
 };
 
 export default function RootLayout({

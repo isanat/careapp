@@ -19,8 +19,9 @@ export async function POST(
       args: [session.user.id]
     });
     
-    if (adminCheck.rows[0]?.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const userRole = adminCheck.rows[0]?.role as string | undefined;
+    if (!userRole || !['ADMIN', 'SUPER_ADMIN'].includes(userRole)) {
+      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
     }
 
     const { id } = await params;

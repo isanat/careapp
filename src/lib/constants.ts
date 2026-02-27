@@ -1,8 +1,8 @@
-// IdosoLink Platform Constants
+// Senior Care App - Platform Constants
 
-export const APP_NAME = "IdosoLink";
+export const APP_NAME = "Senior Care";
 export const APP_TAGLINE = "Cuidado de Qualidade para quem ama";
-export const APP_DESCRIPTION = "O primeiro ecossistema português de cuidados para idosos que une família e cuidador com segurança e confiança.";
+export const APP_DESCRIPTION = "A plataforma portuguesa de cuidados para idosos que une família e cuidador com segurança e confiança.";
 
 // Activation Costs (in cents)
 export const ACTIVATION_COST_EUR_CENTS = 3500; // €35

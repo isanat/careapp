@@ -137,6 +137,7 @@ model User {
   
   // KYC (Didit)
   kycSessionId        String?
+  kycSessionToken     String?   // Token for embedded widget
   kycSessionCreatedAt DateTime?
   kycCompletedAt      DateTime?
   kycConfidence       Int      @default(0)
@@ -256,6 +257,9 @@ model ProfileCaregiver {
   totalHoursWorked  Int      @default(0)
   averageRating     Float    @default(0)
   totalReviews      Int      @default(0)
+  
+  // Destaque
+  featured          Int      @default(0)  // 0 = não destacado, 1 = destacado
   
   // Portfolio
   profileImage      String?

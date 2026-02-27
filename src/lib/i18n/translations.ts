@@ -3,7 +3,7 @@ export const translations = {
   // PORTUGUÊS (Portugal)
   // ============================================
   pt: {
-    appName: "IdosoLink",
+    appName: "Senior Care",
     tagline: "Cuidado de Qualidade para quem ama",
     loading: "A carregar...",
     error: "Ocorreu um erro",
@@ -715,7 +715,7 @@ export const translations = {
   // ENGLISH
   // ============================================
   en: {
-    appName: "IdosoLink",
+    appName: "Senior Care",
     tagline: "Quality Care for Those You Love",
     loading: "Loading...",
     error: "An error occurred",

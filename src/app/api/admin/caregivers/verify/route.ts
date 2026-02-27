@@ -11,6 +11,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check admin permission
+    const adminCheck = await db.execute({
+      sql: `SELECT role FROM User WHERE id = ?`,
+      args: [session.user.id]
+    });
+    
+    const userRole = adminCheck.rows[0]?.role as string | undefined;
+    if (!userRole || !['ADMIN', 'SUPER_ADMIN'].includes(userRole)) {
+      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { caregiverId, action, reason } = body;
 

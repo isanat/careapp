@@ -14,6 +14,15 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@/components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import {
   IconSearch,
   IconStar,
   IconBriefcase,
@@ -26,6 +35,7 @@ import {
   IconStarOff
 } from "@/components/icons";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
 interface Caregiver {
@@ -53,6 +63,7 @@ interface Stats {
 
 export default function AdminCaregiversPage() {
   const { toast } = useToast();
+  const router = useRouter();
   const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
   const [stats, setStats] = useState<Stats>({ total: 0, pending: 0, verified: 0, featured: 0 });
   const [loading, setLoading] = useState(true);
@@ -65,6 +76,11 @@ export default function AdminCaregiversPage() {
     limit: 20,
     total: 0,
   });
+  
+  // Reject dialog state
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectCaregiverId, setRejectCaregiverId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
 
   const fetchCaregivers = async () => {
     setLoading(true);
@@ -110,28 +126,76 @@ export default function AdminCaregiversPage() {
   }, [statusFilter, featuredFilter, pagination.page]);
 
   const handleVerify = async (caregiverId: string, action: 'verify' | 'reject') => {
-    const reason = action === 'reject' ? prompt('Motivo da rejeição:') : undefined;
-    if (action === 'reject' && !reason) return;
+    if (action === 'reject') {
+      // Open reject dialog
+      setRejectCaregiverId(caregiverId);
+      setRejectReason("");
+      setRejectDialogOpen(true);
+      return;
+    }
 
     setActionLoading(caregiverId);
     try {
       const response = await fetch('/api/admin/caregivers/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ caregiverId, action, reason }),
+        body: JSON.stringify({ caregiverId, action }),
       });
 
       if (!response.ok) throw new Error('Failed to update');
 
       toast({
         title: "Sucesso",
-        description: action === 'verify' ? "KYC aprovado com sucesso" : "KYC rejeitado",
+        description: "KYC aprovado com sucesso",
       });
       fetchCaregivers();
     } catch (error) {
       toast({
         title: "Erro",
         description: "Falha ao atualizar cuidador",
+        variant: "destructive",
+      });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!rejectCaregiverId || !rejectReason.trim()) {
+      toast({
+        title: "Erro",
+        description: "Informe o motivo da rejeição",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setActionLoading(rejectCaregiverId);
+    try {
+      const response = await fetch('/api/admin/caregivers/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          caregiverId: rejectCaregiverId, 
+          action: 'reject', 
+          reason: rejectReason 
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update');
+
+      toast({
+        title: "Sucesso",
+        description: "KYC rejeitado",
+      });
+      setRejectDialogOpen(false);
+      setRejectCaregiverId(null);
+      setRejectReason("");
+      fetchCaregivers();
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao rejeitar cuidador",
         variant: "destructive",
       });
     } finally {
@@ -247,6 +311,7 @@ export default function AdminCaregiversPage() {
                 className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700"
                 onClick={() => handleVerify(c.id, 'verify')}
                 disabled={actionLoading === c.id}
+                title="Aprovar KYC"
               >
                 {actionLoading === c.id ? (
                   <IconLoader2 className="h-4 w-4 animate-spin" />
@@ -260,6 +325,7 @@ export default function AdminCaregiversPage() {
                 className="h-8 w-8 p-0"
                 onClick={() => handleVerify(c.id, 'reject')}
                 disabled={actionLoading === c.id}
+                title="Rejeitar KYC"
               >
                 <IconX className="h-4 w-4" />
               </Button>
@@ -279,11 +345,15 @@ export default function AdminCaregiversPage() {
               <IconStar className="h-4 w-4" />
             )}
           </Button>
-          <Link href={`/admin/caregivers/${c.id}`}>
-            <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-              <IconEye className="h-4 w-4" />
-            </Button>
-          </Link>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => router.push(`/admin/caregivers/${c.id}`)}
+            title="Ver detalhes"
+          >
+            <IconEye className="h-4 w-4" />
+          </Button>
         </div>
       ),
     },
@@ -380,6 +450,48 @@ export default function AdminCaregiversPage() {
           onPageChange: (page) => setPagination(prev => ({ ...prev, page })),
         }}
       />
+
+      {/* Reject KYC Dialog */}
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rejeitar Verificação KYC</DialogTitle>
+            <DialogDescription>
+              Informe o motivo da rejeição. O cuidador será notificado.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Textarea
+              placeholder="Ex: Documento ilegível, dados não conferem..."
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={4}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRejectDialogOpen(false);
+                setRejectCaregiverId(null);
+                setRejectReason("");
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleRejectConfirm}
+              disabled={!rejectReason.trim() || actionLoading !== null}
+            >
+              {actionLoading ? (
+                <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+              Rejeitar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

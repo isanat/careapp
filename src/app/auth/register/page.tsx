@@ -61,27 +61,33 @@ function RegisterPageContent() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("handleRegister called", { acceptTerms, isLoading, formData });
     setIsLoading(true);
     setErrorMessage("");
 
     // Validation
     if (!acceptTerms) {
+      console.log("Terms not accepted");
       setErrorMessage(t.register?.termsRequired || "Você deve aceitar os termos para continuar");
       setIsLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage(t.error);
+      console.log("Passwords don't match");
+      setErrorMessage("As senhas não coincidem");
       setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 8) {
-      setErrorMessage(t.error);
+      console.log("Password too short");
+      setErrorMessage("A senha deve ter pelo menos 8 caracteres");
       setIsLoading(false);
       return;
     }
+
+    console.log("Sending registration request...");
 
     try {
       const response = await fetch("/api/register", {
@@ -98,10 +104,13 @@ function RegisterPageContent() {
       });
 
       const data = await response.json();
+      console.log("Registration response:", data);
 
       if (!response.ok) {
-        throw new Error(data.error || t.error);
+        throw new Error(data.error || "Erro ao criar conta");
       }
+
+      console.log("Auto-login after registration...");
 
       // Auto login after registration
       const loginResult = await signIn("credentials", {
@@ -110,11 +119,15 @@ function RegisterPageContent() {
         redirect: false,
       });
 
+      console.log("Login result:", loginResult);
+
       if (loginResult?.error) {
         // If auto-login fails, redirect to login page with message
+        console.log("Auto-login failed, redirecting to login");
         window.location.href = `/auth/login?message=account_created&email=${encodeURIComponent(formData.email)}`;
       } else if (loginResult?.ok) {
         // Different flows for Family and Caregiver
+        console.log("Auto-login success, redirecting...");
         if (role === "FAMILY") {
           // Family: KYC → Payment → Activation
           window.location.href = `/auth/kyc?userId=${data.userId}`;
@@ -126,7 +139,8 @@ function RegisterPageContent() {
         window.location.href = `/auth/login?message=account_created`;
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : t.error);
+      console.error("Registration error:", error);
+      setErrorMessage(error instanceof Error ? error.message : "Erro ao criar conta");
     } finally {
       setIsLoading(false);
     }
