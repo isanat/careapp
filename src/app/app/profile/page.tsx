@@ -143,10 +143,20 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     setIsLoading(true);
+    console.log('🔄 fetchProfile - Iniciando busca de perfil...');
     try {
       const response = await fetch("/api/user/profile");
-      if (!response.ok) throw new Error("Erro ao carregar perfil");
+      console.log('📡 Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Erro na resposta:', errorText);
+        throw new Error("Erro ao carregar perfil: " + errorText);
+      }
+      
       const data = await response.json();
+      console.log('📦 Dados recebidos:', JSON.stringify(data, null, 2));
+      
       setProfile(data.profile);
       setFormData({
         name: data.user?.name || "",
@@ -169,12 +179,15 @@ export default function ProfilePage() {
         totalContracts: data.profile?.totalContracts || 0,
         elderName: data.profile?.elderName || "",
         elderAge: data.profile?.elderAge || undefined,
+        elderNeeds: data.profile?.elderNeeds || "",
         emergencyContact: data.profile?.emergencyContact || "",
         emergencyPhone: data.profile?.emergencyPhone || "",
         backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
         backgroundCheckUrl: data.user?.backgroundCheckUrl || "",
       });
+      console.log('✅ Perfil carregado com sucesso');
     } catch (err) {
+      console.error('❌ Erro ao carregar perfil:', err);
       setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
     } finally {
       setIsLoading(false);
@@ -185,18 +198,33 @@ export default function ProfilePage() {
     setIsSaving(true);
     setError(null);
     setSuccess(null);
+    console.log('💾 handleSave - Iniciando salvamento...');
+    console.log('📦 Dados a salvar:', JSON.stringify(formData, null, 2));
+    
     try {
       const response = await fetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      if (!response.ok) throw new Error("Erro ao salvar");
+      
+      console.log('📡 Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Erro na resposta:', errorText);
+        throw new Error("Erro ao salvar: " + errorText);
+      }
+      
+      const result = await response.json();
+      console.log('✅ Resposta do servidor:', result);
+      
       setSuccess("Salvo!");
       setIsEditing(false);
       if (formData.name !== session?.user?.name) await update({ name: formData.name });
       fetchProfile();
     } catch (err) {
+      console.error('❌ Erro ao salvar:', err);
       setError(err instanceof Error ? err.message : "Erro ao salvar");
     } finally {
       setIsSaving(false);
