@@ -18,28 +18,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  IconSettings,
-  IconRefresh,
   IconCoin,
   IconCreditCard,
   IconPercentage,
   IconServer,
   IconShield,
-  IconMail,
+  IconVideo,
+  IconAlertTriangle,
   IconCheck,
   IconX,
-  IconAlertTriangle,
 } from "@/components/icons";
 import { useToast } from "@/hooks/use-toast";
 
 interface PlatformSettings {
+  // Taxas
   activationCostEurCents: number;
   contractFeeEurCents: number;
   platformFeePercent: number;
-  tokenPriceEurCents: number;
+  // Geral
   maintenanceMode: boolean;
   supportEmail: string;
   supportPhone: string;
+  // KYC
+  kycEnabled: boolean;
+  kycProvider: string;
+  kycApiKey: string;
+  // Easypay
+  easypayEnabled: boolean;
+  easypayAccountId: string;
+  easypayApiKey: string;
+  easypayEnvironment: "sandbox" | "production";
+  // Vídeo
+  videoEnabled: boolean;
+  videoProvider: string;
+  videoApiKey: string;
 }
 
 interface IntegrationStatus {
@@ -56,11 +68,20 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<PlatformSettings>({
     activationCostEurCents: 3500,
     contractFeeEurCents: 500,
-    platformFeePercent: 15,
-    tokenPriceEurCents: 1,
+    platformFeePercent: 10,
     maintenanceMode: false,
     supportEmail: "",
     supportPhone: "",
+    kycEnabled: true,
+    kycProvider: "didit",
+    kycApiKey: "",
+    easypayEnabled: true,
+    easypayAccountId: "",
+    easypayApiKey: "",
+    easypayEnvironment: "sandbox",
+    videoEnabled: false,
+    videoProvider: "daily",
+    videoApiKey: "",
   });
   const [integrations, setIntegrations] = useState<IntegrationStatus[]>([]);
 
@@ -167,69 +188,15 @@ export default function AdminSettingsPage() {
         }
       />
 
-      <Tabs defaultValue="general">
-        <TabsList>
-          <TabsTrigger value="general">Geral</TabsTrigger>
+      <Tabs defaultValue="fees">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="fees">Taxas</TabsTrigger>
-          <TabsTrigger value="integrations">Integrações</TabsTrigger>
+          <TabsTrigger value="kyc">KYC</TabsTrigger>
+          <TabsTrigger value="payments">Pagamentos</TabsTrigger>
+          <TabsTrigger value="video">Vídeo</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general" className="space-y-6 mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Informações Gerais</CardTitle>
-              <CardDescription>
-                Configurações básicas da plataforma
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {loading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-10 w-full" />
-                  <Skeleton className="h-10 w-full" />
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <Label>Email de Suporte</Label>
-                    <Input
-                      value={settings.supportEmail}
-                      onChange={(e) =>
-                        setSettings({ ...settings, supportEmail: e.target.value })
-                      }
-                      placeholder="suporte@idosolink.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Telefone de Suporte</Label>
-                    <Input
-                      value={settings.supportPhone}
-                      onChange={(e) =>
-                        setSettings({ ...settings, supportPhone: e.target.value })
-                      }
-                      placeholder="+351 210 000 000"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Modo de Manutenção</Label>
-                      <p className="text-sm text-slate-500">
-                        Apenas administradores podem acessar
-                      </p>
-                    </div>
-                    <Switch
-                      checked={settings.maintenanceMode}
-                      onCheckedChange={(checked) =>
-                        setSettings({ ...settings, maintenanceMode: checked })
-                      }
-                    />
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
+        {/* Tab: Taxas */}
         <TabsContent value="fees" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
@@ -266,7 +233,7 @@ export default function AdminSettingsPage() {
                       />
                     </div>
                     <p className="text-xs text-slate-500">
-                      Valor pago pelo usuário ao ativar a conta (creditado em tokens)
+                      Valor pago pela família ao ativar a conta
                     </p>
                   </div>
 
@@ -286,7 +253,7 @@ export default function AdminSettingsPage() {
                       />
                     </div>
                     <p className="text-xs text-slate-500">
-                      Valor pago por cada parte ao criar um contrato
+                      Valor pago por cada contrato criado
                     </p>
                   </div>
 
@@ -306,32 +273,53 @@ export default function AdminSettingsPage() {
                       />
                     </div>
                     <p className="text-xs text-slate-500">
-                      Porcentagem sobre o valor do contrato
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Preço do Token (EUR)</Label>
-                    <div className="flex items-center gap-2">
-                      <IconCoin className="h-4 w-4 text-slate-400" />
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={settings.tokenPriceEurCents / 100}
-                        onChange={(e) =>
-                          setSettings({
-                            ...settings,
-                            tokenPriceEurCents: parseFloat(e.target.value) * 100,
-                          })
-                        }
-                      />
-                    </div>
-                    <p className="text-xs text-slate-500">
-                      Preço fixo: 1 SENT = €0.01
+                      Porcentagem sobre o valor do contrato (cuidador recebe 90%)
                     </p>
                   </div>
                 </>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Informações de Contato</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Email de Suporte</Label>
+                <Input
+                  value={settings.supportEmail}
+                  onChange={(e) =>
+                    setSettings({ ...settings, supportEmail: e.target.value })
+                  }
+                  placeholder="suporte@idosolink.pt"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Telefone de Suporte</Label>
+                <Input
+                  value={settings.supportPhone}
+                  onChange={(e) =>
+                    setSettings({ ...settings, supportPhone: e.target.value })
+                  }
+                  placeholder="+351 210 000 000"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Modo de Manutenção</Label>
+                  <p className="text-sm text-slate-500">
+                    Apenas administradores podem acessar
+                  </p>
+                </div>
+                <Switch
+                  checked={settings.maintenanceMode}
+                  onCheckedChange={(checked) =>
+                    setSettings({ ...settings, maintenanceMode: checked })
+                  }
+                />
+              </div>
             </CardContent>
           </Card>
 
@@ -349,68 +337,322 @@ export default function AdminSettingsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="integrations" className="space-y-6 mt-6">
+        {/* Tab: KYC */}
+        <TabsContent value="kyc" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <IconServer className="h-5 w-5" />
-                Status das Integrações
+                <IconShield className="h-5 w-5" />
+                Verificação de Identidade (KYC)
               </CardTitle>
               <CardDescription>
-                Monitore a saúde das integrações externas
+                Configure a integração com o provedor de KYC
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               {loading ? (
                 <div className="space-y-4">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <Skeleton key={i} className="h-16 w-full" />
-                  ))}
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {integrations.map((integration) => (
-                    <div
-                      key={integration.name}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`h-3 w-3 rounded-full ${getStatusColor(
-                            integration.status
-                          )}`}
-                        />
-                        <div>
-                          <p className="font-medium">{integration.name}</p>
-                          <p className="text-sm text-slate-500">
-                            {integration.lastWebhook
-                              ? `Último webhook: ${new Date(
-                                  integration.lastWebhook
-                                ).toLocaleString("pt-PT")}`
-                              : "Nenhum webhook recebido"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={integration.connected ? "default" : "destructive"}>
-                          {integration.connected ? "Conectado" : "Desconectado"}
-                        </Badge>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => testConnection(integration.name)}
-                        >
-                          Testar
-                        </Button>
-                      </div>
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Habilitar Verificação KYC</Label>
+                      <p className="text-sm text-slate-500">
+                        Permite que cuidadores verifiquem sua identidade
+                      </p>
                     </div>
-                  ))}
+                    <Switch
+                      checked={settings.kycEnabled}
+                      onCheckedChange={(checked) =>
+                        setSettings({ ...settings, kycEnabled: checked })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Provedor KYC</Label>
+                    <Select
+                      value={settings.kycProvider}
+                      onValueChange={(v) => setSettings({ ...settings, kycProvider: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="didit">Didit</SelectItem>
+                        <SelectItem value="veriff">Veriff</SelectItem>
+                        <SelectItem value="onfido">Onfido</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>API Key</Label>
+                    <Input
+                      type="password"
+                      value={settings.kycApiKey}
+                      onChange={(e) =>
+                        setSettings({ ...settings, kycApiKey: e.target.value })
+                      }
+                      placeholder="sk_live_..."
+                    />
+                    <p className="text-xs text-slate-500">
+                      Chave de API do provedor KYC
+                    </p>
+                  </div>
+
+                  <Button 
+                    variant="outline" 
+                    onClick={() => testConnection("kyc")}
+                    disabled={!settings.kycApiKey}
+                  >
+                    Testar Conexão
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Tab: Pagamentos */}
+        <TabsContent value="payments" className="space-y-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <IconCreditCard className="h-5 w-5" />
+                Easypay - Pagamentos
+              </CardTitle>
+              <CardDescription>
+                Configure a integração com Easypay (Multibanco, MB Way, Cartão)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {loading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
                 </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Habilitar Easypay</Label>
+                      <p className="text-sm text-slate-500">
+                        Ativa processamento de pagamentos via Easypay
+                      </p>
+                    </div>
+                    <Switch
+                      checked={settings.easypayEnabled}
+                      onCheckedChange={(checked) =>
+                        setSettings({ ...settings, easypayEnabled: checked })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Ambiente</Label>
+                    <Select
+                      value={settings.easypayEnvironment}
+                      onValueChange={(v: "sandbox" | "production") =>
+                        setSettings({ ...settings, easypayEnvironment: v })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sandbox">Sandbox (Testes)</SelectItem>
+                        <SelectItem value="production">Produção</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Account ID</Label>
+                    <Input
+                      value={settings.easypayAccountId}
+                      onChange={(e) =>
+                        setSettings({ ...settings, easypayAccountId: e.target.value })
+                      }
+                      placeholder="12345"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>API Key</Label>
+                    <Input
+                      type="password"
+                      value={settings.easypayApiKey}
+                      onChange={(e) =>
+                        setSettings({ ...settings, easypayApiKey: e.target.value })
+                      }
+                      placeholder="API Key da Easypay"
+                    />
+                    <p className="text-xs text-slate-500">
+                      Encontrada no painel da Easypay
+                    </p>
+                  </div>
+
+                  <Button 
+                    variant="outline" 
+                    onClick={() => testConnection("easypay")}
+                    disabled={!settings.easypayAccountId || !settings.easypayApiKey}
+                  >
+                    Testar Conexão
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Tab: Vídeo */}
+        <TabsContent value="video" className="space-y-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <IconVideo className="h-5 w-5" />
+                Videochamadas
+              </CardTitle>
+              <CardDescription>
+                Configure a integração para reuniões por vídeo entre famílias e cuidadores
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {loading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Habilitar Videochamadas</Label>
+                      <p className="text-sm text-slate-500">
+                        Permite reuniões por vídeo entre famílias e cuidadores
+                      </p>
+                    </div>
+                    <Switch
+                      checked={settings.videoEnabled}
+                      onCheckedChange={(checked) =>
+                        setSettings({ ...settings, videoEnabled: checked })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Provedor de Vídeo</Label>
+                    <Select
+                      value={settings.videoProvider}
+                      onValueChange={(v) => setSettings({ ...settings, videoProvider: v })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Daily.co</SelectItem>
+                        <SelectItem value="twilio">Twilio Video</SelectItem>
+                        <SelectItem value="zoom">Zoom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>API Key</Label>
+                    <Input
+                      type="password"
+                      value={settings.videoApiKey}
+                      onChange={(e) =>
+                        setSettings({ ...settings, videoApiKey: e.target.value })
+                      }
+                      placeholder="API Key do provedor"
+                    />
+                    <p className="text-xs text-slate-500">
+                      Chave de API para criar salas de vídeo
+                    </p>
+                  </div>
+
+                  <Button 
+                    variant="outline" 
+                    onClick={() => testConnection("video")}
+                    disabled={!settings.videoApiKey}
+                  >
+                    Testar Conexão
+                  </Button>
+                </>
               )}
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Status das Integrações */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <IconServer className="h-5 w-5" />
+            Status das Integrações
+          </CardTitle>
+          <CardDescription>
+            Monitore a saúde das integrações externas
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          ) : integrations.length > 0 ? (
+            <div className="space-y-4">
+              {integrations.map((integration) => (
+                <div
+                  key={integration.name}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-3 w-3 rounded-full ${getStatusColor(integration.status)}`}
+                    />
+                    <div>
+                      <p className="font-medium">{integration.name}</p>
+                      <p className="text-sm text-slate-500">
+                        {integration.lastWebhook
+                          ? `Último webhook: ${new Date(
+                              integration.lastWebhook
+                            ).toLocaleString("pt-PT")}`
+                          : "Nenhum webhook recebido"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={integration.connected ? "default" : "destructive"}>
+                      {integration.connected ? "Conectado" : "Desconectado"}
+                    </Badge>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => testConnection(integration.name)}
+                    >
+                      Testar
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              Configure as integrações acima para ver o status aqui.
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

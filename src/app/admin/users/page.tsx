@@ -19,12 +19,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   IconSearch,
-  IconFilter,
   IconEye,
   IconUserOff,
   IconUserCheck,
   IconMoreHorizontal,
-  IconPlus,
 } from "@/components/icons";
 import {
   DropdownMenu,
@@ -58,7 +56,7 @@ interface UsersResponse {
   };
 }
 
-export default function AdminUsersPage() {
+export default function AdminFamiliesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
@@ -210,7 +208,7 @@ export default function AdminUsersPage() {
       header: "Carteira",
       render: (user) => (
         <span className="text-sm">
-          {user.walletBalance?.toLocaleString() || 0} SENT
+          €{(user.walletBalance / 100)?.toFixed(2) || "0.00"}
         </span>
       ),
     },
@@ -262,16 +260,8 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Usuários"
-        description="Gerencie todos os usuários da plataforma"
-        actions={
-          <Button asChild>
-            <Link href="/admin/users/new">
-              <IconPlus className="mr-2 h-4 w-4" />
-              Novo Usuário
-            </Link>
-          </Button>
-        }
+        title="Famílias"
+        description="Gerencie as famílias cadastradas na plataforma"
       />
 
       {/* Filters */}

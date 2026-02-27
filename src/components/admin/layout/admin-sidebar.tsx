@@ -13,7 +13,6 @@ import {
   IconHeartHandshake,
   IconFileText,
   IconCreditCard,
-  IconCoins,
   IconShield,
   IconSettings,
   IconBarChart,
@@ -28,11 +27,10 @@ import { useSession, signOut } from "next-auth/react";
 
 const mainNavItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: IconLayoutDashboard },
-  { label: "Usuários", href: "/admin/users", icon: IconUsers },
+  { label: "Famílias", href: "/admin/users", icon: IconUsers },
   { label: "Cuidadores", href: "/admin/caregivers", icon: IconHeartHandshake, badge: 12 },
   { label: "Contratos", href: "/admin/contracts", icon: IconFileText, badge: 3 },
   { label: "Pagamentos", href: "/admin/payments", icon: IconCreditCard },
-  { label: "Tokens", href: "/admin/tokens", icon: IconCoins },
 ];
 
 const secondaryNavItems = [
