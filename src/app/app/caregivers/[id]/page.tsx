@@ -302,17 +302,6 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                 </div>
               </CardContent>
             </Card>
-
-            {/* Tip CTA */}
-            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-              <CardContent className="pt-6 text-center">
-                <IconHeart className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="font-medium mb-2">Gorjetas em </p>
-                <p className="text-sm text-muted-foreground">
-                  Após um contrato, você pode enviar gorjetas em tokens que valorizam!
-                </p>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

@@ -92,7 +92,7 @@ export function Header() {
                   <IconChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-48 bg-background border shadow-lg">
                 <DropdownMenuItem asChild>
                   <Link href="/app/dashboard" className="flex items-center">
                     <IconUser className="mr-2 h-4 w-4" />

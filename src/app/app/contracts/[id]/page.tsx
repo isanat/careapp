@@ -47,7 +47,10 @@ interface ContractDetails {
   createdAt: string;
   serviceTypes: string[];
   hoursPerWeek: number;
+  caregiverId?: string;
+  familyId?: string;
   otherParty: {
+    id?: string;
     name: string;
     title?: string;
     city?: string;

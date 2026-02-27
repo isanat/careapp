@@ -130,6 +130,11 @@ model User {
   role          UserRole   @default(FAMILY)
   status        UserStatus @default(PENDING)
   
+  // Documentos pessoais
+  nif           String?   // NIF português (9 dígitos)
+  documentType  String?   // Tipo de documento (CC, Passaporte, etc.)
+  documentNumber String?  // Número do documento
+  
   // Verificação
   emailVerified    DateTime?
   phoneVerified    DateTime?
@@ -141,6 +146,10 @@ model User {
   kycSessionCreatedAt DateTime?
   kycCompletedAt      DateTime?
   kycConfidence       Int      @default(0)
+  
+  // Antecedentes criminais
+  backgroundCheckStatus String? @default("PENDING") // PENDING, SUBMITTED, VERIFIED, REJECTED
+  backgroundCheckUrl    String? // URL do comprovante
   
   // Metadados
   profileImage    String?

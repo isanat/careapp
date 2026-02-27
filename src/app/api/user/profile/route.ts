@@ -15,9 +15,12 @@ export async function GET(request: NextRequest) {
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
 
-    // Get basic user info
+    // Get basic user info with all new fields
     const userResult = await db.execute({
-      sql: `SELECT id, email, name, phone, role, status, profileImage, createdAt 
+      sql: `SELECT id, email, name, phone, role, status, profileImage, 
+                   nif, documentType, documentNumber,
+                   backgroundCheckStatus, backgroundCheckUrl,
+                   createdAt 
             FROM User WHERE id = ?`,
       args: [userId]
     });
@@ -90,13 +93,14 @@ export async function GET(request: NextRequest) {
 
     // Get wallet info
     const walletResult = await db.execute({
-      sql: `SELECT address, balanceTokens FROM Wallet WHERE userId = ?`,
+      sql: `SELECT address, balanceTokens, balanceEurCents FROM Wallet WHERE userId = ?`,
       args: [userId]
     });
 
     const wallet = walletResult.rows.length > 0 ? {
       address: walletResult.rows[0].address,
       balanceTokens: walletResult.rows[0].balanceTokens,
+      balanceEurCents: walletResult.rows[0].balanceEurCents,
     } : null;
 
     return NextResponse.json({
@@ -108,6 +112,11 @@ export async function GET(request: NextRequest) {
         role: user.role,
         status: user.status,
         profileImage: user.profileImage,
+        nif: user.nif,
+        documentType: user.documentType,
+        documentNumber: user.documentNumber,
+        backgroundCheckStatus: user.backgroundCheckStatus,
+        backgroundCheckUrl: user.backgroundCheckUrl,
         createdAt: user.createdAt,
       },
       profile,
@@ -132,16 +141,64 @@ export async function PUT(request: NextRequest) {
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
 
-    // Update user basic info
-    if (body.name || body.phone) {
+    // Build update query for User table
+    const userUpdates: string[] = [];
+    const userArgs: any[] = [];
+
+    if (body.name !== undefined) {
+      userUpdates.push('name = ?');
+      userArgs.push(body.name);
+    }
+    if (body.phone !== undefined) {
+      userUpdates.push('phone = ?');
+      userArgs.push(body.phone);
+    }
+    if (body.profileImage !== undefined) {
+      userUpdates.push('profileImage = ?');
+      userArgs.push(body.profileImage);
+    }
+    if (body.nif !== undefined) {
+      userUpdates.push('nif = ?');
+      userArgs.push(body.nif);
+    }
+    if (body.documentType !== undefined) {
+      userUpdates.push('documentType = ?');
+      userArgs.push(body.documentType);
+    }
+    if (body.documentNumber !== undefined) {
+      userUpdates.push('documentNumber = ?');
+      userArgs.push(body.documentNumber);
+    }
+    if (body.backgroundCheckStatus !== undefined) {
+      userUpdates.push('backgroundCheckStatus = ?');
+      userArgs.push(body.backgroundCheckStatus);
+    }
+    if (body.backgroundCheckUrl !== undefined) {
+      userUpdates.push('backgroundCheckUrl = ?');
+      userArgs.push(body.backgroundCheckUrl);
+    }
+
+    if (userUpdates.length > 0) {
+      userUpdates.push('updatedAt = CURRENT_TIMESTAMP');
+      userArgs.push(userId);
+      
       await db.execute({
-        sql: `UPDATE User SET name = ?, phone = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [body.name || '', body.phone || null, userId]
+        sql: `UPDATE User SET ${userUpdates.join(', ')} WHERE id = ?`,
+        args: userArgs
       });
     }
 
     // Update profile based on role
-    if (isCaregiver) {
+    if (isCaregiver && (
+      body.title !== undefined ||
+      body.bio !== undefined ||
+      body.city !== undefined ||
+      body.experienceYears !== undefined ||
+      body.services !== undefined ||
+      body.hourlyRateEur !== undefined ||
+      body.certifications !== undefined ||
+      body.languages !== undefined
+    )) {
       const servicesJson = body.services && body.services.length > 0 
         ? JSON.stringify(body.services) 
         : null;
@@ -151,37 +208,55 @@ export async function PUT(request: NextRequest) {
 
       await db.execute({
         sql: `UPDATE ProfileCaregiver 
-              SET title = ?, bio = ?, city = ?, experienceYears = ?, 
-                  services = ?, hourlyRateEur = ?, certifications = ?, languages = ?,
+              SET title = COALESCE(?, title),
+                  bio = COALESCE(?, bio),
+                  city = COALESCE(?, city),
+                  experienceYears = COALESCE(?, experienceYears),
+                  services = COALESCE(?, services),
+                  hourlyRateEur = COALESCE(?, hourlyRateEur),
+                  certifications = COALESCE(?, certifications),
+                  languages = COALESCE(?, languages),
                   updatedAt = CURRENT_TIMESTAMP 
               WHERE userId = ?`,
         args: [
-          body.title || '',
-          body.bio || '',
-          body.city || '',
-          body.experienceYears || 0,
+          body.title ?? null,
+          body.bio ?? null,
+          body.city ?? null,
+          body.experienceYears ?? null,
           servicesJson,
-          hourlyRateCents || 1500,
-          body.certifications || '',
-          body.languages || '',
+          hourlyRateCents,
+          body.certifications ?? null,
+          body.languages ?? null,
           userId
         ]
       });
     }
 
-    if (isFamily) {
+    if (isFamily && (
+      body.city !== undefined ||
+      body.elderName !== undefined ||
+      body.elderAge !== undefined ||
+      body.emergencyContact !== undefined ||
+      body.emergencyPhone !== undefined ||
+      body.elderNeeds !== undefined
+    )) {
       await db.execute({
         sql: `UPDATE ProfileFamily 
-              SET city = ?, elderName = ?, elderAge = ?,
-                  emergencyContactName = ?, emergencyContactPhone = ?,
+              SET city = COALESCE(?, city),
+                  elderName = COALESCE(?, elderName),
+                  elderAge = COALESCE(?, elderAge),
+                  emergencyContactName = COALESCE(?, emergencyContactName),
+                  emergencyContactPhone = COALESCE(?, emergencyContactPhone),
+                  elderNeeds = COALESCE(?, elderNeeds),
                   updatedAt = CURRENT_TIMESTAMP 
               WHERE userId = ?`,
         args: [
-          body.city || '',
-          body.elderName || '',
-          body.elderAge || null,
-          body.emergencyContact || '',
-          body.emergencyPhone || '',
+          body.city ?? null,
+          body.elderName ?? null,
+          body.elderAge ?? null,
+          body.emergencyContact ?? null,
+          body.emergencyPhone ?? null,
+          body.elderNeeds ?? null,
           userId
         ]
       });

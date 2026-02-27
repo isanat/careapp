@@ -289,15 +289,8 @@ export const translations = {
           item2: "Taxa de contrato: €5 por contrato criado",
           item3: "Comissão da plataforma: 10% sobre transacções",
         },
-        tokens: {
-          title: "6. Sistema de Tokens",
-          content: "O IdosoLink utiliza um sistema de tokens para facilitar pagamentos:",
-          item1: "1 Token = €0.01 (valor fixo)",
-          item2: "Tokens são comprados através da plataforma",
-          item3: "Tokens podem ser convertidos em euros a qualquer momento",
-        },
         prohibited: {
-          title: "7. Condutas Proibidas",
+          title: "6. Condutas Proibidas",
           content: "É estritamente proibido:",
           item1: "Fornecer informações falsas ou enganosas",
           item2: "Usar a plataforma para actividades ilegais",
@@ -941,7 +934,7 @@ export const translations = {
             "Dados de identificação: nome, email, telefone, CPF/NIF",
             "Dados de localização: endereço, cidade, código postal",
             "Dados de perfil: foto, descrição, qualificações profissionais",
-            "Dados de transacção: histórico de contratos, pagamentos, tokens",
+            "Dados de transacção: histórico de contratos, pagamentos",
             "Dados de uso: logs de acesso, navegação, preferências"
           ],
         },
@@ -1941,7 +1934,7 @@ export const translations = {
             "Identification data: name, email, phone, ID/tax number",
             "Location data: address, city, postal code",
             "Profile data: photo, description, professional qualifications",
-            "Transaction data: contract history, payments, tokens",
+            "Transaction data: contract history, payments",
             "Usage data: access logs, navigation, preferences"
           ],
         },
@@ -2940,31 +2933,31 @@ export const translations = {
           items: [
             "Dati di identificazione: nome, email, telefono, codice fiscale",
             "Dati di localizzazione: indirizzo, città, codice postale",
-            "Dati del profilo: foto, descripción, calificaciones profesionales",
-            "Dati di transazione: historial de contratos, pagos, tokens",
-            "Dati di uso: registros de acceso, navegación, preferencias"
+            "Dati del profilo: foto, descrizione, qualifiche professionali",
+            "Dati di transazione: storico contratti, pagamenti",
+            "Dati di uso: log di accesso, navigazione, preferenze"
           ],
         },
         dataUsage: {
-          title: "3. Come utilizziamo las tus informaciones",
-          content: "Utilizamos las tus informaciones para:",
+          title: "3. Come utilizziamo le tue informazioni",
+          content: "Utilizziamo le tue informazioni per:",
           items: [
-            "Proporcionar y mejorar nuestros servicios",
-            "Processar transacciones y pagos",
-            "Comunicarnos contigo usted sobre su cuenta",
-            "Enviar notificaciones relevantes sobre cuidadores y contratos",
-            "Cumplir obligaciones legales y regulatorias",
-            "Prevenir fraudes y garantizar la seguridad"
+            "Fornire e migliorare i nostri servizi",
+            "Elaborare transazioni e pagamenti",
+            "Comunicare con te riguardo al tuo account",
+            "Inviare notifiche pertinenti su caregiver e contratti",
+            "Rispettare gli obblighi legali e normativi",
+            "Prevenire frodi e garantire la sicurezza"
           ],
         },
         dataSharing: {
-          title: "4. Condivision de datos",
-          content: "No vendemos sus informaciones personales. Podemos compartir datos con:",
+          title: "4. Condivisione dei dati",
+          content: "Non vendiamo le tue informazioni personali. Possiamo condividere dati con:",
           items: [
-            "Otros usuarios (según sea necesario para contratos)",
-            "Procesadores de pagos (Stripe)",
-            "Autoridades legales (cuando sea exija por ley)",
-            "Proveedores de servicios esenciales (hosting, análisis)"
+            "Altri utenti (secondo necessità per i contratti)",
+            "Processatori di pagamento (Stripe)",
+            "Autorità legali (quando richiesto dalla legge)",
+            "Fornitori di servizi essenziali (hosting, analisi)"
           ],
         },
         security: {
@@ -3002,7 +2995,7 @@ export const translations = {
           ],
         },
       },
-      backHome: "Volver al Inicio",
+      backHome: "Torna alla Home",
     },
   },
 
@@ -3938,11 +3931,11 @@ export const translations = {
           title: "2. Información que Recopilamos",
           content: "Podemos recopilar los siguientes tipos de información:",
           items: [
-            "Datos de identificación: nombre. email. teléfono. documento fiscal",
-            "Datos de ubicación: dirección. ciudad. código postal",
-            "Datos de perfil: foto. descripción. calificaciones profesionales",
-            "Datos de transacción: historial de contratos. pagos. tokens",
-            "Datos de uso: registros de acceso. navegación. preferencias"
+            "Datos de identificación: nombre, email, teléfono, documento fiscal",
+            "Datos de ubicación: dirección, ciudad, código postal",
+            "Datos de perfil: foto, descripción, calificaciones profesionales",
+            "Datos de transacción: historial de contratos, pagos",
+            "Datos de uso: registros de acceso, navegación, preferencias"
           ],
         },
         dataUsage: {

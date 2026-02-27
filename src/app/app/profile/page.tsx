@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,6 +25,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AppShell } from "@/components/layout/app-shell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/ui/language-selector";
@@ -43,7 +50,11 @@ import {
   IconShield,
   IconTrash,
   IconLogout,
-  IconChevronRight,
+  IconFileText,
+  IconUpload,
+  IconCheckCircle,
+  IconClock,
+  IconAlertTriangle,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -64,10 +75,21 @@ const SERVICE_TYPES = [
   { id: "NURSING_CARE", label: "Enfermagem" },
 ];
 
+const DOCUMENT_TYPES = [
+  { id: "CC", label: "Cartão de Cidadão" },
+  { id: "PASSPORT", label: "Passaporte" },
+  { id: "NIF", label: "NIF" },
+  { id: "RESIDENCE", label: "Título de Residência" },
+];
+
 interface ProfileData {
   name: string;
   email: string;
   phone: string;
+  nif?: string;
+  documentType?: string;
+  documentNumber?: string;
+  profileImage?: string;
   title?: string;
   bio?: string;
   experienceYears?: number;
@@ -84,6 +106,8 @@ interface ProfileData {
   elderNeeds?: string;
   emergencyContact?: string;
   emergencyPhone?: string;
+  backgroundCheckStatus?: string;
+  backgroundCheckUrl?: string;
 }
 
 export default function ProfilePage() {
@@ -91,6 +115,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { t } = useI18n();
   const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported } = useNotifications();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -99,6 +124,7 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [formData, setFormData] = useState<ProfileData>({
@@ -125,6 +151,10 @@ export default function ProfilePage() {
         name: data.user?.name || "",
         email: data.user?.email || "",
         phone: data.user?.phone || "",
+        nif: data.user?.nif || "",
+        documentType: data.user?.documentType || "",
+        documentNumber: data.user?.documentNumber || "",
+        profileImage: data.user?.profileImage || "",
         title: data.profile?.title || "",
         bio: data.profile?.bio || "",
         experienceYears: data.profile?.experienceYears || 0,
@@ -140,6 +170,8 @@ export default function ProfilePage() {
         elderAge: data.profile?.elderAge || undefined,
         emergencyContact: data.profile?.emergencyContact || "",
         emergencyPhone: data.profile?.emergencyPhone || "",
+        backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
+        backgroundCheckUrl: data.user?.backgroundCheckUrl || "",
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
@@ -192,6 +224,89 @@ export default function ProfilePage() {
     signOut({ callbackUrl: "/" });
   };
 
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "profile");
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Erro ao enviar foto");
+      
+      const data = await response.json();
+      setFormData(prev => ({ ...prev, profileImage: data.url }));
+      
+      // Save immediately
+      await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileImage: data.url }),
+      });
+      
+      setSuccess("Foto atualizada!");
+      fetchProfile();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao enviar foto");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleBackgroundCheckUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      formDataUpload.append("type", "background_check");
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (!response.ok) throw new Error("Erro ao enviar documento");
+      
+      const data = await response.json();
+      
+      // Update background check status
+      await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          backgroundCheckUrl: data.url,
+          backgroundCheckStatus: "SUBMITTED"
+        }),
+      });
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        backgroundCheckUrl: data.url,
+        backgroundCheckStatus: "SUBMITTED"
+      }));
+      
+      setSuccess("Comprovante enviado! Aguarde verificação.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao enviar documento");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   if (status === "unauthenticated") {
     router.push("/auth/login");
     return null;
@@ -209,12 +324,24 @@ export default function ProfilePage() {
     );
   }
 
+  const getBackgroundCheckBadge = () => {
+    switch (formData.backgroundCheckStatus) {
+      case "VERIFIED":
+        return <Badge className="bg-green-500"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</Badge>;
+      case "SUBMITTED":
+        return <Badge className="bg-yellow-500"><IconClock className="h-3 w-3 mr-1" />Em análise</Badge>;
+      case "REJECTED":
+        return <Badge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
+      default:
+        return <Badge variant="outline"><IconClock className="h-3 w-3 mr-1" />Pendente</Badge>;
+    }
+  };
+
   return (
     <AppShell>
       <div className="space-y-3">
-        {/* Header compacto */}
-        <div className="flex items-center justify-between px-4 py-3 bg-background sticky top-0 z-10 border-b">
-          <h1 className="text-lg font-semibold">{t.nav.profile}</h1>
+        {/* Botão de editar/salvar no topo direito - mostrado apenas no header do AppShell */}
+        <div className="flex justify-end px-4 py-2">
           <Button 
             size="sm"
             variant={isEditing ? "default" : "outline"}
@@ -230,23 +357,39 @@ export default function ProfilePage() {
         {error && <Alert variant="destructive" className="mx-4"><IconAlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert>}
         {success && <Alert className="mx-4 border-green-500/20 bg-green-500/5"><IconCheck className="h-4 w-4 text-green-500" /><AlertDescription className="text-green-600">{success}</AlertDescription></Alert>}
 
-        {/* Perfil resumido */}
+        {/* Perfil com foto */}
         <div className="px-4 py-3 flex items-center gap-3">
           <div className="relative">
-            <Avatar className="h-14 w-14">
+            <Avatar className="h-16 w-16 cursor-pointer" onClick={handlePhotoClick}>
+              {formData.profileImage ? (
+                <AvatarImage src={formData.profileImage} alt={formData.name} />
+              ) : null}
               <AvatarFallback className="text-lg bg-primary/10 text-primary">
                 {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
               </AvatarFallback>
             </Avatar>
-            {isEditing && (
-              <Button size="icon" className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full">
+            <button 
+              className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors"
+              onClick={handlePhotoClick}
+              disabled={uploadingPhoto}
+            >
+              {uploadingPhoto ? (
+                <IconLoader2 className="h-3 w-3 animate-spin" />
+              ) : (
                 <IconCamera className="h-3 w-3" />
-              </Button>
-            )}
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handlePhotoChange}
+            />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <span className="font-medium">{session?.user?.name}</span>
+              <span className="font-medium text-lg">{session?.user?.name}</span>
               <Badge variant="outline" className={isFamily ? "text-blue-600 border-blue-600" : "text-green-600 border-green-600"}>
                 {isFamily ? <IconFamily className="h-3 w-3 mr-1" /> : <IconCaregiver className="h-3 w-3 mr-1" />}
                 {isFamily ? t.auth.family : t.auth.caregiver}
@@ -255,6 +398,7 @@ export default function ProfilePage() {
             {isCaregiver && formData.title && (
               <p className="text-sm text-muted-foreground">{formData.title} {formData.city ? `• ${formData.city}` : ""}</p>
             )}
+            <p className="text-xs text-muted-foreground">{formData.email}</p>
           </div>
         </div>
 
@@ -283,10 +427,11 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Tabs compactas */}
+        {/* Tabs */}
         <Tabs defaultValue="about" className="px-4">
-          <TabsList className="grid w-full grid-cols-4 h-9">
+          <TabsList className={`grid w-full h-9 ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'}`}>
             <TabsTrigger value="about" className="text-xs py-1.5">Info</TabsTrigger>
+            <TabsTrigger value="documents" className="text-xs py-1.5">Docs</TabsTrigger>
             {isCaregiver && <TabsTrigger value="services" className="text-xs py-1.5">Serviços</TabsTrigger>}
             {isFamily && <TabsTrigger value="elder" className="text-xs py-1.5">Idoso</TabsTrigger>}
             <TabsTrigger value="contact" className="text-xs py-1.5">Contato</TabsTrigger>
@@ -311,20 +456,136 @@ export default function ProfilePage() {
                 <>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <Label className="text-xs text-muted-foreground">Título</Label>
+                      <Label className="text-xs text-muted-foreground">Título Profissional</Label>
                       <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Ex: Enfermeira" />
                     </div>
                     <div>
-                      <Label className="text-xs text-muted-foreground">Anos Exp.</Label>
+                      <Label className="text-xs text-muted-foreground">Anos de Experiência</Label>
                       <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-9 mt-0.5" />
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Bio</Label>
-                    <Textarea value={formData.bio || ""} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={2} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Sobre você..." />
+                    <Label className="text-xs text-muted-foreground">Bio / Sobre você</Label>
+                    <Textarea value={formData.bio || ""} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={2} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Descreva sua experiência e especialidades..." />
                   </div>
                 </>
               )}
+            </div>
+          </TabsContent>
+
+          {/* Documents Tab */}
+          <TabsContent value="documents" className="mt-3 space-y-2">
+            <div className="p-3 bg-muted/30 rounded-lg">
+              <div className="flex items-center gap-2 mb-3">
+                <IconFileText className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Documentos Pessoais</span>
+              </div>
+              
+              <div className="space-y-2">
+                <div>
+                  <Label className="text-xs text-muted-foreground">NIF (Número de Identificação Fiscal)</Label>
+                  <Input 
+                    value={formData.nif || ""} 
+                    onChange={(e) => setFormData({...formData, nif: e.target.value})} 
+                    disabled={!isEditing} 
+                    className="h-9 mt-0.5" 
+                    placeholder="123456789"
+                    maxLength={9}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Tipo de Documento</Label>
+                    <Select 
+                      value={formData.documentType || ""} 
+                      onValueChange={(value) => setFormData({...formData, documentType: value})}
+                      disabled={!isEditing}
+                    >
+                      <SelectTrigger className="h-9 mt-0.5">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-lg">
+                        {DOCUMENT_TYPES.map((doc) => (
+                          <SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Número do Documento</Label>
+                    <Input 
+                      value={formData.documentNumber || ""} 
+                      onChange={(e) => setFormData({...formData, documentNumber: e.target.value})} 
+                      disabled={!isEditing} 
+                      className="h-9 mt-0.5" 
+                      placeholder="000000000"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Antecedentes Criminais - Apenas Cuidadores */}
+            {isCaregiver && (
+              <div className="p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <IconShield className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Antecedentes Criminais</span>
+                  </div>
+                  {getBackgroundCheckBadge()}
+                </div>
+                
+                <p className="text-xs text-muted-foreground mb-3">
+                  Para trabalhar como cuidador, é necessário apresentar comprovante de antecedentes criminais.
+                  Você pode obter online em justica.gov.pt
+                </p>
+                
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => document.getElementById('backgroundCheckInput')?.click()}
+                    disabled={uploadingPhoto}
+                    className="flex-1"
+                  >
+                    {uploadingPhoto ? (
+                      <IconLoader2 className="h-4 w-4 animate-spin mr-1" />
+                    ) : (
+                      <IconUpload className="h-4 w-4 mr-1" />
+                    )}
+                    Enviar Comprovante
+                  </Button>
+                  <input
+                    id="backgroundCheckInput"
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={handleBackgroundCheckUpload}
+                  />
+                </div>
+                
+                {formData.backgroundCheckUrl && (
+                  <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                    <IconCheck className="h-3 w-3" />
+                    Documento enviado
+                  </p>
+                )}
+              </div>
+            )}
+
+            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+              <div className="flex gap-2">
+                <IconAlertCircle className="h-4 w-4 text-yellow-600 shrink-0 mt-0.5" />
+                <div className="text-xs text-yellow-700 dark:text-yellow-400">
+                  <p className="font-medium mb-1">Segurança dos dados</p>
+                  <p className="text-yellow-600/80 dark:text-yellow-400/80">
+                    Seus documentos são armazenados de forma segura e criptografada.
+                    Apenas a equipe de verificação tem acesso.
+                  </p>
+                </div>
+              </div>
             </div>
           </TabsContent>
 
@@ -355,8 +616,8 @@ export default function ProfilePage() {
               </div>
               
               <div>
-                <Label className="text-xs text-muted-foreground">Certificações</Label>
-                <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Cursos..." />
+                <Label className="text-xs text-muted-foreground">Certificações e Cursos</Label>
+                <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Ex: Curso de Cuidador, Primeiros Socorros..." />
               </div>
             </TabsContent>
           )}
@@ -375,8 +636,8 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Necessidades</Label>
-                <Textarea value={formData.elderNeeds || ""} onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})} rows={2} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Descreva..." />
+                <Label className="text-xs text-muted-foreground">Necessidades Específicas</Label>
+                <Textarea value={formData.elderNeeds || ""} onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})} rows={3} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Descreva as necessidades de cuidados, medicamentos, mobilidade..." />
               </div>
             </TabsContent>
           )}
@@ -394,7 +655,7 @@ export default function ProfilePage() {
             <Separator className="my-2" />
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <Label className="text-xs text-muted-foreground">Contato Emergência</Label>
+                <Label className="text-xs text-muted-foreground">Contato de Emergência</Label>
                 <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Nome" />
               </div>
               <div>
@@ -411,7 +672,7 @@ export default function ProfilePage() {
               <div className="flex items-center gap-2">
                 <IconBell className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">Push</p>
+                  <p className="text-sm font-medium">Notificações Push</p>
                   <p className="text-[10px] text-muted-foreground">Alertas em tempo real</p>
                 </div>
               </div>
@@ -466,7 +727,7 @@ export default function ProfilePage() {
                   Apagar conta
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="bg-background border shadow-lg">
                 <DialogHeader>
                   <DialogTitle>Apagar conta?</DialogTitle>
                   <DialogDescription>Esta ação é irreversível. Todos os seus dados serão excluídos.</DialogDescription>

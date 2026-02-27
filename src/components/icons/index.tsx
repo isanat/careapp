@@ -25,6 +25,7 @@ import {
   Menu,
   X,
   Check,
+  CheckCircle2,
   AlertCircle,
   AlertTriangle,
   Info,
@@ -581,6 +582,10 @@ export function IconMicOff({ className }: { className?: string }) {
 
 export function IconInbox({ className }: { className?: string }) {
   return <Inbox className={className} />;
+}
+
+export function IconCheckCircle({ className }: { className?: string }) {
+  return <CheckCircle2 className={className} />;
 }
 
 // Re-export all lucide icons for convenience
