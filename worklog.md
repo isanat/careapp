@@ -71,10 +71,16 @@
 
 ### ⚠️ Funcionalidades Parciais:
 
-#### 1. KYC (Verificação de Identidade)
+#### 1. KYC (Verificação de Identidade) ✅ ATUALIZADO
 - Schema preparado (verificationStatus, documentType, etc.)
-- API Didit criada mas não integrada no frontend
-- Página de verificação precisa ser criada
+- API Didit criada e integrada no frontend
+- Página de verificação refatorada:
+  - Usa AppShell para usuários autenticados
+  - Restrito apenas para CAREGIVERS
+  - Design mobile-first compacto
+  - Modal com iframe do widget Didit
+  - Polling automático para atualização de status
+  - Traduções completas (PT, EN, IT, ES)
 
 #### 2. Sistema de Pagamentos
 - Stripe configurado para ativação e compra de tokens
@@ -181,7 +187,7 @@ src/
 ## Próximos Passos Prioritários
 
 ### P0 - Crítico:
-1. Implementar página de KYC para cuidadores
+1. ~~Implementar página de KYC para cuidadores~~ ✅ CONCLUÍDO
 2. Traduzir todas as páginas (i18n)
 3. Completar Admin Panel
 
@@ -232,3 +238,112 @@ src/
 ---
 
 *Última atualização: Fevereiro 2025*
+
+---
+## Task ID: kyc-ui - GLM Code
+### Work Task
+Create KYC Verification Page for Caregivers at `/src/app/auth/kyc/page.tsx` with AppShell layout, CAREGIVER-only restriction, and compact mobile-first design.
+
+### Work Summary
+Refactored the existing KYC page at `/src/app/auth/kyc/page.tsx` to:
+
+1. **AppShell Integration**: Changed from standalone public page to authenticated page using AppShell layout for consistent navigation and UI.
+
+2. **CAREGIVER-Only Restriction**: Added authentication check that redirects non-CAREGIVER users to dashboard with a message. Only caregivers can access the KYC verification page.
+
+3. **Compact Mobile-First Design**: 
+   - Reduced header size with sticky positioning
+   - Compact cards with smaller padding and text sizes
+   - Status icons in circular backgrounds
+   - Compact requirements and benefits lists
+   - Consistent with the profile page design pattern
+
+4. **Didit Widget Integration**:
+   - Modal overlay for the Didit verification iframe
+   - Automatic polling (3 seconds) for status updates when widget is open
+   - Proper handling of PENDING, VERIFIED, REJECTED, and UNVERIFIED states
+
+5. **Translations Added**:
+   - Added `refreshStatus`, `continueVerification`, and `caregiverOnly` keys
+   - Updated all 4 languages (Portuguese, English, Italian, Spanish)
+
+**Files Modified**:
+- `/src/app/auth/kyc/page.tsx` - Complete refactor with AppShell and compact design
+- `/src/lib/i18n/translations.ts` - Added new translation keys for all languages
+- `/home/z/my-project/worklog.md` - Updated project status documentation
+
+---
+## Task ID: i18n-public-pages
+### Work Task
+Add internationalization (i18n) translations to ALL public pages using the existing `useI18n` hook from the i18n system located in `/src/lib/i18n/`.
+
+### Work Summary
+Added complete i18n translations and updated all public pages to use the translation system:
+
+**Translations Added to `/src/lib/i18n/translations.ts`:**
+- Added `tokens` section to `terms.sections` for all 4 languages (PT, EN, IT, ES)
+- Added complete `ajudaPage` translations with FAQ sections for families, caregivers, and security
+- Added complete `contatoPage` translations with form labels and contact info
+- Added complete `blogPage` translations with categories, newsletter, and sample posts
+- Added complete `sobrePage` translations with mission, stats, values, team, contact, and CTA sections
+- Added complete `privacidadePage` translations with all privacy policy sections (RGPD/LGPD compliant)
+
+**Pages Updated to Use i18n:**
+1. **Ajuda Page** (`/src/app/ajuda/page.tsx`) - Refactored to use `t.ajudaPage.*` translations with dynamic FAQ rendering
+2. **Contato Page** (`/src/app/contato/page.tsx`) - Refactored to use `t.contatoPage.*` translations with form and info sections
+3. **Blog Page** (`/src/app/blog/page.tsx`) - Refactored to use `t.blogPage.*` translations with dynamic posts rendering
+4. **Sobre Page** (`/src/app/sobre/page.tsx`) - Refactored to use `t.sobrePage.*` translations with all sections
+5. **Privacidade Page** (`/src/app/privacidade/page.tsx`) - Refactored to use `t.privacidadePage.*` translations
+
+**Pages Already Using i18n (No Changes Needed):**
+- Landing Page (`/src/app/page.tsx`)
+- Como Funciona (`/src/app/como-funciona/page.tsx`)
+- Para Famílias (`/src/app/familias/page.tsx`)
+- Para Cuidadores (`/src/app/cuidadores/page.tsx`)
+- Precos/Token (`/src/app/precos/page.tsx`)
+- Termos (`/src/app/termos/terms-content.tsx`)
+
+**Technical Implementation:**
+- All pages now use the `useI18n()` hook to access translations via the `t` object
+- Translations follow a nested object structure: `t.pageName.section.key`
+- All 4 languages supported: Portuguese (pt), English (en), Italian (it), Spanish (es)
+- Lint passes with no errors
+
+**Files Modified:**
+- `/src/lib/i18n/translations.ts` - Added ~500 new translation keys for all languages
+- `/src/app/ajuda/page.tsx` - Complete i18n refactor
+- `/src/app/contato/page.tsx` - Complete i18n refactor
+- `/src/app/blog/page.tsx` - Complete i18n refactor
+- `/src/app/sobre/page.tsx` - Complete i18n refactor
+- `/src/app/privacidade/page.tsx` - Complete i18n refactor
+
+---
+## Task ID: i18n-public-pages - Verification
+### Work Task
+Verify that i18n translations have been added to ALL public pages using the existing `useI18n` hook.
+
+### Work Summary
+Verified that all public pages mentioned in the task already have complete i18n implementation:
+
+**Verification Results:**
+1. **Landing Page** (`/src/app/page.tsx`): ✅ Uses `useI18n()` with `t.landing.*` keys
+2. **Como Funciona** (`/src/app/como-funciona/page.tsx`): ✅ Uses `useI18n()` with `t.howItWorksPage.*` keys
+3. **Para Famílias** (`/src/app/familias/page.tsx`): ✅ Uses `useI18n()` with `t.forFamiliesPage.*` keys
+4. **Para Cuidadores** (`/src/app/cuidadores/page.tsx`): ✅ Uses `useI18n()` with `t.forCaregiversPage.*` keys
+5. **Precos/Token** (`/src/app/precos/page.tsx`): ✅ Uses `useI18n()` with `t.pricingPage.*` keys
+
+**Translation Completeness:**
+- All 4 languages (pt, en, it, es) have complete translations for all public pages
+- Portuguese: Lines 5-1007 (complete)
+- English: Lines 1012-2007 (complete)
+- Italian: Lines 2012-3007 (complete)
+- Spanish: Lines 3012-4007 (complete)
+
+**Note:** The task mentioned `/src/app/(public)/token/page.tsx` but:
+- No `(public)` folder exists in the project structure
+- No `token/page.tsx` file exists
+- The equivalent page is `/src/app/precos/page.tsx` (Pricing/Token page) which already has i18n
+
+**Lint Check:** ✅ Passed with no errors
+
+**Conclusion:** Task was already completed by previous agent. All public pages have proper i18n implementation with translations in all 4 supported languages.

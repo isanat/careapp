@@ -289,8 +289,15 @@ export const translations = {
           item2: "Taxa de contrato: €5 por contrato criado",
           item3: "Comissão da plataforma: 10% sobre transacções",
         },
+        tokens: {
+          title: "6. Sistema de Tokens",
+          content: "O IdosoLink utiliza um sistema de tokens para facilitar pagamentos:",
+          item1: "1 Token = €0.01 (valor fixo)",
+          item2: "Tokens são comprados através da plataforma",
+          item3: "Tokens podem ser convertidos em euros a qualquer momento",
+        },
         prohibited: {
-          title: "6. Condutas Proibidas",
+          title: "7. Condutas Proibidas",
           content: "É estritamente proibido:",
           item1: "Fornecer informações falsas ou enganosas",
           item2: "Usar a plataforma para actividades ilegais",
@@ -369,6 +376,9 @@ export const translations = {
       onlyCaregivers: "Apenas cuidadores podem verificar a sua identidade.",
       completedAt: "Verificado em",
       sessionId: "ID da Sessão",
+      refreshStatus: "Atualizar",
+      continueVerification: "Continuar",
+      caregiverOnly: "Esta página é exclusiva para cuidadores.",
     },
     
     profile: {
@@ -708,6 +718,291 @@ export const translations = {
         description: "Crie a sua conta gratuita hoje mesmo.",
         button: "Começar Grátis",
       },
+    },
+    
+    // ============================================
+    // AJUDA PAGE
+    // ============================================
+    ajudaPage: {
+      title: "Central de Ajuda",
+      subtitle: "Encontre respostas para as dúvidas mais comuns ou entre em contacto com o nosso suporte.",
+      notFound: "Não encontrou o que procurava?",
+      supportReady: "A nossa equipa de suporte está pronta para ajudar você.",
+      contactSupport: "Falar com Suporte",
+      categories: {
+        forFamilies: "Para Famílias",
+        forCaregivers: "Para Cuidadores",
+        security: "Segurança e Privacidade",
+      },
+      faqs: {
+        families: [
+          {
+            q: "Como encontro um cuidador?",
+            a: "Após criar a sua conta, aceda à busca de cuidadores. Pode filtrar por tipo de serviço, localização, disponibilidade e avaliações de outras famílias."
+          },
+          {
+            q: "Como funciona o pagamento?",
+            a: "Você paga mensalmente pelo serviço contratado. O valor é calculado com base nas horas acordadas. A plataforma retém uma pequena taxa para garantir a segurança da transação."
+          },
+          {
+            q: "Posso trocar de cuidador?",
+            a: "Sim. Se não estiver satisfeito, pode encerrar o contrato atual e procurar um novo cuidador. Recomendamos sempre conversar antes para resolver possíveis problemas."
+          }
+        ],
+        caregivers: [
+          {
+            q: "Como me registo como cuidador?",
+            a: "Clique em 'Criar Conta', seleccione a opção 'Sou Cuidador' e preencha os seus dados profissionais. Após verificação, o seu perfil estará visível para famílias."
+          },
+          {
+            q: "Quanto custa usar a plataforma?",
+            a: "O registo é gratuito. Cobramos uma pequena taxa (10%) sobre cada pagamento recebido para manter a plataforma e garantir a sua segurança."
+          },
+          {
+            q: "Como recebo os meus pagamentos?",
+            a: "Os pagamentos são depositados automaticamente na sua carteira digital. Pode levantar para a sua conta bancária a qualquer momento."
+          }
+        ],
+        security: [
+          {
+            q: "Como verificam os cuidadores?",
+            a: "Realizamos verificação de identidade, antecedentes criminais e validamos certificações profissionais. Cuidadores verificados têm um selo no seu perfil."
+          },
+          {
+            q: "Os meus dados estão seguros?",
+            a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD/LGPD e não vendemos os seus dados. Os seus contratos são registados de forma segura para garantir transparência."
+          }
+        ]
+      }
+    },
+    
+    // ============================================
+    // CONTATO PAGE
+    // ============================================
+    contatoPage: {
+      title: "Entre em Contacto",
+      subtitle: "A nossa equipa está pronta para ajudar você. Envie a sua mensagem ou utilize os nossos canais de atendimento.",
+      form: {
+        title: "Envie uma Mensagem",
+        name: "Nome",
+        namePlaceholder: "O seu nome",
+        email: "Email",
+        emailPlaceholder: "seu@email.com",
+        subject: "Assunto",
+        subjectPlaceholder: "Como podemos ajudar?",
+        message: "Mensagem",
+        messagePlaceholder: "Descreva a sua dúvida ou sugestão...",
+        submit: "Enviar Mensagem",
+      },
+      info: {
+        email: "Email",
+        emailValue: "contacto@idosolink.com",
+        emailSupport: "suporte@idosolink.com",
+        phone: "Telefone",
+        phoneValue: "+351 912 345 678",
+        phoneHours: "Segunda a Sexta, 9h às 18h",
+        address: "Endereço",
+        addressValue1: "Av. da Liberdade, 123",
+        addressValue2: "1250-096 Lisboa, Portugal",
+        hours: "Horário de Atendimento",
+        hoursWeekday: "Segunda a Sexta: 9h - 18h",
+        hoursSaturday: "Sábado: 9h - 13h",
+      },
+    },
+    
+    // ============================================
+    // BLOG PAGE
+    // ============================================
+    blogPage: {
+      title: "Blog IdosoLink",
+      subtitle: "Dicas, artigos e novidades sobre cuidados com idosos e a nossa plataforma.",
+      categories: {
+        all: "Todos",
+        tips: "Dicas",
+        health: "Saúde",
+        technology: "Tecnologia",
+        platform: "Plataforma",
+        rights: "Direitos",
+      },
+      readTime: "min",
+      newsletter: {
+        title: "Receba as Nossas Novidades",
+        subtitle: "Registe-se para receber dicas e actualizações da plataforma.",
+        placeholder: "seu@email.com",
+        subscribe: "Subscrever",
+      },
+      posts: [
+        {
+          title: "Como Escolher o Cuidador Ideal para o seu Idoso",
+          excerpt: "A escolha de um cuidador é uma decisão importante. Confira os principais factores a considerar.",
+          category: "Dicas",
+          author: "Equipa IdosoLink",
+          readTime: "5 min",
+        },
+        {
+          title: "Cuidados com a Saúde Mental do Idoso",
+          excerpt: "A saúde mental é tão importante quanto a física. Saiba como apoiar o seu ente querido.",
+          category: "Saúde",
+          author: "Dra. Maria Santos",
+          readTime: "7 min",
+        },
+        {
+          title: "Benefícios da Tecnologia para Idosos",
+          excerpt: "Como dispositivos e aplicações podem melhorar a qualidade de vida dos mais velhos.",
+          category: "Tecnologia",
+          author: "Equipa IdosoLink",
+          readTime: "4 min",
+        }
+      ]
+    },
+    
+    // ============================================
+    // SOBRE PAGE
+    // ============================================
+    sobrePage: {
+      badge: "Nossa História",
+      title: "Sobre o",
+      subtitle: "Somos uma empresa de tecnologia com propósito: transformar o cuidado de idosos através de confiança, transparência e valorização profissional.",
+      mission: {
+        title: "Nossa Missão",
+        paragraph1: "O IdosoLink nasceu da observação de um problema real: famílias lutando para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
+        paragraph2: "Usamos tecnologia de ponta para resolver problemas humanos: garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores sejam valorizados a longo prazo.",
+        values: {
+          care: "Cuidado",
+          trust: "Confiança",
+          value: "Valor",
+        },
+      },
+      stats: {
+        title: "Nossos Números",
+        caregivers: "Cuidadores activos",
+        families: "Famílias atendidas",
+        hours: "Horas de cuidado",
+        countries: "Países",
+      },
+      values: {
+        title: "Nossos Valores",
+        humanity: {
+          title: "Humanidade",
+          description: "Tecnologia ao serviço das pessoas. Cada decisão considera o impacto em famílias e cuidadores.",
+        },
+        transparency: {
+          title: "Transparência",
+          description: "Contratos claros, taxas transparentes, sem surpresas. Tudo registado de forma segura e auditável.",
+        },
+        appreciation: {
+          title: "Valorização",
+          description: "Cuidadores merecem reconhecimento. Nossa plataforma permite que ganhem e valorizem o seu trabalho com justiça.",
+        },
+      },
+      team: {
+        title: "Nossa Equipa",
+        subtitle: "Profissionais apaixonados por tecnologia e cuidados de saúde.",
+        members: [
+          { name: "Ana Silva", role: "CEO & Co-founder" },
+          { name: "Carlos Santos", role: "CTO & Co-founder" },
+          { name: "Maria Costa", role: "Head of Care" },
+          { name: "João Pereira", role: "Head of Product" },
+        ],
+      },
+      contact: {
+        title: "Entre em Contacto",
+        subtitle: "Estamos aqui para ajudar. Entre em contacto connosco.",
+        email: "Email",
+        emailValue: "contacto@idosolink.com",
+        phone: "Telefone",
+        phoneValue: "+351 210 000 000",
+        location: "Localização",
+        locationValue: "Lisboa, Portugal",
+      },
+      cta: {
+        title: "Junte-se a nós",
+        subtitle: "Faça parte da transformação do cuidado de idosos.",
+        familyButton: "Sou Família",
+        caregiverButton: "Sou Cuidador",
+      },
+    },
+    
+    // ============================================
+    // PRIVACIDADE PAGE
+    // ============================================
+    privacidadePage: {
+      title: "Política de Privacidade",
+      lastUpdate: "Última actualização: Janeiro de 2024",
+      sections: {
+        introduction: {
+          title: "1. Introdução",
+          content: "O IdosoLink está comprometido em proteger a privacidade dos seus utilizadores. Esta Política de Privacidade explica como recolhemos, usamos, armazenamos e protegemos as suas informações pessoais.",
+        },
+        dataCollected: {
+          title: "2. Informações que Recolhemos",
+          content: "Podemos recolher os seguintes tipos de informações:",
+          items: [
+            "Dados de identificação: nome, email, telefone, CPF/NIF",
+            "Dados de localização: endereço, cidade, código postal",
+            "Dados de perfil: foto, descrição, qualificações profissionais",
+            "Dados de transacção: histórico de contratos, pagamentos, tokens",
+            "Dados de uso: logs de acesso, navegação, preferências"
+          ],
+        },
+        dataUsage: {
+          title: "3. Como Usamos as Suas Informações",
+          content: "Utilizamos as suas informações para:",
+          items: [
+            "Fornecer e melhorar os nossos serviços",
+            "Processar transacções e pagamentos",
+            "Comunicar-nos consigo sobre a sua conta",
+            "Enviar notificações relevantes sobre cuidadores e contratos",
+            "Cumprir obrigações legais e regulatórias",
+            "Prevenir fraudes e garantir a segurança"
+          ],
+        },
+        dataSharing: {
+          title: "4. Partilha de Dados",
+          content: "Não vendemos as suas informações pessoais. Podemos partilhar dados com:",
+          items: [
+            "Outros utilizadores (conforme necessário para contratos)",
+            "Processadores de pagamento (Stripe)",
+            "Autoridades legais (quando exigido por lei)",
+            "Fornecedores de serviços essenciais (hospedagem, análise)"
+          ],
+        },
+        security: {
+          title: "5. Segurança dos Dados",
+          content: "Implementamos medidas de segurança técnicas e organizacionais para proteger os seus dados, incluindo:",
+          items: [
+            "Criptografia SSL/TLS em todas as comunicações",
+            "Armazenamento seguro com criptografia em repouso",
+            "Controlo de acesso restrito aos dados",
+            "Monitorização contínua de segurança"
+          ],
+        },
+        rights: {
+          title: "6. Os Seus Direitos (RGPD/LGPD)",
+          content: "Você tem direito a:",
+          items: [
+            "Aceder aos seus dados pessoais",
+            "Corrigir dados incorrectos",
+            "Solicitar exclusão dos seus dados",
+            "Portabilidade de dados",
+            "Retirar consentimento a qualquer momento",
+            "Opor-se a determinados tratamentos"
+          ],
+        },
+        cookies: {
+          title: "7. Cookies e Tecnologias Similares",
+          content: "Utilizamos cookies essenciais para funcionamento da plataforma e cookies analíticos para melhorar os nossos serviços. Pode gerir as suas preferências de cookies nas configurações do navegador.",
+        },
+        contact: {
+          title: "8. Contacto",
+          content: "Para exercer os seus direitos ou esclarecer dúvidas sobre privacidade, entre em contacto:",
+          items: [
+            "Email: privacidade@idosolink.com",
+            "Endereço: Av. da Liberdade, 123, 1250-096 Lisboa, Portugal"
+          ],
+        },
+      },
+      backHome: "Voltar ao Início",
     },
   },
 
@@ -1081,6 +1376,9 @@ export const translations = {
       onlyCaregivers: "Only caregivers can verify their identity.",
       completedAt: "Verified on",
       sessionId: "Session ID",
+      refreshStatus: "Refresh",
+      continueVerification: "Continue",
+      caregiverOnly: "This page is for caregivers only.",
     },
     
     profile: {
@@ -1420,6 +1718,291 @@ export const translations = {
         description: "Create your free account today.",
         button: "Start Free",
       },
+    },
+    
+    // ============================================
+    // AJUDA PAGE
+    // ============================================
+    ajudaPage: {
+      title: "Help Center",
+      subtitle: "Find answers to the most common questions or contact our support.",
+      notFound: "Didn't find what you were looking for?",
+      supportReady: "Our support team is ready to help you.",
+      contactSupport: "Contact Support",
+      categories: {
+        forFamilies: "For Families",
+        forCaregivers: "For Caregivers",
+        security: "Security and Privacy",
+      },
+      faqs: {
+        families: [
+          {
+            q: "How do I find a caregiver?",
+            a: "After creating your account, access the caregiver search. You can filter by type of service, location, availability and reviews from other families."
+          },
+          {
+            q: "How does payment work?",
+            a: "You pay monthly for the contracted service. The value is calculated based on the agreed hours. The platform retains a small fee to ensure transaction security."
+          },
+          {
+            q: "Can I change caregivers?",
+            a: "Yes. If you're not satisfied, you can end the current contract and look for a new caregiver. We always recommend talking first to resolve any issues."
+          }
+        ],
+        caregivers: [
+          {
+            q: "How do I register as a caregiver?",
+            a: "Click on 'Create Account', select the 'I'm a Caregiver' option and fill in your professional details. After verification, your profile will be visible to families."
+          },
+          {
+            q: "How much does it cost to use the platform?",
+            a: "Registration is free. We charge a small fee (10%) on each payment received to maintain the platform and ensure your security."
+          },
+          {
+            q: "How do I receive my payments?",
+            a: "Payments are automatically deposited into your digital wallet. You can withdraw to your bank account at any time."
+          }
+        ],
+        security: [
+          {
+            q: "How do you verify caregivers?",
+            a: "We perform identity verification, criminal background checks and validate professional certifications. Verified caregivers have a badge on their profile."
+          },
+          {
+            q: "Is my data safe?",
+            a: "Yes. We use end-to-end encryption, follow GDPR/LGPD standards and don't sell your data. Your contracts are securely recorded to ensure transparency."
+          }
+        ]
+      }
+    },
+    
+    // ============================================
+    // CONTATO PAGE
+    // ============================================
+    contatoPage: {
+      title: "Contact Us",
+      subtitle: "Our team is ready to help you. Send your message or use our service channels.",
+      form: {
+        title: "Send a Message",
+        name: "Name",
+        namePlaceholder: "Your name",
+        email: "Email",
+        emailPlaceholder: "your@email.com",
+        subject: "Subject",
+        subjectPlaceholder: "How can we help?",
+        message: "Message",
+        messagePlaceholder: "Describe your question or suggestion...",
+        submit: "Send Message",
+      },
+      info: {
+        email: "Email",
+        emailValue: "contact@idosolink.com",
+        emailSupport: "support@idosolink.com",
+        phone: "Phone",
+        phoneValue: "+351 912 345 678",
+        phoneHours: "Monday to Friday, 9am to 6pm",
+        address: "Address",
+        addressValue1: "Av. da Liberdade, 123",
+        addressValue2: "1250-096 Lisbon, Portugal",
+        hours: "Service Hours",
+        hoursWeekday: "Monday to Friday: 9am - 6pm",
+        hoursSaturday: "Saturday: 9am - 1pm",
+      },
+    },
+    
+    // ============================================
+    // BLOG PAGE
+    // ============================================
+    blogPage: {
+      title: "IdosoLink Blog",
+      subtitle: "Tips, articles and news about senior care and our platform.",
+      categories: {
+        all: "All",
+        tips: "Tips",
+        health: "Health",
+        technology: "Technology",
+        platform: "Platform",
+        rights: "Rights",
+      },
+      readTime: "min",
+      newsletter: {
+        title: "Get Our News",
+        subtitle: "Sign up to receive tips and platform updates.",
+        placeholder: "your@email.com",
+        subscribe: "Subscribe",
+      },
+      posts: [
+        {
+          title: "How to Choose the Ideal Caregiver for Your Senior",
+          excerpt: "Choosing a caregiver is an important decision. Check out the main factors to consider.",
+          category: "Tips",
+          author: "IdosoLink Team",
+          readTime: "5 min",
+        },
+        {
+          title: "Senior Mental Health Care",
+          excerpt: "Mental health is just as important as physical health. Learn how to support your loved one.",
+          category: "Health",
+          author: "Dr. Maria Santos",
+          readTime: "7 min",
+        },
+        {
+          title: "Technology Benefits for Seniors",
+          excerpt: "How devices and apps can improve the quality of life for older adults.",
+          category: "Technology",
+          author: "IdosoLink Team",
+          readTime: "4 min",
+        }
+      ]
+    },
+    
+    // ============================================
+    // SOBRE PAGE
+    // ============================================
+    sobrePage: {
+      badge: "Our Story",
+      title: "About",
+      subtitle: "We are a technology company with a purpose: transforming senior care through trust, transparency and professional appreciation.",
+      mission: {
+        title: "Our Mission",
+        paragraph1: "IdosoLink was born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
+        paragraph2: "We use cutting-edge technology to solve human problems: ensuring contracts are secure, payments are protected, and caregivers are valued long-term.",
+        values: {
+          care: "Care",
+          trust: "Trust",
+          value: "Value",
+        },
+      },
+      stats: {
+        title: "Our Numbers",
+        caregivers: "Active caregivers",
+        families: "Families served",
+        hours: "Hours of care",
+        countries: "Countries",
+      },
+      values: {
+        title: "Our Values",
+        humanity: {
+          title: "Humanity",
+          description: "Technology at the service of people. Every decision considers the impact on families and caregivers.",
+        },
+        transparency: {
+          title: "Transparency",
+          description: "Clear contracts, transparent fees, no surprises. Everything recorded securely and auditably.",
+        },
+        appreciation: {
+          title: "Appreciation",
+          description: "Caregivers deserve recognition. Our platform allows them to earn and value their work fairly.",
+        },
+      },
+      team: {
+        title: "Our Team",
+        subtitle: "Professionals passionate about technology and healthcare.",
+        members: [
+          { name: "Ana Silva", role: "CEO & Co-founder" },
+          { name: "Carlos Santos", role: "CTO & Co-founder" },
+          { name: "Maria Costa", role: "Head of Care" },
+          { name: "João Pereira", role: "Head of Product" },
+        ],
+      },
+      contact: {
+        title: "Contact Us",
+        subtitle: "We're here to help. Get in touch with us.",
+        email: "Email",
+        emailValue: "contact@idosolink.com",
+        phone: "Phone",
+        phoneValue: "+351 210 000 000",
+        location: "Location",
+        locationValue: "Lisbon, Portugal",
+      },
+      cta: {
+        title: "Join us",
+        subtitle: "Be part of the transformation of senior care.",
+        familyButton: "I'm a Family",
+        caregiverButton: "I'm a Caregiver",
+      },
+    },
+    
+    // ============================================
+    // PRIVACIDADE PAGE
+    // ============================================
+    privacidadePage: {
+      title: "Privacy Policy",
+      lastUpdate: "Last updated: January 2024",
+      sections: {
+        introduction: {
+          title: "1. Introduction",
+          content: "IdosoLink is committed to protecting the privacy of its users. This Privacy Policy explains how we collect, use, store and protect your personal information.",
+        },
+        dataCollected: {
+          title: "2. Information We Collect",
+          content: "We may collect the following types of information:",
+          items: [
+            "Identification data: name, email, phone, ID/tax number",
+            "Location data: address, city, postal code",
+            "Profile data: photo, description, professional qualifications",
+            "Transaction data: contract history, payments, tokens",
+            "Usage data: access logs, navigation, preferences"
+          ],
+        },
+        dataUsage: {
+          title: "3. How We Use Your Information",
+          content: "We use your information to:",
+          items: [
+            "Provide and improve our services",
+            "Process transactions and payments",
+            "Communicate with you about your account",
+            "Send relevant notifications about caregivers and contracts",
+            "Comply with legal and regulatory obligations",
+            "Prevent fraud and ensure security"
+          ],
+        },
+        dataSharing: {
+          title: "4. Data Sharing",
+          content: "We don't sell your personal information. We may share data with:",
+          items: [
+            "Other users (as needed for contracts)",
+            "Payment processors (Stripe)",
+            "Legal authorities (when required by law)",
+            "Essential service providers (hosting, analytics)"
+          ],
+        },
+        security: {
+          title: "5. Data Security",
+          content: "We implement technical and organizational security measures to protect your data, including:",
+          items: [
+            "SSL/TLS encryption on all communications",
+            "Secure storage with encryption at rest",
+            "Restricted access control to data",
+            "Continuous security monitoring"
+          ],
+        },
+        rights: {
+          title: "6. Your Rights (GDPR/LGPD)",
+          content: "You have the right to:",
+          items: [
+            "Access your personal data",
+            "Correct incorrect data",
+            "Request deletion of your data",
+            "Data portability",
+            "Withdraw consent at any time",
+            "Object to certain processing"
+          ],
+        },
+        cookies: {
+          title: "7. Cookies and Similar Technologies",
+          content: "We use essential cookies for platform functionality and analytical cookies to improve our services. You can manage your cookie preferences in your browser settings.",
+        },
+        contact: {
+          title: "8. Contact",
+          content: "To exercise your rights or clarify questions about privacy, contact us:",
+          items: [
+            "Email: privacy@idosolink.com",
+            "Address: Av. da Liberdade, 123, 1250-096 Lisbon, Portugal"
+          ],
+        },
+      },
+      backHome: "Back to Home",
     },
   },
 
@@ -1793,6 +2376,9 @@ export const translations = {
       onlyCaregivers: "Solo i caregiver possono verificare la propria identità.",
       completedAt: "Verificato il",
       sessionId: "ID Sessione",
+      refreshStatus: "Aggiorna",
+      continueVerification: "Continua",
+      caregiverOnly: "Questa pagina è riservata ai caregiver.",
     },
     
     profile: {
@@ -2132,6 +2718,291 @@ export const translations = {
         description: "Crea il tuo account gratuito oggi.",
         button: "Inizia Gratis",
       },
+    },
+    
+    // ============================================
+    // AJUDA PAGE
+    // ============================================
+    ajudaPage: {
+      title: "Centro Assistenza",
+      subtitle: "Trova risposte alle domande più comuni o contatta il nostro supporto.",
+      notFound: "Non hai trovato quello che cercavi?",
+      supportReady: "Il nostro team di supporto è pronto per aiutarti.",
+      contactSupport: "Contatta Supporto",
+      categories: {
+        forFamilies: "Per Famiglie",
+        forCaregivers: "Per Caregiver",
+        security: "Sicurezza e Privacy",
+      },
+      faqs: {
+        families: [
+          {
+            q: "Come trovo un caregiver?",
+            a: "Dopo aver creato il tuo account, accedi alla ricerca di caregiver. Puoi filtrar per tipo di service, location, disponibility e e reviews di altre families."
+          },
+          {
+            q: "Come funziona il pagamento?",
+            a: "Paghi mensualmente per il servizio contrattato. Il valore è calcolato en base alle ore concordate. La piatta trattiene una piccola fee per garantire la sicurezza della transazione."
+          },
+          {
+            q: "Posso cambiare caregiver?",
+            a: "Sì. Se non sei soddisf, puoi chiudere il contratto attuale e e cercare un nuovo caregiver. Raccomendiamo siempre parlare prima per risolver eventuali problemas."
+          }
+        ],
+        caregivers: [
+          {
+            q: "Come mi registro come caregiver?",
+            a: "Clicca suCrea Account', seleziona l'opzione 'Sono Caregiver' e compila i tuoi dati professionali Dopo la verifica, il tuo profilo sarà visibile alle famiglie."
+          },
+          {
+            q: "Quanto costa usare the platform?",
+            a: "La registrazione è gratuita. Addebimos una piccola fee (10%) su ogni payment received per manten the platform and ensure your security."
+          },
+          {
+            q: "Come ricevo i mie payments?",
+            a: "I pagamenti vengono automaticamente depositati nel tuo portafoglio digitale. Puoi prelevare sul tuo conto bancaria in qualsiasi momento."
+          }
+        ],
+        security: [
+          {
+            q: "Come verificate i caregiver?",
+            a: "Eseguiamo la verifica di identità, i controlli dei precedenti penali e validiamo le certificazioni professionali. I caregiver verificati hanno un badge sul loro profilo."
+          },
+          {
+            q: "I miei dati sono sicuri?",
+            a: "Sì. Utilizziamo la crittografia end-to-end, seguiamo gli standard GDPR/LGPD e non vendiamo i tuoi dati. I tuoi contratti vengono registrati in modo sicuro per garantire la trasparenza."
+          }
+        ]
+      }
+    },
+    
+    // ============================================
+    // CONTATO PAGE
+    // ============================================
+    contatoPage: {
+      title: "Contattaci",
+      subtitle: "Il nostro team è pronto per aiutarti. Invia il tuo message o utilizza i nostri service channels.",
+      form: {
+        title: "Invia un Messaggio",
+        name: "Nome",
+        namePlaceholder: "Il tuo nome",
+        email: "Email",
+        emailPlaceholder: "tuo@email.com",
+        subject: "Oggetto",
+        subjectPlaceholder: "Come possiamo aiutare?",
+        message: "Messaggio",
+        messagePlaceholder: "Descrivi la tua question o suggestion...",
+        submit: "Invia Messaggio",
+      },
+      info: {
+        email: "Email",
+        emailValue: "contatto@idosolink.com",
+        emailSupport: "supporto@idosolink.com",
+        phone: "Telefono",
+        phoneValue: "+351 912 345 678",
+        phoneHours: "Lunedi a Venerdì, 9:00 - 18:00",
+        address: "Indirizzo",
+        addressValue1: "Av. da Liberdade, 123",
+        addressValue2: "1250-096 Lisbon, Portugal",
+        hours: "Orario di Attenzione",
+        hoursWeekday: "Lunedi a Venerdì: 9:00 - 18:00",
+        hoursSaturday: "Sabato: 9:00 - 13:00",
+      },
+    },
+    
+    // ============================================
+    // BLOG PAGE
+    // ============================================
+    blogPage: {
+      title: "Blog IdosoLink",
+      subtitle: "Consigli, articoli e novità sobre el cuidado de ancianos y nuestra plataforma.",
+      categories: {
+        all: "Tutti",
+        tips: "Consigli",
+        health: "Salute",
+        technology: "Tecnologia",
+        platform: "Piattaforma",
+        rights: "Diritti",
+      },
+      readTime: "min",
+      newsletter: {
+        title: "Ricevi le Nostre Novità",
+        subtitle: "Iscriviti per ricevere consigli e aggiornamenti della piatta.",
+        placeholder: "tuo@email.com",
+        subscribe: "Iscriviti",
+      },
+      posts: [
+        {
+          title: "Come Scegliere il Caregiver Ideale per il Tuo Anziano",
+          excerpt: "La scelta del caregiver è una decision importante. Scopri i principali fattori da consider.",
+          category: "Consigli",
+          author: "Team IdosoLink",
+          readTime: "5 min",
+        },
+        {
+          title: "Cure della Salute Mentale degli Anziani",
+          excerpt: "La salute mentale è importante quanto physical health. Scopri come to support your loved one.",
+          category: "Salute",
+          author: "Dr. Maria Santos",
+          readTime: "7 min",
+        },
+        {
+          title: "Benefici della Tecnologia for Seniors",
+          excerpt: "How devices and apps can improve the quality of life for older adults.",
+          category: "Tecnology",
+          author: "Team IdosoLink",
+          readTime: "4 min",
+        }
+      ]
+    },
+    
+    // ============================================
+    // SOBRE PAGE
+    // ============================================
+    sobrePage: {
+      badge: "La Nostra Storia",
+      title: "Informazioni su",
+      subtitle: "Siamo un'azienda tecnologica con purpose: transforming senior care through trust, transparency and and professional appreciation.",
+      mission: {
+        title: "La Nostra Missione",
+        paragraph1: "IdosoLink è born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
+        paragraph2: "Weiamo cutting-edge technology to solve human problems: ensuring contracts are secure, payments are protected, and caregivers are valued long-term.",
+        values: {
+          care: "Cura",
+          trust: "Fiducia",
+          value: "Valore",
+        },
+      },
+      stats: {
+        title: "I Nostri Numeri",
+        caregivers: "Caregiver attivi",
+        families: "Famiglie servite",
+        hours: "Ore di cura",
+        countries: "Paesi",
+      },
+      values: {
+        title: "I Nostri Valori",
+        humanity: {
+          title: "Umanità",
+          description: "Tecnologia al servizio delle persone. Ogni decision considers the impact on families and and caregivers.",
+        },
+        transparency: {
+          title: "Trasparenza",
+          description: "Contratti chiari, tariffe trasparenti, nessuna sorpresa. Tutto registrato in modo sicuro e controllabile.",
+        },
+        appreciation: {
+          title: "Valorizzazione",
+          description: "I caregiver meritano r riconoscimento. La nostra piatta consente loro di guadagnare e valorare il proprio lavoro in modo equabo.",
+        },
+      },
+      team: {
+        title: "Il Nostro Team",
+        subtitle: "Professionisti appassionati di tecnologia e healthcare.",
+        members: [
+          { name: "Ana Silva", role: "CEO & Co-founder" },
+          { name: "Carlos Santos", role: "CTO & Co-founder" },
+          { name: "Maria Costa", role: "Head of Care" },
+          { name: "João Pereira", role: "Head of Product" },
+        ],
+      },
+      contact: {
+        title: "Contattaci",
+        subtitle: "Siamo qui per aiutare. Contattaci.",
+        email: "Email",
+        emailValue: "contatto@idosolink.com",
+        phone: "Telefono",
+        phoneValue: "+351 210 000 000",
+        location: "Localizzazione",
+        locationValue: "Lisbon, Portugal",
+      },
+      cta: {
+        title: "Unisciti a noi",
+        subtitle: "Fai parte della trasformation of senior care.",
+        familyButton: "Sono Famiglia",
+        caregiverButton: "Sono Caregiver",
+      },
+    },
+    
+    // ============================================
+    // PRIVACIDADE PAGE
+    // ============================================
+    privacidadePage: {
+      title: "Politica sulla Privacy",
+      lastUpdate: "Ultimo aggiornamento: Gennaio 2024",
+      sections: {
+        introduction: {
+          title: "1. Introduzione",
+          content: "IdosoLink è impegnato a protezione della privacy dei suoi utenti. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, archiviamo e proteggiamo le sue informazioni personali.",
+        },
+        dataCollected: {
+          title: "2. Informazioni che raccogliamo",
+          content: "Possiamo raccogliere i seguenti tipi di informazioni:",
+          items: [
+            "Dati di identificazione: nome, email, telefono, codice fiscale",
+            "Dati di localizzazione: indirizzo, città, codice postale",
+            "Dati del profilo: foto, descripción, calificaciones profesionales",
+            "Dati di transazione: historial de contratos, pagos, tokens",
+            "Dati di uso: registros de acceso, navegación, preferencias"
+          ],
+        },
+        dataUsage: {
+          title: "3. Come utilizziamo las tus informaciones",
+          content: "Utilizamos las tus informaciones para:",
+          items: [
+            "Proporcionar y mejorar nuestros servicios",
+            "Processar transacciones y pagos",
+            "Comunicarnos contigo usted sobre su cuenta",
+            "Enviar notificaciones relevantes sobre cuidadores y contratos",
+            "Cumplir obligaciones legales y regulatorias",
+            "Prevenir fraudes y garantizar la seguridad"
+          ],
+        },
+        dataSharing: {
+          title: "4. Condivision de datos",
+          content: "No vendemos sus informaciones personales. Podemos compartir datos con:",
+          items: [
+            "Otros usuarios (según sea necesario para contratos)",
+            "Procesadores de pagos (Stripe)",
+            "Autoridades legales (cuando sea exija por ley)",
+            "Proveedores de servicios esenciales (hosting, análisis)"
+          ],
+        },
+        security: {
+          title: "5. Seguridad de los datos",
+          content: "Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos, incluyendo:",
+          items: [
+            "Cifrado SSL/TLS en todas las comunicaciones",
+            "Almacenamiento seguro con cifrado en reposo",
+            "Control de acceso restringido a los datos",
+            "Monitorización continua de seguridad"
+          ],
+        },
+        rights: {
+          title: "6. Sus derechos (RGPD/LGPD)",
+          content: "Tiene derecho a:",
+          items: [
+            "Acceder a sus datos personales",
+            "Corregir datos incorrectos",
+            "Solicitar eliminación de sus datos",
+            "Portabilidad de datos",
+            "Retirar el consentimiento en cualquier momento",
+            "Oponerse a determinados tratamientos"
+          ],
+        },
+        cookies: {
+          title: "7. Cookies y tecnologías similares",
+          content: "Utilizamos cookies esenciales para el funcionamiento de la plataforma y cookies analíticos para mejorar nuestros servicios. Puede administrar sus preferencias de cookies en la configuración del navegador.",
+        },
+        contact: {
+          title: "8. Contacto",
+          content: "Para ejercer sus derechos o aclarar dudas sobre privacidad, contacte:",
+          items: [
+            "Email: privacidad@idosolink.com",
+            "Dirección: Av. da Liberdade, 123, 1250-096 Lisbon, Portugal"
+          ],
+        },
+      },
+      backHome: "Volver al Inicio",
     },
   },
 
@@ -2505,6 +3376,9 @@ export const translations = {
       onlyCaregivers: "Solo los cuidadores pueden verificar su identidad.",
       completedAt: "Verificado el",
       sessionId: "ID de Sesión",
+      refreshStatus: "Actualizar",
+      continueVerification: "Continuar",
+      caregiverOnly: "Esta página es exclusiva para cuidadores.",
     },
     
     profile: {
@@ -2844,6 +3718,291 @@ export const translations = {
         description: "Crea tu cuenta gratuita hoy.",
         button: "Empezar Gratis",
       },
+    },
+    
+    // ============================================
+    // AJUDA PAGE
+    // ============================================
+    ajudaPage: {
+      title: "Centro de Ayuda",
+      subtitle: "Encuentra respuestas a las preguntas más comunes o contacta nuestro soporte.",
+      notFound: "¿No encontraste lo que buscabas?",
+      supportReady: "Nuestro equipo de soporte está listo para ayudarte.",
+      contactSupport: "Contactar Soporte",
+      categories: {
+        forFamilies: "Para Familias",
+        forCaregivers: "Para Cuidadores",
+        security: "Seguridad y Privacidad",
+      },
+      faqs: {
+        families: [
+          {
+            q: "¿Cómo encuentro un cuidador?",
+            a: "Después de crear tu cuenta, accede a la búsqueda de cuidadores. Puedes filtrar por tipo de servicio. ubicación. disponibilidad y reseñas de otras familias."
+          },
+          {
+            q: "¿Cómo funciona el pago?",
+            a: "Pagas mensualmente por el servicio contratado. El valor se calcula en base a las horas acordadas. La plataforma retiene una pequeña comisión para garantizar la seguridad de la transacción."
+          },
+          {
+            q: "¿Puedo cambiar de cuidador?",
+            a: "Sí. Si no estás satisfecho. puedes cerrar el contrato actual y buscar un nuevo cuidador. Recomendamos siempre conversar antes para resolver posibles problemas."
+          }
+        ],
+        caregivers: [
+          {
+            q: "¿Cómo me registro como cuidador?",
+            a: "Haz clic en 'Crear Cuenta'. selecciona la opción 'Soy Cuidador' y completa tus datos profesionales. Después de la verificación. tu perfil será visible para las familias."
+          },
+          {
+            q: "¿Cuánto cuesta usar la plataforma?",
+            a: "El registro es gratuito. Cobramos una pequeña comisión (10%) sobre cada pago recibido para mantener la plataforma y garantizar tu seguridad."
+          },
+          {
+            q: "¿Cómo recibo mis pagos?",
+            a: "Los pagos se depositan automáticamente en tu billetera digital. Puedes retirar a tu cuenta bancaria en cualquier momento."
+          }
+        ],
+        security: [
+          {
+            q: "¿Cómo verifican a los cuidadores?",
+            a: "Realizamos verificación de identidad. controles de antecedentes penales y validamos certificaciones profesionales. Los cuidadores verificados tienen un distintivo en su perfil."
+          },
+          {
+            q: "¿Mis datos están seguros?",
+            a: "Sí. Utilizamos cifrado de extremo a extremo. seguimos los estándares RGPD/LGPD y no vendemos tus datos. Tus contratos se registran de forma segura para garantizar transparencia."
+          }
+        ]
+      }
+    },
+    
+    // ============================================
+    // CONTATO PAGE
+    // ============================================
+    contatoPage: {
+      title: "Contacto",
+      subtitle: "Nuestro equipo está listo para ayudarte. Envía tu mensaje o utiliza nuestros canales de servicio.",
+      form: {
+        title: "Envía un Mensaje",
+        name: "Nombre",
+        namePlaceholder: "Tu nombre",
+        email: "Email",
+        emailPlaceholder: "tu@email.com",
+        subject: "Asunto",
+        subjectPlaceholder: "¿Cómo podemos ayudar?",
+        message: "Mensaje",
+        messagePlaceholder: "Describe tu pregunta o sugerencia...",
+        submit: "Enviar Mensaje",
+      },
+      info: {
+        email: "Email",
+        emailValue: "contacto@idosolink.com",
+        emailSupport: "soporte@idosolink.com",
+        phone: "Teléfono",
+        phoneValue: "+351 912 345 678",
+        phoneHours: "Lunes a Viernes. 9:00 - 18:00",
+        address: "Dirección",
+        addressValue1: "Av. da Liberdade. 123",
+        addressValue2: "1250-096 Lisboa. Portugal",
+        hours: "Horario de Atención",
+        hoursWeekday: "Lunes a Viernes: 9:00 - 18:00",
+        hoursSaturday: "Sábado: 9:00 - 13:00",
+      },
+    },
+    
+    // ============================================
+    // BLOG PAGE
+    // ============================================
+    blogPage: {
+      title: "Blog IdosoLink",
+      subtitle: "Consejos. artículos y novedades sobre el cuidado de ancianos y nuestra plataforma.",
+      categories: {
+        all: "Todos",
+        tips: "Consejos",
+        health: "Salud",
+        technology: "Tecnología",
+        platform: "Plataforma",
+        rights: "Derechos",
+      },
+      readTime: "min",
+      newsletter: {
+        title: "Recibe Nuestras Novedades",
+        subtitle: "Regístrate para recibir consejos y actualizaciones de la plataforma.",
+        placeholder: "tu@email.com",
+        subscribe: "Suscribir",
+      },
+      posts: [
+        {
+          title: "Cómo Elegir el Cuidador Ideal para tu Anciano",
+          excerpt: "La elección de un cuidador es una decisión importante. Consulta los principales factores a considerar.",
+          category: "Consejos",
+          author: "Equipo IdosoLink",
+          readTime: "5 min",
+        },
+        {
+          title: "Cuidados de la Salud Mental del Anciano",
+          excerpt: "La salud mental es tan importante como la física. Aprende cómo apoyar a tu ser querido.",
+          category: "Salud",
+          author: "Dra. María Santos",
+          readTime: "7 min",
+        },
+        {
+          title: "Beneficios de la Tecnología para Ancianos",
+          excerpt: "Cómo los dispositivos y aplicaciones pueden mejorar la calidad de vida de los adultos mayores.",
+          category: "Tecnología",
+          author: "Equipo IdosoLink",
+          readTime: "4 min",
+        }
+      ]
+    },
+    
+    // ============================================
+    // SOBRE PAGE
+    // ============================================
+    sobrePage: {
+      badge: "Nuestra Historia",
+      title: "Sobre",
+      subtitle: "Somos una empresa tecnológica con propósito: transformar el cuidado de ancianos a través de confianza. transparencia y y valorización profesional.",
+      mission: {
+        title: "Nuestra Misión",
+        paragraph1: "IdosoLink nació de observar un problema real: familias luchando por encontrar cuidadores de confianza. y cuidadores profesionales sin reconocimiento ni valorización adecuada.",
+        paragraph2: "Usamos tecnología de vanguardia para resolver problemas humanos: garantizar que los contratos sean seguros. los pagos estén protegidos y los cuidadores sean valorizados a largo plazo.",
+        values: {
+          care: "Cuidado",
+          trust: "Confianza",
+          value: "Valor",
+        },
+      },
+      stats: {
+        title: "Nuestros Números",
+        caregivers: "Cuidadores activos",
+        families: "Familias atendidas",
+        hours: "Horas de cuidado",
+        countries: "Países",
+      },
+      values: {
+        title: "Nuestros Valores",
+        humanity: {
+          title: "Humanidad",
+          description: "Tecnología al servicio de las personas. Cada decisión considera el impacto en familias y y cuidadores.",
+        },
+        transparency: {
+          title: "Transparencia",
+          description: "Contratos claros. tarifas transparentes. sin sorpresas. Todo registrado de forma segura y auditable.",
+        },
+        appreciation: {
+          title: "Valorización",
+          description: "Los cuidadores merecen reconocimiento. Nuestra plataforma permite que ganen y valoren su trabajo con justicia.",
+        },
+      },
+      team: {
+        title: "Nuestro Equipo",
+        subtitle: "Profesionales apasionados por tecnología y salud.",
+        members: [
+          { name: "Ana Silva", role: "CEO & Co-fundadora" },
+          { name: "Carlos Santos", role: "CTO & Co-fundador" },
+          { name: "Maria Costa", role: "Jefa de Cuidado" },
+          { name: "João Pereira", role: "Jefe de Producto" },
+        ],
+      },
+      contact: {
+        title: "Contacto",
+        subtitle: "Estamos aquí para ayudar. Contáctanos.",
+        email: "Email",
+        emailValue: "contacto@idosolink.com",
+        phone: "Teléfono",
+        phoneValue: "+351 210 000 000",
+        location: "Ubicación",
+        locationValue: "Lisboa. Portugal",
+      },
+      cta: {
+        title: "Únete a nosotros",
+        subtitle: "Sé parte de la transformación del cuidado de ancianos.",
+        familyButton: "Soy Familia",
+        caregiverButton: "Soy Cuidador",
+      },
+    },
+    
+    // ============================================
+    // PRIVACIDADE PAGE
+    // ============================================
+    privacidadePage: {
+      title: "Política de Privacidad",
+      lastUpdate: "Última actualización: Enero 2024",
+      sections: {
+        introduction: {
+          title: "1. Introducción",
+          content: "IdosoLink se compromete a proteger la privacidad de sus usuarios. Esta Política de Privacidad explica cómo recopilamos. usamos. almacenamos y protegemos su información personal.",
+        },
+        dataCollected: {
+          title: "2. Información que Recopilamos",
+          content: "Podemos recopilar los siguientes tipos de información:",
+          items: [
+            "Datos de identificación: nombre. email. teléfono. documento fiscal",
+            "Datos de ubicación: dirección. ciudad. código postal",
+            "Datos de perfil: foto. descripción. calificaciones profesionales",
+            "Datos de transacción: historial de contratos. pagos. tokens",
+            "Datos de uso: registros de acceso. navegación. preferencias"
+          ],
+        },
+        dataUsage: {
+          title: "3. Cómo Usamos tu Información",
+          content: "Utilizamos tu información para:",
+          items: [
+            "Proporcionar y mejorar nuestros servicios",
+            "Procesar transacciones y pagos",
+            "Comunicarnos contigo sobre tu cuenta",
+            "Enviar notificaciones relevantes sobre cuidadores y contratos",
+            "Cumplir obligaciones legales y reglamentarias",
+            "Prevenir fraudes y garantizar la seguridad"
+          ],
+        },
+        dataSharing: {
+          title: "4. Compartición de Datos",
+          content: "No vendemos tu información personal. Podemos compartir datos con:",
+          items: [
+            "Otros usuarios (según sea necesario para contratos)",
+            "Procesadores de pagos (Stripe)",
+            "Autoridades legales (cuando sea requerido por ley)",
+            "Proveedores de servicios esenciales (hosting. análisis)"
+          ],
+        },
+        security: {
+          title: "5. Seguridad de Datos",
+          content: "Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos. incluyendo:",
+          items: [
+            "Cifrado SSL/TLS en todas las comunicaciones",
+            "Almacenamiento seguro con cifrado en reposo",
+            "Control de acceso restringido a los datos",
+            "Monitorización continua de seguridad"
+          ],
+        },
+        rights: {
+          title: "6. Tus Derechos (RGPD/LGPD)",
+          content: "Tienes derecho a:",
+          items: [
+            "Acceder a tus datos personales",
+            "Corregir datos incorrectos",
+            "Solicitar eliminación de tus datos",
+            "Portabilidad de datos",
+            "Retirar el consentimiento en cualquier momento",
+            "Oponerse a determinados tratamientos"
+          ],
+        },
+        cookies: {
+          title: "7. Cookies y Tecnologías Similares",
+          content: "Utilizamos cookies esenciales para el funcionamiento de la plataforma y cookies analíticos para mejorar nuestros servicios. Puedes administrar tus preferencias de la configuración del navegador.",
+        },
+        contact: {
+          title: "8. Contacto",
+          content: "Para ejercer tus derechos o aclarar dudas sobre privacidad. contacta:",
+          items: [
+            "Email: privacidad@idosolink.com",
+            "Dirección: Av. da Liberdade. 123. 1250-096 Lisboa. Portugal"
+          ],
+        },
+      },
+      backHome: "Volver al Inicio",
     },
   },
 };
