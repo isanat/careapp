@@ -6,15 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   IconCaregiver, 
-  IconWallet, 
-  IconCoins, 
   IconEuro,
   IconStar,
   IconShield,
   IconChevronRight,
-  IconCheck
+  IconCheck,
+  IconTrust
 } from "@/components/icons";
-import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 export default function CuidadoresPage() {
@@ -41,26 +40,26 @@ export default function CuidadoresPage() {
                         <IconEuro className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-semibold">85%</p>
+                        <p className="font-semibold">90%</p>
                         <p className="text-sm text-muted-foreground">{t.forCaregiversPage.earnings.receive}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background/50 rounded-xl">
                       <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                        <IconCoins className="h-6 w-6 text-yellow-600" />
+                        <IconStar className="h-6 w-6 text-yellow-600" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.forCaregiversPage.benefits.tokens.title}</p>
-                        <p className="text-sm text-muted-foreground">{TOKEN_SYMBOL}</p>
+                        <p className="font-semibold">{t.forCaregiversPage.benefits.verified.title}</p>
+                        <p className="text-sm text-muted-foreground">{t.forCaregiversPage.benefits.verified.description}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background/50 rounded-xl">
                       <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                        <IconWallet className="h-6 w-6 text-primary" />
+                        <IconTrust className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.forCaregiversPage.benefits.wallet.title}</p>
-                        <p className="text-sm text-muted-foreground">{t.forCaregiversPage.benefits.wallet.description.split('.')[0]}</p>
+                        <p className="font-semibold">{t.forCaregiversPage.benefits.profile.title}</p>
+                        <p className="text-sm text-muted-foreground">{t.forCaregiversPage.benefits.profile.description}</p>
                       </div>
                     </div>
                   </div>
@@ -100,7 +99,7 @@ export default function CuidadoresPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forCaregiversPage.benefits.title.replace('IdosoLink', APP_NAME)}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forCaregiversPage.benefits.title}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t.forCaregiversPage.benefits.description}
             </p>
@@ -110,11 +109,11 @@ export default function CuidadoresPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <IconWallet className="h-7 w-7 text-green-600" />
+                  <IconCaregiver className="h-7 w-7 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.wallet.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.profile.title}</h3>
                 <p className="text-muted-foreground">
-                  {t.forCaregiversPage.benefits.wallet.description}
+                  {t.forCaregiversPage.benefits.profile.description}
                 </p>
               </CardContent>
             </Card>
@@ -122,11 +121,11 @@ export default function CuidadoresPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4">
-                  <IconCoins className="h-7 w-7 text-yellow-600" />
+                  <IconShield className="h-7 w-7 text-yellow-600" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.tokens.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.verified.title}</h3>
                 <p className="text-muted-foreground">
-                  {t.forCaregiversPage.benefits.tokens.description.replace('SENT', TOKEN_SYMBOL)}
+                  {t.forCaregiversPage.benefits.verified.description}
                 </p>
               </CardContent>
             </Card>
@@ -134,11 +133,11 @@ export default function CuidadoresPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6">
                 <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                  <IconEuro className="h-7 w-7 text-primary" />
+                  <IconTrust className="h-7 w-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.sell.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.support.title}</h3>
                 <p className="text-muted-foreground">
-                  {t.forCaregiversPage.benefits.sell.description}
+                  {t.forCaregiversPage.benefits.support.description}
                 </p>
               </CardContent>
             </Card>
@@ -153,7 +152,7 @@ export default function CuidadoresPage() {
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.forCaregiversPage.earnings.title}</h2>
               <p className="text-muted-foreground mb-8">
-                {t.forCaregiversPage.earnings.description.replace('IdosoLink', APP_NAME)}
+                {t.forCaregiversPage.earnings.description}
               </p>
               
               <Card>
@@ -163,23 +162,19 @@ export default function CuidadoresPage() {
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span>{t.forCaregiversPage.earnings.profile}</span>
-                    <Badge variant="secondary">{t.forFamiliesPage.pricing.free}</Badge>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                    <span>{t.forCaregiversPage.earnings.activation}</span>
-                    <Badge>€25 ({TOKEN_SYMBOL})</Badge>
+                    <Badge variant="secondary">{t.forCaregiversPage.earnings.activation}</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span>{t.forCaregiversPage.earnings.contractFee}</span>
-                    <Badge>€5 ({TOKEN_SYMBOL})</Badge>
+                    <Badge>{t.forCaregiversPage.earnings.contractFee}</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
                     <span>{t.forCaregiversPage.earnings.receive}</span>
-                    <Badge className="bg-green-600">85%</Badge>
+                    <Badge className="bg-green-600">90%</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
                     <span>{t.forCaregiversPage.earnings.tipsValue}</span>
-                    <Badge className="bg-yellow-600">{TOKEN_SYMBOL}</Badge>
+                    <Badge className="bg-yellow-600">{t.forFamiliesPage.pricing.optional}</Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -191,18 +186,16 @@ export default function CuidadoresPage() {
                 <div className="space-y-6">
                   <div className="text-center p-6 bg-background/50 rounded-xl">
                     <p className="text-sm text-muted-foreground mb-2">{t.forCaregiversPage.earnings.example.hours}</p>
-                    <p className="text-4xl font-bold text-primary">€1.020</p>
+                    <p className="text-4xl font-bold text-primary">€1.080</p>
                     <p className="text-sm text-muted-foreground">{t.forCaregiversPage.earnings.example.perMonth}</p>
                   </div>
                   <div className="text-center p-6 bg-background/50 rounded-xl">
                     <p className="text-sm text-muted-foreground mb-2">{t.forCaregiversPage.earnings.example.averageTips}</p>
-                    <p className="text-4xl font-bold text-yellow-600">+€150</p>
-                    <p className="text-sm text-muted-foreground">{t.forCaregiversPage.earnings.example.inTokens.replace('SENT', TOKEN_SYMBOL)}</p>
+                    <p className="text-4xl font-bold text-yellow-600">+€100</p>
                   </div>
                   <div className="border-t pt-4 text-center">
                     <p className="text-sm text-muted-foreground mb-2">{t.forCaregiversPage.earnings.example.total}</p>
-                    <p className="text-5xl font-bold text-green-600">€1.170</p>
-                    <p className="text-sm text-muted-foreground">/ {t.forCaregiversPage.earnings.example.title.split(' ')[0]}</p>
+                    <p className="text-5xl font-bold text-green-600">€1.180</p>
                   </div>
                 </div>
               </CardContent>
@@ -239,7 +232,7 @@ export default function CuidadoresPage() {
             </Card>
             <Card>
               <CardContent className="p-6 text-center">
-                <IconWallet className="h-10 w-10 text-primary mx-auto mb-4" />
+                <IconEuro className="h-10 w-10 text-primary mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.payments.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {t.forCaregiversPage.features.payments.description}
@@ -248,10 +241,10 @@ export default function CuidadoresPage() {
             </Card>
             <Card>
               <CardContent className="p-6 text-center">
-                <IconCoins className="h-10 w-10 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.appreciation.title}</h3>
+                <IconTrust className="h-10 w-10 text-primary mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.support.title}</h3>
                 <p className="text-sm text-muted-foreground">
-                  {t.forCaregiversPage.features.appreciation.description}
+                  {t.forCaregiversPage.features.support.description}
                 </p>
               </CardContent>
             </Card>
@@ -264,7 +257,7 @@ export default function CuidadoresPage() {
         <div className="container px-4 mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">{t.forCaregiversPage.cta.title}</h2>
           <p className="text-lg opacity-90 max-w-xl mx-auto mb-8">
-            {t.forCaregiversPage.cta.description.replace('IdosoLink', APP_NAME)}
+            {t.forCaregiversPage.cta.description}
           </p>
           <Button size="lg" variant="secondary" asChild>
             <Link href="/auth/register?role=caregiver">

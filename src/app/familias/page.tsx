@@ -15,7 +15,7 @@ import {
   IconChevronRight,
   IconCheck
 } from "@/components/icons";
-import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 export default function FamiliasPage() {
@@ -40,7 +40,7 @@ export default function FamiliasPage() {
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" asChild>
                   <Link href="/auth/register">
-                    {t.landing.hero.cta}
+                    {t.landing.hero.ctaFamily}
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -196,18 +196,18 @@ export default function FamiliasPage() {
                       <IconWallet className="h-5 w-5 text-muted-foreground" />
                       {t.forFamiliesPage.pricing.activation}
                     </span>
-                    <Badge>€25 ({TOKEN_SYMBOL})</Badge>
+                    <Badge>€35</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span className="flex items-center gap-2">
                       <IconContract className="h-5 w-5 text-muted-foreground" />
                       {t.forFamiliesPage.pricing.contractFee}
                     </span>
-                    <Badge>€5 ({TOKEN_SYMBOL})</Badge>
+                    <Badge>€5</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span>{t.forFamiliesPage.pricing.commission}</span>
-                    <Badge variant="outline">15%</Badge>
+                    <Badge variant="outline">10%</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span>{t.forFamiliesPage.pricing.tips}</span>

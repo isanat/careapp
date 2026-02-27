@@ -18,7 +18,7 @@ import {
   IconCoins,
   IconCheck
 } from "@/components/icons";
-import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 export default function ComoFuncionaPage() {

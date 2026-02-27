@@ -22,7 +22,7 @@ import {
   IconBuilding,
   IconCreditCard
 } from "@/components/icons";
-import { APP_NAME, TOKEN_NAME, TOKEN_SYMBOL, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
+import { APP_NAME, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 function PaymentPageContent() {
@@ -218,7 +218,7 @@ function PaymentPageContent() {
               <span className="text-muted-foreground">{t.payment.tokensReceived}</span>
               <Badge className="bg-primary">
                 <IconToken className="h-3 w-3 mr-1" />
-                {tokensReceived} {TOKEN_SYMBOL}
+                {tokensReceived} 
               </Badge>
             </div>
           </div>
@@ -315,7 +315,7 @@ function PaymentPageContent() {
               <div className="flex items-start gap-3">
                 <IconToken className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">{tokensReceived} {TOKEN_SYMBOL} Tokens</p>
+                  <p className="font-medium">{tokensReceived}  Tokens</p>
                   <p className="text-sm text-muted-foreground">{t.payment.tokensForUse}</p>
                 </div>
               </div>

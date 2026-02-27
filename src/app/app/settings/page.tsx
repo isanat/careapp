@@ -27,7 +27,7 @@ import {
   IconShield,
   IconAlert
 } from "@/components/icons";
-import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 interface UserProfile {
@@ -236,7 +236,7 @@ export default function SettingsPage() {
                 <IconWallet className="h-5 w-5" />
                 {t.wallet.title}
               </CardTitle>
-              <CardDescription>{TOKEN_SYMBOL}</CardDescription>
+              <CardDescription></CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-muted/50 rounded-lg space-y-3">
@@ -253,7 +253,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">{t.wallet.balance}</span>
-                  <span className="font-medium">{wallet.balanceTokens.toLocaleString()} {TOKEN_SYMBOL}</span>
+                  <span className="font-medium">{wallet.balanceTokens.toLocaleString()} </span>
                 </div>
               </div>
 

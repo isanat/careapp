@@ -338,7 +338,7 @@ export default function WalletPage() {
                           className={tx.type === "CREDIT" ? "bg-green-500" : ""}
                         >
                           {tx.type === "CREDIT" ? "+" : "-"}
-                          {tx.tokens} {TOKEN_SYMBOL}
+                          {tx.tokens} 
                         </Badge>
                       </div>
                     ))}
@@ -358,7 +358,7 @@ export default function WalletPage() {
               <CardHeader>
                 <CardTitle>{t.wallet.buy}</CardTitle>
                 <CardDescription>
-                  {TOKEN_SYMBOL} - Stripe
+                   - Stripe
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -379,7 +379,7 @@ export default function WalletPage() {
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t.wallet.buy}</span>
-                    <span className="font-medium">{purchaseAmount * 100} {TOKEN_SYMBOL}</span>
+                    <span className="font-medium">{purchaseAmount * 100} </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fee</span>
@@ -419,7 +419,7 @@ export default function WalletPage() {
               <CardHeader>
                 <CardTitle>{t.wallet.sell}</CardTitle>
                 <CardDescription>
-                  {TOKEN_SYMBOL}
+                  
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -440,14 +440,14 @@ export default function WalletPage() {
                     placeholder="0"
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t.wallet.balance}: {wallet.balanceTokens.toLocaleString()} {TOKEN_SYMBOL}
+                    {t.wallet.balance}: {wallet.balanceTokens.toLocaleString()} 
                   </p>
                 </div>
 
                 <div className="p-4 bg-muted rounded-lg space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Rate</span>
-                    <span className="font-medium">€0.01 / {TOKEN_SYMBOL}</span>
+                    <span className="font-medium">€0.01 / </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">You receive</span>

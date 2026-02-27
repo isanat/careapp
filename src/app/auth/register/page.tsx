@@ -26,7 +26,7 @@ import {
   IconWallet,
   IconLoader2
 } from "@/components/icons";
-import { APP_NAME, TOKEN_SYMBOL, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
+import { APP_NAME, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { TermsAcceptance } from "@/components/terms/terms-acceptance";
 
@@ -327,7 +327,7 @@ function RegisterPageContent() {
                   <Badge>€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {TOKEN_SYMBOL} tokens
+                   tokens
                 </p>
               </div>
 

@@ -32,7 +32,7 @@ import {
   IconChevronDown,
 } from "@/components/icons";
 import { useState, useEffect } from "react";
-import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/ui/language-selector";
@@ -188,7 +188,7 @@ export function AppShell({ children }: AppShellProps) {
               <Link href="/app/wallet">
                 <Badge variant="secondary" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5">
                   <IconToken className="h-3.5 w-3.5 text-primary" />
-                  <span>{formattedBalance} {TOKEN_SYMBOL}</span>
+                  <span>{formattedBalance} </span>
                 </Badge>
               </Link>
 

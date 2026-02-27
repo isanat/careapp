@@ -16,7 +16,7 @@ import {
   IconHealthWallet, IconHealthToken, IconHealthReputation, IconHealthSchedule,
   IconHealthPayment, IconHealthBurn, IconHealthSupport, IconHealthTrust,
 } from "@/components/icons/health-icons";
-import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 
 export default function UIKitPage() {
   const [activationModalOpen, setActivationModalOpen] = React.useState(false);

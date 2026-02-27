@@ -23,7 +23,7 @@ import {
   IconHeart,
   IconContract
 } from "@/components/icons";
-import { SERVICE_TYPES, TOKEN_SYMBOL } from "@/lib/constants";
+import { SERVICE_TYPES } from "@/lib/constants";
 
 // Mock caregiver data
 const mockCaregiver = {
@@ -307,7 +307,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardContent className="pt-6 text-center">
                 <IconHeart className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="font-medium mb-2">Gorjetas em {TOKEN_SYMBOL}</p>
+                <p className="font-medium mb-2">Gorjetas em </p>
                 <p className="text-sm text-muted-foreground">
                   Após um contrato, você pode enviar gorjetas em tokens que valorizam!
                 </p>

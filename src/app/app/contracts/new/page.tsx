@@ -20,7 +20,7 @@ import {
   IconCheck,
   IconArrowRight
 } from "@/components/icons";
-import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS, TOKEN_SYMBOL, PLATFORM_FEE_PERCENT } from "@/lib/constants";
+import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS, PLATFORM_FEE_PERCENT } from "@/lib/constants";
 
 function NewContractContent() {
   const searchParams = useSearchParams();
@@ -371,7 +371,7 @@ function NewContractContent() {
                   <div>
                     <p className="font-medium">Taxa de Contrato</p>
                     <p className="text-sm text-muted-foreground">
-                      Você paga €{CONTRACT_FEE_EUR_CENTS / 100} em {TOKEN_SYMBOL} tokens para criar este contrato.
+                      Você paga €{CONTRACT_FEE_EUR_CENTS / 100} em  tokens para criar este contrato.
                       O cuidador também paga €{CONTRACT_FEE_EUR_CENTS / 100} ao aceitar.
                     </p>
                   </div>

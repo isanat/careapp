@@ -26,7 +26,7 @@ import {
   IconCheck,
   IconChevronRight
 } from "@/components/icons";
-import { APP_NAME, TOKEN_SYMBOL } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 interface Stats {
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                   <IconToken className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.tokenBalance} {TOKEN_SYMBOL}</p>
+                  <p className="text-sm text-muted-foreground">{t.dashboard.tokenBalance} </p>
                   <p className="text-2xl font-bold">{stats?.tokenBalance?.toLocaleString() || 0}</p>
                   <p className="text-xs text-muted-foreground">≈ €{(stats?.tokenValueEur || 0).toFixed(2)}</p>
                 </div>
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Badge variant={activity.type === "credit" ? "default" : "secondary"}>
-                      {activity.type === "credit" ? "+" : ""}{activity.amount} {TOKEN_SYMBOL}
+                      {activity.type === "credit" ? "+" : ""}{activity.amount} 
                     </Badge>
                   </div>
                 ))}
