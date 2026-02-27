@@ -87,10 +87,12 @@
 - Escrow preparado mas não totalmente implementado
 - Stripe Connect para cuidadores não implementado
 
-#### 3. i18n (Traduções)
+#### 3. ~~i18n (Traduções)~~ ✅ COMPLETO
 - Sistema implementado (useI18n hook)
-- Apenas ~30% das páginas traduzidas
-- Maioria ainda com texto hardcoded em português
+- **100% das páginas traduzidas**
+- 4 idiomas: Português, English, Italiano, Español
+- Todas as páginas públicas, auth e app usam traduções
+- ~500 novas chaves de tradução adicionadas
 
 ### ❌ Funcionalidades Pendentes:
 
@@ -188,7 +190,7 @@ src/
 
 ### P0 - Crítico:
 1. ~~Implementar página de KYC para cuidadores~~ ✅ CONCLUÍDO
-2. Traduzir todas as páginas (i18n)
+2. ~~Traduzir todas as páginas (i18n)~~ ✅ CONCLUÍDO
 3. Completar Admin Panel
 
 ### P1 - Alto:
@@ -207,9 +209,9 @@ src/
 
 | Commit | Descrição |
 |--------|-----------|
+| 3dc5b89 | feat: complete KYC page and add missing i18n translations |
+| 99356f6 | docs: update worklog with current project status |
 | d7a2fef | refactor: compact mobile-first design, remove settings page |
-| cc43238 | fix: merge profile and settings |
-| ... | ... |
 
 ---
 
