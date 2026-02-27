@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,9 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AppShell } from "@/components/layout/app-shell";
 import {
   IconUser,
@@ -26,64 +29,191 @@ import {
   IconClock,
   IconBriefcase,
   IconFamily,
-  IconCaregiver
+  IconCaregiver,
+  IconLoader2,
+  IconAlertCircle,
+  IconEuro,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+
+// Service types for caregivers
+const SERVICE_TYPES = [
+  { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
+  { id: "MEDICATION", label: "Administração de Medicação" },
+  { id: "MOBILITY", label: "Mobilidade" },
+  { id: "COMPANIONSHIP", label: "Companhia" },
+  { id: "MEAL_PREPARATION", label: "Preparo de Refeições" },
+  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas" },
+  { id: "TRANSPORTATION", label: "Transporte" },
+  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva" },
+  { id: "NIGHT_CARE", label: "Cuidados Noturnos" },
+  { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos" },
+  { id: "PHYSIOTHERAPY", label: "Fisioterapia" },
+  { id: "NURSING_CARE", label: "Enfermagem" },
+];
+
+interface ProfileData {
+  // User fields
+  name: string;
+  email: string;
+  phone: string;
+  // Caregiver fields
+  title?: string;
+  bio?: string;
+  experienceYears?: number;
+  city?: string;
+  services?: string[];
+  hourlyRateEur?: number;
+  certifications?: string;
+  languages?: string;
+  averageRating?: number;
+  totalReviews?: number;
+  totalContracts?: number;
+  // Family fields
+  elderName?: string;
+  elderAge?: number;
+  elderNeeds?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+}
 
 export default function ProfilePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const { t } = useI18n();
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const isFamily = session?.user?.role === "FAMILY";
-
-  // Profile data based on role - memoized to avoid recalculation
-  const profile = useMemo(() => isFamily ? {
-    address: "Rua das Flores, 123",
-    city: "Lisboa",
-    postalCode: "1250-096",
-    country: "Portugal",
-    elderName: "Dona Maria",
-    elderAge: 82,
-    elderNeeds: "Cuidados diários, medicação, companhia",
-    emergencyContact: "João Silva",
-    emergencyPhone: "+351 912 345 678",
-  } : {
-    title: "Enfermeira",
-    bio: "Profissional de saúde com mais de 10 anos de experiência em cuidados geriátricos. Especializada em cuidados paliativos e acompanhamento de idosos com Alzheimer.",
-    address: "Lisboa, Portugal",
-    experienceYears: 10,
-    hourlyRate: 25,
-    services: ["Cuidados Pessoais", "Medicação", "Companhia", "Alimentação"],
-    languages: ["Português", "Inglês", "Espanhol"],
-    totalContracts: 45,
-    totalHours: 1200,
-    averageRating: 4.9,
-    totalReviews: 32,
-  }, [isFamily]);
-
-  const [formData, setFormData] = useState({
-    name: session?.user?.name || "",
-    email: session?.user?.email || "",
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [formData, setFormData] = useState<ProfileData>({
+    name: "",
+    email: "",
     phone: "",
   });
 
-  // Early return AFTER all hooks
+  const isFamily = session?.user?.role === "FAMILY";
+  const isCaregiver = session?.user?.role === "CAREGIVER";
+
+  // Fetch profile data
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchProfile();
+    }
+  }, [status]);
+
+  const fetchProfile = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch("/api/user/profile");
+      
+      if (!response.ok) {
+        throw new Error("Erro ao carregar perfil");
+      }
+      
+      const data = await response.json();
+      
+      setProfile(data.profile);
+      setFormData({
+        name: data.user?.name || "",
+        email: data.user?.email || "",
+        phone: data.user?.phone || "",
+        // Caregiver fields
+        title: data.profile?.title || "",
+        bio: data.profile?.bio || "",
+        experienceYears: data.profile?.experienceYears || 0,
+        city: data.profile?.city || "",
+        services: Array.isArray(data.profile?.services) ? data.profile.services : [],
+        hourlyRateEur: data.profile?.hourlyRateEur ? data.profile.hourlyRateEur / 100 : 15,
+        certifications: data.profile?.certifications || "",
+        languages: data.profile?.languages || "",
+        averageRating: data.profile?.averageRating || 0,
+        totalReviews: data.profile?.totalReviews || 0,
+        totalContracts: data.profile?.totalContracts || 0,
+        // Family fields
+        elderName: data.profile?.elderName || "",
+        elderAge: data.profile?.elderAge || undefined,
+        emergencyContact: data.profile?.emergencyContact || "",
+        emergencyPhone: data.profile?.emergencyPhone || "",
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setError(null);
+    setSuccess(null);
+    
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Erro ao salvar perfil");
+      }
+      
+      setSuccess("Perfil atualizado com sucesso!");
+      setIsEditing(false);
+      
+      // Update session name if changed
+      if (formData.name !== session?.user?.name) {
+        await update({ name: formData.name });
+      }
+      
+      // Refresh profile data
+      fetchProfile();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao salvar perfil");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleServiceToggle = (serviceId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      services: prev.services?.includes(serviceId)
+        ? prev.services.filter(s => s !== serviceId)
+        : [...(prev.services || []), serviceId]
+    }));
+  };
+
+  // Redirect if not authenticated
   if (status === "unauthenticated") {
     router.push("/auth/login");
     return null;
   }
 
-  const handleSave = async () => {
-    setIsLoading(true);
-    // Simulate save
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsEditing(false);
-    setIsLoading(false);
-  };
+  // Loading state
+  if (status === "loading" || isLoading) {
+    return (
+      <AppShell>
+        <div className="space-y-6 max-w-4xl">
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-24 w-24 rounded-full -mt-12 ml-6" />
+          <div className="space-y-4 pt-4">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
@@ -112,10 +242,13 @@ export default function ProfilePage() {
             <Button 
               variant={isEditing ? "default" : "outline"}
               onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-              disabled={isLoading}
+              disabled={isSaving}
             >
-              {isLoading ? (
-                t.loading
+              {isSaving ? (
+                <>
+                  <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {t.loading}
+                </>
               ) : isEditing ? (
                 <>
                   <IconCheck className="h-4 w-4 mr-2" />
@@ -130,6 +263,21 @@ export default function ProfilePage() {
             </Button>
           </div>
         </div>
+
+        {/* Alerts */}
+        {error && (
+          <Alert variant="destructive">
+            <IconAlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
+        {success && (
+          <Alert className="border-green-500/20 bg-green-500/5">
+            <IconCheck className="h-4 w-4 text-green-500" />
+            <AlertDescription className="text-green-600">{success}</AlertDescription>
+          </Alert>
+        )}
 
         {/* Profile Info */}
         <div className="pt-8">
@@ -148,59 +296,66 @@ export default function ProfilePage() {
               </Badge>
             )}
           </div>
-          {!isFamily && (
+          {isCaregiver && formData.title && (
             <p className="text-muted-foreground mb-4">
-              {(profile as any).title} • {(profile as any).address}
+              {formData.title} {formData.city ? `• ${formData.city}` : ""}
             </p>
           )}
         </div>
 
-        {/* Tabs */}
+        {/* Tabs - Fixed grid based on role */}
         <Tabs defaultValue="about" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
-            <TabsTrigger value="contact">{t.profile.contactInfo}</TabsTrigger>
-            {!isFamily && <TabsTrigger value="reviews">{t.dashboard.rating}</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder">{t.profile.elderInfo}</TabsTrigger>}
-          </TabsList>
+          {isCaregiver ? (
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
+              <TabsTrigger value="services">{t.profile.services}</TabsTrigger>
+              <TabsTrigger value="contact">{t.profile.contactInfo}</TabsTrigger>
+            </TabsList>
+          ) : (
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
+              <TabsTrigger value="elder">{t.profile.elderInfo || "Idoso"}</TabsTrigger>
+              <TabsTrigger value="contact">{t.profile.contactInfo}</TabsTrigger>
+            </TabsList>
+          )}
 
           {/* About Tab */}
           <TabsContent value="about" className="space-y-6 mt-6">
             {isFamily ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>{t.profile.title}</CardTitle>
+                  <CardTitle>{t.profile.about}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">{t.auth.name}</Label>
+                    <Input 
+                      id="name" 
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      disabled={!isEditing}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">{t.auth.name}</Label>
+                      <Label htmlFor="city">{t.profile.city}</Label>
                       <Input 
-                        id="name" 
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        id="city" 
+                        value={formData.city || ""}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
                         disabled={!isEditing}
+                        placeholder="Lisboa"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="address">{t.profile.address}</Label>
-                        <Input 
-                          id="address" 
-                          value={formData.address}
-                          onChange={(e) => setFormData({...formData, address: e.target.value})}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="city">{t.profile.city}</Label>
-                        <Input 
-                          id="city" 
-                          value={formData.city}
-                          onChange={(e) => setFormData({...formData, city: e.target.value})}
-                          disabled={!isEditing}
-                        />
-                      </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">{t.auth.phone}</Label>
+                      <Input 
+                        id="phone" 
+                        value={formData.phone || ""}
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        disabled={!isEditing}
+                        placeholder="+351 912 345 678"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -213,74 +368,85 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="bio">{t.profile.bio}</Label>
-                      <Textarea 
-                        id="bio" 
-                        value={(formData as any).bio}
-                        rows={4}
+                      <Label htmlFor="name">{t.auth.name}</Label>
+                      <Input 
+                        id="name" 
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
                         disabled={!isEditing}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="title">{t.profile.titleLabel}</Label>
+                        <Label htmlFor="title">{t.profile.titleLabel || "Título Profissional"}</Label>
                         <Input 
                           id="title" 
-                          value={(formData as any).title}
+                          value={formData.title || ""}
+                          onChange={(e) => setFormData({...formData, title: e.target.value})}
                           disabled={!isEditing}
+                          placeholder="Enfermeira, Cuidadora..."
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="experience">{t.profile.experience}</Label>
+                        <Label htmlFor="experienceYears">{t.profile.experience || "Anos de Experiência"}</Label>
                         <Input 
-                          id="experience" 
-                          value={(formData as any).experienceYears}
+                          id="experienceYears" 
+                          type="number"
+                          value={formData.experienceYears || 0}
+                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
                           disabled={!isEditing}
                         />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t.profile.services}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {(formData as any).services?.map((service: string) => (
-                        <Badge key={service} variant="secondary">
-                          {service}
-                        </Badge>
-                      ))}
+                    <div className="space-y-2">
+                      <Label htmlFor="city">{t.profile.city}</Label>
+                      <Input 
+                        id="city" 
+                        value={formData.city || ""}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        disabled={!isEditing}
+                        placeholder="Lisboa, Porto..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="bio">{t.profile.bio || "Sobre você"}</Label>
+                      <Textarea 
+                        id="bio" 
+                        value={formData.bio || ""}
+                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                        rows={4}
+                        disabled={!isEditing}
+                        placeholder="Conte sobre sua experiência e especializações..."
+                      />
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                {/* Stats Card - Read Only */}
+                <Card className="bg-muted/30">
                   <CardHeader>
-                    <CardTitle>{t.dashboard.recentActivity}</CardTitle>
+                    <CardTitle className="text-base">{t.dashboard.recentActivity}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="text-center p-4 bg-muted/50 rounded-lg">
-                        <p className="text-2xl font-bold text-primary">{(profile as any).totalContracts}</p>
+                      <div className="text-center p-4 bg-background rounded-lg">
+                        <p className="text-2xl font-bold text-primary">{profile?.totalContracts || 0}</p>
                         <p className="text-sm text-muted-foreground">{t.contracts.title}</p>
                       </div>
-                      <div className="text-center p-4 bg-muted/50 rounded-lg">
-                        <p className="text-2xl font-bold text-primary">{(profile as any).totalHours}h</p>
-                        <p className="text-sm text-muted-foreground">{t.dashboard.hoursWorked}</p>
+                      <div className="text-center p-4 bg-background rounded-lg">
+                        <p className="text-2xl font-bold text-primary">{profile?.totalReviews || 0}</p>
+                        <p className="text-sm text-muted-foreground">{t.dashboard.reviews}</p>
                       </div>
-                      <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-center p-4 bg-background rounded-lg">
                         <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
                           <IconStar className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                          {(profile as any).averageRating}
+                          {(profile?.averageRating || 0).toFixed(1)}
                         </p>
                         <p className="text-sm text-muted-foreground">{t.dashboard.rating}</p>
                       </div>
-                      <div className="text-center p-4 bg-muted/50 rounded-lg">
-                        <p className="text-2xl font-bold text-primary">{(profile as any).totalReviews}</p>
-                        <p className="text-sm text-muted-foreground">{t.dashboard.reviews}</p>
+                      <div className="text-center p-4 bg-background rounded-lg">
+                        <p className="text-2xl font-bold text-primary">€{formData.hourlyRateEur || 0}</p>
+                        <p className="text-sm text-muted-foreground">por hora</p>
                       </div>
                     </div>
                   </CardContent>
@@ -289,11 +455,133 @@ export default function ProfilePage() {
             )}
           </TabsContent>
 
+          {/* Services Tab (Caregiver only) */}
+          {isCaregiver && (
+            <TabsContent value="services" className="space-y-6 mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t.profile.services}</CardTitle>
+                  <CardDescription>Selecione os serviços que você oferece</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {SERVICE_TYPES.map((service) => (
+                      <label
+                        key={service.id}
+                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                          formData.services?.includes(service.id)
+                            ? "border-primary bg-primary/5"
+                            : "hover:border-primary/50"
+                        } ${!isEditing ? "pointer-events-none opacity-80" : ""}`}
+                      >
+                        <Checkbox
+                          checked={formData.services?.includes(service.id)}
+                          onCheckedChange={() => handleServiceToggle(service.id)}
+                          disabled={!isEditing}
+                        />
+                        <span className="text-sm">{service.label}</span>
+                      </label>
+                    ))}
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-2">
+                    <Label htmlFor="hourlyRate">{t.profile.hourlyRate || "Valor por Hora (€)"}</Label>
+                    <div className="relative">
+                      <IconEuro className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="hourlyRate" 
+                        type="number"
+                        step="0.50"
+                        value={formData.hourlyRateEur || ""}
+                        onChange={(e) => setFormData({...formData, hourlyRateEur: parseFloat(e.target.value) || 0})}
+                        className="pl-10"
+                        disabled={!isEditing}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="certifications">Certificações</Label>
+                      <Input 
+                        id="certifications" 
+                        value={formData.certifications || ""}
+                        onChange={(e) => setFormData({...formData, certifications: e.target.value})}
+                        disabled={!isEditing}
+                        placeholder="Curso de Cuidador..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="languages">Idiomas</Label>
+                      <Input 
+                        id="languages" 
+                        value={formData.languages || ""}
+                        onChange={(e) => setFormData({...formData, languages: e.target.value})}
+                        disabled={!isEditing}
+                        placeholder="Português, Inglês..."
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* Elder Tab (Family only) */}
+          {isFamily && (
+            <TabsContent value="elder" className="space-y-6 mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t.profile.elderInfo || "Informações do Idoso"}</CardTitle>
+                  <CardDescription>
+                    Informações sobre a pessoa que receberá os cuidados
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="elderName">Nome do Idoso</Label>
+                      <Input 
+                        id="elderName" 
+                        value={formData.elderName || ""}
+                        onChange={(e) => setFormData({...formData, elderName: e.target.value})}
+                        disabled={!isEditing}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="elderAge">Idade</Label>
+                      <Input 
+                        id="elderAge" 
+                        type="number"
+                        value={formData.elderAge || ""}
+                        onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})}
+                        disabled={!isEditing}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="elderNeeds">Necessidades Especiais</Label>
+                    <Textarea 
+                      id="elderNeeds" 
+                      value={formData.elderNeeds || ""}
+                      onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})}
+                      rows={3}
+                      disabled={!isEditing}
+                      placeholder="Descreva as necessidades de cuidado..."
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
           {/* Contact Tab */}
           <TabsContent value="contact" className="space-y-6 mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t.profile.editProfile}</CardTitle>
+                <CardTitle>{t.profile.contactInfo}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -304,11 +592,11 @@ export default function ProfilePage() {
                       id="email" 
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
                       className="pl-10"
-                      disabled={!isEditing}
+                      disabled={true} // Email cannot be changed
                     />
                   </div>
+                  <p className="text-xs text-muted-foreground">O email não pode ser alterado</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">{t.auth.phone}</Label>
@@ -317,115 +605,40 @@ export default function ProfilePage() {
                     <Input 
                       id="phone" 
                       type="tel"
-                      placeholder="+351 912 345 678"
+                      value={formData.phone || ""}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
                       className="pl-10"
                       disabled={!isEditing}
+                      placeholder="+351 912 345 678"
                     />
                   </div>
                 </div>
                 <Separator />
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyContact">{t.profile.emergency}</Label>
-                  <Input 
-                    id="emergencyContact" 
-                    value={isFamily ? (profile as any).emergencyContact : ""}
-                    placeholder={t.auth.name}
-                    disabled={!isEditing}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="emergencyPhone">{t.auth.phone}</Label>
-                  <Input 
-                    id="emergencyPhone" 
-                    value={isFamily ? (profile as any).emergencyPhone : ""}
-                    placeholder="+351 912 345 678"
-                    disabled={!isEditing}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyContact">{t.profile.emergency || "Contato de Emergência"}</Label>
+                    <Input 
+                      id="emergencyContact" 
+                      value={formData.emergencyContact || ""}
+                      onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})}
+                      disabled={!isEditing}
+                      placeholder="Nome do contato"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="emergencyPhone">Telefone de Emergência</Label>
+                    <Input 
+                      id="emergencyPhone" 
+                      value={formData.emergencyPhone || ""}
+                      onChange={(e) => setFormData({...formData, emergencyPhone: e.target.value})}
+                      disabled={!isEditing}
+                      placeholder="+351 912 345 678"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Elder Tab (Family only) */}
-          {isFamily && (
-            <TabsContent value="elder" className="space-y-6 mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t.profile.elderInfo}</CardTitle>
-                  <CardDescription>
-                    {t.profile.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="elderName">{t.auth.name}</Label>
-                      <Input 
-                        id="elderName" 
-                        value={(profile as any).elderName}
-                        disabled={!isEditing}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="elderAge">{t.profile.years}</Label>
-                      <Input 
-                        id="elderAge" 
-                        type="number"
-                        value={(profile as any).elderAge}
-                        disabled={!isEditing}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="elderNeeds">{t.profile.elderNeeds}</Label>
-                    <Textarea 
-                      id="elderNeeds" 
-                      value={(profile as any).elderNeeds}
-                      rows={3}
-                      disabled={!isEditing}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
-
-          {/* Reviews Tab (Caregiver only) */}
-          {!isFamily && (
-            <TabsContent value="reviews" className="space-y-6 mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t.dashboard.rating}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Mock reviews */}
-                  {[
-                    { author: "Ana Silva", rating: 5, comment: "Excelente profissional! Muito dedicada e atenciosa com minha mãe.", date: "10 Jan 2024" },
-                    { author: "Pedro Costa", rating: 5, comment: "Muito competente e pontual. Recomendo fortemente.", date: "5 Jan 2024" },
-                    { author: "Maria Santos", rating: 4, comment: "Bom trabalho, comunicação clara.", date: "28 Dez 2023" },
-                  ].map((review, index) => (
-                    <div key={index} className="pb-4 border-b last:border-0 last:pb-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback>{review.author.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium">{review.author}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {Array.from({ length: review.rating }).map((_, i) => (
-                            <IconStar key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{review.comment}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{review.date}</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
         </Tabs>
 
         {/* Quick Actions */}
@@ -442,10 +655,10 @@ export default function ProfilePage() {
                   {t.wallet.title}
                 </Link>
               </Button>
-              {!isFamily && (
+              {isCaregiver && (
                 <Button variant="outline" asChild>
-                  <Link href="/app/contracts">
-                    {t.contracts.title}
+                  <Link href="/app/proposals">
+                    Propostas
                   </Link>
                 </Button>
               )}

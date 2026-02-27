@@ -13,10 +13,11 @@ export async function GET(request: NextRequest) {
 
     const userId = session.user.id;
     const isCaregiver = session.user.role === 'CAREGIVER';
+    const isFamily = session.user.role === 'FAMILY';
 
     // Get basic user info
     const userResult = await db.execute({
-      sql: `SELECT id, email, name, role, status, profileImage, createdAt 
+      sql: `SELECT id, email, name, phone, role, status, profileImage, createdAt 
             FROM User WHERE id = ?`,
       args: [userId]
     });
@@ -33,26 +34,42 @@ export async function GET(request: NextRequest) {
     if (isCaregiver) {
       const profileResult = await db.execute({
         sql: `SELECT id, title, bio, experienceYears, city, services, 
-                     hourlyRateEur, averageRating, totalReviews, totalContracts
+                     hourlyRateEur, averageRating, totalReviews, totalContracts,
+                     certifications, languages
               FROM ProfileCaregiver WHERE userId = ?`,
         args: [userId]
       });
 
       if (profileResult.rows.length > 0) {
+        const row = profileResult.rows[0];
+        let services = [];
+        try {
+          if (row.services) {
+            services = typeof row.services === 'string' 
+              ? JSON.parse(row.services)
+              : row.services;
+          }
+        } catch (e) {
+          services = String(row.services).split(',').filter(Boolean);
+        }
+
         profile = {
-          title: profileResult.rows[0].title,
-          bio: profileResult.rows[0].bio,
-          experienceYears: profileResult.rows[0].experienceYears,
-          city: profileResult.rows[0].city,
-          services: profileResult.rows[0].services ? 
-            String(profileResult.rows[0].services).split(',') : [],
-          hourlyRateEur: profileResult.rows[0].hourlyRateEur,
-          averageRating: profileResult.rows[0].averageRating,
-          totalReviews: profileResult.rows[0].totalReviews,
-          totalContracts: profileResult.rows[0].totalContracts,
+          title: row.title,
+          bio: row.bio,
+          experienceYears: row.experienceYears,
+          city: row.city,
+          services: services,
+          hourlyRateEur: row.hourlyRateEur,
+          averageRating: row.averageRating,
+          totalReviews: row.totalReviews,
+          totalContracts: row.totalContracts,
+          certifications: row.certifications,
+          languages: row.languages,
         };
       }
-    } else {
+    }
+
+    if (isFamily) {
       const profileResult = await db.execute({
         sql: `SELECT id, city, elderName, elderAge, emergencyContactName, emergencyContactPhone
               FROM ProfileFamily WHERE userId = ?`,
@@ -60,12 +77,13 @@ export async function GET(request: NextRequest) {
       });
 
       if (profileResult.rows.length > 0) {
+        const row = profileResult.rows[0];
         profile = {
-          city: profileResult.rows[0].city,
-          elderName: profileResult.rows[0].elderName,
-          elderAge: profileResult.rows[0].elderAge,
-          emergencyContact: profileResult.rows[0].emergencyContactName,
-          emergencyPhone: profileResult.rows[0].emergencyContactPhone,
+          city: row.city,
+          elderName: row.elderName,
+          elderAge: row.elderAge,
+          emergencyContact: row.emergencyContactName,
+          emergencyPhone: row.emergencyContactPhone,
         };
       }
     }
@@ -86,6 +104,7 @@ export async function GET(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
+        phone: user.phone,
         role: user.role,
         status: user.status,
         profileImage: user.profileImage,
@@ -109,29 +128,66 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, phone, ...profileData } = body;
     const userId = session.user.id;
     const isCaregiver = session.user.role === 'CAREGIVER';
+    const isFamily = session.user.role === 'FAMILY';
 
     // Update user basic info
-    if (name) {
+    if (body.name || body.phone) {
       await db.execute({
-        sql: `UPDATE User SET name = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [name, userId]
+        sql: `UPDATE User SET name = ?, phone = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
+        args: [body.name || '', body.phone || null, userId]
       });
     }
 
     // Update profile based on role
-    if (isCaregiver && profileData.title) {
+    if (isCaregiver) {
+      const servicesJson = body.services && body.services.length > 0 
+        ? JSON.stringify(body.services) 
+        : null;
+      const hourlyRateCents = body.hourlyRateEur 
+        ? Math.round(body.hourlyRateEur * 100) 
+        : null;
+
       await db.execute({
         sql: `UPDATE ProfileCaregiver 
-              SET title = ?, bio = ?, city = ?, updatedAt = CURRENT_TIMESTAMP 
+              SET title = ?, bio = ?, city = ?, experienceYears = ?, 
+                  services = ?, hourlyRateEur = ?, certifications = ?, languages = ?,
+                  updatedAt = CURRENT_TIMESTAMP 
               WHERE userId = ?`,
-        args: [profileData.title, profileData.bio || '', profileData.city || '', userId]
+        args: [
+          body.title || '',
+          body.bio || '',
+          body.city || '',
+          body.experienceYears || 0,
+          servicesJson,
+          hourlyRateCents || 1500,
+          body.certifications || '',
+          body.languages || '',
+          userId
+        ]
       });
     }
 
-    return NextResponse.json({ success: true, message: 'Profile updated' });
+    if (isFamily) {
+      await db.execute({
+        sql: `UPDATE ProfileFamily 
+              SET city = ?, elderName = ?, elderAge = ?,
+                  emergencyContactName = ?, emergencyContactPhone = ?,
+                  updatedAt = CURRENT_TIMESTAMP 
+              WHERE userId = ?`,
+        args: [
+          body.city || '',
+          body.elderName || '',
+          body.elderAge || null,
+          body.emergencyContact || '',
+          body.emergencyPhone || '',
+          userId
+        ]
+      });
+    }
+
+    return NextResponse.json({ success: true, message: 'Perfil atualizado com sucesso' });
   } catch (error) {
     console.error('Error updating profile:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
