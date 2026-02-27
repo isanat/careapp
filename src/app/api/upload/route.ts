@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import { db } from '@/lib/db-turso';
 
-// Simple file upload API
+// Upload API - stores images as base64 data URLs in database
 export async function POST(request: NextRequest) {
   console.log('📤 Upload API called');
   
@@ -34,48 +32,51 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 2MB for base64)
+    if (file.size > 2 * 1024 * 1024) {
       console.log('❌ File too large:', file.size);
-      return NextResponse.json({ error: 'Arquivo muito grande. Máximo 5MB' }, { status: 400 });
+      return NextResponse.json({ error: 'Arquivo muito grande. Máximo 2MB' }, { status: 400 });
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
       console.log('❌ Invalid file type:', file.type);
-      return NextResponse.json({ error: 'Tipo de arquivo não permitido. Use JPG, PNG, WEBP, GIF ou PDF' }, { status: 400 });
+      return NextResponse.json({ error: 'Tipo de arquivo não permitido. Use JPG, PNG, WEBP ou GIF' }, { status: 400 });
     }
 
-    // Generate unique filename
+    // Convert to base64 data URL
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString('base64');
+    const dataUrl = `data:${file.type};base64,${base64}`;
     
-    const ext = file.name.split('.').pop() || 'jpg';
-    const filename = `${session.user.id}-${type}-${Date.now()}.${ext}`;
-    
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    console.log('📂 Uploads directory:', uploadsDir);
-    
-    if (!existsSync(uploadsDir)) {
-      console.log('📁 Creating uploads directory...');
-      await mkdir(uploadsDir, { recursive: true });
+    console.log('✅ Image converted to base64, length:', dataUrl.length);
+
+    // For profile images, update user directly
+    if (type === 'profile') {
+      await db.execute({
+        sql: `UPDATE User SET profileImage = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
+        args: [dataUrl, session.user.id]
+      });
+      console.log('✅ Profile image updated in database');
     }
 
-    // Write file
-    const filepath = path.join(uploadsDir, filename);
-    console.log('💾 Writing file to:', filepath);
-    await writeFile(filepath, buffer);
-
-    // Return public URL
-    const url = `/uploads/${filename}`;
-    console.log('✅ Upload successful:', url);
+    // For background check, update the specific field
+    if (type === 'background_check') {
+      await db.execute({
+        sql: `UPDATE User SET backgroundCheckUrl = ?, backgroundCheckStatus = 'SUBMITTED', updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
+        args: [dataUrl, session.user.id]
+      });
+      console.log('✅ Background check document updated in database');
+    }
 
     return NextResponse.json({ 
       success: true, 
-      url,
-      filename 
+      url: dataUrl,
+      filename: file.name,
+      size: file.size,
+      type: file.type
     });
   } catch (error) {
     console.error('❌ Upload error:', error);
