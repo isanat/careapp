@@ -7,30 +7,44 @@ import path from 'path';
 
 // Simple file upload API
 export async function POST(request: NextRequest) {
+  console.log('📤 Upload API called');
+  
   try {
     const session = await getServerSession(authOptions);
+    console.log('📋 Session:', session ? { id: session.user?.id, name: session.user?.name } : 'No session');
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.log('❌ Unauthorized - no session');
+      return NextResponse.json({ error: 'Unauthorized - faça login novamente' }, { status: 401 });
     }
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const type = formData.get('type') as string || 'general';
 
+    console.log('📁 File info:', { 
+      name: file?.name, 
+      type: file?.type, 
+      size: file?.size,
+      uploadType: type
+    });
+
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      console.log('❌ No file provided');
+      return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File too large. Max 5MB' }, { status: 400 });
+      console.log('❌ File too large:', file.size);
+      return NextResponse.json({ error: 'Arquivo muito grande. Máximo 5MB' }, { status: 400 });
     }
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ error: 'Invalid file type' }, { status: 400 });
+      console.log('❌ Invalid file type:', file.type);
+      return NextResponse.json({ error: 'Tipo de arquivo não permitido. Use JPG, PNG, WEBP, GIF ou PDF' }, { status: 400 });
     }
 
     // Generate unique filename
@@ -42,16 +56,21 @@ export async function POST(request: NextRequest) {
     
     // Create uploads directory if it doesn't exist
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    console.log('📂 Uploads directory:', uploadsDir);
+    
     if (!existsSync(uploadsDir)) {
+      console.log('📁 Creating uploads directory...');
       await mkdir(uploadsDir, { recursive: true });
     }
 
     // Write file
     const filepath = path.join(uploadsDir, filename);
+    console.log('💾 Writing file to:', filepath);
     await writeFile(filepath, buffer);
 
     // Return public URL
     const url = `/uploads/${filename}`;
+    console.log('✅ Upload successful:', url);
 
     return NextResponse.json({ 
       success: true, 
@@ -59,9 +78,9 @@ export async function POST(request: NextRequest) {
       filename 
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('❌ Upload error:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file' },
+      { error: 'Erro ao enviar arquivo: ' + (error instanceof Error ? error.message : 'Erro desconhecido') },
       { status: 500 }
     );
   }
