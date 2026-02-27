@@ -128,6 +128,12 @@
   --color-border: #E0E7E5;
   --color-input: #E0E7E5;
   --color-ring: #2F6F6D;
+  
+  /* Popover & Card */
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #1F2933;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #1F2933;
 }
 
 /* Dark Mode */
@@ -180,6 +186,12 @@
   --color-border: #2F3A45;
   --color-input: #2F3A45;
   --color-ring: #3D9996;
+  
+  /* Popover & Card */
+  --color-popover: #1A2128;
+  --color-popover-foreground: #E8ECEF;
+  --color-card: #1A2128;
+  --color-card-foreground: #E8ECEF;
 }
 
 @layer base {

@@ -9,14 +9,12 @@ import { Label } from "@/components/ui/label";
 import { IconLogo, IconMail, IconPhone, IconMapPin, IconClock } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
-import { PublicLayout } from "@/components/layout/public-layout";
 
 export default function ContatoPage() {
   const { t } = useI18n();
 
   return (
-    <PublicLayout>
-      <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
+    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">{t.contatoPage.title}</h1>
@@ -121,6 +119,5 @@ export default function ContatoPage() {
           </div>
         </div>
       </div>
-    </PublicLayout>
   );
 }

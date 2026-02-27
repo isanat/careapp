@@ -17,14 +17,12 @@ import {
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
-import { PublicLayout } from "@/components/layout/public-layout";
 
 export default function SobrePage() {
   const { t } = useI18n();
 
   return (
-    <PublicLayout>
-      <main className="min-h-screen flex flex-col">
+    <main className="min-h-screen flex flex-col">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
           <div className="container px-4 mx-auto">
@@ -235,6 +233,5 @@ export default function SobrePage() {
           </div>
         </section>
       </main>
-    </PublicLayout>
   );
 }

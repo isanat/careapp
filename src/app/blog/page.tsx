@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { IconLogo, IconClock, IconUser } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
-import { PublicLayout } from "@/components/layout/public-layout";
 
 export default function BlogPage() {
   const { t } = useI18n();
@@ -22,8 +21,7 @@ export default function BlogPage() {
   ];
 
   return (
-    <PublicLayout>
-      <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
+    <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 py-16">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">{t.blogPage.title}</h1>
@@ -94,6 +92,5 @@ export default function BlogPage() {
           </div>
         </div>
       </div>
-    </PublicLayout>
   );
 }
