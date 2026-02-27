@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconLogo, IconMenu, IconLogout, IconUser, IconSettings, IconChevronDown } from "@/components/icons";
+import { IconLogo, IconMenu, IconLogout, IconUser, IconChevronDown } from "@/components/icons";
 import { APP_NAME, NAV_LINKS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -100,9 +100,9 @@ export function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/app/settings" className="flex items-center">
-                    <IconSettings className="mr-2 h-4 w-4" />
-                    {t.nav.settings}
+                  <Link href="/app/profile" className="flex items-center">
+                    <IconUser className="mr-2 h-4 w-4" />
+                    {t.nav.profile}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

@@ -23,7 +23,6 @@ import {
   IconContract,
   IconWallet,
   IconChat,
-  IconSettings,
   IconUser,
   IconMenu,
   IconX,
@@ -124,7 +123,7 @@ export function AppShell({ children }: AppShellProps) {
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
         { href: "/app/wallet", label: t.nav.wallet, icon: IconWallet },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
-        { href: "/app/settings", label: t.nav.settings, icon: IconSettings },
+        { href: "/app/profile", label: t.nav.profile, icon: IconUser },
       ]
     : [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
@@ -133,7 +132,6 @@ export function AppShell({ children }: AppShellProps) {
         { href: "/app/wallet", label: t.nav.wallet, icon: IconWallet },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
         { href: "/app/profile", label: t.nav.profile, icon: IconUser },
-        { href: "/app/settings", label: t.nav.settings, icon: IconSettings },
       ];
 
   // Mobile bottom navigation items (limited set)
@@ -142,13 +140,13 @@ export function AppShell({ children }: AppShellProps) {
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
         { href: "/app/search", label: t.nav.searchCaregivers, icon: IconSearch },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
-        { href: "/app/settings", label: t.nav.settings, icon: IconSettings },
+        { href: "/app/profile", label: t.nav.profile, icon: IconUser },
       ]
     : [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
         { href: "/app/proposals", label: "Propostas", icon: IconInbox },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
-        { href: "/app/settings", label: t.nav.settings, icon: IconSettings },
+        { href: "/app/profile", label: t.nav.profile, icon: IconUser },
       ];
 
   const handleLogout = async () => {
@@ -217,9 +215,9 @@ export function AppShell({ children }: AppShellProps) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/app/settings" className="flex items-center">
-                      <IconSettings className="mr-2 h-4 w-4" />
-                      {t.nav.settings}
+                    <Link href="/app/profile" className="flex items-center">
+                      <IconUser className="mr-2 h-4 w-4" />
+                      {t.nav.profile}
                     </Link>
                   </DropdownMenuItem>
                   

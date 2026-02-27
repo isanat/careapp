@@ -3,47 +3,58 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { signOut } from "next-auth/react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { AppShell } from "@/components/layout/app-shell";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSelector } from "@/components/ui/language-selector";
 import {
   IconUser,
-  IconMail,
-  IconPhone,
-  IconMapPin,
   IconCamera,
   IconEdit,
   IconCheck,
   IconStar,
-  IconClock,
-  IconBriefcase,
   IconFamily,
   IconCaregiver,
   IconLoader2,
   IconAlertCircle,
   IconEuro,
+  IconBell,
+  IconShield,
+  IconTrash,
+  IconLogout,
+  IconChevronRight,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+import { useNotifications } from "@/hooks/useNotifications";
 
-// Service types for caregivers
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
-  { id: "MEDICATION", label: "Administração de Medicação" },
+  { id: "MEDICATION", label: "Medicação" },
   { id: "MOBILITY", label: "Mobilidade" },
   { id: "COMPANIONSHIP", label: "Companhia" },
-  { id: "MEAL_PREPARATION", label: "Preparo de Refeições" },
+  { id: "MEAL_PREPARATION", label: "Refeições" },
   { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas" },
   { id: "TRANSPORTATION", label: "Transporte" },
   { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva" },
@@ -54,11 +65,9 @@ const SERVICE_TYPES = [
 ];
 
 interface ProfileData {
-  // User fields
   name: string;
   email: string;
   phone: string;
-  // Caregiver fields
   title?: string;
   bio?: string;
   experienceYears?: number;
@@ -70,7 +79,6 @@ interface ProfileData {
   averageRating?: number;
   totalReviews?: number;
   totalContracts?: number;
-  // Family fields
   elderName?: string;
   elderAge?: number;
   elderNeeds?: string;
@@ -82,12 +90,15 @@ export default function ProfilePage() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
   const { t } = useI18n();
+  const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported } = useNotifications();
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [formData, setFormData] = useState<ProfileData>({
@@ -99,32 +110,21 @@ export default function ProfilePage() {
   const isFamily = session?.user?.role === "FAMILY";
   const isCaregiver = session?.user?.role === "CAREGIVER";
 
-  // Fetch profile data
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchProfile();
-    }
+    if (status === "authenticated") fetchProfile();
   }, [status]);
 
   const fetchProfile = async () => {
     setIsLoading(true);
-    setError(null);
-    
     try {
       const response = await fetch("/api/user/profile");
-      
-      if (!response.ok) {
-        throw new Error("Erro ao carregar perfil");
-      }
-      
+      if (!response.ok) throw new Error("Erro ao carregar perfil");
       const data = await response.json();
-      
       setProfile(data.profile);
       setFormData({
         name: data.user?.name || "",
         email: data.user?.email || "",
         phone: data.user?.phone || "",
-        // Caregiver fields
         title: data.profile?.title || "",
         bio: data.profile?.bio || "",
         experienceYears: data.profile?.experienceYears || 0,
@@ -136,7 +136,6 @@ export default function ProfilePage() {
         averageRating: data.profile?.averageRating || 0,
         totalReviews: data.profile?.totalReviews || 0,
         totalContracts: data.profile?.totalContracts || 0,
-        // Family fields
         elderName: data.profile?.elderName || "",
         elderAge: data.profile?.elderAge || undefined,
         emergencyContact: data.profile?.emergencyContact || "",
@@ -153,31 +152,19 @@ export default function ProfilePage() {
     setIsSaving(true);
     setError(null);
     setSuccess(null);
-    
     try {
       const response = await fetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Erro ao salvar perfil");
-      }
-      
-      setSuccess("Perfil atualizado com sucesso!");
+      if (!response.ok) throw new Error("Erro ao salvar");
+      setSuccess("Salvo!");
       setIsEditing(false);
-      
-      // Update session name if changed
-      if (formData.name !== session?.user?.name) {
-        await update({ name: formData.name });
-      }
-      
-      // Refresh profile data
+      if (formData.name !== session?.user?.name) await update({ name: formData.name });
       fetchProfile();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao salvar perfil");
+      setError(err instanceof Error ? err.message : "Erro ao salvar");
     } finally {
       setIsSaving(false);
     }
@@ -192,24 +179,31 @@ export default function ProfilePage() {
     }));
   };
 
-  // Redirect if not authenticated
+  const handleEnablePush = async () => {
+    const granted = await requestPushPermission();
+    if (granted) await subscribeToPush();
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsDeleting(false);
+    setDeleteDialogOpen(false);
+    signOut({ callbackUrl: "/" });
+  };
+
   if (status === "unauthenticated") {
     router.push("/auth/login");
     return null;
   }
 
-  // Loading state
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="space-y-6 max-w-4xl">
-          <Skeleton className="h-32 w-full rounded-xl" />
-          <Skeleton className="h-24 w-24 rounded-full -mt-12 ml-6" />
-          <div className="space-y-4 pt-4">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-          <Skeleton className="h-64 w-full" />
+        <div className="space-y-3 p-4">
+          <Skeleton className="h-16 w-full rounded-lg" />
+          <Skeleton className="h-24 w-full rounded-lg" />
+          <Skeleton className="h-32 w-full rounded-lg" />
         </div>
       </AppShell>
     );
@@ -217,454 +211,279 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-4xl">
-        {/* Header with Cover */}
-        <div className="relative">
-          <div className="h-32 bg-gradient-to-r from-primary to-primary/60 rounded-xl" />
-          <div className="absolute -bottom-12 left-6 flex items-end gap-4">
-            <div className="relative">
-              <Avatar className="h-24 w-24 border-4 border-background">
-                <AvatarFallback className="text-2xl bg-primary/10 text-primary">
-                  {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
-                </AvatarFallback>
-              </Avatar>
-              {isEditing && (
-                <Button 
-                  size="icon" 
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
-                >
-                  <IconCamera className="h-4 w-4" />
-                </Button>
-              )}
+      <div className="space-y-3">
+        {/* Header compacto */}
+        <div className="flex items-center justify-between px-4 py-3 bg-background sticky top-0 z-10 border-b">
+          <h1 className="text-lg font-semibold">{t.nav.profile}</h1>
+          <Button 
+            size="sm"
+            variant={isEditing ? "default" : "outline"}
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            disabled={isSaving}
+          >
+            {isSaving ? <IconLoader2 className="h-4 w-4 animate-spin" /> : 
+             isEditing ? <IconCheck className="h-4 w-4 mr-1" /> : <IconEdit className="h-4 w-4 mr-1" />}
+            {isEditing ? t.save : t.profile.editProfile}
+          </Button>
+        </div>
+
+        {error && <Alert variant="destructive" className="mx-4"><IconAlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert>}
+        {success && <Alert className="mx-4 border-green-500/20 bg-green-500/5"><IconCheck className="h-4 w-4 text-green-500" /><AlertDescription className="text-green-600">{success}</AlertDescription></Alert>}
+
+        {/* Perfil resumido */}
+        <div className="px-4 py-3 flex items-center gap-3">
+          <div className="relative">
+            <Avatar className="h-14 w-14">
+              <AvatarFallback className="text-lg bg-primary/10 text-primary">
+                {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
+              </AvatarFallback>
+            </Avatar>
+            {isEditing && (
+              <Button size="icon" className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full">
+                <IconCamera className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <span className="font-medium">{session?.user?.name}</span>
+              <Badge variant="outline" className={isFamily ? "text-blue-600 border-blue-600" : "text-green-600 border-green-600"}>
+                {isFamily ? <IconFamily className="h-3 w-3 mr-1" /> : <IconCaregiver className="h-3 w-3 mr-1" />}
+                {isFamily ? t.auth.family : t.auth.caregiver}
+              </Badge>
+            </div>
+            {isCaregiver && formData.title && (
+              <p className="text-sm text-muted-foreground">{formData.title} {formData.city ? `• ${formData.city}` : ""}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Stats para caregiver */}
+        {isCaregiver && (
+          <div className="px-4 grid grid-cols-4 gap-2">
+            <div className="bg-muted/50 rounded-lg p-2 text-center">
+              <p className="text-lg font-bold text-primary">{profile?.totalContracts || 0}</p>
+              <p className="text-[10px] text-muted-foreground">Contratos</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-2 text-center">
+              <p className="text-lg font-bold text-primary">{profile?.totalReviews || 0}</p>
+              <p className="text-[10px] text-muted-foreground">Avaliações</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-2 text-center">
+              <p className="text-lg font-bold text-primary flex items-center justify-center gap-0.5">
+                <IconStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                {(profile?.averageRating || 0).toFixed(1)}
+              </p>
+              <p className="text-[10px] text-muted-foreground">Nota</p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-2 text-center">
+              <p className="text-lg font-bold text-primary">€{formData.hourlyRateEur || 0}</p>
+              <p className="text-[10px] text-muted-foreground">/hora</p>
             </div>
           </div>
-          <div className="absolute bottom-4 right-4">
-            <Button 
-              variant={isEditing ? "default" : "outline"}
-              onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-              disabled={isSaving}
-            >
-              {isSaving ? (
-                <>
-                  <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                  {t.loading}
-                </>
-              ) : isEditing ? (
-                <>
-                  <IconCheck className="h-4 w-4 mr-2" />
-                  {t.save}
-                </>
-              ) : (
-                <>
-                  <IconEdit className="h-4 w-4 mr-2" />
-                  {t.profile.editProfile}
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Alerts */}
-        {error && (
-          <Alert variant="destructive">
-            <IconAlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        
-        {success && (
-          <Alert className="border-green-500/20 bg-green-500/5">
-            <IconCheck className="h-4 w-4 text-green-500" />
-            <AlertDescription className="text-green-600">{success}</AlertDescription>
-          </Alert>
         )}
 
-        {/* Profile Info */}
-        <div className="pt-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold">{session?.user?.name}</h1>
-            <Badge className={isFamily ? "bg-blue-500" : "bg-green-500"}>
-              {isFamily ? (
-                <><IconFamily className="h-3 w-3 mr-1" /> {t.auth.family}</>
-              ) : (
-                <><IconCaregiver className="h-3 w-3 mr-1" /> {t.auth.caregiver}</>
+        {/* Tabs compactas */}
+        <Tabs defaultValue="about" className="px-4">
+          <TabsList className="grid w-full grid-cols-4 h-9">
+            <TabsTrigger value="about" className="text-xs py-1.5">Info</TabsTrigger>
+            {isCaregiver && <TabsTrigger value="services" className="text-xs py-1.5">Serviços</TabsTrigger>}
+            {isFamily && <TabsTrigger value="elder" className="text-xs py-1.5">Idoso</TabsTrigger>}
+            <TabsTrigger value="contact" className="text-xs py-1.5">Contato</TabsTrigger>
+            <TabsTrigger value="settings" className="text-xs py-1.5">Config</TabsTrigger>
+          </TabsList>
+
+          {/* Info Tab */}
+          <TabsContent value="about" className="mt-3 space-y-2">
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs text-muted-foreground">{t.auth.name}</Label>
+                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">{t.profile.city}</Label>
+                  <Input value={formData.city || ""} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Cidade" />
+                </div>
+              </div>
+              
+              {isCaregiver && (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Título</Label>
+                      <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Ex: Enfermeira" />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Anos Exp.</Label>
+                      <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-9 mt-0.5" />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Bio</Label>
+                    <Textarea value={formData.bio || ""} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={2} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Sobre você..." />
+                  </div>
+                </>
               )}
-            </Badge>
-            {session?.user?.status === "ACTIVE" && (
-              <Badge variant="outline" className="text-green-600 border-green-600">
-                {t.profile.verified}
-              </Badge>
-            )}
-          </div>
-          {isCaregiver && formData.title && (
-            <p className="text-muted-foreground mb-4">
-              {formData.title} {formData.city ? `• ${formData.city}` : ""}
-            </p>
-          )}
-        </div>
-
-        {/* Tabs - Fixed grid based on role */}
-        <Tabs defaultValue="about" className="w-full">
-          {isCaregiver ? (
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
-              <TabsTrigger value="services">{t.profile.services}</TabsTrigger>
-              <TabsTrigger value="contact">{t.profile.contactInfo}</TabsTrigger>
-            </TabsList>
-          ) : (
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="about">{t.profile.about}</TabsTrigger>
-              <TabsTrigger value="elder">{t.profile.elderInfo || "Idoso"}</TabsTrigger>
-              <TabsTrigger value="contact">{t.profile.contactInfo}</TabsTrigger>
-            </TabsList>
-          )}
-
-          {/* About Tab */}
-          <TabsContent value="about" className="space-y-6 mt-6">
-            {isFamily ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t.profile.about}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">{t.auth.name}</Label>
-                    <Input 
-                      id="name" 
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      disabled={!isEditing}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="city">{t.profile.city}</Label>
-                      <Input 
-                        id="city" 
-                        value={formData.city || ""}
-                        onChange={(e) => setFormData({...formData, city: e.target.value})}
-                        disabled={!isEditing}
-                        placeholder="Lisboa"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">{t.auth.phone}</Label>
-                      <Input 
-                        id="phone" 
-                        value={formData.phone || ""}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        disabled={!isEditing}
-                        placeholder="+351 912 345 678"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t.profile.about}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">{t.auth.name}</Label>
-                      <Input 
-                        id="name" 
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        disabled={!isEditing}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="title">{t.profile.titleLabel || "Título Profissional"}</Label>
-                        <Input 
-                          id="title" 
-                          value={formData.title || ""}
-                          onChange={(e) => setFormData({...formData, title: e.target.value})}
-                          disabled={!isEditing}
-                          placeholder="Enfermeira, Cuidadora..."
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="experienceYears">{t.profile.experience || "Anos de Experiência"}</Label>
-                        <Input 
-                          id="experienceYears" 
-                          type="number"
-                          value={formData.experienceYears || 0}
-                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
-                          disabled={!isEditing}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="city">{t.profile.city}</Label>
-                      <Input 
-                        id="city" 
-                        value={formData.city || ""}
-                        onChange={(e) => setFormData({...formData, city: e.target.value})}
-                        disabled={!isEditing}
-                        placeholder="Lisboa, Porto..."
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bio">{t.profile.bio || "Sobre você"}</Label>
-                      <Textarea 
-                        id="bio" 
-                        value={formData.bio || ""}
-                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                        rows={4}
-                        disabled={!isEditing}
-                        placeholder="Conte sobre sua experiência e especializações..."
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Stats Card - Read Only */}
-                <Card className="bg-muted/30">
-                  <CardHeader>
-                    <CardTitle className="text-base">{t.dashboard.recentActivity}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="text-center p-4 bg-background rounded-lg">
-                        <p className="text-2xl font-bold text-primary">{profile?.totalContracts || 0}</p>
-                        <p className="text-sm text-muted-foreground">{t.contracts.title}</p>
-                      </div>
-                      <div className="text-center p-4 bg-background rounded-lg">
-                        <p className="text-2xl font-bold text-primary">{profile?.totalReviews || 0}</p>
-                        <p className="text-sm text-muted-foreground">{t.dashboard.reviews}</p>
-                      </div>
-                      <div className="text-center p-4 bg-background rounded-lg">
-                        <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
-                          <IconStar className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                          {(profile?.averageRating || 0).toFixed(1)}
-                        </p>
-                        <p className="text-sm text-muted-foreground">{t.dashboard.rating}</p>
-                      </div>
-                      <div className="text-center p-4 bg-background rounded-lg">
-                        <p className="text-2xl font-bold text-primary">€{formData.hourlyRateEur || 0}</p>
-                        <p className="text-sm text-muted-foreground">por hora</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
+            </div>
           </TabsContent>
 
-          {/* Services Tab (Caregiver only) */}
+          {/* Services Tab */}
           {isCaregiver && (
-            <TabsContent value="services" className="space-y-6 mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t.profile.services}</CardTitle>
-                  <CardDescription>Selecione os serviços que você oferece</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {SERVICE_TYPES.map((service) => (
-                      <label
-                        key={service.id}
-                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                          formData.services?.includes(service.id)
-                            ? "border-primary bg-primary/5"
-                            : "hover:border-primary/50"
-                        } ${!isEditing ? "pointer-events-none opacity-80" : ""}`}
-                      >
-                        <Checkbox
-                          checked={formData.services?.includes(service.id)}
-                          onCheckedChange={() => handleServiceToggle(service.id)}
-                          disabled={!isEditing}
-                        />
-                        <span className="text-sm">{service.label}</span>
-                      </label>
-                    ))}
+            <TabsContent value="services" className="mt-3 space-y-2">
+              <div className="grid grid-cols-2 gap-1.5">
+                {SERVICE_TYPES.map((service) => (
+                  <label key={service.id} className={`flex items-center gap-2 p-2 border rounded-md text-xs cursor-pointer transition-all ${formData.services?.includes(service.id) ? "border-primary bg-primary/5" : "hover:border-primary/50"} ${!isEditing ? "pointer-events-none opacity-80" : ""}`}>
+                    <Checkbox checked={formData.services?.includes(service.id)} onCheckedChange={() => handleServiceToggle(service.id)} disabled={!isEditing} className="h-4 w-4" />
+                    <span>{service.label}</span>
+                  </label>
+                ))}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <div>
+                  <Label className="text-xs text-muted-foreground">€/hora</Label>
+                  <div className="relative mt-0.5">
+                    <IconEuro className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input type="number" step="0.50" value={formData.hourlyRateEur || ""} onChange={(e) => setFormData({...formData, hourlyRateEur: parseFloat(e.target.value) || 0})} className="h-9 pl-8" disabled={!isEditing} />
                   </div>
-
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <Label htmlFor="hourlyRate">{t.profile.hourlyRate || "Valor por Hora (€)"}</Label>
-                    <div className="relative">
-                      <IconEuro className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input 
-                        id="hourlyRate" 
-                        type="number"
-                        step="0.50"
-                        value={formData.hourlyRateEur || ""}
-                        onChange={(e) => setFormData({...formData, hourlyRateEur: parseFloat(e.target.value) || 0})}
-                        className="pl-10"
-                        disabled={!isEditing}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="certifications">Certificações</Label>
-                      <Input 
-                        id="certifications" 
-                        value={formData.certifications || ""}
-                        onChange={(e) => setFormData({...formData, certifications: e.target.value})}
-                        disabled={!isEditing}
-                        placeholder="Curso de Cuidador..."
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="languages">Idiomas</Label>
-                      <Input 
-                        id="languages" 
-                        value={formData.languages || ""}
-                        onChange={(e) => setFormData({...formData, languages: e.target.value})}
-                        disabled={!isEditing}
-                        placeholder="Português, Inglês..."
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Idiomas</Label>
+                  <Input value={formData.languages || ""} onChange={(e) => setFormData({...formData, languages: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="PT, EN..." />
+                </div>
+              </div>
+              
+              <div>
+                <Label className="text-xs text-muted-foreground">Certificações</Label>
+                <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Cursos..." />
+              </div>
             </TabsContent>
           )}
 
-          {/* Elder Tab (Family only) */}
+          {/* Elder Tab */}
           {isFamily && (
-            <TabsContent value="elder" className="space-y-6 mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t.profile.elderInfo || "Informações do Idoso"}</CardTitle>
-                  <CardDescription>
-                    Informações sobre a pessoa que receberá os cuidados
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="elderName">Nome do Idoso</Label>
-                      <Input 
-                        id="elderName" 
-                        value={formData.elderName || ""}
-                        onChange={(e) => setFormData({...formData, elderName: e.target.value})}
-                        disabled={!isEditing}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="elderAge">Idade</Label>
-                      <Input 
-                        id="elderAge" 
-                        type="number"
-                        value={formData.elderAge || ""}
-                        onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})}
-                        disabled={!isEditing}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="elderNeeds">Necessidades Especiais</Label>
-                    <Textarea 
-                      id="elderNeeds" 
-                      value={formData.elderNeeds || ""}
-                      onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})}
-                      rows={3}
-                      disabled={!isEditing}
-                      placeholder="Descreva as necessidades de cuidado..."
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="elder" className="mt-3 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Nome do Idoso</Label>
+                  <Input value={formData.elderName || ""} onChange={(e) => setFormData({...formData, elderName: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Idade</Label>
+                  <Input type="number" value={formData.elderAge || ""} onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-9 mt-0.5" />
+                </div>
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Necessidades</Label>
+                <Textarea value={formData.elderNeeds || ""} onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})} rows={2} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Descreva..." />
+              </div>
             </TabsContent>
           )}
 
           {/* Contact Tab */}
-          <TabsContent value="contact" className="space-y-6 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t.profile.contactInfo}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">{t.auth.email}</Label>
-                  <div className="relative">
-                    <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="email" 
-                      type="email"
-                      value={formData.email}
-                      className="pl-10"
-                      disabled={true} // Email cannot be changed
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">O email não pode ser alterado</p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">{t.auth.phone}</Label>
-                  <div className="relative">
-                    <IconPhone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="phone" 
-                      type="tel"
-                      value={formData.phone || ""}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="pl-10"
-                      disabled={!isEditing}
-                      placeholder="+351 912 345 678"
-                    />
-                  </div>
-                </div>
-                <Separator />
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="emergencyContact">{t.profile.emergency || "Contato de Emergência"}</Label>
-                    <Input 
-                      id="emergencyContact" 
-                      value={formData.emergencyContact || ""}
-                      onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})}
-                      disabled={!isEditing}
-                      placeholder="Nome do contato"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="emergencyPhone">Telefone de Emergência</Label>
-                    <Input 
-                      id="emergencyPhone" 
-                      value={formData.emergencyPhone || ""}
-                      onChange={(e) => setFormData({...formData, emergencyPhone: e.target.value})}
-                      disabled={!isEditing}
-                      placeholder="+351 912 345 678"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="contact" className="mt-3 space-y-2">
+            <div>
+              <Label className="text-xs text-muted-foreground">{t.auth.email}</Label>
+              <Input type="email" value={formData.email} disabled className="h-9 mt-0.5 bg-muted" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">{t.auth.phone}</Label>
+              <Input type="tel" value={formData.phone || ""} onChange={(e) => setFormData({...formData, phone: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="+351 912 345 678" />
+            </div>
+            <Separator className="my-2" />
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label className="text-xs text-muted-foreground">Contato Emergência</Label>
+                <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Nome" />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">Telefone</Label>
+                <Input value={formData.emergencyPhone || ""} onChange={(e) => setFormData({...formData, emergencyPhone: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="+351..." />
+              </div>
+            </div>
           </TabsContent>
-        </Tabs>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-wrap gap-3">
-              <Button variant="outline" asChild>
-                <Link href="/app/settings">
-                  {t.settings.title}
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/app/wallet">
-                  {t.wallet.title}
-                </Link>
-              </Button>
-              {isCaregiver && (
-                <Button variant="outline" asChild>
-                  <Link href="/app/proposals">
-                    Propostas
-                  </Link>
-                </Button>
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="mt-3 space-y-1">
+            {/* Notificações */}
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center gap-2">
+                <IconBell className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Push</p>
+                  <p className="text-[10px] text-muted-foreground">Alertas em tempo real</p>
+                </div>
+              </div>
+              {isPushSupported ? (
+                isPushEnabled ? (
+                  <Badge variant="outline" className="text-green-600 border-green-600 text-xs">Ativo</Badge>
+                ) : (
+                  <Button size="sm" variant="outline" onClick={handleEnablePush} className="h-7 text-xs">Ativar</Button>
+                )
+              ) : (
+                <span className="text-xs text-muted-foreground">N/A</span>
               )}
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Tema */}
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center gap-2">
+                <IconShield className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Tema</span>
+              </div>
+              <ThemeToggle />
+            </div>
+
+            {/* Idioma */}
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <span className="text-sm font-medium">Idioma</span>
+              <LanguageSelector />
+            </div>
+
+            {/* Termos */}
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <span className="text-sm">Termos / Privacidade</span>
+              <div className="flex gap-1">
+                <Button size="sm" variant="ghost" asChild className="h-7 text-xs px-2"><a href="/termos" target="_blank">Termos</a></Button>
+                <Button size="sm" variant="ghost" asChild className="h-7 text-xs px-2"><a href="/privacidade" target="_blank">Privacidade</a></Button>
+              </div>
+            </div>
+
+            <Separator className="my-2" />
+
+            {/* Logout */}
+            <Button variant="outline" className="w-full h-10" onClick={() => signOut({ callbackUrl: "/" })}>
+              <IconLogout className="h-4 w-4 mr-2" />
+              {t.auth.logout}
+            </Button>
+
+            {/* Delete Account */}
+            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" className="w-full h-9 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950">
+                  <IconTrash className="h-4 w-4 mr-2" />
+                  Apagar conta
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Apagar conta?</DialogTitle>
+                  <DialogDescription>Esta ação é irreversível. Todos os seus dados serão excluídos.</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>Cancelar</Button>
+                  <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting}>
+                    {isDeleting ? <IconLoader2 className="h-4 w-4 mr-2 animate-spin" /> : <IconTrash className="h-4 w-4 mr-2" />}
+                    Apagar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <p className="text-center text-[10px] text-muted-foreground pt-2">{APP_NAME} v1.0.0</p>
+          </TabsContent>
+        </Tabs>
       </div>
     </AppShell>
   );

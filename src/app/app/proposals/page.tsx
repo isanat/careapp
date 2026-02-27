@@ -4,12 +4,10 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -19,23 +17,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { AppShell } from "@/components/layout/app-shell";
 import { 
   IconContract, 
-  IconUser,
   IconFamily,
   IconClock,
   IconEuro,
-  IconCalendar,
   IconCheck,
   IconX,
   IconRefresh,
   IconAlertCircle,
   IconLoader2,
-  IconStar,
   IconMapPin,
-  IconChevronRight
+  IconInbox,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
@@ -60,8 +54,6 @@ interface Proposal {
     elderName?: string;
     elderNeeds?: string;
   };
-  caregiverRate?: number;
-  caregiverReviews?: number;
 }
 
 const statusColors: Record<string, string> = {
@@ -71,30 +63,28 @@ const statusColors: Record<string, string> = {
   ACTIVE: "bg-green-500",
   COMPLETED: "bg-blue-500",
   CANCELLED: "bg-red-500",
-  DISPUTED: "bg-purple-500",
 };
 
 const statusLabels: Record<string, string> = {
   DRAFT: "Rascunho",
-  PENDING_ACCEPTANCE: "Aguardando sua Resposta",
-  PENDING_PAYMENT: "Aguardando Pagamento",
+  PENDING_ACCEPTANCE: "Aguardando",
+  PENDING_PAYMENT: "Aguard. Pagamento",
   ACTIVE: "Ativo",
   COMPLETED: "Concluído",
   CANCELLED: "Cancelado",
-  DISPUTED: "Em Disputa",
 };
 
 const serviceLabels: Record<string, string> = {
   PERSONAL_CARE: "Cuidados Pessoais",
-  MEDICATION: "Administração de Medicação",
+  MEDICATION: "Medicação",
   MOBILITY: "Mobilidade",
   COMPANIONSHIP: "Companhia",
-  MEAL_PREPARATION: "Preparo de Refeições",
-  LIGHT_HOUSEWORK: "Tarefas Domésticas",
+  MEAL_PREPARATION: "Refeições",
+  LIGHT_HOUSEWORK: "Domésticas",
   TRANSPORTATION: "Transporte",
-  COGNITIVE_SUPPORT: "Estimulação Cognitiva",
-  NIGHT_CARE: "Cuidados Noturnos",
-  PALLIATIVE_CARE: "Cuidados Paliativos",
+  COGNITIVE_SUPPORT: "Cognitiva",
+  NIGHT_CARE: "Noturno",
+  PALLIATIVE_CARE: "Paliativos",
   PHYSIOTHERAPY: "Fisioterapia",
   NURSING_CARE: "Enfermagem",
 };
@@ -108,8 +98,6 @@ export default function ProposalsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  
-  // Dialog states
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
@@ -117,85 +105,49 @@ export default function ProposalsPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchProposals();
-    }
+    if (status === "authenticated") fetchProposals();
   }, [status]);
 
   useEffect(() => {
-    // Check for success message from URL
     const urlParams = new URLSearchParams(window.location.search);
     const message = urlParams.get("message");
-    if (message === "accepted") {
-      setSuccessMessage("Proposta aceita com sucesso! Aguarde o pagamento da família.");
-    } else if (message === "rejected") {
-      setSuccessMessage("Proposta recusada.");
-    }
+    if (message === "accepted") setSuccessMessage("Proposta aceita!");
+    else if (message === "rejected") setSuccessMessage("Proposta recusada.");
   }, []);
 
   const fetchProposals = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await fetch('/api/contracts');
-      if (!response.ok) {
-        throw new Error("Erro ao carregar propostas");
-      }
+      if (!response.ok) throw new Error("Erro ao carregar");
       const data = await response.json();
-      
-      // Filter to show only relevant contracts for caregiver
       const caregiverProposals = (data.contracts || []).filter(
         (c: Proposal) => c.status === "PENDING_ACCEPTANCE" || 
                         c.status === "PENDING_PAYMENT" || 
                         c.status === "ACTIVE" ||
                         c.status === "DRAFT"
       );
-      
       setProposals(caregiverProposals);
     } catch (err: any) {
-      console.error('Error fetching proposals:', err);
-      setError(err.message || "Erro ao carregar propostas");
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAccept = async (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setAcceptDialogOpen(true);
-  };
-
-  const handleReject = async (proposal: Proposal) => {
-    setSelectedProposal(proposal);
-    setRejectReason("");
-    setRejectDialogOpen(true);
-  };
-
   const confirmAccept = async () => {
     if (!selectedProposal) return;
-    
     setActionLoading(selectedProposal.id);
     try {
       const response = await fetch(`/api/contracts/${selectedProposal.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          action: "accept",
-          caregiverAcceptedAt: new Date().toISOString()
-        }),
+        body: JSON.stringify({ action: "accept", caregiverAcceptedAt: new Date().toISOString() }),
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Erro ao aceitar proposta");
-      }
-
-      setSuccessMessage("Proposta aceita com sucesso! A família será notificada para realizar o pagamento.");
+      if (!response.ok) throw new Error("Erro ao aceitar");
+      setSuccessMessage("Proposta aceita!");
       setAcceptDialogOpen(false);
       fetchProposals();
-      
-      // Redirect with success message
-      router.push("/app/proposals?message=accepted");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -205,28 +157,17 @@ export default function ProposalsPage() {
 
   const confirmReject = async () => {
     if (!selectedProposal) return;
-    
     setActionLoading(selectedProposal.id);
     try {
       const response = await fetch(`/api/contracts/${selectedProposal.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          action: "reject",
-          rejectionReason: rejectReason
-        }),
+        body: JSON.stringify({ action: "reject", rejectionReason: rejectReason }),
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Erro ao recusar proposta");
-      }
-
+      if (!response.ok) throw new Error("Erro ao recusar");
       setSuccessMessage("Proposta recusada.");
       setRejectDialogOpen(false);
       fetchProposals();
-      
-      router.push("/app/proposals?message=rejected");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -234,150 +175,101 @@ export default function ProposalsPage() {
     }
   };
 
-  // Redirect if not caregiver
   if (status === "authenticated" && session?.user?.role !== "CAREGIVER") {
     router.push("/app/dashboard");
     return null;
   }
-
   if (status === "unauthenticated") {
     router.push("/auth/login");
     return null;
   }
 
-  // Separate proposals by status
   const pendingProposals = proposals.filter(p => p.status === "PENDING_ACCEPTANCE");
   const acceptedProposals = proposals.filter(p => p.status === "PENDING_PAYMENT" || p.status === "ACTIVE");
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <IconContract className="h-6 w-6" />
-              Propostas Recebidas
-            </h1>
-            <p className="text-muted-foreground">
-              Gerencie as propostas de trabalho das famílias
-            </p>
-          </div>
-          <Button variant="outline" onClick={fetchProposals} disabled={isLoading}>
-            <IconRefresh className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Atualizar
+        <div className="flex items-center justify-between px-4 py-3 sticky top-0 z-10 bg-background border-b">
+          <h1 className="text-lg font-semibold">Propostas</h1>
+          <Button variant="ghost" size="sm" onClick={fetchProposals} disabled={isLoading}>
+            <IconRefresh className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
 
-        {/* Success Message */}
         {successMessage && (
-          <Alert className="border-green-500/20 bg-green-500/5">
-            <IconCheck className="h-4 w-4 text-green-500" />
-            <AlertTitle className="text-green-600">Sucesso!</AlertTitle>
-            <AlertDescription>{successMessage}</AlertDescription>
-          </Alert>
+          <div className="mx-4 p-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 text-sm flex items-center gap-2">
+            <IconCheck className="h-4 w-4" />
+            {successMessage}
+          </div>
         )}
 
-        {/* Error */}
         {error && (
-          <Alert variant="destructive">
+          <div className="mx-4 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 text-sm flex items-center gap-2">
             <IconAlertCircle className="h-4 w-4" />
-            <AlertTitle>Erro</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+            {error}
+          </div>
         )}
 
-        {/* Loading State */}
         {isLoading && (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="pt-6">
-                  <div className="flex gap-4">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-48" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <div className="px-4 space-y-2">
+            {[1, 2].map((i) => (
+              <Skeleton key={i} className="h-20 w-full rounded-lg" />
             ))}
           </div>
         )}
 
-        {/* Empty State */}
         {!isLoading && proposals.length === 0 && (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <IconContract className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Nenhuma proposta ainda</h3>
-              <p className="text-muted-foreground mb-4">
-                Quando famílias enviarem propostas de trabalho, elas aparecerão aqui.
-              </p>
-              <Button variant="outline" asChild>
-                <Link href="/app/profile">Completar meu perfil</Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="px-4 py-12 text-center">
+            <IconInbox className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">Nenhuma proposta ainda</p>
+            <Button variant="outline" size="sm" asChild className="mt-3">
+              <Link href="/app/profile">Completar perfil</Link>
+            </Button>
+          </div>
         )}
 
-        {/* Tabs */}
         {!isLoading && proposals.length > 0 && (
-          <Tabs defaultValue="pending">
-            <TabsList>
-              <TabsTrigger value="pending">
-                Novas ({pendingProposals.length})
+          <Tabs defaultValue="pending" className="px-4">
+            <TabsList className="grid w-full grid-cols-2 h-9">
+              <TabsTrigger value="pending" className="text-xs py-1.5">
+                Novas <Badge variant="secondary" className="ml-1 h-4 px-1 text-[10px]">{pendingProposals.length}</Badge>
               </TabsTrigger>
-              <TabsTrigger value="accepted">
-                Aceitas ({acceptedProposals.length})
+              <TabsTrigger value="accepted" className="text-xs py-1.5">
+                Aceitas <Badge variant="secondary" className="ml-1 h-4 px-1 text-[10px]">{acceptedProposals.length}</Badge>
               </TabsTrigger>
             </TabsList>
 
-            {/* Pending Proposals */}
-            <TabsContent value="pending" className="mt-6 space-y-4">
+            <TabsContent value="pending" className="mt-3 space-y-2">
               {pendingProposals.length === 0 ? (
-                <Card>
-                  <CardContent className="py-8 text-center">
-                    <IconCheck className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">
-                      Nenhuma nova proposta aguardando resposta
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="py-6 text-center text-muted-foreground text-sm">
+                  <IconCheck className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                  Nenhuma nova proposta
+                </div>
               ) : (
-                pendingProposals.map((proposal) => (
+                pendingProposals.map((p) => (
                   <ProposalCard
-                    key={proposal.id}
-                    proposal={proposal}
-                    onAccept={() => handleAccept(proposal)}
-                    onReject={() => handleReject(proposal)}
-                    isLoading={actionLoading === proposal.id}
-                    showActions={true}
+                    key={p.id}
+                    proposal={p}
+                    onAccept={() => { setSelectedProposal(p); setAcceptDialogOpen(true); }}
+                    onReject={() => { setSelectedProposal(p); setRejectReason(""); setRejectDialogOpen(true); }}
+                    isLoading={actionLoading === p.id}
+                    showActions
                   />
                 ))
               )}
             </TabsContent>
 
-            {/* Accepted Proposals */}
-            <TabsContent value="accepted" className="mt-6 space-y-4">
+            <TabsContent value="accepted" className="mt-3 space-y-2">
               {acceptedProposals.length === 0 ? (
-                <Card>
-                  <CardContent className="py-8 text-center">
-                    <IconClock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">
-                      Nenhuma proposta aceita ainda
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="py-6 text-center text-muted-foreground text-sm">
+                  <IconClock className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                  Nenhuma proposta aceita
+                </div>
               ) : (
-                acceptedProposals.map((proposal) => (
-                  <ProposalCard
-                    key={proposal.id}
-                    proposal={proposal}
-                    isLoading={false}
-                    showActions={false}
-                  />
+                acceptedProposals.map((p) => (
+                  <ProposalCard key={p.id} proposal={p} isLoading={false} showActions={false} />
                 ))
               )}
             </TabsContent>
@@ -386,57 +278,21 @@ export default function ProposalsPage() {
 
         {/* Accept Dialog */}
         <Dialog open={acceptDialogOpen} onOpenChange={setAcceptDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-sm">
             <DialogHeader>
-              <DialogTitle>Aceitar Proposta</DialogTitle>
-              <DialogDescription>
-                Você tem certeza que deseja aceitar esta proposta de trabalho?
+              <DialogTitle className="text-base">Aceitar Proposta?</DialogTitle>
+              <DialogDescription className="text-sm">
+                {selectedProposal?.family.name} • €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)} total
               </DialogDescription>
             </DialogHeader>
-            
-            {selectedProposal && (
-              <div className="py-4 space-y-3">
-                <div className="p-4 bg-muted rounded-lg space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Família:</span>
-                    <span className="font-medium">{selectedProposal.family.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Valor total:</span>
-                    <span className="font-medium">€{(selectedProposal.totalEurCents / 100).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Horas/semana:</span>
-                    <span className="font-medium">{selectedProposal.hoursPerWeek}h</span>
-                  </div>
-                </div>
-                
-                <Alert>
-                  <IconAlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Ao aceitar, a família será notificada para realizar o pagamento. 
-                    O contrato só iniciará após a confirmação do pagamento.
-                  </AlertDescription>
-                </Alert>
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setAcceptDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={confirmAccept} disabled={actionLoading !== null}>
-                {actionLoading ? (
-                  <>
-                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    <IconCheck className="h-4 w-4 mr-2" />
-                    Aceitar Proposta
-                  </>
-                )}
+            <div className="p-3 bg-muted/50 rounded-lg text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">Horas/sem:</span><span>{selectedProposal?.hoursPerWeek}h</span></div>
+              <div className="flex justify-between mt-1"><span className="text-muted-foreground">Início:</span><span>{selectedProposal?.startDate ? new Date(selectedProposal.startDate).toLocaleDateString('pt-PT') : "A definir"}</span></div>
+            </div>
+            <DialogFooter className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => setAcceptDialogOpen(false)}>Cancelar</Button>
+              <Button size="sm" onClick={confirmAccept} disabled={actionLoading !== null}>
+                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconCheck className="h-4 w-4 mr-1" /> Aceitar</>}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -444,47 +300,16 @@ export default function ProposalsPage() {
 
         {/* Reject Dialog */}
         <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-sm">
             <DialogHeader>
-              <DialogTitle>Recusar Proposta</DialogTitle>
-              <DialogDescription>
-                Por favor, informe o motivo da recusa (opcional).
-              </DialogDescription>
+              <DialogTitle className="text-base">Recusar Proposta</DialogTitle>
+              <DialogDescription className="text-sm">Motivo (opcional)</DialogDescription>
             </DialogHeader>
-            
-            <div className="py-4 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="reason">Motivo da recusa (opcional)</Label>
-                <Textarea
-                  id="reason"
-                  placeholder="Ex: Horário incompatível, valor abaixo do esperado..."
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  rows={3}
-                />
-              </div>
-            </div>
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button 
-                variant="destructive" 
-                onClick={confirmReject}
-                disabled={actionLoading !== null}
-              >
-                {actionLoading ? (
-                  <>
-                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    <IconX className="h-4 w-4 mr-2" />
-                    Recusar Proposta
-                  </>
-                )}
+            <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={2} placeholder="Ex: Horário incompatível..." className="text-sm" />
+            <DialogFooter className="gap-2">
+              <Button variant="outline" size="sm" onClick={() => setRejectDialogOpen(false)}>Cancelar</Button>
+              <Button variant="destructive" size="sm" onClick={confirmReject} disabled={actionLoading !== null}>
+                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconX className="h-4 w-4 mr-1" /> Recusar</>}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -494,146 +319,59 @@ export default function ProposalsPage() {
   );
 }
 
-// Proposal Card Component
-function ProposalCard({ 
-  proposal, 
-  onAccept, 
-  onReject, 
-  isLoading,
-  showActions 
-}: { 
+function ProposalCard({ proposal, onAccept, onReject, isLoading, showActions }: { 
   proposal: Proposal; 
   onAccept?: () => void;
   onReject?: () => void;
   isLoading: boolean;
   showActions: boolean;
 }) {
-  const hourlyRate = proposal.hourlyRateEur ? proposal.hourlyRateEur / 100 : 0;
   const totalEur = proposal.totalEurCents ? proposal.totalEurCents / 100 : 0;
 
   return (
-    <Card className={showActions ? "border-yellow-500/20 bg-yellow-500/5" : ""}>
-      <CardContent className="pt-6">
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-          {/* Main Info */}
-          <div className="flex-1 space-y-4">
-            {/* Header */}
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-primary/10 rounded-full shrink-0">
-                <IconFamily className="h-6 w-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-lg">{proposal.family.name}</h3>
-                  <Badge className={statusColors[proposal.status]}>
-                    {statusLabels[proposal.status]}
-                  </Badge>
-                </div>
-                {proposal.family.city && (
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <IconMapPin className="h-3 w-3" />
-                    <span>{proposal.family.city}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Elder Info */}
-            {proposal.family.elderName && (
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="text-sm">
-                  <span className="text-muted-foreground">Idoso: </span>
-                  <span className="font-medium">{proposal.family.elderName}</span>
-                </p>
-                {proposal.family.elderNeeds && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {proposal.family.elderNeeds}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Details Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-3 bg-muted/30 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Valor/Hora</p>
-                <p className="font-semibold">€{hourlyRate.toFixed(2)}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Horas/Semana</p>
-                <p className="font-semibold">{proposal.hoursPerWeek}h</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Total</p>
-                <p className="font-semibold">€{totalEur.toFixed(2)}</p>
-              </div>
-              <div className="p-3 bg-muted/30 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Início</p>
-                <p className="font-semibold text-sm">
-                  {proposal.startDate 
-                    ? new Date(proposal.startDate).toLocaleDateString('pt-PT')
-                    : "A definir"
-                  }
-                </p>
-              </div>
-            </div>
-
-            {/* Services */}
-            {proposal.serviceTypes && proposal.serviceTypes.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {proposal.serviceTypes.map((service, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {serviceLabels[service] || service}
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            {/* Description */}
-            {proposal.description && (
-              <p className="text-sm text-muted-foreground">
-                {proposal.description}
-              </p>
-            )}
+    <div className={`p-3 border rounded-lg ${showActions ? "border-yellow-500/30 bg-yellow-500/5" : ""}`}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="p-1.5 bg-primary/10 rounded-full shrink-0">
+            <IconFamily className="h-4 w-4 text-primary" />
           </div>
-
-          {/* Actions */}
-          {showActions && (
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
-              <Button onClick={onAccept} disabled={isLoading} className="flex-1">
-                {isLoading ? (
-                  <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <IconCheck className="h-4 w-4 mr-2" />
-                )}
-                Aceitar
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={onReject} 
-                disabled={isLoading}
-                className="flex-1"
-              >
-                {isLoading ? (
-                  <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <IconX className="h-4 w-4 mr-2" />
-                )}
-                Recusar
-              </Button>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="font-medium text-sm truncate">{proposal.family.name}</span>
+              <Badge className={`${statusColors[proposal.status]} text-[10px] px-1.5 py-0`}>{statusLabels[proposal.status]}</Badge>
             </div>
-          )}
-
-          {!showActions && proposal.status === "PENDING_PAYMENT" && (
-            <Alert className="mt-4 lg:mt-0 lg:w-auto">
-              <IconClock className="h-4 w-4" />
-              <AlertDescription>
-                Aguardando pagamento da família
-              </AlertDescription>
-            </Alert>
-          )}
+            <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
+              {proposal.family.city && <span className="flex items-center gap-0.5"><IconMapPin className="h-3 w-3" />{proposal.family.city}</span>}
+              <span>€{totalEur.toFixed(0)}</span>
+              <span>{proposal.hoursPerWeek}h/sem</span>
+            </div>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+        
+        {showActions && (
+          <div className="flex gap-1 shrink-0">
+            <Button size="sm" className="h-7 px-2 text-xs" onClick={onAccept} disabled={isLoading}>
+              {isLoading ? <IconLoader2 className="h-3 w-3 animate-spin" /> : <IconCheck className="h-3 w-3" />}
+            </Button>
+            <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={onReject} disabled={isLoading}>
+              <IconX className="h-3 w-3" />
+            </Button>
+          </div>
+        )}
+        
+        {!showActions && proposal.status === "PENDING_PAYMENT" && (
+          <span className="text-[10px] text-orange-600 bg-orange-500/10 px-1.5 py-0.5 rounded">Aguard. pagamento</span>
+        )}
+      </div>
+      
+      {proposal.serviceTypes && proposal.serviceTypes.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {proposal.serviceTypes.slice(0, 3).map((s, i) => (
+            <Badge key={i} variant="outline" className="text-[10px] px-1 py-0">{serviceLabels[s] || s}</Badge>
+          ))}
+          {proposal.serviceTypes.length > 3 && <span className="text-[10px] text-muted-foreground">+{proposal.serviceTypes.length - 3}</span>}
+        </div>
+      )}
+    </div>
   );
 }

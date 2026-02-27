@@ -4,19 +4,14 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
 import { 
   IconToken, 
-  IconWallet, 
   IconContract, 
   IconSearch, 
-  IconFamily,
-  IconCaregiver,
   IconStar,
   IconClock,
   IconArrowUp,
@@ -24,9 +19,10 @@ import {
   IconShield,
   IconAlertCircle,
   IconCheck,
-  IconChevronRight
+  IconChevronRight,
+  IconWallet,
+  IconCaregiver,
 } from "@/components/icons";
-import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 interface Stats {
@@ -62,15 +58,11 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    }
+    if (status === "unauthenticated") router.push("/auth/login");
   }, [status, router]);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchStats();
-    }
+    if (status === "authenticated") fetchStats();
   }, [status]);
 
   const fetchStats = async () => {
@@ -82,54 +74,31 @@ export default function DashboardPage() {
         setRecentActivity(data.recentActivity || []);
         setUserStatus(data.userStatus || null);
       }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      // Fallback to defaults
-      setStats({
-        tokenBalance: 0,
-        tokenValueEur: 0,
-        activeContracts: 0,
-        totalHours: 0,
-        rating: 0,
-        totalReviews: 0,
-      });
+    } catch {
+      setStats({ tokenBalance: 0, tokenValueEur: 0, activeContracts: 0, totalHours: 0, rating: 0, totalReviews: 0 });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // User role checks
   const isFamily = session?.user?.role === "FAMILY";
   const isCaregiver = session?.user?.role === "CAREGIVER";
-
-  // Check what steps the user needs to complete
   const needsPayment = session?.user?.status === "PENDING";
   const needsKYC = userStatus?.verificationStatus !== "VERIFIED";
   const needsProfile = !userStatus?.profileComplete;
 
-  // Build list of pending steps
   const pendingSteps = [];
-  if (needsPayment) {
-    pendingSteps.push({ key: 'payment', label: t.dashboard.nextSteps.payment, href: '/auth/payment', icon: IconWallet });
-  }
-  if (needsKYC) {
-    pendingSteps.push({ key: 'kyc', label: t.dashboard.nextSteps.kyc, href: '/auth/kyc', icon: IconShield });
-  }
-  if (needsProfile) {
-    pendingSteps.push({ key: 'profile', label: t.dashboard.nextSteps.profile, href: '/app/profile', icon: IconCaregiver });
-  }
+  if (needsPayment) pendingSteps.push({ key: 'payment', label: t.dashboard.nextSteps.payment, href: '/auth/payment', icon: IconWallet });
+  if (needsKYC) pendingSteps.push({ key: 'kyc', label: t.dashboard.nextSteps.kyc, href: '/auth/kyc', icon: IconShield });
+  if (needsProfile) pendingSteps.push({ key: 'profile', label: t.dashboard.nextSteps.profile, href: '/app/profile', icon: IconCaregiver });
 
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="space-y-6">
-          <Skeleton className="h-8 w-48" />
-          <div className="grid gap-4 md:grid-cols-4">
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-            <Skeleton className="h-32" />
-          </div>
+        <div className="space-y-2 p-4">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-20 w-full rounded-lg" />
+          <Skeleton className="h-24 w-full rounded-lg" />
         </div>
       </AppShell>
     );
@@ -137,237 +106,135 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        {/* Welcome */}
-        <div className="flex items-center justify-between">
+      <div className="space-y-3">
+        {/* Header compacto */}
+        <div className="flex items-center justify-between px-4 py-3 sticky top-0 z-10 bg-background border-b">
           <div>
-            <h1 className="text-2xl font-bold">
-              {t.dashboard.welcome}, {session?.user?.name?.split(" ")[0] || "Usuário"}!
+            <h1 className="text-lg font-semibold">
+              {t.dashboard.welcome}, {session?.user?.name?.split(" ")[0]}!
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {isFamily ? t.dashboard.familyPanel : t.dashboard.caregiverPanel}
             </p>
           </div>
-          <Badge variant={session?.user?.status === "ACTIVE" ? "default" : "secondary"}>
+          <Badge variant={session?.user?.status === "ACTIVE" ? "default" : "secondary"} className="text-xs">
             {session?.user?.status === "ACTIVE" ? t.dashboard.status.active : t.dashboard.status.pending}
           </Badge>
         </div>
 
-        {/* Next Steps Alert - Show if there are pending steps */}
+        {/* Next Steps - compacto */}
         {pendingSteps.length > 0 && (
-          <Alert className="border-primary/20 bg-primary/5">
-            <IconAlertCircle className="h-4 w-4 text-primary" />
-            <AlertTitle className="text-primary">{t.dashboard.nextSteps.title}</AlertTitle>
-            <AlertDescription>
-              <div className="mt-3 space-y-2">
-                {pendingSteps.map((step) => (
-                  <Link 
-                    key={step.key}
-                    href={step.href}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-primary/10 transition-colors"
-                  >
-                    <div className="p-2 bg-primary/20 rounded-full">
-                      <step.icon className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="flex-1 text-sm">{step.label}</span>
-                    <IconChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
-                ))}
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* All set message */}
-        {pendingSteps.length === 0 && (
-          <Alert className="border-green-500/20 bg-green-500/5">
-            <IconCheck className="h-4 w-4 text-green-500" />
-            <AlertTitle className="text-green-600">{t.dashboard.allSet}</AlertTitle>
-            <AlertDescription>
-              {isFamily ? t.dashboard.allSetFamily : t.dashboard.allSetCaregiver}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Stats Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {/* Token Balance */}
-          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/20 rounded-full">
-                  <IconToken className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.tokenBalance} </p>
-                  <p className="text-2xl font-bold">{stats?.tokenBalance?.toLocaleString() || 0}</p>
-                  <p className="text-xs text-muted-foreground">≈ €{(stats?.tokenValueEur || 0).toFixed(2)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Active Contracts */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-muted rounded-full">
-                  <IconContract className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.activeContracts}</p>
-                  <p className="text-2xl font-bold">{stats?.activeContracts || 0}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Hours */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-muted rounded-full">
-                  <IconClock className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.hoursWorked}</p>
-                  <p className="text-2xl font-bold">{stats?.totalHours || 0}h</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Rating */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-500/10 rounded-full">
-                  <IconStar className="h-5 w-5 text-yellow-500" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.rating}</p>
-                  <p className="text-2xl font-bold">{stats?.rating?.toFixed(1) || '-'}</p>
-                  {stats?.totalReviews ? (
-                    <p className="text-xs text-muted-foreground">{stats.totalReviews} {t.dashboard.reviews}</p>
-                  ) : null}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid gap-4 lg:grid-cols-2">
-          {isFamily && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <IconSearch className="h-5 w-5" />
-                  {t.nav.searchCaregivers}
-                </CardTitle>
-                <CardDescription>
-                  {t.search.placeholder}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full">
-                  <Link href="/app/search">{t.search.title}</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {isCaregiver && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <IconCaregiver className="h-5 w-5" />
-                  {t.nav.profile}
-                </CardTitle>
-                <CardDescription>
-                  {t.profile.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full">
-                  <Link href="/app/profile">{t.profile.editProfile}</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <IconContract className="h-5 w-5" />
-                {t.contracts.title}
-              </CardTitle>
-              <CardDescription>
-                {t.dashboard.viewAll}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/app/contracts">{t.contracts.title}</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconWallet className="h-5 w-5" />
-              {t.dashboard.recentActivity}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {recentActivity.length > 0 ? (
-              <div className="space-y-3">
-                {recentActivity.map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${
-                        activity.type === "credit" 
-                          ? "bg-green-500/10 text-green-500" 
-                          : "bg-red-500/10 text-red-500"
-                      }`}>
-                        {activity.type === "credit" ? (
-                          <IconArrowUp className="h-4 w-4" />
-                        ) : (
-                          <IconArrowDown className="h-4 w-4" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-medium">{activity.description}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(activity.date).toLocaleDateString('pt-PT')}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge variant={activity.type === "credit" ? "default" : "secondary"}>
-                      {activity.type === "credit" ? "+" : ""}{activity.amount} 
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <IconWallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>{t.dashboard.noActivity}</p>
-              </div>
-            )}
-            <div className="mt-4 pt-4 border-t">
-              <Button asChild variant="ghost" className="w-full">
-                <Link href="/app/wallet">{t.dashboard.viewAll}</Link>
-              </Button>
+          <div className="mx-4 p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <div className="flex items-center gap-2 mb-2">
+              <IconAlertCircle className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-primary">{t.dashboard.nextSteps.title}</span>
             </div>
-          </CardContent>
-        </Card>
+            <div className="space-y-1">
+              {pendingSteps.map((step) => (
+                <Link key={step.key} href={step.href} className="flex items-center gap-2 p-2 rounded-md hover:bg-primary/10">
+                  <step.icon className="h-4 w-4 text-primary" />
+                  <span className="flex-1 text-sm">{step.label}</span>
+                  <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* All set - compacto */}
+        {pendingSteps.length === 0 && (
+          <div className="mx-4 p-3 rounded-lg bg-green-500/5 border border-green-500/20 flex items-center gap-2">
+            <IconCheck className="h-4 w-4 text-green-500" />
+            <span className="text-sm text-green-600">{t.dashboard.allSet}</span>
+          </div>
+        )}
+
+        {/* Stats Grid - compacto */}
+        <div className="px-4 grid grid-cols-4 gap-2">
+          <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-2.5 text-center">
+            <IconToken className="h-4 w-4 text-primary mx-auto mb-1" />
+            <p className="text-lg font-bold">{stats?.tokenBalance?.toLocaleString() || 0}</p>
+            <p className="text-[10px] text-muted-foreground">Tokens</p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2.5 text-center">
+            <IconContract className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
+            <p className="text-lg font-bold">{stats?.activeContracts || 0}</p>
+            <p className="text-[10px] text-muted-foreground">Contratos</p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2.5 text-center">
+            <IconClock className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
+            <p className="text-lg font-bold">{stats?.totalHours || 0}h</p>
+            <p className="text-[10px] text-muted-foreground">Horas</p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2.5 text-center">
+            <IconStar className="h-4 w-4 mx-auto mb-1 text-yellow-500" />
+            <p className="text-lg font-bold">{stats?.rating?.toFixed(1) || '-'}</p>
+            <p className="text-[10px] text-muted-foreground">Nota</p>
+          </div>
+        </div>
+
+        {/* Quick Actions - compacto */}
+        <div className="px-4 grid grid-cols-2 gap-2">
+          {isFamily && (
+            <Link href="/app/search" className="flex items-center gap-2 p-3 border rounded-lg hover:bg-muted/50">
+              <IconSearch className="h-5 w-5 text-primary" />
+              <div>
+                <p className="text-sm font-medium">{t.nav.searchCaregivers}</p>
+                <p className="text-[10px] text-muted-foreground">Encontrar cuidador</p>
+              </div>
+            </Link>
+          )}
+          {isCaregiver && (
+            <Link href="/app/proposals" className="flex items-center gap-2 p-3 border rounded-lg hover:bg-muted/50">
+              <IconContract className="h-5 w-5 text-primary" />
+              <div>
+                <p className="text-sm font-medium">Propostas</p>
+                <p className="text-[10px] text-muted-foreground">Ver solicitações</p>
+              </div>
+            </Link>
+          )}
+          <Link href="/app/contracts" className="flex items-center gap-2 p-3 border rounded-lg hover:bg-muted/50">
+            <IconContract className="h-5 w-5 text-muted-foreground" />
+            <div>
+              <p className="text-sm font-medium">{t.contracts.title}</p>
+              <p className="text-[10px] text-muted-foreground">{t.dashboard.viewAll}</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Recent Activity - compacto */}
+        <div className="px-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">{t.dashboard.recentActivity}</span>
+            <Link href="/app/wallet" className="text-xs text-primary">{t.dashboard.viewAll}</Link>
+          </div>
+          
+          {recentActivity.length > 0 ? (
+            <div className="space-y-1">
+              {recentActivity.slice(0, 3).map((activity, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <div className={`p-1.5 rounded-full ${activity.type === "credit" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
+                      {activity.type === "credit" ? <IconArrowUp className="h-3 w-3" /> : <IconArrowDown className="h-3 w-3" />}
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium truncate max-w-[140px]">{activity.description}</p>
+                      <p className="text-[10px] text-muted-foreground">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
+                    </div>
+                  </div>
+                  <span className={`text-xs font-medium ${activity.type === "credit" ? "text-green-600" : "text-red-600"}`}>
+                    {activity.type === "credit" ? "+" : ""}{activity.amount}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-muted-foreground bg-muted/30 rounded-lg">
+              <IconWallet className="h-8 w-8 mx-auto mb-2 opacity-30" />
+              <p className="text-xs">{t.dashboard.noActivity}</p>
+            </div>
+          )}
+        </div>
       </div>
     </AppShell>
   );

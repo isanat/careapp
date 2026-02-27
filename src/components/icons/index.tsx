@@ -454,6 +454,10 @@ export function IconGlobe({ className }: { className?: string }) {
   return <Globe className={className} />;
 }
 
+export function IconLanguage({ className }: { className?: string }) {
+  return <Globe className={className} />;
+}
+
 export function IconMoon({ className }: { className?: string }) {
   return <Moon className={className} />;
 }
