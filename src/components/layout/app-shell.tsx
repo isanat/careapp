@@ -25,17 +25,18 @@ import {
   IconChat,
   IconSettings,
   IconUser,
-  IconBell,
   IconMenu,
   IconX,
   IconLogout,
   IconChevronDown,
+  IconInbox,
 } from "@/components/icons";
 import { useState, useEffect } from "react";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { NotificationDropdown } from "@/components/notifications/notification-dropdown";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -127,6 +128,7 @@ export function AppShell({ children }: AppShellProps) {
       ]
     : [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
+        { href: "/app/proposals", label: "Propostas", icon: IconInbox },
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
         { href: "/app/wallet", label: t.nav.wallet, icon: IconWallet },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
@@ -144,7 +146,7 @@ export function AppShell({ children }: AppShellProps) {
       ]
     : [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
-        { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
+        { href: "/app/proposals", label: "Propostas", icon: IconInbox },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
         { href: "/app/settings", label: t.nav.settings, icon: IconSettings },
       ];
@@ -193,9 +195,7 @@ export function AppShell({ children }: AppShellProps) {
               </Link>
 
               {/* Notifications */}
-              <Button variant="ghost" size="icon" className="relative">
-                <IconBell className="h-5 w-5" />
-              </Button>
+              <NotificationDropdown />
 
               {/* User Menu with Logout */}
               <DropdownMenu>

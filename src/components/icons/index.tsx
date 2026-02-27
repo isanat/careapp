@@ -89,6 +89,7 @@ import {
   VideoOff,
   Mic,
   MicOff,
+  Inbox,
 } from "lucide-react";
 
 // Senior Care App - Custom Icons
@@ -574,6 +575,10 @@ export function IconMicOff({ className }: { className?: string }) {
   return <MicOff className={className} />;
 }
 
+export function IconInbox({ className }: { className?: string }) {
+  return <Inbox className={className} />;
+}
+
 // Re-export all lucide icons for convenience
 export {
   Heart,
@@ -664,4 +669,5 @@ export {
   VideoOff,
   Mic,
   MicOff,
+  Inbox,
 };

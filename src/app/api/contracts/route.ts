@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
          LEFT JOIN ProfileCaregiver p ON c.caregiverUserId = p.userId
          WHERE c.familyUserId = ?
          ORDER BY c.createdAt DESC`
-      : `SELECT c.*, u.name as family_name, p.city as family_city
+      : `SELECT c.*, u.name as family_name, u.email as family_email, u.phone as family_phone,
+                p.city as family_city, p.elderName as elder_name, p.elderNeeds as elder_needs
          FROM Contract c
          JOIN User u ON c.familyUserId = u.id
          LEFT JOIN ProfileFamily p ON c.familyUserId = p.userId
@@ -46,6 +47,15 @@ export async function GET(request: NextRequest) {
       otherParty: isFamily 
         ? { name: row.caregiver_name, title: row.caregiver_title, city: row.caregiver_city }
         : { name: row.family_name, city: row.family_city },
+      // Additional family info for caregivers
+      family: !isFamily ? {
+        name: row.family_name,
+        email: row.family_email,
+        phone: row.family_phone,
+        city: row.family_city,
+        elderName: row.elder_name,
+        elderNeeds: row.elder_needs,
+      } : undefined,
     }));
 
     return NextResponse.json({ contracts });
