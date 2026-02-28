@@ -3,11 +3,11 @@ import CryptoJS from "crypto-js";
 import { db } from "@/lib/db-turso";
 import { generateId } from "@/lib/utils/id";
 
-const ENCRYPTION_KEY = (() => {
+function getEncryptionKey(): string {
   const key = process.env.WALLET_ENCRYPTION_KEY;
   if (!key) throw new Error("WALLET_ENCRYPTION_KEY environment variable is required");
   return key;
-})();
+}
 
 export interface WalletData {
   address: string;
@@ -42,7 +42,7 @@ export function generateWallet(): WalletData {
   // Encrypt private key
   const encryptedPrivateKey = CryptoJS.AES.encrypt(
     wallet.privateKey,
-    ENCRYPTION_KEY + salt
+    getEncryptionKey() + salt
   ).toString();
 
   return {
@@ -61,7 +61,7 @@ export function decryptPrivateKey(
 ): string {
   const bytes = CryptoJS.AES.decrypt(
     encryptedPrivateKey,
-    ENCRYPTION_KEY + salt
+    getEncryptionKey() + salt
   );
   return bytes.toString(CryptoJS.enc.Utf8);
 }

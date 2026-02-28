@@ -6,12 +6,11 @@ import { registerSchema } from "@/lib/validations/schemas";
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
 
-// Wallet encryption key
-const ENCRYPTION_KEY = (() => {
+function getEncryptionKey(): string {
   const key = process.env.WALLET_ENCRYPTION_KEY;
   if (!key) throw new Error("WALLET_ENCRYPTION_KEY environment variable is required");
   return key;
-})();
+}
 
 // Generate a new Ethereum wallet
 function generateWallet() {
@@ -24,7 +23,7 @@ function generateWallet() {
   // Encrypt private key
   const encryptedPrivateKey = CryptoJS.AES.encrypt(
     wallet.privateKey,
-    ENCRYPTION_KEY + salt
+    getEncryptionKey() + salt
   ).toString();
 
   return {
