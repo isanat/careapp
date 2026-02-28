@@ -132,6 +132,10 @@ export const authOptions: NextAuthOptions = {
     },
   },
   // Required for production
-  secret: process.env.NEXTAUTH_SECRET || "idosolink-secret-key-change-in-production",
+  secret: (() => {
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret) throw new Error("NEXTAUTH_SECRET environment variable is required");
+    return secret;
+  })(),
   debug: process.env.NODE_ENV === 'development',
 };

@@ -11,15 +11,7 @@ const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 
 let db: Client;
 
-// Log for debugging
-console.log('📦 Database config:', {
-  isTurso,
-  hasLocalDb,
-  isBuildTime,
-  tursoUrl: tursoUrl ? tursoUrl.substring(0, 30) + '...' : 'not set',
-  hasToken: !!tursoToken,
-  databaseUrl: databaseUrl ? databaseUrl.substring(0, 30) + '...' : 'not set',
-});
+// Database configuration validated at startup (no sensitive data logged)
 
 if (isTurso) {
   // Turso connection (production)

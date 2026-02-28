@@ -13,7 +13,11 @@ function generateId(): string {
 }
 
 // Wallet encryption key
-const ENCRYPTION_KEY = process.env.WALLET_ENCRYPTION_KEY || "default-encryption-key-change-in-production";
+const ENCRYPTION_KEY = (() => {
+  const key = process.env.WALLET_ENCRYPTION_KEY;
+  if (!key) throw new Error("WALLET_ENCRYPTION_KEY environment variable is required");
+  return key;
+})();
 
 // Generate a new Ethereum wallet
 function generateWallet() {

@@ -1,28 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
 import { stripeService } from "@/lib/services/stripe";
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     // Check if Stripe is configured
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json(
-        { 
+        {
           error: "Pagamento temporariamente indisponível",
-          details: "O sistema de pagamento não está configurado. Entre em contato com o suporte." 
+          details: "O sistema de pagamento não está configurado. Entre em contato com o suporte."
         },
         { status: 503 }
       );
     }
 
-    const body = await request.json();
-    const { userId } = body;
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
-      );
-    }
+    // Use the authenticated user's ID - don't accept arbitrary userId from body
+    const userId = session.user.id;
 
     const result = await stripeService.createActivationCheckout(userId);
 
