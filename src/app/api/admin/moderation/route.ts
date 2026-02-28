@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, reason, createdAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [`action-${Date.now()}`, session.user.id, `MODERATE_${action}`, type, entityId, reason, now]
+      args: [generateId("action"), session.user.id, `MODERATE_${action}`, type, entityId, reason, now]
     });
 
     return NextResponse.json({ success: true, type, entityId, action });

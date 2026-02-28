@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Terms types available
 const TERMS_TYPES: Record<string, { version: string; required: boolean }> = {
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
                       'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
-    const acceptanceId = `ta-${Date.now()}`;
+    const acceptanceId = generateId("ta");
     const now = new Date().toISOString();
 
     await db.execute({

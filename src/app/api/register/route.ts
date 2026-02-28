@@ -1,16 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
-
-// Generate a CUID-like ID
-function generateId(): string {
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  const randomPart2 = Math.random().toString(36).substring(2, 15);
-  return `c${timestamp}${randomPart}${randomPart2}`.substring(0, 25);
-}
 
 // Wallet encryption key
 const ENCRYPTION_KEY = (() => {
@@ -165,7 +158,7 @@ export async function POST(request: NextRequest) {
     const requiredTerms = ['terms_of_use', 'privacy_policy', 'mediation_policy'];
     
     for (const termsType of requiredTerms) {
-      const acceptanceId = `ta-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const acceptanceId = generateId("ta");
       
       await db.execute({
         sql: `INSERT INTO TermsAcceptance (id, userId, termsType, termsVersion, ipAddress, userAgent, acceptedAt)

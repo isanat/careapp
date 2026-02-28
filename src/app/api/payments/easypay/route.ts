@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 import { easypayService } from '@/lib/services/easypay';
-
-// Generate a CUID-like ID
-function generateId(): string {
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  return `ep-${timestamp}${randomPart}`.substring(0, 25);
-}
 
 // POST: Create an Easypay payment
 export async function POST(request: NextRequest) {

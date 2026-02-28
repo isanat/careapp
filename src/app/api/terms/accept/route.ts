@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Accept terms during registration (before user is fully authenticated)
 export async function POST(request: NextRequest) {
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // Accept all specified terms
     for (const termsType of termsTypes) {
-      const acceptanceId = `ta-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const acceptanceId = generateId("ta");
       
       await db.execute({
         sql: `INSERT INTO TermsAcceptance (id, userId, termsType, termsVersion, ipAddress, userAgent, acceptedAt)

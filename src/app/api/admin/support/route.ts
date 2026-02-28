@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // GET - List support tickets
 export async function GET(request: NextRequest) {
@@ -183,7 +184,7 @@ export async function POST(request: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    const id = `ticket-${Date.now()}`;
+    const id = generateId("ticket");
 
     await db.execute({
       sql: `

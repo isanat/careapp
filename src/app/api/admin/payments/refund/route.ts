@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Process refund
 export async function POST(request: NextRequest) {
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, createdAt)
         VALUES (?, ?, 'REFUND', 'PAYMENT', ?, ?, ?, ?)`,
-      args: [`action-${Date.now()}`, session.user.id, paymentId, JSON.stringify({ amount: refundAmount }), reason, now]
+      args: [generateId("action"), session.user.id, paymentId, JSON.stringify({ amount: refundAmount }), reason, now]
     });
 
     return NextResponse.json({ success: true, paymentId, refundAmount });

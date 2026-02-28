@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 import Stripe from 'stripe';
 
 // POST - Process refund
@@ -87,7 +88,7 @@ export async function POST(
       await db.execute({
         sql: `INSERT INTO TokenLedger (id, userId, type, reason, amountTokens, description, referenceType, referenceId, createdAt)
               VALUES (?, ?, 'DEBIT', 'REFUND', ?, 'Tokens deducted due to refund', 'PAYMENT', ?, CURRENT_TIMESTAMP)`,
-        args: [`tl_${Date.now()}`, p.userId, -refundTokens, id]
+        args: [generateId("tl"), p.userId, -refundTokens, id]
       });
     }
 
@@ -110,7 +111,7 @@ export async function POST(
       await db.execute({
         sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
               VALUES (?, ?, 'PAYMENT', 'Reembolso Processado', ?, 'PAYMENT', ?, CURRENT_TIMESTAMP)`,
-        args: [`notif_${Date.now()}`, p.userId, `Seu pagamento de €${(refundAmountCents/100).toFixed(2)} foi reembolsado.`, id]
+        args: [generateId("notif"), p.userId, `Seu pagamento de €${(refundAmountCents/100).toFixed(2)} foi reembolsado.`, id]
       });
     }
 
