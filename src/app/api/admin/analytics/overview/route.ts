@@ -32,7 +32,7 @@ async function verifyAdminAccess(sessionUserId: string): Promise<{ authorized: b
     };
   } catch (error) {
     console.error('Error verifying admin access:', error);
-    return { authorized: true, adminUserId: sessionUserId, role: 'ADMIN' };
+    return { authorized: false, error: 'Database error during admin verification' };
   }
 }
 

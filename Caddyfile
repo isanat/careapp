@@ -1,15 +1,25 @@
 :81 {
-	@transform_port_query {
-		query XTransformPort=*
+	# Chat service - only allow port 3003
+	@chat_service {
+		query XTransformPort=3003
 	}
 
-	handle @transform_port_query {
-		reverse_proxy localhost:{query.XTransformPort} {
+	handle @chat_service {
+		reverse_proxy localhost:3003 {
 			header_up Host {host}
 			header_up X-Forwarded-For {remote_host}
 			header_up X-Forwarded-Proto {scheme}
 			header_up X-Real-IP {remote_host}
 		}
+	}
+
+	# Block any other XTransformPort values to prevent SSRF
+	@blocked_transform {
+		query XTransformPort=*
+	}
+
+	handle @blocked_transform {
+		respond "Forbidden" 403
 	}
 
 	handle {

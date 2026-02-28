@@ -126,6 +126,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Only allow creating notifications for self, or require ADMIN role
+    if (userId !== session.user.id && session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden - Can only create notifications for yourself' }, { status: 403 });
+    }
+
     const notificationId = `notif-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const now = new Date().toISOString();
 

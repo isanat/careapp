@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
         id, contractId, fromUserId, toUserId, rating, comment,
         punctualityRating, professionalismRating, communicationRating, qualityRating,
         isPublic, isModerated, createdAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, ?)`,
       args: [
         reviewId, contractId, session.user.id, toUserId, rating, comment || null,
         punctualityRating || null, professionalismRating || null, 

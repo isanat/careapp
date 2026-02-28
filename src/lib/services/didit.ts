@@ -164,27 +164,50 @@ export async function getSessionStatus(
 /**
  * Verify webhook signature for security
  */
-export function verifyWebhookSignature(
+export async function verifyWebhookSignature(
   payload: string,
   signature: string
-): boolean {
+): Promise<boolean> {
   const webhookSecret = process.env.DIDIT_WEBHOOK_SECRET;
-  
+
   if (!webhookSecret) {
-    console.warn("DIDIT_WEBHOOK_SECRET not configured");
-    return true; // Skip verification in development
+    console.error("DIDIT_WEBHOOK_SECRET not configured - rejecting webhook");
+    return false;
   }
 
-  // Implement HMAC signature verification
-  // Using Web Crypto API for better compatibility
-  const encoder = new TextEncoder();
-  const keyData = encoder.encode(webhookSecret);
-  const messageData = encoder.encode(payload);
+  if (!signature) {
+    return false;
+  }
 
-  // Note: In production, use crypto.subtle.importKey and crypto.subtle.sign
-  // For now, we'll use a simple comparison
-  // This should be replaced with proper HMAC verification
-  return signature.length > 0;
+  try {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      encoder.encode(webhookSecret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+    const signatureBytes = await crypto.subtle.sign(
+      "HMAC",
+      key,
+      encoder.encode(payload)
+    );
+    const expectedSignature = Array.from(new Uint8Array(signatureBytes))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    // Constant-time comparison to prevent timing attacks
+    if (expectedSignature.length !== signature.length) return false;
+    let result = 0;
+    for (let i = 0; i < expectedSignature.length; i++) {
+      result |= expectedSignature.charCodeAt(i) ^ signature.charCodeAt(i);
+    }
+    return result === 0;
+  } catch (error) {
+    console.error("Error verifying Didit webhook signature:", error);
+    return false;
+  }
 }
 
 /**

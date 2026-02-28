@@ -21,13 +21,13 @@ export async function POST(request: NextRequest) {
       paid_at,
     } = body;
 
-    // Get signature from headers
+    // Get signature from headers and verify
     const signature = request.headers.get('x-easypay-signature') || '';
 
-    // Verify signature (in production, implement proper verification)
-    // if (!easypayService.verifyWebhookSignature(body, signature)) {
-    //   return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-    // }
+    if (!easypayService.verifyWebhookSignature(body, signature)) {
+      console.error('Easypay webhook signature verification failed');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
 
     // Find payment by transaction key or Easypay UID
     const paymentResult = await db.execute({
