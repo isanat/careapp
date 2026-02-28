@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 export async function GET(request: NextRequest) {
   try {
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     const { caregiverUserId, title, description, hourlyRateEur, totalHours, startDate, endDate, serviceTypes, hoursPerWeek } = body;
 
     const familyUserId = session.user.id;
-    const contractId = `ctr-${Date.now()}`;
+    const contractId = generateId("ctr");
     const totalEurCents = (hourlyRateEur || 0) * (totalHours || 0);
 
     await db.execute({

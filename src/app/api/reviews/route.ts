@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // GET: List reviews
 export async function GET(request: NextRequest) {
@@ -156,7 +157,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'You have already reviewed this contract' }, { status: 400 });
     }
 
-    const reviewId = `review-${Date.now()}`;
+    const reviewId = generateId("review");
     const now = new Date().toISOString();
 
     await db.execute({

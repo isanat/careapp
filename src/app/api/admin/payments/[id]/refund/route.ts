@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import Stripe from 'stripe';
 
 // POST - Process refund
 export async function POST(
@@ -49,11 +50,25 @@ export async function POST(
     const refundAmountCents = amount || p.amountEurCents;
     const refundTokens = Math.round((refundAmountCents / p.amountEurCents) * p.tokensAmount);
 
-    // TODO: Call Stripe API for refund if provider is STRIPE
-    // const stripeRefund = await stripe.refunds.create({
-    //   payment_intent: p.stripePaymentIntentId,
-    //   amount: refundAmountCents,
-    // });
+    // Call Stripe API for refund if provider is STRIPE and payment intent exists
+    if (p.provider === 'STRIPE' && p.stripePaymentIntentId) {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+        apiVersion: '2023-10-16',
+      });
+
+      try {
+        await stripe.refunds.create({
+          payment_intent: p.stripePaymentIntentId as string,
+          amount: refundAmountCents,
+        });
+      } catch (stripeError) {
+        console.error('Stripe refund failed:', stripeError);
+        return NextResponse.json({
+          error: 'Stripe refund failed',
+          details: stripeError instanceof Error ? stripeError.message : 'Unknown Stripe error'
+        }, { status: 502 });
+      }
+    }
 
     // Update payment status
     await db.execute({

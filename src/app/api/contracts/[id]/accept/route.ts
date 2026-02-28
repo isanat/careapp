@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Get contract acceptance details
 export async function GET(
@@ -114,7 +115,7 @@ export async function POST(
 
     if (existingResult.rows.length === 0) {
       // Create new acceptance record
-      const acceptanceId = `ca-${Date.now()}`;
+      const acceptanceId = generateId("ca");
       
       if (isFamily) {
         await db.execute({

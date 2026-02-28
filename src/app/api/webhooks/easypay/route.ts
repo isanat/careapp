@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db-turso';
 import { EasypayWebhookData, easypayService } from '@/lib/services/easypay';
+import { generateId } from '@/lib/utils/id';
 
 // POST: Handle Easypay webhooks
 export async function POST(request: NextRequest) {
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Create ledger entry
-        const ledgerId = `ledger-${Date.now()}`;
+        const ledgerId = generateId("ledger");
         await db.execute({
           sql: `INSERT INTO TokenLedger (id, userId, type, reason, amountTokens, amountEurCents, description, referenceType, referenceId, createdAt)
                 VALUES (?, ?, 'CREDIT', ?, ?, ?, ?, ?, ?, ?)`,
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
       await db.execute({
         sql: `INSERT INTO Notification (id, userId, type, title, message, createdAt)
               VALUES (?, ?, 'payment', 'Pagamento Confirmado', 'Seu pagamento foi processado com sucesso!', ?)`,
-        args: [`notif-${Date.now()}`, userId, now]
+        args: [generateId("notif"), userId, now]
       });
 
       console.log(`Payment ${payment.id} completed successfully. Credited ${tokensAmount} tokens to user ${userId}`);

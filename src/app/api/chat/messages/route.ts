@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // GET: Get messages for a chat room
 export async function GET(request: NextRequest) {
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    const messageId = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const messageId = generateId("msg");
     const now = new Date().toISOString();
 
     await db.execute({

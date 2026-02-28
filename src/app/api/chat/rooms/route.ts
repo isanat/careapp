@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // GET: List chat rooms for logged-in user
 export async function GET(request: NextRequest) {
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const chatRoomId = `room-${Date.now()}`;
+    const chatRoomId = generateId("room");
     const now = new Date().toISOString();
 
     // Create chat room

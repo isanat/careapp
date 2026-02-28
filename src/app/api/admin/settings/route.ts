@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // GET - Platform settings
 export async function GET(request: NextRequest) {
@@ -68,7 +69,7 @@ export async function PATCH(request: NextRequest) {
       // Create default settings
       await db.execute({
         sql: `INSERT INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents)
-          VALUES ('settings-default', ?, ?, ?, ?)`,
+          VALUES ('platform-settings-v1', ?, ?, ?, ?)`,
         args: [activationCostEurCents || 3500, contractFeeEurCents || 500, platformFeePercent || 15, tokenPriceEurCents || 1]
       });
     } else {
@@ -108,7 +109,7 @@ export async function PATCH(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, newValue, createdAt)
         VALUES (?, ?, 'UPDATE_SETTINGS', 'PLATFORM', ?, ?)`,
-      args: [`action-${Date.now()}`, session.user.id, JSON.stringify(body), new Date().toISOString()]
+      args: [generateId("action"), session.user.id, JSON.stringify(body), new Date().toISOString()]
     });
 
     return NextResponse.json({ success: true });

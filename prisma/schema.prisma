@@ -60,6 +60,7 @@ enum PaymentStatus {
 
 enum PaymentProvider {
   STRIPE
+  EASYPAY
   BANK_TRANSFER
   INTERNAL
 }
@@ -627,7 +628,7 @@ model PlatformSettings {
   id              String   @id @default(cuid())
   
   // Token Economics
-  activationCostEurCents    Int     @default(2500)  // €25
+  activationCostEurCents    Int     @default(3500)  // €35
   contractFeeEurCents       Int     @default(500)   // €5
   platformFeePercent        Int     @default(15)    // 15%
   

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Get user notifications
 export async function GET(request: NextRequest) {
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Can only create notifications for yourself' }, { status: 403 });
     }
 
-    const notificationId = `notif-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const notificationId = generateId("notif");
     const now = new Date().toISOString();
 
     await db.execute({

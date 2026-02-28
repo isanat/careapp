@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Reject contract (caregiver only)
 export async function POST(
@@ -55,7 +56,7 @@ export async function POST(
     });
 
     // Create notification for family
-    const notificationId = `notif-${Date.now()}`;
+    const notificationId = generateId("notif");
     await db.execute({
       sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
             VALUES (?, ?, 'contract_rejected', 'Proposta Recusada', ?, 'contract', ?, ?)`,
