@@ -148,8 +148,9 @@ export const translations = {
       noTransactions: "Sem transações",
       deposit: "Depositar",
       withdraw: "Levantar",
+      addFunds: "Adicionar",
     },
-    
+
     chat: {
       title: "Mensagens",
       new: "Nova Conversa",
@@ -409,8 +410,10 @@ export const translations = {
       hourlyRate: "Valor/hora",
       distance: "Distância",
       perHour: "/hora",
+      sortBy: "Ordenar por",
+      resultsFound: "cuidadores encontrados",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================
@@ -1148,8 +1151,9 @@ export const translations = {
       noTransactions: "No transactions",
       deposit: "Deposit",
       withdraw: "Withdraw",
+      addFunds: "Add Funds",
     },
-    
+
     chat: {
       title: "Messages",
       new: "New Conversation",
@@ -1409,8 +1413,10 @@ export const translations = {
       hourlyRate: "Hourly rate",
       distance: "Distance",
       perHour: "/hour",
+      sortBy: "Sort by",
+      resultsFound: "caregivers found",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================
@@ -2148,8 +2154,9 @@ export const translations = {
       noTransactions: "Nessuna transazione",
       deposit: "Deposita",
       withdraw: "Preleva",
+      addFunds: "Aggiungi Fondi",
     },
-    
+
     chat: {
       title: "Messaggi",
       new: "Nuova Conversazione",
@@ -2409,8 +2416,10 @@ export const translations = {
       hourlyRate: "Tariffa oraria",
       distance: "Distanza",
       perHour: "/ora",
+      sortBy: "Ordina per",
+      resultsFound: "caregiver trovati",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================
@@ -3148,8 +3157,9 @@ export const translations = {
       noTransactions: "Sin transacciones",
       deposit: "Depositar",
       withdraw: "Retirar",
+      addFunds: "Añadir Fondos",
     },
-    
+
     chat: {
       title: "Mensajes",
       new: "Nueva Conversación",
@@ -3409,8 +3419,10 @@ export const translations = {
       hourlyRate: "Tarifa por hora",
       distance: "Distancia",
       perHour: "/hora",
+      sortBy: "Ordenar por",
+      resultsFound: "cuidadores encontrados",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
+import { APP_NAME } from '@/lib/constants';
 import { easypayService } from '@/lib/services/easypay';
 
 // POST: Create an Easypay payment
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     switch (type) {
       case 'activation':
-        description = 'Ativação de conta IdosoLink';
+        description = `Ativação de conta ${APP_NAME}`;
         tokensAmount = Math.floor(amount); // 1 token per euro
         break;
       case 'tokens':
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
         tokensAmount = Math.floor(amount);
         break;
       case 'contract':
-        description = 'Pagamento de contrato IdosoLink';
+        description = `Pagamento de contrato ${APP_NAME}`;
         // Contract-specific logic would go here
         break;
       default:

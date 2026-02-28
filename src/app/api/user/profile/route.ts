@@ -4,71 +4,56 @@ import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 
 export async function GET(request: NextRequest) {
-  console.log('📥 GET /api/user/profile - Iniciando');
-  
   try {
     const session = await getServerSession(authOptions);
-    console.log('📋 Session:', JSON.stringify(session, null, 2));
-    
+
     if (!session?.user?.id) {
-      console.log('❌ Unauthorized - no session or user id');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const userId = session.user.id;
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
-    
-    console.log(`👤 User ID: ${userId}, Role: ${session.user.role}, isCaregiver: ${isCaregiver}, isFamily: ${isFamily}`);
 
-    // Get basic user info with all new fields
-    console.log('🔍 Buscando usuário no banco...');
+    // Get basic user info
     const userResult = await db.execute({
-      sql: `SELECT id, email, name, phone, role, status, profileImage, 
+      sql: `SELECT id, email, name, phone, role, status, profileImage,
                    nif, documentType, documentNumber,
                    backgroundCheckStatus, backgroundCheckUrl,
-                   createdAt 
+                   createdAt
             FROM User WHERE id = ?`,
       args: [userId]
     });
 
-    console.log(`📊 Resultado da busca: ${userResult.rows.length} linhas`);
-
     if (userResult.rows.length === 0) {
-      console.log('❌ User not found in database');
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const user = userResult.rows[0];
-    console.log('👤 Dados do usuário:', JSON.stringify(user, null, 2));
 
     // Get profile based on role
-    let profile: Record<string, any> = null;
+    let profile: Record<string, any> | null = null;
 
     if (isCaregiver) {
-      console.log('🔍 Buscando ProfileCaregiver...');
       const profileResult = await db.execute({
-        sql: `SELECT id, title, bio, experienceYears, city, services, 
+        sql: `SELECT id, title, bio, experienceYears, city, services,
                      hourlyRateEur, averageRating, totalReviews, totalContracts,
                      certifications, languages
               FROM ProfileCaregiver WHERE userId = ?`,
         args: [userId]
       });
 
-      console.log(`📊 ProfileCaregiver: ${profileResult.rows.length} linhas`);
-
       if (profileResult.rows.length > 0) {
         const row = profileResult.rows[0];
-        console.log('📋 Dados do ProfileCaregiver:', JSON.stringify(row, null, 2));
-        
-        let services = [];
+
+        let services: string[] = [];
         try {
           if (row.services) {
-            services = typeof row.services === 'string' 
+            services = typeof row.services === 'string'
               ? JSON.parse(row.services)
               : row.services;
           }
-        } catch (e) {
+        } catch {
           services = String(row.services).split(',').filter(Boolean);
         }
 
@@ -86,20 +71,18 @@ export async function GET(request: NextRequest) {
           languages: row.languages,
         };
       } else {
-        console.log('⚠️ ProfileCaregiver não encontrado - criando perfil vazio...');
-        // Criar perfil vazio para o cuidador
+        // Create empty caregiver profile
         const profileId = crypto.randomUUID();
         try {
           await db.execute({
             sql: `INSERT INTO ProfileCaregiver (
-                    id, userId, title, bio, experienceYears, services, 
+                    id, userId, title, bio, experienceYears, services,
                     hourlyRateEur, city, certifications, languages,
                     verificationStatus, totalContracts, totalHoursWorked, averageRating, totalReviews,
                     createdAt, updatedAt
                   ) VALUES (?, ?, '', '', 0, NULL, 1500, '', '', '', 'UNVERIFIED', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
             args: [profileId, userId]
           });
-          console.log('✅ ProfileCaregiver criado com sucesso');
           profile = {
             title: '',
             bio: '',
@@ -114,66 +97,59 @@ export async function GET(request: NextRequest) {
             languages: '',
           };
         } catch (e) {
-          console.error('❌ Erro ao criar ProfileCaregiver:', e);
+          console.error('Error creating ProfileCaregiver:', e);
         }
       }
     }
 
     if (isFamily) {
-      console.log('🔍 Buscando ProfileFamily...');
       const profileResult = await db.execute({
-        sql: `SELECT id, city, elderName, elderAge, emergencyContactName, emergencyContactPhone
+        sql: `SELECT id, city, elderName, elderAge, elderNeeds, emergencyContactName, emergencyContactPhone
               FROM ProfileFamily WHERE userId = ?`,
         args: [userId]
       });
 
-      console.log(`📊 ProfileFamily: ${profileResult.rows.length} linhas`);
-
       if (profileResult.rows.length > 0) {
         const row = profileResult.rows[0];
-        console.log('📋 Dados do ProfileFamily:', JSON.stringify(row, null, 2));
         profile = {
           city: row.city,
           elderName: row.elderName,
           elderAge: row.elderAge,
+          elderNeeds: row.elderNeeds,
           emergencyContact: row.emergencyContactName,
           emergencyPhone: row.emergencyContactPhone,
         };
       } else {
-        console.log('⚠️ ProfileFamily não encontrado - criando perfil vazio...');
-        // Criar perfil vazio para a família
+        // Create empty family profile
         const profileId = crypto.randomUUID();
         try {
           await db.execute({
             sql: `INSERT INTO ProfileFamily (
-                    id, userId, city, elderName, elderAge, 
+                    id, userId, city, elderName, elderAge,
                     emergencyContactName, emergencyContactPhone,
                     createdAt, updatedAt
                   ) VALUES (?, ?, '', '', NULL, '', '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
             args: [profileId, userId]
           });
-          console.log('✅ ProfileFamily criado com sucesso');
           profile = {
             city: '',
             elderName: '',
             elderAge: null,
+            elderNeeds: '',
             emergencyContact: '',
             emergencyPhone: '',
           };
         } catch (e) {
-          console.error('❌ Erro ao criar ProfileFamily:', e);
+          console.error('Error creating ProfileFamily:', e);
         }
       }
     }
 
     // Get wallet info
-    console.log('🔍 Buscando Wallet...');
     const walletResult = await db.execute({
       sql: `SELECT address, balanceTokens, balanceEurCents FROM Wallet WHERE userId = ?`,
       args: [userId]
     });
-
-    console.log(`📊 Wallet: ${walletResult.rows.length} linhas`);
 
     const wallet = walletResult.rows.length > 0 ? {
       address: walletResult.rows[0].address,
@@ -181,7 +157,7 @@ export async function GET(request: NextRequest) {
       balanceEurCents: walletResult.rows[0].balanceEurCents,
     } : null;
 
-    const responseData = {
+    return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
@@ -199,32 +175,22 @@ export async function GET(request: NextRequest) {
       },
       profile,
       wallet,
-    };
-    
-    console.log('📤 Retornando dados:', JSON.stringify(responseData, null, 2));
-
-    return NextResponse.json(responseData);
+    });
   } catch (error) {
-    console.error('❌ Error fetching profile:', error);
-    return NextResponse.json({ error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error') }, { status: 500 });
+    console.error('Error fetching profile:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
-  console.log('📝 PUT /api/user/profile - Iniciando');
-  
   try {
     const session = await getServerSession(authOptions);
-    console.log('📋 Session:', JSON.stringify(session, null, 2));
-    
+
     if (!session?.user?.id) {
-      console.log('❌ Unauthorized - no session or user id');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    console.log('📦 Body recebido:', JSON.stringify(body, null, 2));
-    
     const userId = session.user.id;
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
@@ -269,17 +235,11 @@ export async function PUT(request: NextRequest) {
     if (userUpdates.length > 0) {
       userUpdates.push('updatedAt = CURRENT_TIMESTAMP');
       userArgs.push(userId);
-      
-      console.log('📝 Atualizando User:', { updates: userUpdates, args: userArgs });
-      
-      const result = await db.execute({
+
+      await db.execute({
         sql: `UPDATE User SET ${userUpdates.join(', ')} WHERE id = ?`,
         args: userArgs
       });
-      
-      console.log('✅ User atualizado:', result.rowsAffected, 'linhas afetadas');
-    } else {
-      console.log('⚠️ Nenhum campo de User para atualizar');
     }
 
     // Update profile based on role
@@ -293,17 +253,15 @@ export async function PUT(request: NextRequest) {
       body.certifications !== undefined ||
       body.languages !== undefined
     )) {
-      const servicesJson = body.services && body.services.length > 0 
-        ? JSON.stringify(body.services) 
+      const servicesJson = body.services && body.services.length > 0
+        ? JSON.stringify(body.services)
         : null;
-      const hourlyRateCents = body.hourlyRateEur 
-        ? Math.round(body.hourlyRateEur * 100) 
+      const hourlyRateCents = body.hourlyRateEur
+        ? Math.round(body.hourlyRateEur * 100)
         : null;
 
-      console.log('📝 Atualizando ProfileCaregiver...');
-
-      const result = await db.execute({
-        sql: `UPDATE ProfileCaregiver 
+      await db.execute({
+        sql: `UPDATE ProfileCaregiver
               SET title = COALESCE(?, title),
                   bio = COALESCE(?, bio),
                   city = COALESCE(?, city),
@@ -312,7 +270,7 @@ export async function PUT(request: NextRequest) {
                   hourlyRateEur = COALESCE(?, hourlyRateEur),
                   certifications = COALESCE(?, certifications),
                   languages = COALESCE(?, languages),
-                  updatedAt = CURRENT_TIMESTAMP 
+                  updatedAt = CURRENT_TIMESTAMP
               WHERE userId = ?`,
         args: [
           body.title ?? null,
@@ -326,8 +284,6 @@ export async function PUT(request: NextRequest) {
           userId
         ]
       });
-      
-      console.log('✅ ProfileCaregiver atualizado:', result.rowsAffected, 'linhas afetadas');
     }
 
     if (isFamily && (
@@ -338,17 +294,15 @@ export async function PUT(request: NextRequest) {
       body.emergencyPhone !== undefined ||
       body.elderNeeds !== undefined
     )) {
-      console.log('📝 Atualizando ProfileFamily...');
-      
-      const result = await db.execute({
-        sql: `UPDATE ProfileFamily 
+      await db.execute({
+        sql: `UPDATE ProfileFamily
               SET city = COALESCE(?, city),
                   elderName = COALESCE(?, elderName),
                   elderAge = COALESCE(?, elderAge),
                   emergencyContactName = COALESCE(?, emergencyContactName),
                   emergencyContactPhone = COALESCE(?, emergencyContactPhone),
                   elderNeeds = COALESCE(?, elderNeeds),
-                  updatedAt = CURRENT_TIMESTAMP 
+                  updatedAt = CURRENT_TIMESTAMP
               WHERE userId = ?`,
         args: [
           body.city ?? null,
@@ -360,25 +314,20 @@ export async function PUT(request: NextRequest) {
           userId
         ]
       });
-      
-      console.log('✅ ProfileFamily atualizado:', result.rowsAffected, 'linhas afetadas');
     }
 
-    console.log('🎉 Perfil atualizado com sucesso');
     return NextResponse.json({ success: true, message: 'Perfil atualizado com sucesso' });
   } catch (error) {
-    console.error('❌ Error updating profile:', error);
-    return NextResponse.json({ error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error') }, { status: 500 });
+    console.error('Error updating profile:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 // POST: Create/update caregiver profile during setup
 export async function POST(request: NextRequest) {
-  console.log('📝 POST /api/user/profile - Iniciando');
-  
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -413,10 +362,9 @@ export async function POST(request: NextRequest) {
     const availabilityJson = availability && availability.length > 0 ? JSON.stringify(availability) : null;
 
     if (existingProfile.rows.length > 0) {
-      // Update existing profile
       await db.execute({
-        sql: `UPDATE ProfileCaregiver 
-              SET title = ?, bio = ?, experienceYears = ?, services = ?, 
+        sql: `UPDATE ProfileCaregiver
+              SET title = ?, bio = ?, experienceYears = ?, services = ?,
                   hourlyRateEur = ?, availabilityJson = ?, city = ?,
                   certifications = ?, languages = ?, updatedAt = CURRENT_TIMESTAMP
               WHERE userId = ?`,
@@ -434,11 +382,10 @@ export async function POST(request: NextRequest) {
         ]
       });
     } else {
-      // Create new profile
       const profileId = crypto.randomUUID();
       await db.execute({
         sql: `INSERT INTO ProfileCaregiver (
-                id, userId, title, bio, experienceYears, services, 
+                id, userId, title, bio, experienceYears, services,
                 hourlyRateEur, availabilityJson, city, certifications, languages,
                 verificationStatus, totalContracts, totalHoursWorked, averageRating, totalReviews,
                 createdAt, updatedAt
@@ -465,10 +412,10 @@ export async function POST(request: NextRequest) {
       args: [userId]
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Profile created successfully',
-      profileComplete: true 
+      profileComplete: true
     });
   } catch (error) {
     console.error('Error creating profile:', error);

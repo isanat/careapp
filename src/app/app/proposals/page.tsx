@@ -139,10 +139,9 @@ export default function ProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(selectedProposal.id);
     try {
-      const response = await fetch(`/api/contracts/${selectedProposal.id}`, {
-        method: "PATCH",
+      const response = await fetch(`/api/contracts/${selectedProposal.id}/accept`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "accept", caregiverAcceptedAt: new Date().toISOString() }),
       });
       if (!response.ok) throw new Error("Erro ao aceitar");
       setSuccessMessage("Proposta aceita!");
@@ -159,10 +158,10 @@ export default function ProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(selectedProposal.id);
     try {
-      const response = await fetch(`/api/contracts/${selectedProposal.id}`, {
-        method: "PATCH",
+      const response = await fetch(`/api/contracts/${selectedProposal.id}/reject`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reject", rejectionReason: rejectReason }),
+        body: JSON.stringify({ rejectionReason: rejectReason }),
       });
       if (!response.ok) throw new Error("Erro ao recusar");
       setSuccessMessage("Proposta recusada.");

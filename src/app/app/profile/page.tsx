@@ -143,19 +143,15 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     setIsLoading(true);
-    console.log('🔄 fetchProfile - Iniciando busca de perfil...');
     try {
       const response = await fetch("/api/user/profile");
-      console.log('📡 Response status:', response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Erro na resposta:', errorText);
         throw new Error("Erro ao carregar perfil: " + errorText);
       }
-      
+
       const data = await response.json();
-      console.log('📦 Dados recebidos:', JSON.stringify(data, null, 2));
       
       setProfile(data.profile);
       setFormData({
@@ -185,9 +181,7 @@ export default function ProfilePage() {
         backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
         backgroundCheckUrl: data.user?.backgroundCheckUrl || "",
       });
-      console.log('✅ Perfil carregado com sucesso');
     } catch (err) {
-      console.error('❌ Erro ao carregar perfil:', err);
       setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
     } finally {
       setIsLoading(false);
@@ -198,27 +192,20 @@ export default function ProfilePage() {
     setIsSaving(true);
     setError(null);
     setSuccess(null);
-    console.log('💾 handleSave - Iniciando salvamento...');
-    console.log('📦 Dados a salvar:', JSON.stringify(formData, null, 2));
-    
     try {
       const response = await fetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      
-      console.log('📡 Response status:', response.status);
-      
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Erro na resposta:', errorText);
         throw new Error("Erro ao salvar: " + errorText);
       }
-      
-      const result = await response.json();
-      console.log('✅ Resposta do servidor:', result);
-      
+
+      await response.json();
+
       setSuccess("Salvo!");
       setIsEditing(false);
       if (formData.name !== session?.user?.name) await update({ name: formData.name });
@@ -260,7 +247,17 @@ export default function ProfilePage() {
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch("/api/user/account", { method: "DELETE" });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Erro ao apagar conta");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao apagar conta");
+      setIsDeleting(false);
+      return;
+    }
     setIsDeleting(false);
     setDeleteDialogOpen(false);
     signOut({ callbackUrl: "/" });
