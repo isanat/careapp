@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
+import { createContractSchema } from '@/lib/validations/schemas';
 
 export async function GET(request: NextRequest) {
   try {
@@ -75,7 +76,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { caregiverUserId, title, description, hourlyRateEur, totalHours, startDate, endDate, serviceTypes, hoursPerWeek } = body;
+    const parsed = createContractSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { caregiverUserId, title, description, hourlyRateEur, totalHours, startDate, endDate, serviceTypes, hoursPerWeek } = parsed.data;
 
     const familyUserId = session.user.id;
     const contractId = generateId("ctr");

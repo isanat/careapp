@@ -229,6 +229,74 @@ export async function GET(request: NextRequest) {
       console.error('Error counting token holders:', e);
     }
 
+    // Period-based stats
+    const dateFilter = `-${daysAgo} days`;
+
+    try {
+      const newUsersResult = await db.execute({
+        sql: `SELECT COUNT(*) as count FROM User WHERE createdAt >= datetime('now', ?)`,
+        args: [dateFilter]
+      });
+      newUsersPeriod = Number(newUsersResult.rows[0]?.count) || 0;
+    } catch (e) {
+      console.error('Error counting new users:', e);
+    }
+
+    let newContractsPeriod = 0;
+    try {
+      const newContractsResult = await db.execute({
+        sql: `SELECT COUNT(*) as count FROM Contract WHERE createdAt >= datetime('now', ?)`,
+        args: [dateFilter]
+      });
+      newContractsPeriod = Number(newContractsResult.rows[0]?.count) || 0;
+    } catch (e) {
+      console.error('Error counting new contracts:', e);
+    }
+
+    // Revenue breakdown
+    let periodRevenue = 0;
+    let activationRevenue = 0;
+    let tokenPurchaseRevenue = 0;
+    let refundedRevenue = 0;
+    let tokenTransactionsPeriod = 0;
+
+    try {
+      const revenueBreakdown = await db.execute({
+        sql: `SELECT
+          COALESCE(SUM(CASE WHEN paidAt >= datetime('now', ?) THEN amountEurCents ELSE 0 END), 0) as periodTotal,
+          COALESCE(SUM(CASE WHEN type = 'ACTIVATION' THEN amountEurCents ELSE 0 END), 0) as activation,
+          COALESCE(SUM(CASE WHEN type = 'TOKEN_PURCHASE' THEN amountEurCents ELSE 0 END), 0) as tokenPurchase
+        FROM Payment WHERE status = 'COMPLETED'`,
+        args: [dateFilter]
+      });
+      const row = revenueBreakdown.rows[0] || {};
+      periodRevenue = Number(row.periodTotal) || 0;
+      activationRevenue = Number(row.activation) || 0;
+      tokenPurchaseRevenue = Number(row.tokenPurchase) || 0;
+    } catch (e) {
+      console.error('Error getting revenue breakdown:', e);
+    }
+
+    try {
+      const refundResult = await db.execute({
+        sql: `SELECT COALESCE(SUM(amountEurCents), 0) as total FROM Payment WHERE status = 'REFUNDED'`,
+        args: []
+      });
+      refundedRevenue = Number(refundResult.rows[0]?.total) || 0;
+    } catch (e) {
+      console.error('Error getting refund stats:', e);
+    }
+
+    try {
+      const tokenTxResult = await db.execute({
+        sql: `SELECT COUNT(*) as count FROM TokenLedger WHERE createdAt >= datetime('now', ?)`,
+        args: [dateFilter]
+      });
+      tokenTransactionsPeriod = Number(tokenTxResult.rows[0]?.count) || 0;
+    } catch (e) {
+      console.error('Error counting token transactions:', e);
+    }
+
     // Average rating
     let avgRating = 0;
     let totalReviews = 0;
@@ -242,6 +310,83 @@ export async function GET(request: NextRequest) {
       totalReviews = Number(ratingResult.rows[0]?.count) || 0;
     } catch (e) {
       console.error('Error getting average rating:', e);
+    }
+
+    // Growth data
+    let growthUsers: { date: string; count: number }[] = [];
+    let growthRevenue: { date: string; revenue: number }[] = [];
+
+    try {
+      const userGrowthResult = await db.execute({
+        sql: `SELECT DATE(createdAt) as date, COUNT(*) as count FROM User WHERE createdAt >= datetime('now', ?) GROUP BY DATE(createdAt) ORDER BY date`,
+        args: [dateFilter]
+      });
+      growthUsers = userGrowthResult.rows.map(r => ({
+        date: String(r.date),
+        count: Number(r.count) || 0,
+      }));
+    } catch (e) {
+      console.error('Error getting user growth:', e);
+    }
+
+    try {
+      const revenueGrowthResult = await db.execute({
+        sql: `SELECT DATE(paidAt) as date, COALESCE(SUM(amountEurCents), 0) as revenue FROM Payment WHERE status = 'COMPLETED' AND paidAt >= datetime('now', ?) GROUP BY DATE(paidAt) ORDER BY date`,
+        args: [dateFilter]
+      });
+      growthRevenue = revenueGrowthResult.rows.map(r => ({
+        date: String(r.date),
+        revenue: Number(r.revenue) || 0,
+      }));
+    } catch (e) {
+      console.error('Error getting revenue growth:', e);
+    }
+
+    // Distribution data
+    let geoDistribution: { city: string; count: number }[] = [];
+    let serviceDistribution: { service: string; count: number }[] = [];
+
+    try {
+      const geoResult = await db.execute({
+        sql: `SELECT COALESCE(pc.city, pf.city) as city, COUNT(DISTINCT u.id) as count
+          FROM User u
+          LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
+          LEFT JOIN ProfileFamily pf ON u.id = pf.userId
+          WHERE COALESCE(pc.city, pf.city) IS NOT NULL
+          GROUP BY COALESCE(pc.city, pf.city)
+          ORDER BY count DESC LIMIT 10`,
+        args: []
+      });
+      geoDistribution = geoResult.rows.map(r => ({
+        city: String(r.city),
+        count: Number(r.count) || 0,
+      }));
+    } catch (e) {
+      console.error('Error getting geo distribution:', e);
+    }
+
+    try {
+      const serviceResult = await db.execute({
+        sql: `SELECT services FROM ProfileCaregiver WHERE services IS NOT NULL AND services != ''`,
+        args: []
+      });
+      const serviceCounts: Record<string, number> = {};
+      for (const row of serviceResult.rows) {
+        try {
+          const services = JSON.parse(String(row.services));
+          if (Array.isArray(services)) {
+            for (const s of services) {
+              serviceCounts[s] = (serviceCounts[s] || 0) + 1;
+            }
+          }
+        } catch { /* skip malformed JSON */ }
+      }
+      serviceDistribution = Object.entries(serviceCounts)
+        .map(([service, count]) => ({ service, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+    } catch (e) {
+      console.error('Error getting service distribution:', e);
     }
 
     // Calculate dispute rate
@@ -273,16 +418,16 @@ export async function GET(request: NextRequest) {
           disputed: disputedContracts,
           totalValueEurCents: totalContractValue,
           avgValueEurCents: avgContractValue,
-          newThisPeriod: 0,
+          newThisPeriod: newContractsPeriod,
         },
         revenue: {
           totalEurCents: totalRevenue,
-          periodEurCents: 0,
-          activationEurCents: 0,
-          tokenPurchaseEurCents: 0,
+          periodEurCents: periodRevenue,
+          activationEurCents: activationRevenue,
+          tokenPurchaseEurCents: tokenPurchaseRevenue,
           totalTransactions: totalTransactions,
           totalRefunds: totalRefunds,
-          refundedEurCents: 0,
+          refundedEurCents: refundedRevenue,
         },
         tokens: {
           minted: totalMinted,
@@ -290,7 +435,7 @@ export async function GET(request: NextRequest) {
           inCirculation: totalMinted - totalBurned,
           reserveEurCents: reserveEurCents,
           holders: tokenHolders,
-          transactionsPeriod: 0,
+          transactionsPeriod: tokenTransactionsPeriod,
         },
         quality: {
           avgRating: avgRating,
@@ -299,12 +444,12 @@ export async function GET(request: NextRequest) {
         },
       },
       growth: {
-        users: [],
-        revenue: [],
+        users: growthUsers,
+        revenue: growthRevenue,
       },
       distribution: {
-        geographic: [],
-        services: [],
+        geographic: geoDistribution,
+        services: serviceDistribution,
       },
     });
   } catch (error) {

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
+import { createReviewSchema } from '@/lib/validations/schemas';
 
 // GET: List reviews
 export async function GET(request: NextRequest) {
@@ -102,24 +103,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { 
-      contractId, 
-      toUserId, 
-      rating, 
-      comment, 
-      punctualityRating, 
-      professionalismRating, 
-      communicationRating, 
-      qualityRating 
-    } = body;
-
-    if (!contractId || !toUserId || !rating) {
-      return NextResponse.json({ error: 'contractId, toUserId, and rating are required' }, { status: 400 });
+    const parsed = createReviewSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      );
     }
-
-    if (rating < 1 || rating > 5) {
-      return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 });
-    }
+    const {
+      contractId,
+      toUserId,
+      rating,
+      comment,
+      punctualityRating,
+      professionalismRating,
+      communicationRating,
+      qualityRating
+    } = parsed.data;
 
     // Verify contract exists and user is part of it
     const contract = await db.execute({

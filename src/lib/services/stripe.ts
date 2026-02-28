@@ -291,6 +291,32 @@ export class StripeService {
           }
         }
 
+        // Handle contract fee payment
+        if (type === "CONTRACT_FEE") {
+          const contractId = session.metadata?.contractId;
+          if (contractId) {
+            await tx.execute({
+              sql: `UPDATE Contract SET familyFeePaid = 1, status = 'ACTIVE', updatedAt = datetime('now') WHERE id = ? AND status = 'PENDING_PAYMENT'`,
+              args: [contractId],
+            });
+
+            // Get caregiver to notify them
+            const contractResult = await tx.execute({
+              sql: `SELECT caregiverUserId FROM Contract WHERE id = ?`,
+              args: [contractId],
+            });
+
+            if (contractResult.rows.length > 0) {
+              const caregiverUserId = contractResult.rows[0].caregiverUserId;
+              const notifId = generateId("notif");
+              await tx.execute({
+                sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt) VALUES (?, ?, 'contract', 'Contrato Ativado', 'A taxa de contrato foi paga. O contrato está agora ativo.', 'Contract', ?, datetime('now'))`,
+                args: [notifId, caregiverUserId, contractId],
+              });
+            }
+          }
+        }
+
         // Update platform settings (reserve) - use fixed ID to prevent duplicates
         const SETTINGS_ID = "platform-settings-v1";
         const settingsResult = await tx.execute({

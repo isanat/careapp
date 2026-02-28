@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db-turso";
 import { generateId } from "@/lib/utils/id";
+import { registerSchema } from "@/lib/validations/schemas";
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
 
@@ -36,28 +37,20 @@ function generateWallet() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, password, role, acceptTerms } = body;
-    
+    const parsed = registerSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { name, email, phone, password, role, acceptTerms } = parsed.data;
+
     // Get IP address and user agent for legal proof
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                      request.headers.get('x-real-ip') || 
+    const ipAddress = request.headers.get('x-forwarded-for') ||
+                      request.headers.get('x-real-ip') ||
                       'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
-
-    // Validate input
-    if (!name || !email || !password || !role) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    if (!["FAMILY", "CAREGIVER"].includes(role)) {
-      return NextResponse.json(
-        { error: "Invalid role" },
-        { status: 400 }
-      );
-    }
 
     // Validate terms acceptance (required for legal protection)
     if (!acceptTerms) {

@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
+import { adminSettingsSchema } from '@/lib/validations/schemas';
 
 // GET - Platform settings
 export async function GET(request: NextRequest) {
@@ -57,7 +58,14 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents } = body;
+    const parsed = adminSettingsSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents } = parsed.data;
 
     // Check if settings exist
     const existingResult = await db.execute({
