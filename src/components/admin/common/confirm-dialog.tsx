@@ -22,7 +22,7 @@ interface ConfirmDialogProps {
   confirmText?: string;
   cancelText?: string;
   variant?: "danger" | "warning" | "info";
-  onConfirm: () => void;
+  onConfirm: (reason?: string) => void;
   loading?: boolean;
   requireReason?: boolean;
   reasonPlaceholder?: string;

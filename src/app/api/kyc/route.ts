@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const user = result.rows[0];
 
     // Build widget URL if session exists (use session_token, not session_id)
-    let widget_url = null;
+    let widget_url: string | null = null;
     if (user.kycSessionToken && user.verificationStatus === 'PENDING') {
       // The URL format is: https://verify.didit.me/session/{session_token}
       widget_url = `https://verify.didit.me/session/${user.kycSessionToken}`;

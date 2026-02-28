@@ -21,6 +21,23 @@ const PUBLIC_ROUTES = [
   "/privacy",
 ];
 
+// API routes exempt from CSRF validation
+const CSRF_EXEMPT_PREFIXES = [
+  "/api/auth/",
+  "/api/register",
+  "/api/webhooks/",
+  "/api/kyc/webhook",
+  "/api/contact",
+  "/api/csrf-token",
+  "/api/caregivers",
+  "/api/health",
+  "/api/diagnostic",
+  "/api/push/",
+];
+
+const CSRF_COOKIE_NAME = "__csrf";
+const CSRF_HEADER_NAME = "x-csrf-token";
+
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some(route => pathname.startsWith(route));
 }
@@ -33,6 +50,28 @@ function isAdminRoute(pathname: string): boolean {
   return ADMIN_ROUTES.some(route => pathname.startsWith(route));
 }
 
+function isCsrfExempt(pathname: string): boolean {
+  return CSRF_EXEMPT_PREFIXES.some(prefix => pathname.startsWith(prefix));
+}
+
+/**
+ * Double-submit cookie CSRF validation.
+ * Compares the token from the cookie (before the signature dot) with the header value.
+ */
+function validateCsrf(request: NextRequest): boolean {
+  const cookieValue = request.cookies.get(CSRF_COOKIE_NAME)?.value;
+  if (!cookieValue) return false;
+
+  // Cookie is signed as "token.signature" — extract the token part
+  const dotIndex = cookieValue.indexOf(".");
+  const cookieToken = dotIndex > 0 ? cookieValue.substring(0, dotIndex) : cookieValue;
+
+  const headerToken = request.headers.get(CSRF_HEADER_NAME);
+  if (!headerToken) return false;
+
+  return cookieToken.length > 0 && cookieToken === headerToken;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -43,6 +82,22 @@ export async function middleware(request: NextRequest) {
     pathname.includes(".") // static files
   ) {
     return NextResponse.next();
+  }
+
+  // CSRF validation for non-GET API requests
+  if (
+    pathname.startsWith("/api/") &&
+    request.method !== "GET" &&
+    request.method !== "HEAD" &&
+    request.method !== "OPTIONS" &&
+    !isCsrfExempt(pathname)
+  ) {
+    if (!validateCsrf(request)) {
+      return NextResponse.json(
+        { error: "Invalid CSRF token" },
+        { status: 403 }
+      );
+    }
   }
 
   // Allow public routes

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type'); // REVIEW, PROFILE, etc
 
     // Get pending reviews
-    let reviews = [];
+    let reviews: Record<string, unknown>[] = [];
     if (!type || type === 'REVIEW') {
       const reviewsResult = await db.execute({
         sql: `SELECT 

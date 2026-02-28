@@ -35,7 +35,7 @@ import {
   IconMail,
   IconAlertTriangle,
   IconCheck,
-  IconMessage,
+  IconMessageSquare,
 } from "@/components/icons";
 import { useToast } from "@/hooks/use-toast";
 
@@ -409,7 +409,7 @@ export default function AdminSupportPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    handleUpdateStatus(selectedTicket.id, "in_progress");
+                    handleUpdateStatus(selectedTicket!.id, "in_progress");
                   }}
                   disabled={updating}
                 >

@@ -269,9 +269,9 @@ export function TermsAcceptance({ acceptTerms, onAcceptChange, showDetailed = fa
 
   const getTermTitle = (key: string) => {
     const titles: Record<string, string> = {
-      terms_of_use: t.terms?.termsOfUse || "Termos de Uso",
-      privacy_policy: t.terms?.privacyPolicy || "Política de Privacidade",
-      mediation_policy: t.terms?.mediationPolicy || "Política de Mediação",
+      terms_of_use: t.register?.termsOfUse || "Termos de Uso",
+      privacy_policy: t.register?.privacyPolicy || "Política de Privacidade",
+      mediation_policy: "Política de Mediação",
     };
     return titles[key] || key;
   };
@@ -313,7 +313,7 @@ export function TermsAcceptance({ acceptTerms, onAcceptChange, showDetailed = fa
               onClick={() => setSelectedTerm("mediation_policy")}
               className="text-primary hover:underline font-medium"
             >
-              {t.terms?.mediationPolicy || "Política de Mediação"}
+              {"Política de Mediação"}
             </button>
           </label>
           <p className="text-xs text-muted-foreground">
