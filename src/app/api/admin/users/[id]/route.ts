@@ -29,7 +29,7 @@ export async function GET(
         u.createdAt,
         u.lastLoginAt,
         w.address as walletAddress,
-        w.balance as walletBalance
+        w.balanceTokens as walletBalance
       FROM User u
       LEFT JOIN Wallet w ON u.id = w.userId
       WHERE u.id = ?`,
@@ -57,11 +57,11 @@ export async function GET(
     if (userRow.role === "CAREGIVER") {
       const profileResult = await db.execute({
         sql: `SELECT
-          experience,
-          specialties,
-          hourlyRate,
+          experienceYears,
+          services,
+          hourlyRateEur,
           bio,
-          rating,
+          averageRating,
           totalReviews
         FROM ProfileCaregiver WHERE userId = ?`,
         args: [id],
@@ -69,11 +69,11 @@ export async function GET(
       if (profileResult.rows.length > 0) {
         const p = profileResult.rows[0];
         profile = {
-          experience: Number(p.experience || 0),
-          specialties: p.specialties ? JSON.parse(p.specialties as string) : [],
-          hourlyRate: Number(p.hourlyRate || 0),
+          experience: Number(p.experienceYears || 0),
+          specialties: p.services ? JSON.parse(p.services as string) : [],
+          hourlyRate: Number(p.hourlyRateEur || 0),
           bio: p.bio as string,
-          rating: Number(p.rating || 0),
+          rating: Number(p.averageRating || 0),
           totalReviews: Number(p.totalReviews || 0),
         };
       }
@@ -95,9 +95,9 @@ export async function GET(
     // Get wallet totals
     const walletTotalsResult = await db.execute({
       sql: `SELECT
-        COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END), 0) as totalReceived,
-        COALESCE(SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END), 0) as totalSent
-      FROM TokenLedger WHERE walletId = (SELECT id FROM Wallet WHERE userId = ?)`,
+        COALESCE(SUM(CASE WHEN amountTokens > 0 THEN amountTokens ELSE 0 END), 0) as totalReceived,
+        COALESCE(SUM(CASE WHEN amountTokens < 0 THEN ABS(amountTokens) ELSE 0 END), 0) as totalSent
+      FROM TokenLedger WHERE userId = ?`,
       args: [id],
     });
     const walletTotals = walletTotalsResult.rows[0];
@@ -110,9 +110,9 @@ export async function GET(
         c.status,
         c.startDate,
         c.endDate,
-        c.totalValue as value
+        c.totalEurCents as value
       FROM Contract c
-      WHERE c.familyId = ? OR c.caregiverId = ?
+      WHERE c.familyUserId = ? OR c.caregiverUserId = ?
       ORDER BY c.createdAt DESC
       LIMIT 10`,
       args: [id, id],
@@ -130,11 +130,11 @@ export async function GET(
     const transactionsResult = await db.execute({
       sql: `SELECT
         tl.id,
-        tl.amount,
+        tl.amountTokens as amount,
         tl.reason as description,
         tl.createdAt
       FROM TokenLedger tl
-      WHERE tl.walletId = (SELECT id FROM Wallet WHERE userId = ?)
+      WHERE tl.userId = ?
       ORDER BY tl.createdAt DESC
       LIMIT 20`,
       args: [id],
@@ -410,7 +410,7 @@ export async function DELETE(
     const userResult = await db.execute({
       sql: `SELECT 
         u.id, u.name, u.email, u.phone, u.role, u.status,
-        w.balance as walletBalance
+        w.balanceTokens as walletBalance
       FROM User u
       LEFT JOIN Wallet w ON u.id = w.userId
       WHERE u.id = ?`,
@@ -434,7 +434,7 @@ export async function DELETE(
     // Check for active contracts
     const activeContractsResult = await db.execute({
       sql: `SELECT COUNT(*) as count FROM Contract 
-            WHERE (familyId = ? OR caregiverId = ?) 
+            WHERE (familyUserId = ? OR caregiverUserId = ?)
             AND status IN ('ACTIVE', 'PENDING_ACCEPTANCE', 'PENDING_PAYMENT')`,
       args: [id, id],
     });

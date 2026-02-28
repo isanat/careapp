@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Helper function to verify admin access
 async function verifyAdminAccess(sessionUserId: string): Promise<{ authorized: boolean; adminUserId?: string; role?: string; error?: string }> {
@@ -76,10 +77,10 @@ export async function POST(
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, createdAt)
             VALUES (?, ?, 'MARK_READ', 'ADMIN_NOTIFICATION', ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
-        `action-${Date.now()}`, 
-        adminCheck.adminUserId, 
-        id, 
-        JSON.stringify({ isRead: false }), 
+        generateId("action"),
+        adminCheck.adminUserId,
+        id,
+        JSON.stringify({ isRead: false }),
         JSON.stringify({ isRead: true, readBy: session.user.id })
       ]
     });
@@ -138,7 +139,7 @@ export async function DELETE(
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, createdAt)
             VALUES (?, ?, 'DELETE_NOTIFICATION', 'ADMIN_NOTIFICATION', ?, CURRENT_TIMESTAMP)`,
-      args: [`action-${Date.now()}`, adminCheck.adminUserId, id]
+      args: [generateId("action"), adminCheck.adminUserId, id]
     });
 
     return NextResponse.json({

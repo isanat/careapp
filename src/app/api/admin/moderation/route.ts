@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // GET - Moderation queue
 export async function GET(request: NextRequest) {
@@ -91,14 +92,14 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO ModerationQueue (id, entityType, entityId, status, reviewedBy, action, notes, createdAt)
         VALUES (?, ?, ?, 'REVIEWED', ?, ?, ?, ?)`,
-      args: [`mod-${Date.now()}`, type, entityId, session.user.id, action, reason, now]
+      args: [generateId("mod"), type, entityId, session.user.id, action, reason, now]
     });
 
     // Log admin action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, reason, createdAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [`action-${Date.now()}`, session.user.id, `MODERATE_${action}`, type, entityId, reason, now]
+      args: [generateId("action"), session.user.id, `MODERATE_${action}`, type, entityId, reason, now]
     });
 
     return NextResponse.json({ success: true, type, entityId, action });

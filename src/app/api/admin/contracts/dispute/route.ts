@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Resolve dispute
 export async function POST(request: NextRequest) {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, createdAt)
         VALUES (?, ?, 'RESOLVE_DISPUTE', 'CONTRACT', ?, ?, ?, ?)`,
-      args: [`action-${Date.now()}`, session.user.id, contractId, JSON.stringify({ resolution, familyAmount, caregiverAmount }), reason, now]
+      args: [generateId("action"), session.user.id, contractId, JSON.stringify({ resolution, familyAmount, caregiverAmount }), reason, now]
     });
 
     return NextResponse.json({ success: true, contractId, resolution });

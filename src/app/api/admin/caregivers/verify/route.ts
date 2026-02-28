@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Verify/Reject caregiver KYC
 export async function POST(request: NextRequest) {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, reason, createdAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [`action-${Date.now()}`, session.user.id, action === 'verify' ? 'VERIFY_KYC' : 'REJECT_KYC', 'CAREGIVER', caregiverId, reason || null, now]
+      args: [generateId("action"), session.user.id, action === 'verify' ? 'VERIFY_KYC' : 'REJECT_KYC', 'CAREGIVER', caregiverId, reason || null, now]
     });
 
     return NextResponse.json({ success: true, action, caregiverId, newStatus });

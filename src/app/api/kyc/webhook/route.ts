@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 import crypto from 'crypto';
 
 // Didit webhook payload structure (based on actual documentation)
@@ -216,7 +217,7 @@ export async function POST(request: NextRequest) {
       PENDING: 'Sua verificação de identidade está sendo analisada. Você será notificado quando for concluída.',
     };
 
-    const notificationId = `notif-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const notificationId = generateId("notif");
     await db.execute({
       sql: `INSERT INTO Notification (id, userId, type, title, message, createdAt) VALUES (?, ?, ?, ?, ?, ?)`,
       args: [notificationId, userId, 'kyc_complete', titles[verificationStatus], messages[verificationStatus], new Date().toISOString()]

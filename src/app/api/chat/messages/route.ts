@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
+import { chatMessageSchema } from '@/lib/validations/schemas';
 
 // GET: Get messages for a chat room
 export async function GET(request: NextRequest) {
@@ -91,11 +93,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { chatRoomId, content, messageType, metadata } = body;
-
-    if (!chatRoomId || !content) {
-      return NextResponse.json({ error: 'chatRoomId and content required' }, { status: 400 });
+    const parsed = chatMessageSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: parsed.error.flatten() },
+        { status: 400 }
+      );
     }
+    const { chatRoomId, content, messageType, metadata } = parsed.data;
 
     // Verify user is participant
     const participant = await db.execute({
@@ -107,7 +112,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
-    const messageId = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const messageId = generateId("msg");
     const now = new Date().toISOString();
 
     await db.execute({
@@ -119,6 +124,12 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `UPDATE ChatRoom SET updatedAt = ? WHERE id = ?`,
       args: [now, chatRoomId]
+    });
+
+    // Increment unread count for other participants
+    await db.execute({
+      sql: `UPDATE ChatParticipant SET unreadCount = unreadCount + 1 WHERE chatRoomId = ? AND userId != ?`,
+      args: [chatRoomId, session.user.id]
     });
 
     return NextResponse.json({ 

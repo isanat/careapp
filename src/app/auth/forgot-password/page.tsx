@@ -23,11 +23,22 @@ export default function ForgotPasswordPage() {
     setErrorMessage("");
 
     try {
-      // Simular envio de email
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to send reset email");
+      }
+
       setIsSuccess(true);
-    } catch {
-      setErrorMessage(t.forgotPassword.sendError);
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : t.forgotPassword.sendError
+      );
     } finally {
       setIsLoading(false);
     }

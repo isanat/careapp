@@ -1,17 +1,11 @@
 import Stripe from "stripe";
 import { db } from "@/lib/db-turso";
 import { ACTIVATION_COST_EUR_CENTS, CONTRACT_FEE_EUR_CENTS } from "@/lib/constants";
+import { generateId } from "@/lib/utils/id";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_stub", {
   apiVersion: "2023-10-16",
 });
-
-/**
- * Generate a unique ID for database records
- */
-function generateId(prefix: string): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-}
 
 export class StripeService {
   /**
@@ -235,97 +229,127 @@ export class StripeService {
       
       const payment = paymentResult.rows[0];
       
-      // Check if already completed
+      // Check if already completed (idempotency)
       if (payment.status === "COMPLETED") return;
 
-      // Update payment status
-      await db.execute({
-        sql: `UPDATE Payment 
-              SET status = 'COMPLETED', 
-                  stripePaymentIntentId = ?, 
-                  paidAt = datetime('now')
-              WHERE id = ?`,
-        args: [session.payment_intent as string, paymentId],
-      });
-
-      // Add tokens to user wallet
-      if (type === "ACTIVATION" || type === "TOKEN_PURCHASE") {
-        // Get wallet
-        const walletResult = await db.execute({
-          sql: `SELECT id, balanceTokens, balanceEurCents FROM Wallet WHERE userId = ?`,
-          args: [userId],
+      // Wrap all mutations in a transaction to prevent partial updates
+      const tx = await db.transaction("write");
+      try {
+        // Update payment status
+        await tx.execute({
+          sql: `UPDATE Payment
+                SET status = 'COMPLETED',
+                    stripePaymentIntentId = ?,
+                    paidAt = datetime('now')
+                WHERE id = ?`,
+          args: [session.payment_intent as string, paymentId],
         });
 
-        if (walletResult.rows.length > 0) {
-          const wallet = walletResult.rows[0];
-          const newBalanceTokens = Number(wallet.balanceTokens) + Number(payment.tokensAmount);
-          const newBalanceEurCents = Number(wallet.balanceEurCents) + Number(payment.amountEurCents);
-
-          // Update wallet balance
-          await db.execute({
-            sql: `UPDATE Wallet 
-                  SET balanceTokens = ?, 
-                      balanceEurCents = ?,
-                      updatedAt = datetime('now')
-                  WHERE id = ?`,
-            args: [newBalanceTokens, newBalanceEurCents, wallet.id],
+        // Add tokens to user wallet
+        if (type === "ACTIVATION" || type === "TOKEN_PURCHASE") {
+          const walletResult = await tx.execute({
+            sql: `SELECT id, balanceTokens, balanceEurCents FROM Wallet WHERE userId = ?`,
+            args: [userId],
           });
 
-          // Create ledger entry
-          const ledgerId = generateId("tl");
-          await db.execute({
-            sql: `INSERT INTO TokenLedger 
-                  (id, userId, type, reason, amountTokens, amountEurCents, referenceType, referenceId, description, createdAt)
-                  VALUES (?, ?, 'CREDIT', ?, ?, ?, 'Payment', ?, ?, datetime('now'))`,
-            args: [
-              ledgerId,
-              userId,
-              type === "ACTIVATION" ? "ACTIVATION_BONUS" : "TOKEN_PURCHASE",
-              payment.tokensAmount,
-              payment.amountEurCents,
-              paymentId,
-              type === "ACTIVATION" ? "Tokens de ativação de conta" : "Compra de tokens",
-            ],
-          });
+          if (walletResult.rows.length > 0) {
+            const wallet = walletResult.rows[0];
+            const newBalanceTokens = Number(wallet.balanceTokens) + Number(payment.tokensAmount);
+            const newBalanceEurCents = Number(wallet.balanceEurCents) + Number(payment.amountEurCents);
 
-          // Update user status to active for activation
-          if (type === "ACTIVATION") {
-            await db.execute({
-              sql: `UPDATE User SET status = 'ACTIVE', updatedAt = datetime('now') WHERE id = ?`,
-              args: [userId],
+            await tx.execute({
+              sql: `UPDATE Wallet
+                    SET balanceTokens = ?,
+                        balanceEurCents = ?,
+                        updatedAt = datetime('now')
+                    WHERE id = ?`,
+              args: [newBalanceTokens, newBalanceEurCents, wallet.id],
             });
+
+            const ledgerId = generateId("tl");
+            await tx.execute({
+              sql: `INSERT INTO TokenLedger
+                    (id, userId, type, reason, amountTokens, amountEurCents, referenceType, referenceId, description, createdAt)
+                    VALUES (?, ?, 'CREDIT', ?, ?, ?, 'Payment', ?, ?, datetime('now'))`,
+              args: [
+                ledgerId,
+                userId,
+                type === "ACTIVATION" ? "ACTIVATION_BONUS" : "TOKEN_PURCHASE",
+                payment.tokensAmount,
+                payment.amountEurCents,
+                paymentId,
+                type === "ACTIVATION" ? "Tokens de ativação de conta" : "Compra de tokens",
+              ],
+            });
+
+            if (type === "ACTIVATION") {
+              await tx.execute({
+                sql: `UPDATE User SET status = 'ACTIVE', updatedAt = datetime('now') WHERE id = ?`,
+                args: [userId],
+              });
+            }
           }
         }
-      }
 
-      // Update platform settings (reserve)
-      const settingsResult = await db.execute({
-        sql: `SELECT id, totalReserveEurCents, totalTokensMinted FROM PlatformSettings LIMIT 1`,
-        args: [],
-      });
+        // Handle contract fee payment
+        if (type === "CONTRACT_FEE") {
+          const contractId = session.metadata?.contractId;
+          if (contractId) {
+            await tx.execute({
+              sql: `UPDATE Contract SET familyFeePaid = 1, status = 'ACTIVE', updatedAt = datetime('now') WHERE id = ? AND status = 'PENDING_PAYMENT'`,
+              args: [contractId],
+            });
 
-      if (settingsResult.rows.length > 0) {
-        const settings = settingsResult.rows[0];
-        const newReserve = Number(settings.totalReserveEurCents) + Number(payment.amountEurCents);
-        const newMinted = Number(settings.totalTokensMinted) + Number(payment.tokensAmount);
+            // Get caregiver to notify them
+            const contractResult = await tx.execute({
+              sql: `SELECT caregiverUserId FROM Contract WHERE id = ?`,
+              args: [contractId],
+            });
 
-        await db.execute({
-          sql: `UPDATE PlatformSettings 
-                SET totalReserveEurCents = ?, 
-                    totalTokensMinted = ?,
-                    updatedAt = datetime('now')
-                WHERE id = ?`,
-          args: [newReserve, newMinted, settings.id],
+            if (contractResult.rows.length > 0) {
+              const caregiverUserId = contractResult.rows[0].caregiverUserId;
+              const notifId = generateId("notif");
+              await tx.execute({
+                sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt) VALUES (?, ?, 'contract', 'Contrato Ativado', 'A taxa de contrato foi paga. O contrato está agora ativo.', 'Contract', ?, datetime('now'))`,
+                args: [notifId, caregiverUserId, contractId],
+              });
+            }
+          }
+        }
+
+        // Update platform settings (reserve) - use fixed ID to prevent duplicates
+        const SETTINGS_ID = "platform-settings-v1";
+        const settingsResult = await tx.execute({
+          sql: `SELECT id, totalReserveEurCents, totalTokensMinted FROM PlatformSettings WHERE id = ?`,
+          args: [SETTINGS_ID],
         });
-      } else {
-        // Create platform settings if not exists
-        const settingsId = generateId("ps");
-        await db.execute({
-          sql: `INSERT INTO PlatformSettings 
-                (id, totalReserveEurCents, totalTokensMinted, updatedAt)
-                VALUES (?, ?, ?, datetime('now'))`,
-          args: [settingsId, payment.amountEurCents, payment.tokensAmount],
-        });
+
+        if (settingsResult.rows.length > 0) {
+          const settings = settingsResult.rows[0];
+          const newReserve = Number(settings.totalReserveEurCents) + Number(payment.amountEurCents);
+          const newMinted = Number(settings.totalTokensMinted) + Number(payment.tokensAmount);
+
+          await tx.execute({
+            sql: `UPDATE PlatformSettings
+                  SET totalReserveEurCents = ?,
+                      totalTokensMinted = ?,
+                      updatedAt = datetime('now')
+                  WHERE id = ?`,
+            args: [newReserve, newMinted, SETTINGS_ID],
+          });
+        } else {
+          await tx.execute({
+            sql: `INSERT INTO PlatformSettings
+                  (id, totalReserveEurCents, totalTokensMinted, updatedAt)
+                  VALUES (?, ?, ?, datetime('now'))`,
+            args: [SETTINGS_ID, payment.amountEurCents, payment.tokensAmount],
+          });
+        }
+
+        await tx.commit();
+      } catch (error) {
+        await tx.rollback();
+        throw error;
       }
     }
   }

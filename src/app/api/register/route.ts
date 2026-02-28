@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
+import { registerSchema } from "@/lib/validations/schemas";
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
-
-// Generate a CUID-like ID
-function generateId(): string {
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  const randomPart2 = Math.random().toString(36).substring(2, 15);
-  return `c${timestamp}${randomPart}${randomPart2}`.substring(0, 25);
-}
 
 // Wallet encryption key
 const ENCRYPTION_KEY = (() => {
@@ -43,28 +37,20 @@ function generateWallet() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, password, role, acceptTerms } = body;
-    
+    const parsed = registerSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const { name, email, phone, password, role, acceptTerms } = parsed.data;
+
     // Get IP address and user agent for legal proof
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                      request.headers.get('x-real-ip') || 
+    const ipAddress = request.headers.get('x-forwarded-for') ||
+                      request.headers.get('x-real-ip') ||
                       'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
-
-    // Validate input
-    if (!name || !email || !password || !role) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    if (!["FAMILY", "CAREGIVER"].includes(role)) {
-      return NextResponse.json(
-        { error: "Invalid role" },
-        { status: 400 }
-      );
-    }
 
     // Validate terms acceptance (required for legal protection)
     if (!acceptTerms) {
@@ -165,7 +151,7 @@ export async function POST(request: NextRequest) {
     const requiredTerms = ['terms_of_use', 'privacy_policy', 'mediation_policy'];
     
     for (const termsType of requiredTerms) {
-      const acceptanceId = `ta-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      const acceptanceId = generateId("ta");
       
       await db.execute({
         sql: `INSERT INTO TermsAcceptance (id, userId, termsType, termsVersion, ipAddress, userAgent, acceptedAt)

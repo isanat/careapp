@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
 import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 const ENCRYPTION_KEY = (() => {
   const key = process.env.WALLET_ENCRYPTION_KEY;
@@ -63,15 +64,6 @@ export function decryptPrivateKey(
     ENCRYPTION_KEY + salt
   );
   return bytes.toString(CryptoJS.enc.Utf8);
-}
-
-/**
- * Generate a unique CUID-like ID
- */
-function generateId(): string {
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  return `c${timestamp}${randomPart}`;
 }
 
 /**

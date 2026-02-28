@@ -7,7 +7,7 @@ export const APP_DESCRIPTION = "A plataforma portuguesa de cuidados para idosos 
 // Activation Costs (in cents)
 export const ACTIVATION_COST_EUR_CENTS = 3500; // €35
 export const CONTRACT_FEE_EUR_CENTS = 500; // €5 per contract
-export const PLATFORM_FEE_PERCENT = 10; // 10%
+export const PLATFORM_FEE_PERCENT = 15; // 15%
 
 // Supported Languages
 export const SUPPORTED_LANGUAGES = ["pt", "en", "it", "es"] as const;

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // Note: For production, you should use web-push library and VAPID keys
 // This is a simplified version that stores subscriptions for later use
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Store subscription in database
     // Note: You need to add PushSubscription table to schema
-    const subscriptionId = `sub-${Date.now()}`;
+    const subscriptionId = generateId("sub");
     const now = new Date().toISOString();
     const subscriptionJson = JSON.stringify(subscription);
 
