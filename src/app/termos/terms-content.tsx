@@ -74,14 +74,6 @@ export function TermsContent() {
                 <li>{t.terms.sections.payments.item3}</li>
               </ul>
 
-              <h2>{t.terms.sections.tokens.title}</h2>
-              <p>{t.terms.sections.tokens.content}</p>
-              <ul>
-                <li>{t.terms.sections.tokens.item1}</li>
-                <li>{t.terms.sections.tokens.item2}</li>
-                <li>{t.terms.sections.tokens.item3}</li>
-              </ul>
-
               <h2>{t.terms.sections.prohibited.title}</h2>
               <p>{t.terms.sections.prohibited.content}</p>
               <ul>

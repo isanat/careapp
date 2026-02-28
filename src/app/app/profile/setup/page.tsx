@@ -34,7 +34,7 @@ import {
   IconHeart,
   IconPill,
   IconHome,
-  IconCar,
+  IconCare,
   IconStar
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";

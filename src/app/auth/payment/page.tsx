@@ -10,11 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { 
-  IconLogo, 
-  IconToken, 
-  IconShield, 
-  IconWallet,
+import {
+  IconLogo,
+  IconShield,
   IconCheck,
   IconAlert,
   IconLoader2,
@@ -114,7 +112,7 @@ function PaymentPageContent() {
     }
   };
 
-  const tokensReceived = ACTIVATION_COST_EUR_CENTS; // 1:1 conversion
+  const activationCostEur = ACTIVATION_COST_EUR_CENTS / 100;
 
   // Show payment result after successful payment creation
   if (paymentResult?.success) {
@@ -173,12 +171,12 @@ function PaymentPageContent() {
               </p>
             </div>
 
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={() => router.push("/app/dashboard")}
               variant="outline"
             >
-              {t.dashboard.title}
+              {t.success.goToDashboard}
             </Button>
           </CardContent>
         </Card>
@@ -212,14 +210,7 @@ function PaymentPageContent() {
           <div className="p-4 bg-muted rounded-lg space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">{t.payment.activationFee}</span>
-              <Badge variant="secondary">€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">{t.payment.tokensReceived}</span>
-              <Badge className="bg-primary">
-                <IconToken className="h-3 w-3 mr-1" />
-                {tokensReceived} 
-              </Badge>
+              <Badge variant="secondary">€{activationCostEur}</Badge>
             </div>
           </div>
 
@@ -306,17 +297,10 @@ function PaymentPageContent() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <IconWallet className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <IconShield className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium">{t.payment.walletCreated}</p>
-                  <p className="text-sm text-muted-foreground">{t.payment.walletCreatedDesc}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <IconToken className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">{tokensReceived}  Tokens</p>
-                  <p className="text-sm text-muted-foreground">{t.payment.tokensForUse}</p>
+                  <p className="font-medium">{t.payment.securePayment}</p>
+                  <p className="text-sm text-muted-foreground">{t.payment.processedByEasypay}</p>
                 </div>
               </div>
             </div>

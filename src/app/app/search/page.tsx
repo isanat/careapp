@@ -163,7 +163,7 @@ export default function SearchPage() {
 
               {/* Sort */}
               <div>
-                <Label>{t.edit}</Label>
+                <Label>{t.search.sortBy || "Ordenar por"}</Label>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="mt-1.5">
                     <SelectValue />
@@ -196,7 +196,9 @@ export default function SearchPage() {
         {/* Results Count */}
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">
-            {filteredCaregivers.length} {t.search.noResults}
+            {filteredCaregivers.length > 0
+              ? `${filteredCaregivers.length} ${t.search.resultsFound || "cuidadores encontrados"}`
+              : ""}
           </p>
         </div>
 

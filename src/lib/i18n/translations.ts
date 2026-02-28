@@ -7,7 +7,7 @@ export const translations = {
     tagline: "Cuidado de Qualidade para quem ama",
     loading: "A carregar...",
     error: "Ocorreu um erro",
-    success: "Sucesso!",
+    successMessage: "Sucesso!",
     save: "Guardar",
     cancel: "Cancelar",
     delete: "Eliminar",
@@ -16,7 +16,7 @@ export const translations = {
     next: "Seguinte",
     submit: "Submeter",
     close: "Fechar",
-    search: "Pesquisar",
+    searchLabel: "Pesquisar",
     filter: "Filtrar",
     all: "Todos",
     none: "Nenhum",
@@ -148,8 +148,9 @@ export const translations = {
       noTransactions: "Sem transações",
       deposit: "Depositar",
       withdraw: "Levantar",
+      addFunds: "Adicionar",
     },
-    
+
     chat: {
       title: "Mensagens",
       new: "Nova Conversa",
@@ -225,8 +226,9 @@ export const translations = {
       checkPhone: "Verifique o pedido de pagamento no número",
       expiresAt: "Válido até",
       afterPayment: "Após o pagamento, a sua conta será activada automaticamente em alguns minutos.",
+      or: "ou",
     },
-    
+
     success: {
       title: "Conta Activada!",
       message: "Parabéns! A sua conta foi activada com sucesso.",
@@ -409,8 +411,10 @@ export const translations = {
       hourlyRate: "Valor/hora",
       distance: "Distância",
       perHour: "/hora",
+      sortBy: "Ordenar por",
+      resultsFound: "cuidadores encontrados",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================
@@ -1007,7 +1011,7 @@ export const translations = {
     tagline: "Quality Care for Those You Love",
     loading: "Loading...",
     error: "An error occurred",
-    success: "Success!",
+    successMessage: "Success!",
     save: "Save",
     cancel: "Cancel",
     delete: "Delete",
@@ -1016,7 +1020,7 @@ export const translations = {
     next: "Next",
     submit: "Submit",
     close: "Close",
-    search: "Search",
+    searchLabel: "Search",
     filter: "Filter",
     all: "All",
     none: "None",
@@ -1148,8 +1152,9 @@ export const translations = {
       noTransactions: "No transactions",
       deposit: "Deposit",
       withdraw: "Withdraw",
+      addFunds: "Add Funds",
     },
-    
+
     chat: {
       title: "Messages",
       new: "New Conversation",
@@ -1225,8 +1230,9 @@ export const translations = {
       checkPhone: "Check the payment request on number",
       expiresAt: "Valid until",
       afterPayment: "After payment, your account will be activated automatically in a few minutes.",
+      or: "or",
     },
-    
+
     success: {
       title: "Account Activated!",
       message: "Congratulations! Your account has been successfully activated.",
@@ -1409,8 +1415,10 @@ export const translations = {
       hourlyRate: "Hourly rate",
       distance: "Distance",
       perHour: "/hour",
+      sortBy: "Sort by",
+      resultsFound: "caregivers found",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================
@@ -2007,7 +2015,7 @@ export const translations = {
     tagline: "Cura di Qualità per chi ami",
     loading: "Caricamento...",
     error: "Si è verificato un errore",
-    success: "Successo!",
+    successMessage: "Successo!",
     save: "Salva",
     cancel: "Annulla",
     delete: "Elimina",
@@ -2016,7 +2024,7 @@ export const translations = {
     next: "Avanti",
     submit: "Invia",
     close: "Chiudi",
-    search: "Cerca",
+    searchLabel: "Cerca",
     filter: "Filtra",
     all: "Tutti",
     none: "Nessuno",
@@ -2148,8 +2156,9 @@ export const translations = {
       noTransactions: "Nessuna transazione",
       deposit: "Deposita",
       withdraw: "Preleva",
+      addFunds: "Aggiungi Fondi",
     },
-    
+
     chat: {
       title: "Messaggi",
       new: "Nuova Conversazione",
@@ -2225,8 +2234,9 @@ export const translations = {
       checkPhone: "Controlla la richiesta di pagamento al numero",
       expiresAt: "Valido fino al",
       afterPayment: "Dopo il pagamento, il tuo account sarà attivato automaticamente in pochi minuti.",
+      or: "o",
     },
-    
+
     success: {
       title: "Account Attivato!",
       message: "Congratulazioni! Il tuo account è stato attivato con successo.",
@@ -2409,8 +2419,10 @@ export const translations = {
       hourlyRate: "Tariffa oraria",
       distance: "Distanza",
       perHour: "/ora",
+      sortBy: "Ordina per",
+      resultsFound: "caregiver trovati",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================
@@ -3007,7 +3019,7 @@ export const translations = {
     tagline: "Cuidado de Calidad para quienes amas",
     loading: "Cargando...",
     error: "Se produjo un error",
-    success: "¡Éxito!",
+    successMessage: "¡Éxito!",
     save: "Guardar",
     cancel: "Cancelar",
     delete: "Eliminar",
@@ -3016,7 +3028,7 @@ export const translations = {
     next: "Siguiente",
     submit: "Enviar",
     close: "Cerrar",
-    search: "Buscar",
+    searchLabel: "Buscar",
     filter: "Filtrar",
     all: "Todos",
     none: "Ninguno",
@@ -3148,8 +3160,9 @@ export const translations = {
       noTransactions: "Sin transacciones",
       deposit: "Depositar",
       withdraw: "Retirar",
+      addFunds: "Añadir Fondos",
     },
-    
+
     chat: {
       title: "Mensajes",
       new: "Nueva Conversación",
@@ -3225,8 +3238,9 @@ export const translations = {
       checkPhone: "Verifica la solicitud de pago en el número",
       expiresAt: "Válido hasta",
       afterPayment: "Después del pago, tu cuenta será activada automáticamente en unos minutos.",
+      or: "o",
     },
-    
+
     success: {
       title: "¡Cuenta Activada!",
       message: "¡Felicitaciones! Tu cuenta ha sido activada con éxito.",
@@ -3409,8 +3423,10 @@ export const translations = {
       hourlyRate: "Tarifa por hora",
       distance: "Distancia",
       perHour: "/hora",
+      sortBy: "Ordenar por",
+      resultsFound: "cuidadores encontrados",
     },
-    
+
     // ============================================
     // LANDING PAGE
     // ============================================

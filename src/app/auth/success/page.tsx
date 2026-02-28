@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconLogo, IconCheck, IconWallet, IconToken, IconArrowUp } from "@/components/icons";
+import { IconLogo, IconCheck } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
@@ -29,31 +29,6 @@ function SuccessPageContent() {
           <div className="text-center text-muted-foreground">
             <p>{t.success.message}</p>
             <p>{t.success.readyToStart} {APP_NAME}.</p>
-          </div>
-
-          {/* What happened */}
-          <div className="p-4 bg-green-500/5 border border-green-500/20 rounded-lg space-y-3">
-            <div className="flex items-center gap-3">
-              <IconWallet className="h-5 w-5 text-green-500" />
-              <div>
-                <p className="font-medium">{t.success.walletCreated}</p>
-                <p className="text-sm text-muted-foreground">{t.success.walletCreatedDesc}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconToken className="h-5 w-5 text-primary" />
-              <div>
-                <p className="font-medium">{t.success.tokensCredited}</p>
-                <p className="text-sm text-muted-foreground">{t.success.tokensCreditedDesc}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <IconArrowUp className="h-5 w-5 text-primary" />
-              <div>
-                <p className="font-medium">{t.success.potentialAppreciation}</p>
-                <p className="text-sm text-muted-foreground">{t.success.potentialAppreciationDesc}</p>
-              </div>
-            </div>
           </div>
 
           <div className="space-y-3">

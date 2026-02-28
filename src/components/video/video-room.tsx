@@ -211,7 +211,7 @@ export function VideoRoom({
             moderation: {
               enabled: true,
             }
-          }}
+          } as any}
           interfaceConfigOverwrite={{
             SHOW_JITSI_WATERMARK: false,
             SHOW_WATERMARK_FOR_GUESTS: false,
@@ -259,7 +259,7 @@ export function VideoRoom({
             email: email || '',
           }}
           onApiReady={handleApiReady}
-          onError={handleLoadError}
+          {...{ onError: handleLoadError } as any}
           getIFrameRef={(iframeRef) => {
             if (iframeRef) {
               iframeRef.style.borderRadius = '0 0 0.5rem 0.5rem';

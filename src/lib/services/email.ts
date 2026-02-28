@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { APP_NAME } from "@/lib/constants";
 
 let transporter: nodemailer.Transporter | null = null;
 
@@ -33,7 +34,7 @@ export async function sendEmail(options: {
   const transport = getTransporter();
   if (!transport) return false;
 
-  const from = process.env.SMTP_FROM || "IdosoLink <noreply@idosolink.pt>";
+  const from = process.env.SMTP_FROM || `${APP_NAME} <noreply@idosolink.pt>`;
 
   await transport.sendMail({ from, ...options });
   return true;
@@ -45,10 +46,10 @@ export async function sendPasswordResetEmail(
 ): Promise<boolean> {
   return sendEmail({
     to: email,
-    subject: "Redefinir senha - IdosoLink",
+    subject: `Redefinir senha - ${APP_NAME}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #2563eb;">IdosoLink - Redefinir Senha</h2>
+        <h2 style="color: #2563eb;">${APP_NAME} - Redefinir Senha</h2>
         <p>Recebeu este email porque solicitou a redefinição da sua senha.</p>
         <p>Clique no botão abaixo para criar uma nova senha:</p>
         <a href="${resetUrl}"
@@ -59,9 +60,9 @@ export async function sendPasswordResetEmail(
           Este link expira em 1 hora. Se não solicitou esta alteração, ignore este email.
         </p>
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
-        <p style="color: #9ca3af; font-size: 12px;">IdosoLink - Cuidado de Qualidade para quem ama</p>
+        <p style="color: #9ca3af; font-size: 12px;">${APP_NAME} - Cuidado de Qualidade para quem ama</p>
       </div>
     `,
-    text: `Redefinir senha IdosoLink: ${resetUrl}\n\nEste link expira em 1 hora.`,
+    text: `Redefinir senha ${APP_NAME}: ${resetUrl}\n\nEste link expira em 1 hora.`,
   });
 }

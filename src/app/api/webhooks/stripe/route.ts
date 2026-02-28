@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { stripeService } from "@/lib/services/stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_stub", {
-  apiVersion: "2023-10-16",
+  apiVersion: "2023-10-16" as any,
 });
 
 export async function POST(request: NextRequest) {

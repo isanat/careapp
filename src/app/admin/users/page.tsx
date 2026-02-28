@@ -313,7 +313,9 @@ export default function AdminFamiliesPage() {
         loading={loading}
         onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
         pagination={{
-          ...pagination,
+          page: pagination.page,
+          pageSize: pagination.limit,
+          total: pagination.total,
           onPageChange: (page) => setPagination((p) => ({ ...p, page })),
         }}
       />

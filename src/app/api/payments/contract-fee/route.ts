@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (contract.familyFeePaid === 1 || contract.familyFeePaid === true) {
+    if (Number(contract.familyFeePaid) === 1 || Boolean(contract.familyFeePaid) === true) {
       return NextResponse.json(
         { error: "Contract fee already paid" },
         { status: 400 }

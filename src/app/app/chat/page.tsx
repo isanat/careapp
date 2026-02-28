@@ -13,12 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
-import { 
-  IconChat, 
+import {
+  IconChat,
   IconSend,
-  IconPhone,
-  IconVideo,
-  IconMoreVertical,
   IconSearch,
   IconRefresh
 } from "@/components/icons";
@@ -67,6 +64,7 @@ export default function ChatPage() {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -237,7 +235,7 @@ export default function ChatPage() {
               </div>
               <div className="relative mt-2">
                 <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder={t.search.placeholder} className="pl-10" />
+                <Input placeholder={t.search.placeholder} className="pl-10" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
               </div>
             </CardHeader>
             <CardContent className="p-0">
@@ -250,7 +248,7 @@ export default function ChatPage() {
                   </div>
                 ) : (
                   <div className="space-y-1 p-2">
-                    {conversations.map((conv) => (
+                    {conversations.filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase())).map((conv) => (
                       <button
                         key={conv.id}
                         onClick={() => setSelectedConversation(conv)}
@@ -324,15 +322,6 @@ export default function ChatPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon">
-                        <IconPhone className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <IconVideo className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <IconMoreVertical className="h-4 w-4" />
-                      </Button>
                     </div>
                   </div>
                 </CardHeader>

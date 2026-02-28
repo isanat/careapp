@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n";
 export default function PrivacidadePage() {
   const { t } = useI18n();
 
-  const sections = [
+  const sections: Array<{ title: string; content: string; items?: string[] }> = [
     t.privacidadePage.sections.introduction,
     t.privacidadePage.sections.dataCollected,
     t.privacidadePage.sections.dataUsage,

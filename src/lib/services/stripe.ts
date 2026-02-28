@@ -1,10 +1,10 @@
 import Stripe from "stripe";
 import { db } from "@/lib/db-turso";
-import { ACTIVATION_COST_EUR_CENTS, CONTRACT_FEE_EUR_CENTS } from "@/lib/constants";
+import { ACTIVATION_COST_EUR_CENTS, CONTRACT_FEE_EUR_CENTS, APP_NAME } from "@/lib/constants";
 import { generateId } from "@/lib/utils/id";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_stub", {
-  apiVersion: "2023-10-16",
+  apiVersion: "2023-10-16" as any,
 });
 
 export class StripeService {
@@ -32,7 +32,7 @@ export class StripeService {
     const paymentId = generateId("pay");
     await db.execute({
       sql: `INSERT INTO Payment (id, userId, type, provider, amountEurCents, tokensAmount, status, description, createdAt)
-            VALUES (?, ?, 'ACTIVATION', 'STRIPE', ?, ?, 'PENDING', 'Ativação de conta IdosoLink', datetime('now'))`,
+            VALUES (?, ?, 'ACTIVATION', 'STRIPE', ?, ?, 'PENDING', 'Ativação de conta ${APP_NAME}', datetime('now'))`,
       args: [paymentId, userId, ACTIVATION_COST_EUR_CENTS, ACTIVATION_COST_EUR_CENTS],
     });
 
@@ -48,8 +48,8 @@ export class StripeService {
             currency: "eur",
             unit_amount: ACTIVATION_COST_EUR_CENTS,
             product_data: {
-              name: "Ativação IdosoLink",
-              description: `Ativação de conta IdosoLink`,
+              name: `Ativação ${APP_NAME}`,
+              description: `Ativação de conta ${APP_NAME}`,
             },
           },
           quantity: 1,
@@ -95,7 +95,7 @@ export class StripeService {
     await db.execute({
       sql: `INSERT INTO Payment (id, userId, type, provider, amountEurCents, tokensAmount, status, description, createdAt)
             VALUES (?, ?, 'TOKEN_PURCHASE', 'STRIPE', ?, ?, 'PENDING', ?, datetime('now'))`,
-      args: [paymentId, userId, eurAmount, eurAmount, `Compra de créditos IdosoLink`],
+      args: [paymentId, userId, eurAmount, eurAmount, `Compra de créditos ${APP_NAME}`],
     });
 
     // Create Stripe checkout session
@@ -110,7 +110,7 @@ export class StripeService {
             currency: "eur",
             unit_amount: eurAmount,
             product_data: {
-              name: "Créditos IdosoLink",
+              name: `Créditos ${APP_NAME}`,
               description: `${eurAmount / 100} créditos`,
             },
           },
@@ -178,7 +178,7 @@ export class StripeService {
             currency: "eur",
             unit_amount: CONTRACT_FEE_EUR_CENTS,
             product_data: {
-              name: "Taxa de Contrato IdosoLink",
+              name: `Taxa de Contrato ${APP_NAME}`,
               description: "Taxa para criação de contrato de cuidado",
             },
           },

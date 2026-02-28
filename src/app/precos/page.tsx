@@ -101,7 +101,7 @@ export default function PricingPage() {
                     <span className="font-medium">{t.pricingPage.caregiver.contractFeePrice}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-muted-foreground">{t.pricingPage.caregiver.receive}</span>
+                    <span className="text-muted-foreground">{t.pricingPage.caregiver.commission}</span>
                     <span className="font-medium">{t.pricingPage.caregiver.commissionPrice}</span>
                   </div>
                 </div>

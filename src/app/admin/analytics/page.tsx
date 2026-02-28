@@ -131,24 +131,24 @@ export default function AdminAnalyticsPage() {
         <StatsCard
           title="Total de Usuários"
           value={data?.kpis.totalUsers || 0}
-          change={`${data?.kpis.usersGrowth > 0 ? "+" : ""}${data?.kpis.usersGrowth || 0}%`}
-          trend={data?.kpis.usersGrowth > 0 ? "up" : data?.kpis.usersGrowth < 0 ? "down" : "neutral"}
+          change={`${(data?.kpis?.usersGrowth ?? 0) > 0 ? "+" : ""}${data?.kpis?.usersGrowth || 0}%`}
+          trend={(data?.kpis?.usersGrowth ?? 0) > 0 ? "up" : (data?.kpis?.usersGrowth ?? 0) < 0 ? "down" : "neutral"}
           icon={<IconUsers className="h-5 w-5" />}
           loading={loading}
         />
         <StatsCard
           title="Receita Total"
           value={formatCurrency(data?.kpis.totalRevenue || 0)}
-          change={`${data?.kpis.revenueGrowth > 0 ? "+" : ""}${data?.kpis.revenueGrowth || 0}%`}
-          trend={data?.kpis.revenueGrowth > 0 ? "up" : data?.kpis.revenueGrowth < 0 ? "down" : "neutral"}
+          change={`${(data?.kpis?.revenueGrowth ?? 0) > 0 ? "+" : ""}${data?.kpis?.revenueGrowth || 0}%`}
+          trend={(data?.kpis?.revenueGrowth ?? 0) > 0 ? "up" : (data?.kpis?.revenueGrowth ?? 0) < 0 ? "down" : "neutral"}
           icon={<IconCreditCard className="h-5 w-5" />}
           loading={loading}
         />
         <StatsCard
           title="Contratos Ativos"
           value={data?.kpis.activeContracts || 0}
-          change={`${data?.kpis.contractsGrowth > 0 ? "+" : ""}${data?.kpis.contractsGrowth || 0}%`}
-          trend={data?.kpis.contractsGrowth > 0 ? "up" : data?.kpis.contractsGrowth < 0 ? "down" : "neutral"}
+          change={`${(data?.kpis?.contractsGrowth ?? 0) > 0 ? "+" : ""}${data?.kpis?.contractsGrowth || 0}%`}
+          trend={(data?.kpis?.contractsGrowth ?? 0) > 0 ? "up" : (data?.kpis?.contractsGrowth ?? 0) < 0 ? "down" : "neutral"}
           icon={<IconFileText className="h-5 w-5" />}
           loading={loading}
         />

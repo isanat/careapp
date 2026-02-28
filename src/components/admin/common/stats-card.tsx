@@ -14,6 +14,7 @@ interface StatsCardProps {
   description?: string;
   variant?: "default" | "success" | "warning" | "danger";
   loading?: boolean;
+  className?: string;
 }
 
 export function StatsCard({

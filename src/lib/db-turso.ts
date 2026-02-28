@@ -19,11 +19,19 @@ if (isTurso) {
     url: tursoUrl!,
     authToken: tursoToken!,
   });
+  // Enable foreign key enforcement
+  db.execute({ sql: 'PRAGMA foreign_keys = ON', args: [] }).catch(() => {
+    console.warn('[DB] PRAGMA foreign_keys not supported on this backend');
+  });
   console.log('✅ Connected to Turso database');
 } else if (hasLocalDb) {
   // Local SQLite connection (development)
   db = createClient({
     url: databaseUrl!,
+  });
+  // Enable foreign key enforcement
+  db.execute({ sql: 'PRAGMA foreign_keys = ON', args: [] }).catch(() => {
+    console.warn('[DB] PRAGMA foreign_keys not supported on this backend');
   });
   console.log('✅ Connected to local SQLite database');
 } else if (isBuildTime) {

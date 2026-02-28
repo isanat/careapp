@@ -78,7 +78,7 @@ export async function POST(
             VALUES (?, ?, 'MARK_READ', 'ADMIN_NOTIFICATION', ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
         generateId("action"),
-        adminCheck.adminUserId,
+        adminCheck.adminUserId ?? '',
         id,
         JSON.stringify({ isRead: false }),
         JSON.stringify({ isRead: true, readBy: session.user.id })
@@ -139,7 +139,7 @@ export async function DELETE(
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, createdAt)
             VALUES (?, ?, 'DELETE_NOTIFICATION', 'ADMIN_NOTIFICATION', ?, CURRENT_TIMESTAMP)`,
-      args: [generateId("action"), adminCheck.adminUserId, id]
+      args: [generateId("action"), adminCheck.adminUserId ?? '', id]
     });
 
     return NextResponse.json({

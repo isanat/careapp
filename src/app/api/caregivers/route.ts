@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
 
     let sql = `
       SELECT 
-        u.id, u.name, u.email, u.profileImage,
-        p.title, p.bio, p.city, p.services, p.hourlyRateEur, 
+        u.id, u.name, u.profileImage, u.verificationStatus,
+        p.title, p.bio, p.city, p.services, p.hourlyRateEur,
         p.averageRating, p.totalReviews, p.totalContracts, p.experienceYears
       FROM User u
       INNER JOIN ProfileCaregiver p ON u.id = p.userId
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
     const caregivers = result.rows.map(row => ({
       id: row.id,
       name: row.name,
-      email: row.email,
       profileImage: row.profileImage,
+      verificationStatus: row.verificationStatus,
       title: row.title,
       bio: row.bio,
       city: row.city,

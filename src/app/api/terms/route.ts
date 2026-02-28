@@ -63,9 +63,9 @@ export async function GET(request: NextRequest) {
       const type = row.termsType as string;
       if (!acc[type] || new Date(row.acceptedAt as string) > new Date(acc[type].acceptedAt)) {
         acc[type] = {
-          version: row.termsVersion,
-          acceptedAt: row.acceptedAt,
-          ipAddress: row.ipAddress,
+          version: String(row.termsVersion),
+          acceptedAt: String(row.acceptedAt),
+          ipAddress: String(row.ipAddress),
         };
       }
       return acc;

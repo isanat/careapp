@@ -232,7 +232,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                   {/* Service Types */}
                   {contract.serviceTypes && contract.serviceTypes.length > 0 && (
                     <div>
-                      <h4 className="text-sm font-medium mb-2">{t.search.serviceTypes || "Serviços"}</h4>
+                      <h4 className="text-sm font-medium mb-2">{"Serviços"}</h4>
                       <div className="flex flex-wrap gap-2">
                         {contract.serviceTypes.map((service, index) => (
                           <Badge key={index} variant="outline">
@@ -409,7 +409,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                       </div>
                       <Button className="w-full" asChild>
                         <Link href={`/app/contracts/${contract.id}/pay`}>
-                          {t.wallet.pay || "Pagar"} €{(contract.totalEurCents / 100).toFixed(0)}
+                          {"Pagar"} €{(contract.totalEurCents / 100).toFixed(0)}
                         </Link>
                       </Button>
                     </div>

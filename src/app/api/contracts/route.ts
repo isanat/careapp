@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
     await db.execute({
       sql: `INSERT INTO Contract (id, familyUserId, caregiverUserId, status, title, description, hourlyRateEur, totalHours, totalEurCents, startDate, endDate, serviceTypes, hoursPerWeek, createdAt) VALUES (?, ?, ?, 'DRAFT', ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
-      args: [contractId, familyUserId, caregiverUserId, title, description, hourlyRateEur || 0, totalHours || 0, totalEurCents, startDate, endDate, serviceTypes, hoursPerWeek || 0]
+      args: [contractId, familyUserId, caregiverUserId, title, description ?? '', hourlyRateEur || 0, totalHours || 0, totalEurCents, startDate ?? null, endDate ?? null, serviceTypes ?? '', hoursPerWeek || 0]
     });
 
     return NextResponse.json({ 

@@ -65,5 +65,13 @@ export const chatMessageSchema = z.object({
   chatRoomId: z.string().min(1),
   content: z.string().min(1).max(5000),
   messageType: z.enum(["text", "image", "file"]).optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+// POST /api/contact
+export const contactFormSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  subject: z.string().min(2).max(200),
+  message: z.string().min(10).max(5000),
 });
