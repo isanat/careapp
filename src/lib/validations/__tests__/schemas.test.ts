@@ -15,7 +15,7 @@ describe('registerSchema', () => {
     const result = registerSchema.safeParse({
       name: 'João Silva',
       email: 'joao@example.com',
-      password: 'securepass123',
+      password: 'SecurePass123',
       role: 'FAMILY',
     });
     expect(result.success).toBe(true);
@@ -25,7 +25,7 @@ describe('registerSchema', () => {
     const result = registerSchema.safeParse({
       name: 'João',
       email: 'not-an-email',
-      password: 'securepass123',
+      password: 'SecurePass123',
       role: 'FAMILY',
     });
     expect(result.success).toBe(false);
@@ -41,11 +41,41 @@ describe('registerSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects invalid role', () => {
+  it('rejects password without uppercase', () => {
     const result = registerSchema.safeParse({
       name: 'João',
       email: 'joao@example.com',
       password: 'securepass123',
+      role: 'FAMILY',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects password without lowercase', () => {
+    const result = registerSchema.safeParse({
+      name: 'João',
+      email: 'joao@example.com',
+      password: 'SECUREPASS123',
+      role: 'FAMILY',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects password without digit', () => {
+    const result = registerSchema.safeParse({
+      name: 'João',
+      email: 'joao@example.com',
+      password: 'SecurePassword',
+      role: 'FAMILY',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid role', () => {
+    const result = registerSchema.safeParse({
+      name: 'João',
+      email: 'joao@example.com',
+      password: 'SecurePass123',
       role: 'ADMIN',
     });
     expect(result.success).toBe(false);
@@ -55,7 +85,7 @@ describe('registerSchema', () => {
     const result = registerSchema.safeParse({
       name: 'J',
       email: 'joao@example.com',
-      password: 'securepass123',
+      password: 'SecurePass123',
       role: 'CAREGIVER',
     });
     expect(result.success).toBe(false);
@@ -79,7 +109,7 @@ describe('resetPasswordSchema', () => {
     const result = resetPasswordSchema.safeParse({
       token: 'abc123',
       email: 'test@example.com',
-      password: 'newpassword123',
+      password: 'NewPassword123',
     });
     expect(result.success).toBe(true);
   });
@@ -88,7 +118,7 @@ describe('resetPasswordSchema', () => {
     const result = resetPasswordSchema.safeParse({
       token: '',
       email: 'test@example.com',
-      password: 'newpassword123',
+      password: 'NewPassword123',
     });
     expect(result.success).toBe(false);
   });

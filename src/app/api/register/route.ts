@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db-turso";
 import { generateId } from "@/lib/utils/id";
 import { registerSchema } from "@/lib/validations/schemas";
+import { verifyTurnstileToken } from "@/lib/services/turnstile";
 import { ethers } from "ethers";
 import CryptoJS from "crypto-js";
 
@@ -50,6 +51,16 @@ export async function POST(request: NextRequest) {
                       request.headers.get('x-real-ip') ||
                       'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
+
+    // Verify Turnstile CAPTCHA (skipped if not configured)
+    const turnstileToken = body.turnstileToken as string | undefined;
+    const turnstileValid = await verifyTurnstileToken(turnstileToken, ipAddress);
+    if (!turnstileValid) {
+      return NextResponse.json(
+        { error: "CAPTCHA verification failed. Please try again." },
+        { status: 400 }
+      );
+    }
 
     // Validate terms acceptance (required for legal protection)
     if (!acceptTerms) {
