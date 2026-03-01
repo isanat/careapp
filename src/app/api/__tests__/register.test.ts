@@ -56,7 +56,7 @@ describe('POST /api/register', () => {
   const validBody = {
     name: 'Maria Silva',
     email: 'maria@example.com',
-    password: 'securepass123',
+    password: 'SecurePass123',
     role: 'FAMILY',
     acceptTerms: true,
   };

@@ -1,11 +1,20 @@
 import { z } from "zod";
 
+// Reusable strong password validator
+const strongPassword = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .max(128, "Password must be at most 128 characters")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[0-9]/, "Password must contain at least one digit");
+
 // POST /api/register
 export const registerSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
   phone: z.string().optional(),
-  password: z.string().min(8).max(128),
+  password: strongPassword,
   role: z.enum(["FAMILY", "CAREGIVER"]),
   acceptTerms: z.boolean().optional(),
 });
@@ -19,7 +28,7 @@ export const forgotPasswordSchema = z.object({
 export const resetPasswordSchema = z.object({
   token: z.string().min(1),
   email: z.string().email(),
-  password: z.string().min(8).max(128),
+  password: strongPassword,
 });
 
 // POST /api/contracts

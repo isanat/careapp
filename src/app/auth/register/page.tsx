@@ -29,6 +29,7 @@ import {
 import { APP_NAME, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { TermsAcceptance } from "@/components/terms/terms-acceptance";
+import { Turnstile } from "@/components/ui/turnstile";
 
 function RegisterPageContent() {
   const router = useRouter();
@@ -53,6 +54,7 @@ function RegisterPageContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -100,6 +102,7 @@ function RegisterPageContent() {
           password: formData.password,
           role,
           acceptTerms,
+          turnstileToken,
         }),
       });
 
@@ -346,11 +349,14 @@ function RegisterPageContent() {
               </div>
 
               {/* Terms Acceptance Component */}
-              <TermsAcceptance 
-                acceptTerms={acceptTerms} 
+              <TermsAcceptance
+                acceptTerms={acceptTerms}
                 onAcceptChange={setAcceptTerms}
                 showDetailed={false}
               />
+
+              {/* CAPTCHA (renders only when NEXT_PUBLIC_TURNSTILE_SITE_KEY is set) */}
+              <Turnstile onVerify={setTurnstileToken} />
 
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? t.loading : t.auth.register}
