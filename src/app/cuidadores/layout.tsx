@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import { PublicLayout } from "@/components/layout/public-layout";
+
+export const metadata: Metadata = {
+  title: "Para Cuidadores",
+  description: "Junte-se à plataforma Senior Care como cuidador. Encontre famílias, receba pagamentos seguros e construa a sua reputação.",
+};
 
 export default function Layout({
   children,

@@ -12,3 +12,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /app/
+
+Sitemap: https://seniorcare.app/sitemap.xml
