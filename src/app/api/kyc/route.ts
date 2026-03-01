@@ -135,8 +135,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare callback URL for webhook - use production URL
-    const webhookUrl = `https://careapp-pied.vercel.app/api/kyc/webhook`;
+    // Prepare callback URL for webhook
+    const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://careapp-pied.vercel.app'}/api/kyc/webhook`;
 
     console.log('KYC POST - Creating Didit session...');
 

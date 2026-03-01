@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         p.averageRating, p.totalReviews, p.totalContracts, p.experienceYears
       FROM User u
       INNER JOIN ProfileCaregiver p ON u.id = p.userId
-      WHERE u.role = 'CAREGIVER' AND u.status = 'ACTIVE'
+      WHERE u.role = 'CAREGIVER' AND u.status = 'ACTIVE' AND u.verificationStatus = 'VERIFIED'
     `;
     
     const args: string[] = [];

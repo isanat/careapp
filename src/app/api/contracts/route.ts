@@ -86,6 +86,34 @@ export async function POST(request: NextRequest) {
     const { caregiverUserId, title, description, hourlyRateEur, totalHours, startDate, endDate, serviceTypes, hoursPerWeek } = parsed.data;
 
     const familyUserId = session.user.id;
+
+    // Verify both parties have completed KYC
+    const kycCheck = await db.execute({
+      sql: `SELECT id, verificationStatus, role FROM User WHERE id IN (?, ?)`,
+      args: [familyUserId, caregiverUserId]
+    });
+
+    const familyUser = kycCheck.rows.find(r => r.id === familyUserId);
+    const caregiverUser = kycCheck.rows.find(r => r.id === caregiverUserId);
+
+    if (!caregiverUser) {
+      return NextResponse.json({ error: 'Cuidador não encontrado' }, { status: 404 });
+    }
+
+    if (familyUser?.verificationStatus !== 'VERIFIED') {
+      return NextResponse.json(
+        { error: 'Verificação KYC necessária antes de criar contrato', code: 'KYC_REQUIRED' },
+        { status: 403 }
+      );
+    }
+
+    if (caregiverUser.verificationStatus !== 'VERIFIED') {
+      return NextResponse.json(
+        { error: 'O cuidador ainda não completou a verificação KYC', code: 'CAREGIVER_KYC_PENDING' },
+        { status: 403 }
+      );
+    }
+
     const contractId = generateId("ctr");
     const totalEurCents = (hourlyRateEur || 0) * (totalHours || 0);
 
