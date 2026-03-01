@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
@@ -57,6 +57,14 @@ interface UsersResponse {
 }
 
 export default function AdminFamiliesPage() {
+  return (
+    <Suspense>
+      <AdminFamiliesContent />
+    </Suspense>
+  );
+}
+
+function AdminFamiliesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
