@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,14 @@ import { IconLogo, IconAlert, IconCheck } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPasswordContent />
+    </Suspense>
+  );
+}
+
+function ResetPasswordContent() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";

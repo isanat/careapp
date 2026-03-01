@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
@@ -100,6 +100,14 @@ interface ContractDetails {
 }
 
 export default function AdminContractDetailPage() {
+  return (
+    <Suspense>
+      <AdminContractDetailContent />
+    </Suspense>
+  );
+}
+
+function AdminContractDetailContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
