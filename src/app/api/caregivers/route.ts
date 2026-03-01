@@ -57,7 +57,9 @@ export async function GET(request: NextRequest) {
       experienceYears: Number(row.experienceYears) || 0,
     }));
 
-    return NextResponse.json({ caregivers });
+    const response = NextResponse.json({ caregivers });
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    return response;
   } catch (error) {
     console.error('Error fetching caregivers:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
