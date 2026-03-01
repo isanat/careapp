@@ -130,7 +130,15 @@ describe('POST /api/contracts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetServerSession.mockResolvedValue(familySession);
-    mockDb.execute.mockResolvedValue({ rows: [] });
+    // Mock: 1) KYC check (both verified), 2) INSERT contract
+    mockDb.execute
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 'family-user-1', verificationStatus: 'VERIFIED', role: 'FAMILY' },
+          { id: 'caregiver-1', verificationStatus: 'VERIFIED', role: 'CAREGIVER' },
+        ],
+      })
+      .mockResolvedValueOnce({ rows: [] });
   });
 
   const validBody = {
@@ -159,7 +167,8 @@ describe('POST /api/contracts', () => {
   it('stores contract with DRAFT status', async () => {
     await POST(createPostRequest(validBody));
 
-    const sql = mockDb.execute.mock.calls[0][0].sql;
+    // calls[0] = KYC check, calls[1] = INSERT
+    const sql = mockDb.execute.mock.calls[1][0].sql;
     expect(sql).toContain("'DRAFT'");
     expect(sql).toContain('INSERT INTO Contract');
   });
@@ -167,7 +176,8 @@ describe('POST /api/contracts', () => {
   it('calculates totalEurCents correctly', async () => {
     await POST(createPostRequest(validBody));
 
-    const args = mockDb.execute.mock.calls[0][0].args;
+    // calls[0] = KYC check, calls[1] = INSERT
+    const args = mockDb.execute.mock.calls[1][0].args;
     // totalEurCents = hourlyRateEur * totalHours = 1500 * 40 = 60000
     expect(args).toContain(60000);
   });
