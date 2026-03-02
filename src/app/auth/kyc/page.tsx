@@ -53,11 +53,9 @@ function KycPageContent() {
 
   const isCaregiver = session?.user?.role === "CAREGIVER";
 
-  // Check authentication and role
+  // Check role
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    } else if (status === "authenticated" && !isCaregiver) {
+    if (status === "authenticated" && !isCaregiver) {
       // Only caregivers can access KYC
       router.push("/app/dashboard?message=kyc_caregiver_only");
     }

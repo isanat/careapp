@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-turso";
+import { requireAdmin } from "@/lib/api/auth";
 import { db } from "@/lib/db-turso";
 
 // GET - Get single ticket details with messages
@@ -9,11 +8,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const { id } = await params;
     const ticketId = id;
@@ -93,11 +89,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const { id } = await params;
     const ticketId = id;
@@ -118,7 +112,7 @@ export async function PATCH(
         updates.push("resolvedAt = ?");
         updates.push("resolvedById = ?");
         args.push(now);
-        args.push(session.user.id);
+        args.push(adminUserId);
       }
     }
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,7 +54,6 @@ const statusColors: Record<string, string> = {
 
 export default function ContractsPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -84,11 +82,6 @@ export default function ContractsPage() {
       setIsLoading(false);
     }
   };
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
 
   const isFamily = session?.user?.role === "FAMILY";
 

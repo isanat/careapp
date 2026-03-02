@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
 import { adminSettingsSchema } from '@/lib/validations/schemas';
@@ -8,10 +7,8 @@ import { adminSettingsSchema } from '@/lib/validations/schemas';
 // GET - Platform settings
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const result = await db.execute({
       sql: `SELECT * FROM PlatformSettings LIMIT 1`,
@@ -47,15 +44,9 @@ export async function GET(request: NextRequest) {
 // PATCH - Update settings
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Verify admin role
-    if (session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const body = await request.json();
     const parsed = adminSettingsSchema.safeParse(body);
@@ -117,7 +108,7 @@ export async function PATCH(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, newValue, createdAt)
         VALUES (?, ?, 'UPDATE_SETTINGS', 'PLATFORM', ?, ?)`,
-      args: [generateId("action"), session.user.id, JSON.stringify(body), new Date().toISOString()]
+      args: [generateId("action"), adminUserId, JSON.stringify(body), new Date().toISOString()]
     });
 
     return NextResponse.json({ success: true });

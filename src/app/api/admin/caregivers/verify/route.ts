@@ -1,27 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
 
 // POST - Verify/Reject caregiver KYC
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check admin permission
-    const adminCheck = await db.execute({
-      sql: `SELECT role FROM User WHERE id = ?`,
-      args: [session.user.id]
-    });
-    
-    const userRole = adminCheck.rows[0]?.role as string | undefined;
-    if (!userRole || !['ADMIN', 'SUPER_ADMIN'].includes(userRole)) {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { session, adminUserId } = auth;
 
     const body = await request.json();
     const { caregiverId, action, reason } = body;
@@ -48,7 +35,7 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, reason, createdAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [generateId("action"), session.user.id, action === 'verify' ? 'VERIFY_KYC' : 'REJECT_KYC', 'CAREGIVER', caregiverId, reason || null, now]
+      args: [generateId("action"), adminUserId, action === 'verify' ? 'VERIFY_KYC' : 'REJECT_KYC', 'CAREGIVER', caregiverId, reason || null, now]
     });
 
     return NextResponse.json({ success: true, action, caregiverId, newStatus });

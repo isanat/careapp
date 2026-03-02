@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,7 +42,6 @@ interface Caregiver {
 
 export default function SearchPage() {
   const { status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,11 +106,6 @@ export default function SearchPage() {
 
     return results;
   }, [caregivers, searchTerm, maxPrice, selectedService, sortBy]);
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
 
   return (
     <AppShell>

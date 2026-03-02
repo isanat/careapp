@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 
 // GET - Get contract timeline
@@ -9,19 +8,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const adminCheck = await db.execute({
-      sql: `SELECT role FROM User WHERE id = ?`,
-      args: [session.user.id]
-    });
-    
-    if (adminCheck.rows[0]?.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const { id } = await params;
 

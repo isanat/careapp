@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,19 +31,12 @@ interface KycStatus {
 
 export default function VerifyPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
 
   const [kycStatus, setKycStatus] = useState<KycStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    }
-  }, [status, router]);
 
   useEffect(() => {
     if (status === "authenticated") {

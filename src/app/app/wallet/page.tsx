@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,6 @@ interface Transaction {
 
 export default function WalletPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -45,7 +44,6 @@ export default function WalletPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (status === "unauthenticated") router.push("/auth/login");
     if (status === "authenticated") fetchWallet();
   }, [status]);
 

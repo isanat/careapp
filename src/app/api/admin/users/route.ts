@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-turso";
+import { requireAdmin } from "@/lib/api/auth";
 import { db } from "@/lib/db-turso";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
@@ -8,11 +7,9 @@ import bcrypt from "bcryptjs";
 // GET - List users with pagination and filters
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
@@ -120,11 +117,9 @@ export async function GET(request: NextRequest) {
 // POST - Create new user
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const body = await request.json();
     const { 
@@ -180,9 +175,9 @@ export async function POST(request: NextRequest) {
     // Get admin profile for logging
     const adminProfileResult = await db.execute({
       sql: `SELECT id FROM AdminUser WHERE userId = ?`,
-      args: [session.user.id],
+      args: [adminUserId],
     });
-    const adminUserId = adminProfileResult.rows[0]?.id as string | null;
+    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     // Get IP and user agent
     const ipAddress = request.headers.get("x-forwarded-for") || 
@@ -246,15 +241,15 @@ export async function POST(request: NextRequest) {
     });
 
     // Log action to AdminAction table
-    if (adminUserId) {
+    if (adminProfileId) {
       await db.execute({
         sql: `INSERT INTO AdminAction (
-          id, adminUserId, action, entityType, entityId, 
+          id, adminUserId, action, entityType, entityId,
           oldValue, newValue, ipAddress, userAgent, reason, createdAt
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
         args: [
           randomUUID(),
-          adminUserId,
+          adminProfileId,
           "CREATE",
           "USER",
           userId,
@@ -274,7 +269,7 @@ export async function POST(request: NextRequest) {
       // Update lastAdminActionAt
       await db.execute({
         sql: `UPDATE AdminUser SET lastAdminActionAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [adminUserId],
+        args: [adminProfileId],
       });
     }
 

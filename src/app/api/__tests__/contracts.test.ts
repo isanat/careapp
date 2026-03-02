@@ -204,4 +204,51 @@ describe('POST /api/contracts', () => {
     expect(res.status).toBe(200);
     expect(data.success).toBe(true);
   });
+
+  it('blocks contract when family KYC not verified', async () => {
+    mockDb.execute.mockReset();
+    mockDb.execute.mockResolvedValueOnce({
+      rows: [
+        { id: 'family-user-1', verificationStatus: 'UNVERIFIED', role: 'FAMILY' },
+        { id: 'caregiver-1', verificationStatus: 'VERIFIED', role: 'CAREGIVER' },
+      ],
+    });
+
+    const res = await POST(createPostRequest(validBody));
+    const data = await res.json();
+
+    expect(res.status).toBe(403);
+    expect(data.code).toBe('KYC_REQUIRED');
+  });
+
+  it('blocks contract when caregiver KYC not verified', async () => {
+    mockDb.execute.mockReset();
+    mockDb.execute.mockResolvedValueOnce({
+      rows: [
+        { id: 'family-user-1', verificationStatus: 'VERIFIED', role: 'FAMILY' },
+        { id: 'caregiver-1', verificationStatus: 'PENDING', role: 'CAREGIVER' },
+      ],
+    });
+
+    const res = await POST(createPostRequest(validBody));
+    const data = await res.json();
+
+    expect(res.status).toBe(403);
+    expect(data.code).toBe('CAREGIVER_KYC_PENDING');
+  });
+
+  it('blocks contract when caregiver not found', async () => {
+    mockDb.execute.mockReset();
+    mockDb.execute.mockResolvedValueOnce({
+      rows: [
+        { id: 'family-user-1', verificationStatus: 'VERIFIED', role: 'FAMILY' },
+      ],
+    });
+
+    const res = await POST(createPostRequest(validBody));
+    const data = await res.json();
+
+    expect(res.status).toBe(404);
+    expect(data.error).toContain('não encontrado');
+  });
 });

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 
 // GET - Get escrow details
@@ -9,25 +8,14 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const adminCheck = await db.execute({
-      sql: `SELECT role FROM User WHERE id = ?`,
-      args: [session.user.id]
-    });
-    
-    if (adminCheck.rows[0]?.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const { id } = await params;
 
     const escrow = await db.execute({
       sql: `
-        SELECT e.*, 
+        SELECT e.*,
           c.title as contractTitle, c.status as contractStatus,
           c.familyUserId, c.caregiverUserId,
           uf.name as familyName, uf.email as familyEmail,
@@ -58,19 +46,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const adminCheck = await db.execute({
-      sql: `SELECT role FROM User WHERE id = ?`,
-      args: [session.user.id]
-    });
-    
-    if (adminCheck.rows[0]?.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const { id } = await params;
     const body = await request.json();
@@ -102,7 +80,7 @@ export async function POST(
     await db.execute({
       sql: `INSERT INTO AdminAction (adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
             VALUES (?, 'RELEASE_ESCROW', 'ESCROW', ?, '{"status": "HELD"}', '{"status": "RELEASED"}', ?, ?, CURRENT_TIMESTAMP)`,
-      args: [session.user.id, id, reason, request.headers.get('x-forwarded-for') || 'unknown']
+      args: [adminUserId, id, reason, request.headers.get('x-forwarded-for') || 'unknown']
     });
 
     return NextResponse.json({
