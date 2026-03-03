@@ -93,6 +93,39 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // Activate contract if contract fee payment
+      if (paymentType === 'CONTRACT_FEE' && metadata.contractId) {
+        const contractId = metadata.contractId;
+
+        // Mark family fee as paid
+        await db.execute({
+          sql: `UPDATE Contract SET familyFeePaid = 1, updatedAt = ? WHERE id = ?`,
+          args: [now, contractId]
+        });
+
+        // Check if both parties have paid — if so, activate the contract
+        const contractResult = await db.execute({
+          sql: `SELECT familyFeePaid, caregiverFeePaid FROM Contract WHERE id = ?`,
+          args: [contractId]
+        });
+
+        if (contractResult.rows.length > 0) {
+          const contract = contractResult.rows[0];
+          const familyPaid = Number(contract.familyFeePaid) === 1;
+          const caregiverPaid = Number(contract.caregiverFeePaid) === 1;
+
+          if (familyPaid && caregiverPaid) {
+            await db.execute({
+              sql: `UPDATE Contract SET status = 'ACTIVE', activatedAt = ?, updatedAt = ? WHERE id = ?`,
+              args: [now, now, contractId]
+            });
+            console.log(`Contract ${contractId} activated — both fees paid`);
+          } else {
+            console.log(`Contract ${contractId} fee paid by family. Waiting for caregiver fee.`);
+          }
+        }
+      }
+
       // Create notification
       await db.execute({
         sql: `INSERT INTO Notification (id, userId, type, title, message, createdAt)

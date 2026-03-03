@@ -10,9 +10,13 @@
  */
 
 // API URLs
-const EASYPAY_API_URL = process.env.EASYPAY_ENV === 'production'
-  ? 'https://api.easypay.pt/2.0'
-  : 'https://api.test.easypay.pt/2.0';
+// Use EASYPAY_SANDBOX env var to switch between sandbox and production.
+// Sandbox is enabled by default (EASYPAY_SANDBOX=true or unset).
+// Set EASYPAY_SANDBOX=false for production.
+const EASYPAY_SANDBOX = process.env.EASYPAY_SANDBOX !== 'false';
+const EASYPAY_API_URL = EASYPAY_SANDBOX
+  ? 'https://api.test.easypay.pt/2.0'
+  : 'https://api.prod.easypay.pt/2.0';
 
 // Types
 export interface EasypayConfig {

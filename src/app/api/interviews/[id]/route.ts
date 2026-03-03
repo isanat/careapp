@@ -123,6 +123,9 @@ export async function PATCH(
       }
     }
 
+    // Track newly created contract ID for the response
+    let newContractId: string | null = null;
+
     // Handle questionnaire submission (family only)
     if (questionnaire && interview.familyUserId === session.user.id) {
       const validation = validateQuestionnaire(questionnaire);
@@ -134,9 +137,9 @@ export async function PATCH(
       }
 
       const questionnaireJson = formatQuestionnaireJson(questionnaire);
-      
+
       await db.execute({
-        sql: `UPDATE Interview 
+        sql: `UPDATE Interview
               SET questionnaireJson = ?, familyCompletedAt = ?, updatedAt = ?
               WHERE id = ?`,
         args: [questionnaireJson, new Date().toISOString(), new Date().toISOString(), id]
@@ -144,14 +147,14 @@ export async function PATCH(
 
       // If family wants to proceed and there's a contract, update acceptance
       if (questionnaire.proceedWithContract && interview.contractId) {
-        const ip = request.headers.get("x-forwarded-for") || 
-                   request.headers.get("x-real-ip") || 
+        const ip = request.headers.get("x-forwarded-for") ||
+                   request.headers.get("x-real-ip") ||
                    "unknown";
         const userAgent = request.headers.get("user-agent") || "unknown";
 
         // Record contract acceptance with IP and timestamp
         await db.execute({
-          sql: `INSERT OR REPLACE INTO ContractAcceptance 
+          sql: `INSERT OR REPLACE INTO ContractAcceptance
                 (id, contractId, acceptedByFamilyAt, familyIpAddress, familyUserAgent, createdAt)
                 VALUES (?, ?, ?, ?, ?, ?)`,
           args: [
@@ -186,9 +189,51 @@ export async function PATCH(
           ]
         });
       }
+
+      // If family wants to proceed but there's NO existing contract, auto-create a DRAFT contract
+      if (questionnaire.proceedWithContract && !interview.contractId) {
+        newContractId = crypto.randomUUID();
+        const now = new Date().toISOString();
+
+        // Create a DRAFT contract with the family and caregiver from the interview
+        await db.execute({
+          sql: `INSERT INTO Contract (id, familyUserId, caregiverUserId, status, title, description, hourlyRateEur, totalHours, totalEurCents, createdAt)
+                VALUES (?, ?, ?, 'DRAFT', ?, ?, 0, 0, 0, ?)`,
+          args: [
+            newContractId,
+            interview.familyUserId,
+            interview.caregiverUserId,
+            `Contrato - Entrevista ${id}`,
+            "Contrato criado automaticamente apos entrevista.",
+            now
+          ]
+        });
+
+        // Update the interview with the new contractId
+        await db.execute({
+          sql: `UPDATE Interview SET contractId = ?, updatedAt = ? WHERE id = ?`,
+          args: [newContractId, now, id]
+        });
+
+        // Notify the caregiver about the new draft contract
+        await db.execute({
+          sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [
+            crypto.randomUUID(),
+            interview.caregiverUserId,
+            "contract",
+            "Novo Contrato Criado",
+            "A familia completou a entrevista e deseja prosseguir. Um rascunho de contrato foi criado.",
+            "contract",
+            newContractId,
+            now
+          ]
+        });
+      }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, ...(newContractId ? { contractId: newContractId } : {}) });
   } catch (error) {
     console.error("Error updating interview:", error);
     return NextResponse.json({ error: "Failed to update interview" }, { status: 500 });
