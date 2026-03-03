@@ -183,11 +183,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     }
   };
 
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
-
   if (isLoading) {
     return (
       <AppShell>

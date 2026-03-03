@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 
 // GET - Admin notifications
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
     const unreadOnly = searchParams.get('unread') === 'true';
@@ -41,10 +38,9 @@ export async function GET(request: NextRequest) {
 // PATCH - Mark as read
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const body = await request.json();
     const { notificationId, markAllRead } = body;
@@ -52,12 +48,12 @@ export async function PATCH(request: NextRequest) {
     if (markAllRead) {
       await db.execute({
         sql: `UPDATE AdminNotification SET isRead = 1, readAt = ?, readBy = ? WHERE isRead = 0`,
-        args: [new Date().toISOString(), session.user.id]
+        args: [new Date().toISOString(), adminUserId]
       });
     } else if (notificationId) {
       await db.execute({
         sql: `UPDATE AdminNotification SET isRead = 1, readAt = ?, readBy = ? WHERE id = ?`,
-        args: [new Date().toISOString(), session.user.id, notificationId]
+        args: [new Date().toISOString(), adminUserId, notificationId]
       });
     }
 

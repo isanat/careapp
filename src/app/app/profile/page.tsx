@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -112,7 +112,6 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const { data: session, status, update } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported, pushError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -345,11 +344,6 @@ export default function ProfilePage() {
       setUploadingPhoto(false);
     }
   };
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
 
   if (status === "loading" || isLoading) {
     return (

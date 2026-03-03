@@ -1,36 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
-
-// Helper function to verify admin access
-async function verifyAdminAccess(sessionUserId: string): Promise<{ authorized: boolean; adminUserId?: string; role?: string; error?: string }> {
-  const userResult = await db.execute({
-    sql: `SELECT role FROM User WHERE id = ?`,
-    args: [sessionUserId]
-  });
-
-  const userRole = userResult.rows[0]?.role as string;
-  if (!['ADMIN', 'SUPER_ADMIN', 'SUPPORT'].includes(userRole)) {
-    return { authorized: false, error: 'Forbidden - Admin access required' };
-  }
-
-  const adminResult = await db.execute({
-    sql: `SELECT id, role FROM AdminUser WHERE userId = ? AND isActive = 1`,
-    args: [sessionUserId]
-  });
-
-  if (adminResult.rows.length === 0) {
-    return { authorized: true, adminUserId: sessionUserId, role: userRole };
-  }
-
-  return { 
-    authorized: true, 
-    adminUserId: adminResult.rows[0].id as string,
-    role: adminResult.rows[0].role as string 
-  };
-}
 
 // POST - Mark single notification as read
 export async function POST(
@@ -38,17 +9,18 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const adminCheck = await verifyAdminAccess(session.user.id);
-    if (!adminCheck.authorized) {
-      return NextResponse.json({ error: adminCheck.error }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const { id } = await params;
+
+    // Get admin profile for logging
+    const adminProfileResult = await db.execute({
+      sql: `SELECT id FROM AdminUser WHERE userId = ? AND isActive = 1`,
+      args: [adminUserId]
+    });
+    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     // Check if notification exists
     const notificationResult = await db.execute({
@@ -60,16 +32,14 @@ export async function POST(
       return NextResponse.json({ error: 'Notification not found' }, { status: 404 });
     }
 
-    const notification = notificationResult.rows[0];
-
     // Mark as read
     await db.execute({
-      sql: `UPDATE AdminNotification 
-            SET isRead = 1, 
-                readAt = CURRENT_TIMESTAMP, 
-                readBy = ? 
+      sql: `UPDATE AdminNotification
+            SET isRead = 1,
+                readAt = CURRENT_TIMESTAMP,
+                readBy = ?
             WHERE id = ?`,
-      args: [session.user.id, id]
+      args: [adminUserId, id]
     });
 
     // Log action
@@ -78,10 +48,10 @@ export async function POST(
             VALUES (?, ?, 'MARK_READ', 'ADMIN_NOTIFICATION', ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
         generateId("action"),
-        adminCheck.adminUserId ?? '',
+        adminProfileId ?? '',
         id,
         JSON.stringify({ isRead: false }),
-        JSON.stringify({ isRead: true, readBy: session.user.id })
+        JSON.stringify({ isRead: true, readBy: adminUserId })
       ]
     });
 
@@ -92,7 +62,7 @@ export async function POST(
         id,
         isRead: true,
         readAt: new Date().toISOString(),
-        readBy: session.user.id,
+        readBy: adminUserId,
       },
     });
   } catch (error) {
@@ -107,15 +77,16 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
-    const adminCheck = await verifyAdminAccess(session.user.id);
-    if (!adminCheck.authorized) {
-      return NextResponse.json({ error: adminCheck.error }, { status: 403 });
-    }
+    // Get admin profile for logging
+    const adminProfileResult = await db.execute({
+      sql: `SELECT id FROM AdminUser WHERE userId = ? AND isActive = 1`,
+      args: [adminUserId]
+    });
+    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     const { id } = await params;
 
@@ -139,7 +110,7 @@ export async function DELETE(
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, createdAt)
             VALUES (?, ?, 'DELETE_NOTIFICATION', 'ADMIN_NOTIFICATION', ?, CURRENT_TIMESTAMP)`,
-      args: [generateId("action"), adminCheck.adminUserId ?? '', id]
+      args: [generateId("action"), adminProfileId ?? '', id]
     });
 
     return NextResponse.json({

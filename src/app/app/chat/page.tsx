@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { io, Socket } from "socket.io-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,7 +51,6 @@ interface Conversation {
 
 export default function ChatPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -211,11 +209,6 @@ export default function ChatPage() {
       handleSend();
     }
   };
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
 
   return (
     <AppShell>

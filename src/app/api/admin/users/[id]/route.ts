@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-turso";
+import { requireAdmin } from "@/lib/api/auth";
 import { db } from "@/lib/db-turso";
 import { randomUUID } from "crypto";
 
@@ -9,11 +8,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const { id } = await params;
 
@@ -223,11 +219,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const { id } = await params;
     const body = await request.json();
@@ -313,11 +307,11 @@ export async function PATCH(
     // Log action to AdminAction table
     const adminProfileResult = await db.execute({
       sql: `SELECT id FROM AdminUser WHERE userId = ?`,
-      args: [session.user.id],
+      args: [adminUserId],
     });
-    const adminUserId = adminProfileResult.rows[0]?.id as string | null;
+    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
-    if (adminUserId) {
+    if (adminProfileId) {
       const ipAddress = request.headers.get("x-forwarded-for") || 
                         request.headers.get("x-real-ip") || 
                         "unknown";
@@ -330,7 +324,7 @@ export async function PATCH(
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
         args: [
           randomUUID(),
-          adminUserId,
+          adminProfileId,
           "UPDATE",
           "USER",
           id,
@@ -354,7 +348,7 @@ export async function PATCH(
 
       await db.execute({
         sql: `UPDATE AdminUser SET lastAdminActionAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [adminUserId],
+        args: [adminProfileId],
       });
     }
 
@@ -387,11 +381,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId, session } = auth;
 
     const { id } = await params;
 
@@ -408,7 +400,7 @@ export async function DELETE(
 
     // Get current user state
     const userResult = await db.execute({
-      sql: `SELECT 
+      sql: `SELECT
         u.id, u.name, u.email, u.phone, u.role, u.status,
         w.balanceTokens as walletBalance
       FROM User u
@@ -433,7 +425,7 @@ export async function DELETE(
 
     // Check for active contracts
     const activeContractsResult = await db.execute({
-      sql: `SELECT COUNT(*) as count FROM Contract 
+      sql: `SELECT COUNT(*) as count FROM Contract
             WHERE (familyUserId = ? OR caregiverUserId = ?)
             AND status IN ('ACTIVE', 'PENDING_ACCEPTANCE', 'PENDING_PAYMENT')`,
       args: [id, id],
@@ -450,38 +442,38 @@ export async function DELETE(
     // Get admin profile for logging
     const adminProfileResult = await db.execute({
       sql: `SELECT id FROM AdminUser WHERE userId = ?`,
-      args: [session.user.id],
+      args: [adminUserId],
     });
-    const adminUserId = adminProfileResult.rows[0]?.id as string | null;
+    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     // Get IP and user agent
-    const ipAddress = request.headers.get("x-forwarded-for") || 
-                      request.headers.get("x-real-ip") || 
+    const ipAddress = request.headers.get("x-forwarded-for") ||
+                      request.headers.get("x-real-ip") ||
                       "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Soft delete - set status to INACTIVE and anonymize some data
     await db.execute({
-      sql: `UPDATE User SET 
-        status = 'INACTIVE', 
+      sql: `UPDATE User SET
+        status = 'INACTIVE',
         email = 'deleted_' || id || '@deleted.idosolink.pt',
         phone = NULL,
         passwordHash = NULL,
-        updatedAt = CURRENT_TIMESTAMP 
+        updatedAt = CURRENT_TIMESTAMP
       WHERE id = ?`,
       args: [id],
     });
 
     // Log action to AdminAction table
-    if (adminUserId) {
+    if (adminProfileId) {
       await db.execute({
         sql: `INSERT INTO AdminAction (
-          id, adminUserId, action, entityType, entityId, 
+          id, adminUserId, action, entityType, entityId,
           oldValue, newValue, ipAddress, userAgent, reason, createdAt
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
         args: [
           randomUUID(),
-          adminUserId,
+          adminProfileId,
           "DELETE",
           "USER",
           id,
@@ -506,7 +498,7 @@ export async function DELETE(
       // Update lastAdminActionAt
       await db.execute({
         sql: `UPDATE AdminUser SET lastAdminActionAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [adminUserId],
+        args: [adminProfileId],
       });
     }
 

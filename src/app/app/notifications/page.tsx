@@ -93,11 +93,6 @@ export default function NotificationsPage() {
     }
   };
 
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
-
   return (
     <AppShell>
       <div className="space-y-4">

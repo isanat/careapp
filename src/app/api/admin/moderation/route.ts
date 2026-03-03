@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
 
 // GET - Moderation queue
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || 'PENDING';
@@ -68,10 +65,9 @@ export async function GET(request: NextRequest) {
 // POST - Moderate content
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const body = await request.json();
     const { type, entityId, action, reason } = body;
@@ -92,14 +88,14 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO ModerationQueue (id, entityType, entityId, status, reviewedBy, action, notes, createdAt)
         VALUES (?, ?, ?, 'REVIEWED', ?, ?, ?, ?)`,
-      args: [generateId("mod"), type, entityId, session.user.id, action, reason, now]
+      args: [generateId("mod"), type, entityId, adminUserId, action, reason, now]
     });
 
     // Log admin action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, reason, createdAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [generateId("action"), session.user.id, `MODERATE_${action}`, type, entityId, reason, now]
+      args: [generateId("action"), adminUserId, `MODERATE_${action}`, type, entityId, reason, now]
     });
 
     return NextResponse.json({ success: true, type, entityId, action });

@@ -1,48 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
-
-// Helper function to verify admin access
-async function verifyAdminAccess(sessionUserId: string): Promise<{ authorized: boolean; adminUserId?: string; role?: string; error?: string }> {
-  const userResult = await db.execute({
-    sql: `SELECT role FROM User WHERE id = ?`,
-    args: [sessionUserId]
-  });
-
-  const userRole = userResult.rows[0]?.role as string;
-  if (!['ADMIN', 'SUPER_ADMIN', 'ANALYST'].includes(userRole)) {
-    return { authorized: false, error: 'Forbidden - Admin access required' };
-  }
-
-  const adminResult = await db.execute({
-    sql: `SELECT id, role FROM AdminUser WHERE userId = ? AND isActive = 1`,
-    args: [sessionUserId]
-  });
-
-  if (adminResult.rows.length === 0) {
-    return { authorized: true, adminUserId: sessionUserId, role: userRole };
-  }
-
-  return { 
-    authorized: true, 
-    adminUserId: adminResult.rows[0].id as string,
-    role: adminResult.rows[0].role as string 
-  };
-}
 
 // GET - Revenue analytics and charts
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const adminCheck = await verifyAdminAccess(session.user.id);
-    if (!adminCheck.authorized) {
-      return NextResponse.json({ error: adminCheck.error }, { status: 403 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { session, adminUserId } = auth;
 
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || '30d';

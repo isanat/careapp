@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState, ComponentType } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -50,16 +49,11 @@ interface UserStatus {
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
   const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (status === "unauthenticated") router.push("/auth/login");
-  }, [status, router]);
 
   useEffect(() => {
     if (status === "authenticated") fetchStats();

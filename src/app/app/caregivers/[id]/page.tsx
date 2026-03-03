@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -83,12 +83,6 @@ const mockCaregiver = {
 export default function CaregiverProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { status } = useSession();
-  const router = useRouter();
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
 
   const caregiver = mockCaregiver; // In real app, fetch from API
 

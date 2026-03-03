@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -77,7 +76,6 @@ const statusColors: Record<string, string> = {
 export default function ContractDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { data: session, status } = useSession();
-  const router = useRouter();
   const { t } = useI18n();
   
   const [contract, setContract] = useState<ContractDetails | null>(null);
@@ -155,11 +153,6 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
       setIsAccepting(false);
     }
   };
-
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
 
   const isFamily = session?.user?.role === "FAMILY";
   const statusLabel = contract ? (CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status) : "";

@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
 
 // POST - Resolve dispute
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { adminUserId } = auth;
 
     const body = await request.json();
     const { contractId, resolution, familyAmount, caregiverAmount, reason } = body;
@@ -30,7 +28,7 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, createdAt)
         VALUES (?, ?, 'RESOLVE_DISPUTE', 'CONTRACT', ?, ?, ?, ?)`,
-      args: [generateId("action"), session.user.id, contractId, JSON.stringify({ resolution, familyAmount, caregiverAmount }), reason, now]
+      args: [generateId("action"), adminUserId, contractId, JSON.stringify({ resolution, familyAmount, caregiverAmount }), reason, now]
     });
 
     return NextResponse.json({ success: true, contractId, resolution });

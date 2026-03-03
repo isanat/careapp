@@ -1,7 +1,7 @@
 export { AdminLayout } from "./layout/admin-layout";
 export { AdminGuard } from "./guards/admin-guard";
-export { StatsCard } from "./stats-card";
-export { DataTable } from "./data-table";
-export type { Column } from "./data-table";
-export { PageHeader } from "./page-header";
-export { StatusBadge } from "./status-badge";
+export { StatsCard } from "./common/stats-card";
+export { DataTable } from "./common/data-table";
+export type { Column } from "./common/data-table";
+export { PageHeader } from "./common/page-header";
+export { StatusBadge } from "./common/status-badge";

@@ -33,12 +33,6 @@ export default function GuidePage() {
   const [hasAccepted, setHasAccepted] = useState(false);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
     // Check if already accepted
     const checkAcceptance = async () => {
       try {

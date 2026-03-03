@@ -74,10 +74,6 @@ function NewContractContent() {
     }, 2000);
   };
 
-  if (status === "unauthenticated") {
-    return null; // Will redirect
-  }
-
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header */}

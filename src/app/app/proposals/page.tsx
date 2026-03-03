@@ -178,11 +178,6 @@ export default function ProposalsPage() {
     router.push("/app/dashboard");
     return null;
   }
-  if (status === "unauthenticated") {
-    router.push("/auth/login");
-    return null;
-  }
-
   const pendingProposals = proposals.filter(p => p.status === "PENDING_ACCEPTANCE");
   const acceptedProposals = proposals.filter(p => p.status === "PENDING_PAYMENT" || p.status === "ACTIVE");
 
