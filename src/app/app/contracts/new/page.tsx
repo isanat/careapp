@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +74,7 @@ function NewContractContent() {
       try {
         setCaregiverLoading(true);
         setCaregiverError(null);
-        const res = await fetch(`/api/caregivers/${caregiverId}`);
+        const res = await apiFetch(`/api/caregivers/${caregiverId}`);
         if (!res.ok) {
           if (res.status === 404) {
             setCaregiverError("Cuidador não encontrado.");
@@ -121,7 +122,7 @@ function NewContractContent() {
     setSubmitError(null);
 
     try {
-      const res = await fetch("/api/contracts", {
+      const res = await apiFetch("/api/contracts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

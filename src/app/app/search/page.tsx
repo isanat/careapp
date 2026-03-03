@@ -114,7 +114,7 @@ export default function SearchPage() {
 
   const fetchFamilies = async () => {
     try {
-      const response = await fetch('/api/families');
+      const response = await apiFetch('/api/families');
       if (response.ok) {
         const data = await response.json();
         setFamilies(data.families || []);

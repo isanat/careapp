@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api-client";
 import {
   Dialog,
   DialogContent,
@@ -81,7 +82,7 @@ export function ScheduleInterviewDialog({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/interviews", {
+      const response = await apiFetch("/api/interviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

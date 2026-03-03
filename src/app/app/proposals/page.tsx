@@ -230,7 +230,7 @@ export default function ProposalsPage() {
         return;
       }
 
-      const response = await fetch(`/api/contracts/${selectedProposal.id}/counter`, {
+      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/counter`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

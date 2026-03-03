@@ -3,7 +3,7 @@
 import { use, useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
+import { apiFetch } from "@/lib/api-client";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
       try {
         setIsLoading(true);
         setError(null);
-        const res = await fetch(`/api/caregivers/${resolvedParams.id}`);
+        const res = await apiFetch(`/api/caregivers/${resolvedParams.id}`);
         if (!res.ok) {
           if (res.status === 404) {
             setError("Cuidador não encontrado.");
@@ -99,7 +99,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
     if (!caregiver) return;
     setIsSendingMessage(true);
     try {
-      const res = await fetch("/api/chat/rooms", {
+      const res = await apiFetch("/api/chat/rooms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ participantId: caregiver.id }),
