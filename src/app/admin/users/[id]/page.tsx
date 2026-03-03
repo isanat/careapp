@@ -27,6 +27,7 @@ import {
   IconCalendar,
 } from "@/components/icons";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 
 interface UserDetail {
   id: string;
@@ -71,7 +72,7 @@ export default function AdminUserDetailPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`/api/admin/users/${userId}`);
+        const response = await apiFetch(`/api/admin/users/${userId}`);
         if (!response.ok) throw new Error("Failed to fetch user");
         const data = await response.json();
         setUser(data);
@@ -89,7 +90,7 @@ export default function AdminUserDetailPage() {
     if (!reason) return;
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}/suspend`, {
+      const response = await apiFetch(`/api/admin/users/${userId}/suspend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason }),
@@ -103,7 +104,7 @@ export default function AdminUserDetailPage() {
 
   const handleActivate = async () => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/activate`, {
+      const response = await apiFetch(`/api/admin/users/${userId}/activate`, {
         method: "POST",
       });
       if (!response.ok) throw new Error("Failed to activate");

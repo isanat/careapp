@@ -33,6 +33,7 @@ import {
 } from "@/components/icons";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 
 interface ContractDetails {
   contract: {
@@ -123,7 +124,7 @@ function AdminContractDetailContent() {
   const fetchContract = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/contracts/${params.id}`);
+      const response = await apiFetch(`/api/admin/contracts/${params.id}`);
       if (!response.ok) {
         throw new Error("Contract not found");
       }
@@ -160,7 +161,7 @@ function AdminContractDetailContent() {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`/api/admin/contracts/${params.id}/cancel`, {
+      const response = await apiFetch(`/api/admin/contracts/${params.id}/cancel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: cancelReason }),
@@ -196,7 +197,7 @@ function AdminContractDetailContent() {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`/api/admin/contracts/${params.id}/resolve`, {
+      const response = await apiFetch(`/api/admin/contracts/${params.id}/resolve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ resolution, notes: disputeResolution }),

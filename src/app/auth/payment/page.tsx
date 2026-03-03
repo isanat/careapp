@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -68,7 +69,7 @@ function PaymentPageContent() {
     setError("");
 
     try {
-      const response = await fetch("/api/payments/easypay", {
+      const response = await apiFetch("/api/payments/easypay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

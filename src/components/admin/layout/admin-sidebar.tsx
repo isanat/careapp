@@ -25,6 +25,7 @@ import {
   IconLogout,
 } from "@/components/icons";
 import { useSession, signOut } from "next-auth/react";
+import { apiFetch } from "@/lib/api-client";
 
 interface NavItem {
   label: string;
@@ -194,7 +195,7 @@ export function AdminSidebar({ open, collapsed, onClose, onToggleCollapse }: Adm
   useEffect(() => {
     const fetchBadges = async () => {
       try {
-        const response = await fetch("/api/admin/stats");
+        const response = await apiFetch("/api/admin/stats");
         if (response.ok) {
           const data = await response.json();
           setBadges({

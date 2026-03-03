@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +84,7 @@ function KycPageContent() {
 
   const fetchKycStatus = async () => {
     try {
-      const response = await fetch("/api/kyc");
+      const response = await apiFetch("/api/kyc");
       if (response.ok) {
         const data = await response.json();
         setKycStatus(data);
@@ -115,7 +116,7 @@ function KycPageContent() {
     setError("");
 
     try {
-      const response = await fetch("/api/kyc", {
+      const response = await apiFetch("/api/kyc", {
         method: "POST",
       });
 

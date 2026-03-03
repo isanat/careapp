@@ -15,15 +15,25 @@ export async function GET(request: NextRequest) {
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
 
-    // Get basic user info
-    const userResult = await db.execute({
-      sql: `SELECT id, email, name, phone, role, status, profileImage,
-                   nif, documentType, documentNumber,
-                   backgroundCheckStatus, backgroundCheckUrl,
-                   createdAt
-            FROM User WHERE id = ?`,
-      args: [userId]
-    });
+    // Get basic user info (with fallback for missing columns)
+    let userResult;
+    try {
+      userResult = await db.execute({
+        sql: `SELECT id, email, name, phone, role, status, profileImage,
+                     nif, documentType, documentNumber,
+                     backgroundCheckStatus, backgroundCheckUrl,
+                     createdAt
+              FROM User WHERE id = ?`,
+        args: [userId]
+      });
+    } catch {
+      // Fallback if newer columns don't exist yet
+      userResult = await db.execute({
+        sql: `SELECT id, email, name, phone, role, status, profileImage, createdAt
+              FROM User WHERE id = ?`,
+        args: [userId]
+      });
+    }
 
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

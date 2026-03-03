@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +70,7 @@ export default function ContractsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/contracts');
+      const response = await apiFetch('/api/contracts');
       if (!response.ok) {
         throw new Error(t.error);
       }

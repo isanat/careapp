@@ -23,6 +23,7 @@ import {
   IconCaregiver,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
+import { apiFetch } from "@/lib/api-client";
 
 interface Stats {
   tokenBalance: number;
@@ -61,7 +62,7 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/user/stats');
+      const response = await apiFetch('/api/user/stats');
       if (response.ok) {
         const data = await response.json();
         setStats(data.stats);

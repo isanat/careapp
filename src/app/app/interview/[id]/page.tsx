@@ -24,6 +24,7 @@ import {
   IconMessageSquare
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
+import { apiFetch } from "@/lib/api-client";
 
 interface Interview {
   id: string;
@@ -70,7 +71,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     const loadInterview = async () => {
       const resolvedParams = await paramsRef.current;
       try {
-        const response = await fetch(`/api/interviews/${resolvedParams.id}`);
+        const response = await apiFetch(`/api/interviews/${resolvedParams.id}`);
         if (response.ok) {
           const data = await response.json();
           setInterview(data.interview);
@@ -103,7 +104,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     if (!interview) return;
     
     try {
-      await fetch(`/api/interviews/${interview.id}`, {
+      await apiFetch(`/api/interviews/${interview.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "IN_PROGRESS" })
@@ -121,7 +122,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     if (!interview) return;
     
     try {
-      await fetch(`/api/interviews/${interview.id}`, {
+      await apiFetch(`/api/interviews/${interview.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "COMPLETED" })
@@ -139,7 +140,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/interviews/${interview.id}`, {
+      const response = await apiFetch(`/api/interviews/${interview.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

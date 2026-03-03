@@ -50,6 +50,16 @@
   --color-input: var(--color-input);
   --color-ring: var(--color-ring);
   
+  /* Popover & Card */
+  --color-popover: var(--color-popover);
+  --color-popover-foreground: var(--color-popover-foreground);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+
+  /* Destructive */
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-error-foreground);
+
   /* Sidebar */
   --color-sidebar: var(--color-surface);
   --color-sidebar-foreground: var(--color-foreground);
@@ -209,14 +219,10 @@
     @apply outline-2 outline-offset-2 outline-primary;
   }
   
-  /* Minimum touch target size */
-  button, 
-  a, 
-  [role="button"],
-  input[type="checkbox"],
-  input[type="radio"] {
-    min-height: 44px;
-    min-width: 44px;
+  /* Minimum touch target size - only for standalone interactive elements */
+  button:not([class*="h-"]):not([class*="size-"]):not([class*="absolute"]):not(nav button),
+  [role="button"]:not([class*="h-"]):not([class*="size-"]) {
+    min-height: 36px;
   }
   
   /* Ensure readable text */

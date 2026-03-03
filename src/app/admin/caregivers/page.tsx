@@ -37,6 +37,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api-client";
 
 interface Caregiver {
   id: string;
@@ -91,7 +92,7 @@ export default function AdminCaregiversPage() {
       params.set("page", pagination.page.toString());
       params.set("limit", pagination.limit.toString());
 
-      const response = await fetch(`/api/admin/caregivers?${params}`);
+      const response = await apiFetch(`/api/admin/caregivers?${params}`);
       const data = await response.json();
       setCaregivers(data.caregivers || []);
       setPagination(prev => ({
@@ -100,7 +101,7 @@ export default function AdminCaregiversPage() {
       }));
 
       // Calculate stats from all caregivers
-      const allResponse = await fetch('/api/admin/caregivers?limit=1000');
+      const allResponse = await apiFetch('/api/admin/caregivers?limit=1000');
       const allData = await allResponse.json();
       const allCaregivers = allData.caregivers || [];
       setStats({
@@ -136,7 +137,7 @@ export default function AdminCaregiversPage() {
 
     setActionLoading(caregiverId);
     try {
-      const response = await fetch('/api/admin/caregivers/verify', {
+      const response = await apiFetch('/api/admin/caregivers/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ caregiverId, action }),
@@ -172,7 +173,7 @@ export default function AdminCaregiversPage() {
 
     setActionLoading(rejectCaregiverId);
     try {
-      const response = await fetch('/api/admin/caregivers/verify', {
+      const response = await apiFetch('/api/admin/caregivers/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -206,7 +207,7 @@ export default function AdminCaregiversPage() {
   const handleFeature = async (caregiverId: string, featured: boolean) => {
     setActionLoading(caregiverId);
     try {
-      const response = await fetch(`/api/admin/caregivers/${caregiverId}/feature`, {
+      const response = await apiFetch(`/api/admin/caregivers/${caregiverId}/feature`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ featured }),

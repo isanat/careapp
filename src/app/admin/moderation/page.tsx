@@ -23,6 +23,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import { apiFetch } from "@/lib/api-client";
 
 interface ModerationItem {
   id: string;
@@ -51,7 +52,7 @@ export default function AdminModerationPage() {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/moderation?type=${activeTab}`);
+      const response = await apiFetch(`/api/admin/moderation?type=${activeTab}`);
       if (response.ok) {
         const data = await response.json();
         setItems(data.items || []);
@@ -70,7 +71,7 @@ export default function AdminModerationPage() {
 
   const handleAction = async (id: string, action: "approve" | "reject" | "delete") => {
     try {
-      const response = await fetch(`/api/admin/moderation/${id}/${action}`, {
+      const response = await apiFetch(`/api/admin/moderation/${id}/${action}`, {
         method: "POST",
       });
 

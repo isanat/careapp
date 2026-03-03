@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api-client";
 
 interface Contract {
   id: string;
@@ -71,7 +72,7 @@ export default function AdminContractsPage() {
       params.set("page", pagination.page.toString());
       params.set("limit", pagination.limit.toString());
 
-      const response = await fetch(`/api/admin/contracts?${params}`);
+      const response = await apiFetch(`/api/admin/contracts?${params}`);
       const data = await response.json();
       setContracts(data.contracts || []);
       setStatusCounts(data.statusCounts || {});
@@ -128,7 +129,7 @@ export default function AdminContractsPage() {
     if (!reason) return;
 
     try {
-      const response = await fetch(`/api/admin/contracts/${contractId}/cancel`, {
+      const response = await apiFetch(`/api/admin/contracts/${contractId}/cancel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason }),

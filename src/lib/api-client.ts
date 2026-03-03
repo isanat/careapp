@@ -64,7 +64,9 @@ export async function apiFetch(
     const token = await ensureCsrfToken();
     const headers = new Headers(options.headers);
     headers.set(CSRF_HEADER_NAME, token);
-    if (!headers.has("Content-Type")) {
+    // Don't set Content-Type for FormData - browser sets it with correct boundary
+    const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+    if (!isFormData && !headers.has("Content-Type")) {
       headers.set("Content-Type", "application/json");
     }
     options = { ...options, headers, credentials: "same-origin" };

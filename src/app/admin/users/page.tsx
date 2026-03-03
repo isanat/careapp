@@ -32,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 
 interface User {
   id: string;
@@ -91,7 +92,7 @@ function AdminFamiliesContent() {
       if (roleFilter) params.set("role", roleFilter);
       if (statusFilter) params.set("status", statusFilter);
 
-      const response = await fetch(`/api/admin/users?${params}`);
+      const response = await apiFetch(`/api/admin/users?${params}`);
       if (!response.ok) throw new Error("Failed to fetch users");
       const data: UsersResponse = await response.json();
       setUsers(data.users);
@@ -112,7 +113,7 @@ function AdminFamiliesContent() {
     if (!reason) return;
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}/suspend`, {
+      const response = await apiFetch(`/api/admin/users/${userId}/suspend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason }),
@@ -126,7 +127,7 @@ function AdminFamiliesContent() {
 
   const handleActivate = async (userId: string) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/activate`, {
+      const response = await apiFetch(`/api/admin/users/${userId}/activate`, {
         method: "POST",
       });
       if (!response.ok) throw new Error("Failed to activate user");
