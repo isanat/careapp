@@ -46,9 +46,11 @@ export async function GET(request: NextRequest) {
       createdAt: row.createdAt,
       serviceTypes: row.serviceTypes ? String(row.serviceTypes).split(',') : [],
       hoursPerWeek: Number(row.hoursPerWeek) || 0,
-      otherParty: isFamily 
-        ? { name: row.caregiver_name, title: row.caregiver_title, city: row.caregiver_city }
-        : { name: row.family_name, city: row.family_city },
+      caregiverId: row.caregiverUserId,
+      familyId: row.familyUserId,
+      otherParty: isFamily
+        ? { id: row.caregiverUserId, name: row.caregiver_name, title: row.caregiver_title, city: row.caregiver_city }
+        : { id: row.familyUserId, name: row.family_name, city: row.family_city },
       // Additional family info for caregivers
       family: !isFamily ? {
         name: row.family_name,

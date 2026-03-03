@@ -1,7 +1,43 @@
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { createHmac } from "crypto";
 
 const PORT = 3003;
+const CHAT_TOKEN_SECRET = process.env.CHAT_TOKEN_SECRET || process.env.NEXTAUTH_SECRET || 'default-chat-secret';
+
+// Verify HMAC-signed chat token
+function verifyChatToken(token: string): { userId: string; userName: string } | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 2) return null;
+
+    const [payloadBase64, signature] = parts;
+
+    // Verify signature
+    const expectedSignature = createHmac('sha256', CHAT_TOKEN_SECRET)
+      .update(payloadBase64)
+      .digest('base64url');
+
+    if (signature !== expectedSignature) {
+      console.log('Invalid token signature');
+      return null;
+    }
+
+    // Decode payload
+    const payload = JSON.parse(Buffer.from(payloadBase64, 'base64url').toString());
+
+    // Check expiry
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+      console.log('Token expired');
+      return null;
+    }
+
+    return { userId: payload.userId, userName: payload.userName };
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return null;
+  }
+}
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -14,6 +50,25 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+});
+
+// Authenticate socket connections via middleware
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+
+  if (!token) {
+    return next(new Error("Authentication token required"));
+  }
+
+  const user = verifyChatToken(token);
+  if (!user) {
+    return next(new Error("Invalid or expired token"));
+  }
+
+  // Attach verified user data to socket
+  socket.data.userId = user.userId;
+  socket.data.userName = user.userName;
+  next();
 });
 
 // Store connected users
@@ -38,23 +93,12 @@ interface TypingIndicator {
 }
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
+  console.log(`Authenticated user connected: ${socket.data.userName} (${socket.data.userId})`);
 
-  // User authentication/join
-  socket.on("join", (data: { userId: string; userName: string }) => {
-    console.log(`User ${data.userName} (${data.userId}) joined`);
-    
-    // Store user connection
-    connectedUsers.set(data.userId, socket.id);
-    socket.data.userId = data.userId;
-    socket.data.userName = data.userName;
-    
-    // Join user's personal room for notifications
-    socket.join(`user:${data.userId}`);
-    
-    // Emit online status
-    io.emit("user:online", { userId: data.userId, userName: data.userName });
-  });
+  // Store user connection (already authenticated via middleware)
+  connectedUsers.set(socket.data.userId, socket.id);
+  socket.join(`user:${socket.data.userId}`);
+  io.emit("user:online", { userId: socket.data.userId, userName: socket.data.userName });
 
   // Join a chat room
   socket.on("room:join", (data: { chatRoomId: string }) => {

@@ -132,8 +132,8 @@ function RegisterPageContent() {
         // Different flows for Family and Caregiver
         console.log("Auto-login success, redirecting...");
         if (role === "FAMILY") {
-          // Family: KYC verification → Payment → Activation
-          window.location.href = `/app/verify?userId=${data.userId}`;
+          // Family: Onboarding Setup → KYC verification → Payment → Activation
+          window.location.href = `/app/family-setup?userId=${data.userId}`;
         } else {
           // Caregiver: Profile Setup → KYC → Approval (NO PAYMENT)
           window.location.href = `/app/profile/setup?userId=${data.userId}`;

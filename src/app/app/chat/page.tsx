@@ -16,7 +16,8 @@ import {
   IconChat,
   IconSend,
   IconSearch,
-  IconRefresh
+  IconRefresh,
+  IconArrowLeft
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
@@ -63,6 +64,7 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileShowChat, setMobileShowChat] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -98,36 +100,61 @@ export default function ChatPage() {
     }
   }, []);
 
-  // Connect to socket
+  // Fetch chat auth token and connect to socket
   useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      const socketUrl = `/?XTransformPort=${CHAT_PORT}`;
-      const newSocket = io(socketUrl, {
-        transports: ["websocket"],
-      });
+    if (status !== "authenticated" || !session?.user) return;
 
-      newSocket.on("connect", () => {
-        console.log("Connected to chat server");
-        newSocket.emit("join", {
-          userId: session.user.id,
-          userName: session.user.name,
+    let newSocket: Socket | null = null;
+    let cancelled = false;
+
+    async function connectWithAuth() {
+      try {
+        // Fetch a signed token from the server
+        const tokenRes = await fetch('/api/chat/token');
+        if (!tokenRes.ok) {
+          console.error('Failed to fetch chat token');
+          return;
+        }
+        const { token } = await tokenRes.json();
+
+        if (cancelled) return;
+
+        const socketUrl = `/?XTransformPort=${CHAT_PORT}`;
+        newSocket = io(socketUrl, {
+          transports: ["websocket"],
+          auth: { token },
         });
-      });
 
-      newSocket.on("message:receive", (message: Message) => {
-        setMessages((prev) => [...prev, message]);
-      });
+        newSocket.on("connect", () => {
+          console.log("Connected to chat server (authenticated)");
+        });
 
-      newSocket.on("typing:indicator", (data: { userId: string; userName: string; isTyping: boolean }) => {
-        setTypingUser(data.isTyping ? data.userName : null);
-      });
+        newSocket.on("connect_error", (err) => {
+          console.error("Chat connection error:", err.message);
+        });
 
-      queueMicrotask(() => setSocket(newSocket));
+        newSocket.on("message:receive", (message: Message) => {
+          setMessages((prev) => [...prev, message]);
+        });
 
-      return () => {
-        newSocket.disconnect();
-      };
+        newSocket.on("typing:indicator", (data: { userId: string; userName: string; isTyping: boolean }) => {
+          setTypingUser(data.isTyping ? data.userName : null);
+        });
+
+        queueMicrotask(() => setSocket(newSocket));
+      } catch (error) {
+        console.error('Error connecting to chat:', error);
+      }
     }
+
+    connectWithAuth();
+
+    return () => {
+      cancelled = true;
+      if (newSocket) {
+        newSocket.disconnect();
+      }
+    };
   }, [status, session]);
 
   // Load conversations on mount
@@ -215,7 +242,7 @@ export default function ChatPage() {
       <div className="h-[calc(100vh-8rem)]">
         <div className="grid h-full lg:grid-cols-[300px_1fr] gap-4">
           {/* Conversations List */}
-          <Card className="hidden lg:block">
+          <Card className={`${mobileShowChat ? "hidden" : "block"} lg:block`}>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{t.chat.title}</CardTitle>
@@ -244,7 +271,7 @@ export default function ChatPage() {
                     {conversations.filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase())).map((conv) => (
                       <button
                         key={conv.id}
-                        onClick={() => setSelectedConversation(conv)}
+                        onClick={() => { setSelectedConversation(conv); setMobileShowChat(true); }}
                         className={`w-full p-3 rounded-lg text-left transition-colors hover:bg-muted ${
                           selectedConversation?.id === conv.id ? "bg-muted" : ""
                         }`}
@@ -295,13 +322,21 @@ export default function ChatPage() {
           </Card>
 
           {/* Chat Area */}
-          <Card className="flex flex-col">
+          <Card className={`flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
                 <CardHeader className="pb-3 border-b">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="lg:hidden"
+                        onClick={() => setMobileShowChat(false)}
+                      >
+                        <IconArrowLeft className="h-4 w-4" />
+                      </Button>
                       <Avatar>
                         <AvatarFallback>
                           {selectedConversation.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}

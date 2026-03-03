@@ -52,21 +52,15 @@ function KycPageContent() {
   const [widgetUrl, setWidgetUrl] = useState("");
 
   const isCaregiver = session?.user?.role === "CAREGIVER";
-
-  // Check role
-  useEffect(() => {
-    if (status === "authenticated" && !isCaregiver) {
-      // Only caregivers can access KYC
-      router.push("/app/dashboard?message=kyc_caregiver_only");
-    }
-  }, [status, isCaregiver, router]);
+  const isFamily = session?.user?.role === "FAMILY";
+  const canAccessKyc = isCaregiver || isFamily;
 
   // Fetch KYC status on mount
   useEffect(() => {
-    if (status === "authenticated" && isCaregiver) {
+    if (status === "authenticated" && canAccessKyc) {
       fetchKycStatus();
     }
-  }, [status, isCaregiver]);
+  }, [status, canAccessKyc]);
 
   // Poll for status when widget is open
   useEffect(() => {
@@ -169,8 +163,8 @@ function KycPageContent() {
     );
   }
 
-  // Not a caregiver - will redirect
-  if (!isCaregiver) {
+  // Only authenticated FAMILY or CAREGIVER users can access KYC
+  if (!canAccessKyc) {
     return (
       <AppShell>
         <div className="flex items-center justify-center p-8">

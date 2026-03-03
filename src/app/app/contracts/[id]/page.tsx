@@ -32,6 +32,8 @@ import {
 } from "@/components/icons";
 import { CONTRACT_STATUS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+import { PaymentSection } from "@/components/contracts/payment-section";
+import { ReviewSection } from "@/components/contracts/review-section";
 
 interface ContractDetails {
   id: string;
@@ -388,26 +390,21 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                 </Card>
               )}
 
-              {/* Payment Status */}
+              {/* Payment Section */}
               {contract.status === 'PENDING_PAYMENT' && isFamily && (
-                <Card className="border-orange-500">
-                  <CardContent className="pt-6">
-                    <div className="text-center space-y-4">
-                      <IconEuro className="h-12 w-12 text-orange-500 mx-auto" />
-                      <div>
-                        <h3 className="font-semibold">{t.contracts.payment || "Pagamento Pendente"}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {t.contracts.paymentInfo || "Ambas as partes aceitaram. Prossiga com o pagamento para iniciar o contrato."}
-                        </p>
-                      </div>
-                      <Button className="w-full" asChild>
-                        <Link href={`/app/contracts/${contract.id}/pay`}>
-                          {"Pagar"} €{(contract.totalEurCents / 100).toFixed(0)}
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <PaymentSection
+                  contractId={contract.id}
+                  onPaymentSuccess={fetchContract}
+                />
+              )}
+
+              {/* Review Section */}
+              {contract.status === 'COMPLETED' && isFamily && session?.user?.id && contract.caregiverId && (
+                <ReviewSection
+                  contractId={contract.id}
+                  caregiverUserId={contract.caregiverId}
+                  currentUserId={session.user.id}
+                />
               )}
             </div>
           </div>

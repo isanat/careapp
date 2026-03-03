@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -22,6 +22,14 @@ import {
 } from "@/components/icons";
 import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS, PLATFORM_FEE_PERCENT } from "@/lib/constants";
 
+interface CaregiverInfo {
+  id: string;
+  name: string;
+  title: string;
+  averageRating: number;
+  hourlyRateEur: number;
+}
+
 function NewContractContent() {
   const searchParams = useSearchParams();
   const caregiverId = searchParams.get("caregiverId");
@@ -29,6 +37,13 @@ function NewContractContent() {
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [contractId, setContractId] = useState<string | null>(null);
+
+  // Caregiver fetching state
+  const [caregiver, setCaregiver] = useState<CaregiverInfo | null>(null);
+  const [caregiverLoading, setCaregiverLoading] = useState(true);
+  const [caregiverError, setCaregiverError] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -46,14 +61,48 @@ function NewContractContent() {
     emergencyPhone: "",
   });
 
-  // Mock caregiver data
-  const caregiver = {
-    id: caregiverId || "1",
-    name: "Carmela Oliveira",
-    title: "Enfermeira",
-    rating: 4.9,
-    hourlyRate: 25,
-  };
+  // Fetch caregiver data from API
+  useEffect(() => {
+    async function fetchCaregiver() {
+      if (!caregiverId) {
+        setCaregiverLoading(false);
+        setCaregiverError("ID do cuidador não fornecido.");
+        return;
+      }
+
+      try {
+        setCaregiverLoading(true);
+        setCaregiverError(null);
+        const res = await fetch(`/api/caregivers/${caregiverId}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            setCaregiverError("Cuidador não encontrado.");
+            return;
+          }
+          throw new Error("Erro ao carregar dados do cuidador.");
+        }
+        const data = await res.json();
+        const c = data.caregiver;
+        setCaregiver({
+          id: c.id,
+          name: c.name,
+          title: c.title,
+          averageRating: c.averageRating,
+          hourlyRateEur: c.hourlyRateEur,
+        });
+        // Pre-fill hourly rate from caregiver's profile
+        setFormData((prev) => ({ ...prev, hourlyRate: c.hourlyRateEur }));
+      } catch (err) {
+        setCaregiverError(
+          err instanceof Error ? err.message : "Erro inesperado ao carregar cuidador."
+        );
+      } finally {
+        setCaregiverLoading(false);
+      }
+    }
+
+    fetchCaregiver();
+  }, [caregiverId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -66,13 +115,94 @@ function NewContractContent() {
   const caregiverReceives = totalEur - platformFee;
 
   const handleSubmit = async () => {
+    if (!caregiver) return;
+
     setIsSubmitting(true);
-    // In real app, submit to API
-    setTimeout(() => {
+    setSubmitError(null);
+
+    try {
+      const res = await fetch("/api/contracts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          caregiverUserId: caregiver.id,
+          title: formData.title || `Contrato com ${caregiver.name}`,
+          hourlyRateEur: formData.hourlyRate,
+          totalHours: totalHours,
+          description: [
+            formData.tasks,
+            formData.elderInfo ? `Info idoso: ${formData.elderInfo}` : "",
+            formData.specialNeeds ? `Necessidades: ${formData.specialNeeds}` : "",
+            formData.schedule ? `Horário: ${formData.schedule}` : "",
+            formData.emergencyContact
+              ? `Emergência: ${formData.emergencyContact} (${formData.emergencyPhone})`
+              : "",
+          ]
+            .filter(Boolean)
+            .join("\n"),
+          startDate: formData.startDate || undefined,
+          endDate: formData.endDate || undefined,
+          serviceTypes: formData.serviceType || undefined,
+          hoursPerWeek: formData.hoursPerWeek,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erro ao criar contrato.");
+      }
+
+      const data = await res.json();
+      setContractId(data.contractId);
       setStep(4);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error ? err.message : "Erro inesperado ao criar contrato."
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
+
+  // Show error if caregiver can't be loaded
+  if (caregiverError) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Criar Contrato</h1>
+        </div>
+        <Card>
+          <CardContent className="pt-6 text-center space-y-4">
+            <p className="text-lg text-destructive">{caregiverError}</p>
+            <Button asChild>
+              <Link href="/app/search">Voltar para busca</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show loading while caregiver data is being fetched
+  if (caregiverLoading || !caregiver) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Criar Contrato</h1>
+          <p className="text-muted-foreground">Carregando dados do cuidador...</p>
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-12 bg-muted rounded"></div>
+              <div className="h-12 bg-muted rounded"></div>
+              <div className="h-24 bg-muted rounded"></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -129,8 +259,8 @@ function NewContractContent() {
                 <p className="text-sm text-muted-foreground">{caregiver.title}</p>
               </div>
               <div className="ml-auto text-right">
-                <p className="font-semibold">€{caregiver.hourlyRate}/hora</p>
-                <p className="text-sm text-muted-foreground">⭐ {caregiver.rating}</p>
+                <p className="font-semibold">€{caregiver.hourlyRateEur}/hora</p>
+                <p className="text-sm text-muted-foreground">⭐ {caregiver.averageRating}</p>
               </div>
             </div>
 
@@ -376,6 +506,13 @@ function NewContractContent() {
               </div>
             </div>
 
+            {/* Error message */}
+            {submitError && (
+              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <p className="text-sm text-destructive">{submitError}</p>
+              </div>
+            )}
+
             {/* Terms */}
             <div className="flex items-start gap-2">
               <Checkbox id="terms" />
@@ -421,7 +558,7 @@ function NewContractContent() {
             <div className="p-4 bg-muted/50 rounded-lg text-left space-y-2">
               <div className="flex items-center gap-2">
                 <IconContract className="h-4 w-4 text-primary" />
-                <span className="font-medium">Contrato #12345</span>
+                <span className="font-medium">Contrato #{contractId}</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Status: Aguardando aceite do cuidador
