@@ -33,6 +33,7 @@ const CSRF_EXEMPT_PREFIXES = [
   "/api/health",
   "/api/diagnostic",
   "/api/push/",
+  "/api/migrate/",
 ];
 
 const CSRF_COOKIE_NAME = "__csrf";
