@@ -236,8 +236,9 @@ export default function ProfilePage() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error("Erro ao salvar: " + errorText);
+        const errorData = await response.json().catch(() => null);
+        const msg = errorData?.error || errorData?.detail || 'Erro ao salvar perfil';
+        throw new Error(msg);
       }
 
       await response.json();

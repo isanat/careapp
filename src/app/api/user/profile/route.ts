@@ -242,6 +242,20 @@ export async function PUT(request: NextRequest) {
       userArgs.push(body.backgroundCheckUrl);
     }
 
+    // Check phone uniqueness before updating
+    if (body.phone !== undefined && body.phone !== null && body.phone !== '') {
+      const phoneCheck = await db.execute({
+        sql: `SELECT id FROM User WHERE phone = ? AND id != ?`,
+        args: [body.phone, userId]
+      });
+      if (phoneCheck.rows.length > 0) {
+        return NextResponse.json(
+          { error: 'Este número de telefone já está associado a outra conta.' },
+          { status: 409 }
+        );
+      }
+    }
+
     if (userUpdates.length > 0) {
       userUpdates.push('updatedAt = CURRENT_TIMESTAMP');
       userArgs.push(userId);
