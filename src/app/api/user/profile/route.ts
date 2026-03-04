@@ -297,85 +297,79 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update profile based on role
-    if (isCaregiver && (
-      body.title !== undefined ||
-      body.bio !== undefined ||
-      body.city !== undefined ||
-      body.experienceYears !== undefined ||
-      body.services !== undefined ||
-      body.hourlyRateEur !== undefined ||
-      body.certifications !== undefined ||
-      body.languages !== undefined
-    )) {
+    if (isCaregiver) {
       const servicesJson = body.services && body.services.length > 0
         ? JSON.stringify(body.services)
         : null;
       const hourlyRateCents = body.hourlyRateEur
-        ? Math.round(body.hourlyRateEur * 100)
+        ? Math.round(Number(body.hourlyRateEur) * 100)
         : null;
 
-      await db.execute({
-        sql: `UPDATE ProfileCaregiver
-              SET title = COALESCE(?, title),
-                  bio = COALESCE(?, bio),
-                  city = COALESCE(?, city),
-                  experienceYears = COALESCE(?, experienceYears),
-                  services = COALESCE(?, services),
-                  hourlyRateEur = COALESCE(?, hourlyRateEur),
-                  certifications = COALESCE(?, certifications),
-                  languages = COALESCE(?, languages),
-                  updatedAt = CURRENT_TIMESTAMP
-              WHERE userId = ?`,
-        args: [
-          body.title ?? null,
-          body.bio ?? null,
-          body.city ?? null,
-          body.experienceYears ?? null,
-          servicesJson,
-          hourlyRateCents,
-          body.certifications ?? null,
-          body.languages ?? null,
-          userId
-        ]
-      });
+      try {
+        await db.execute({
+          sql: `UPDATE ProfileCaregiver
+                SET title = COALESCE(?, title),
+                    bio = COALESCE(?, bio),
+                    city = COALESCE(?, city),
+                    experienceYears = COALESCE(?, experienceYears),
+                    services = COALESCE(?, services),
+                    hourlyRateEur = COALESCE(?, hourlyRateEur),
+                    certifications = COALESCE(?, certifications),
+                    languages = COALESCE(?, languages),
+                    updatedAt = CURRENT_TIMESTAMP
+                WHERE userId = ?`,
+          args: [
+            body.title ?? null,
+            body.bio ?? null,
+            body.city ?? null,
+            body.experienceYears != null ? Number(body.experienceYears) : null,
+            servicesJson,
+            hourlyRateCents,
+            body.certifications ?? null,
+            body.languages ?? null,
+            userId
+          ]
+        });
+      } catch (profileErr) {
+        console.error('Error updating ProfileCaregiver:', profileErr);
+      }
     }
 
-    if (isFamily && (
-      body.city !== undefined ||
-      body.elderName !== undefined ||
-      body.elderAge !== undefined ||
-      body.emergencyContact !== undefined ||
-      body.emergencyPhone !== undefined ||
-      body.elderNeeds !== undefined
-    )) {
-      await db.execute({
-        sql: `UPDATE ProfileFamily
-              SET city = COALESCE(?, city),
-                  elderName = COALESCE(?, elderName),
-                  elderAge = COALESCE(?, elderAge),
-                  emergencyContactName = COALESCE(?, emergencyContactName),
-                  emergencyContactPhone = COALESCE(?, emergencyContactPhone),
-                  elderNeeds = COALESCE(?, elderNeeds),
-                  updatedAt = CURRENT_TIMESTAMP
-              WHERE userId = ?`,
-        args: [
-          body.city ?? null,
-          body.elderName ?? null,
-          body.elderAge ?? null,
-          body.emergencyContact ?? null,
-          body.emergencyPhone ?? null,
-          body.elderNeeds ?? null,
-          userId
-        ]
-      });
+    if (isFamily) {
+      try {
+        await db.execute({
+          sql: `UPDATE ProfileFamily
+                SET city = COALESCE(?, city),
+                    elderName = COALESCE(?, elderName),
+                    elderAge = COALESCE(?, elderAge),
+                    emergencyContactName = COALESCE(?, emergencyContactName),
+                    emergencyContactPhone = COALESCE(?, emergencyContactPhone),
+                    elderNeeds = COALESCE(?, elderNeeds),
+                    updatedAt = CURRENT_TIMESTAMP
+                WHERE userId = ?`,
+          args: [
+            body.city ?? null,
+            body.elderName ?? null,
+            body.elderAge != null ? Number(body.elderAge) : null,
+            body.emergencyContact ?? null,
+            body.emergencyPhone ?? null,
+            body.elderNeeds ?? null,
+            userId
+          ]
+        });
+      } catch (profileErr) {
+        console.error('Error updating ProfileFamily:', profileErr);
+      }
     }
 
     return NextResponse.json({ success: true, message: 'Perfil atualizado com sucesso' });
   } catch (error) {
     console.error('Error updating profile:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: 'Internal server error', detail: message }, { status: 500 });
   }
 }
+
 
 // POST: Create/update caregiver profile during setup
 export async function POST(request: NextRequest) {
