@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       const metadata = payment.metadata ? JSON.parse(payment.metadata as string) : {};
       const userId = payment.userId as string;
       const tokensAmount = payment.tokensAmount as number;
+      const amountEurCents = payment.amountEurCents as number;
       const paymentType = payment.type as string;
 
       // Credit tokens to user wallet
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
         // Update wallet balance
         await db.execute({
           sql: `UPDATE Wallet SET balanceTokens = balanceTokens + ?, balanceEurCents = balanceEurCents + ?, updatedAt = ? WHERE userId = ?`,
-          args: [tokensAmount, tokensAmount, now, userId]
+          args: [tokensAmount, amountEurCents, now, userId]
         });
 
         // Create ledger entry
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
             userId,
             paymentType === 'ACTIVATION' ? 'ACTIVATION_BONUS' : 'TOKEN_PURCHASE',
             tokensAmount,
-            tokensAmount,
+            amountEurCents,
             paymentType === 'ACTIVATION' ? 'Bônus de ativação de conta' : 'Compra de tokens',
             'payment',
             payment.id,
@@ -116,8 +117,8 @@ export async function POST(request: NextRequest) {
 
           if (familyPaid && caregiverPaid) {
             await db.execute({
-              sql: `UPDATE Contract SET status = 'ACTIVE', activatedAt = ?, updatedAt = ? WHERE id = ?`,
-              args: [now, now, contractId]
+              sql: `UPDATE Contract SET status = 'ACTIVE', updatedAt = ? WHERE id = ?`,
+              args: [now, contractId]
             });
             console.log(`Contract ${contractId} activated — both fees paid`);
           } else {

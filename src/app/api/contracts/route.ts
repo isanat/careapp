@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     const totalEurCents = (hourlyRateEur || 0) * (totalHours || 0);
 
     await db.execute({
-      sql: `INSERT INTO Contract (id, familyUserId, caregiverUserId, status, title, description, hourlyRateEur, totalHours, totalEurCents, startDate, endDate, serviceTypes, hoursPerWeek, createdAt) VALUES (?, ?, ?, 'DRAFT', ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
+      sql: `INSERT INTO Contract (id, familyUserId, caregiverUserId, status, title, description, hourlyRateEur, totalHours, totalEurCents, startDate, endDate, serviceTypes, hoursPerWeek, createdAt, updatedAt) VALUES (?, ?, ?, 'DRAFT', ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       args: [contractId, familyUserId, caregiverUserId, title, description ?? '', hourlyRateEur || 0, totalHours || 0, totalEurCents, startDate ?? null, endDate ?? null, serviceTypes ?? '', hoursPerWeek || 0]
     });
 

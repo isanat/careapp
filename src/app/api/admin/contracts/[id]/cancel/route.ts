@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Cancel contract
 export async function POST(
@@ -40,15 +41,15 @@ export async function POST(
 
     // Check for escrow and cancel it
     await db.execute({
-      sql: `UPDATE EscrowPayment SET status = 'CANCELLED' WHERE contractId = ? AND status = 'HELD'`,
+      sql: `UPDATE EscrowPayment SET status = 'REFUNDED', refundedAt = CURRENT_TIMESTAMP, updatedAt = CURRENT_TIMESTAMP WHERE contractId = ? AND status = 'HELD'`,
       args: [id]
     });
 
     // Log action
     await db.execute({
-      sql: `INSERT INTO AdminAction (adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
-            VALUES (?, 'CANCEL_CONTRACT', 'CONTRACT', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-      args: [adminUserId, id, `{"status": "${oldStatus}"}`, '{"status": "CANCELLED"}', reason, request.headers.get('x-forwarded-for') || 'unknown']
+      sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
+            VALUES (?, ?, 'CANCEL_CONTRACT', 'CONTRACT', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      args: [generateId("action"), adminUserId, id, `{"status": "${oldStatus}"}`, '{"status": "CANCELLED"}', reason, request.headers.get('x-forwarded-for') || 'unknown']
     });
 
     return NextResponse.json({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Approve KYC verification
 export async function POST(
@@ -29,9 +30,9 @@ export async function POST(
 
     // Log action
     await db.execute({
-      sql: `INSERT INTO AdminAction (adminUserId, action, entityType, entityId, newValue, reason, ipAddress, createdAt)
-            VALUES (?, 'VERIFY_KYC', 'CAREGIVER', ?, '{"verificationStatus": "VERIFIED"}', ?, ?, CURRENT_TIMESTAMP)`,
-      args: [adminUserId, id, reason || 'KYC approved', request.headers.get('x-forwarded-for') || 'unknown']
+      sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, ipAddress, createdAt)
+            VALUES (?, ?, 'VERIFY_KYC', 'CAREGIVER', ?, '{"verificationStatus": "VERIFIED"}', ?, ?, CURRENT_TIMESTAMP)`,
+      args: [generateId("action"), adminUserId, id, reason || 'KYC approved', request.headers.get('x-forwarded-for') || 'unknown']
     });
 
     return NextResponse.json({

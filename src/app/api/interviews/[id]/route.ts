@@ -197,14 +197,15 @@ export async function PATCH(
 
         // Create a DRAFT contract with the family and caregiver from the interview
         await db.execute({
-          sql: `INSERT INTO Contract (id, familyUserId, caregiverUserId, status, title, description, hourlyRateEur, totalHours, totalEurCents, createdAt)
-                VALUES (?, ?, ?, 'DRAFT', ?, ?, 0, 0, 0, ?)`,
+          sql: `INSERT INTO Contract (id, familyUserId, caregiverUserId, status, title, description, hourlyRateEur, totalHours, totalEurCents, createdAt, updatedAt)
+                VALUES (?, ?, ?, 'DRAFT', ?, ?, 0, 0, 0, ?, ?)`,
           args: [
             newContractId,
             interview.familyUserId,
             interview.caregiverUserId,
             `Contrato - Entrevista ${id}`,
             "Contrato criado automaticamente apos entrevista.",
+            now,
             now
           ]
         });

@@ -28,7 +28,7 @@ export async function DELETE(request: NextRequest) {
     // Delete in dependency order to respect FK-like relationships
     // 1. Chat data
     await db.execute({
-      sql: `DELETE FROM ChatMessage WHERE senderUserId = ?`,
+      sql: `DELETE FROM ChatMessage WHERE senderId = ?`,
       args: [userId]
     });
     await db.execute({

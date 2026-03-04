@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Resolve dispute
 export async function POST(
@@ -69,9 +70,10 @@ export async function POST(
 
     // Log action
     await db.execute({
-      sql: `INSERT INTO AdminAction (adminUserId, action, entityType, entityId, newValue, reason, ipAddress, createdAt)
-            VALUES (?, 'RESOLVE_DISPUTE', 'CONTRACT', ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, ipAddress, createdAt)
+            VALUES (?, ?, 'RESOLVE_DISPUTE', 'CONTRACT', ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
+        generateId("action"),
         adminUserId,
         id,
         JSON.stringify({ decision, familyAmount, caregiverAmount }),
