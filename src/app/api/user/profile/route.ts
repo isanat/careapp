@@ -246,10 +246,54 @@ export async function PUT(request: NextRequest) {
       userUpdates.push('updatedAt = CURRENT_TIMESTAMP');
       userArgs.push(userId);
 
-      await db.execute({
-        sql: `UPDATE User SET ${userUpdates.join(', ')} WHERE id = ?`,
-        args: userArgs
-      });
+      try {
+        await db.execute({
+          sql: `UPDATE User SET ${userUpdates.join(', ')} WHERE id = ?`,
+          args: userArgs
+        });
+      } catch (dbError) {
+        // If update fails (possibly due to missing columns), try with only basic fields
+        console.warn('Full user update failed, trying basic fields:', dbError);
+        const basicUpdates: string[] = [];
+        const basicArgs: any[] = [];
+
+        if (body.name !== undefined) { basicUpdates.push('name = ?'); basicArgs.push(body.name); }
+        if (body.phone !== undefined) { basicUpdates.push('phone = ?'); basicArgs.push(body.phone); }
+        if (body.profileImage !== undefined) { basicUpdates.push('profileImage = ?'); basicArgs.push(body.profileImage); }
+
+        if (basicUpdates.length > 0) {
+          basicUpdates.push('updatedAt = CURRENT_TIMESTAMP');
+          basicArgs.push(userId);
+          await db.execute({
+            sql: `UPDATE User SET ${basicUpdates.join(', ')} WHERE id = ?`,
+            args: basicArgs
+          });
+        }
+
+        // Try to add missing columns and retry document fields
+        const docColumns = [
+          { name: 'nif', value: body.nif },
+          { name: 'documentType', value: body.documentType },
+          { name: 'documentNumber', value: body.documentNumber },
+          { name: 'backgroundCheckStatus', value: body.backgroundCheckStatus },
+          { name: 'backgroundCheckUrl', value: body.backgroundCheckUrl },
+        ];
+        for (const col of docColumns) {
+          if (col.value !== undefined) {
+            try {
+              await db.execute({ sql: `ALTER TABLE User ADD COLUMN ${col.name} TEXT`, args: [] });
+            } catch { /* column may already exist */ }
+            try {
+              await db.execute({
+                sql: `UPDATE User SET ${col.name} = ? WHERE id = ?`,
+                args: [col.value, userId]
+              });
+            } catch (e) {
+              console.warn(`Failed to update ${col.name}:`, e);
+            }
+          }
+        }
+      }
     }
 
     // Update profile based on role

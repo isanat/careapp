@@ -39,10 +39,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const allowedDocTypes = ['application/pdf'];
+    const isImage = allowedImageTypes.includes(file.type);
+    const isDocument = allowedDocTypes.includes(file.type);
+
+    if (!isImage && !isDocument) {
       console.log('❌ Invalid file type:', file.type);
-      return NextResponse.json({ error: 'Tipo de arquivo não permitido. Use JPG, PNG, WEBP ou GIF' }, { status: 400 });
+      return NextResponse.json({ error: 'Tipo de arquivo não permitido. Use JPG, PNG, WEBP, GIF ou PDF' }, { status: 400 });
+    }
+
+    // Only allow PDFs for document uploads (background_check), not for profile images
+    if (isDocument && type === 'profile') {
+      console.log('❌ PDF not allowed for profile images');
+      return NextResponse.json({ error: 'Fotos de perfil devem ser imagens (JPG, PNG, WEBP ou GIF)' }, { status: 400 });
     }
 
     // Convert to base64 data URL
