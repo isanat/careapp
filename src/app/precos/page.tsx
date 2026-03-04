@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PublicLayout } from "@/components/layout/public-layout";
-import { 
+import {
   IconChevronRight,
   IconCheck
 } from "@/components/icons";
@@ -16,7 +15,7 @@ export default function PricingPage() {
   const { t } = useI18n();
 
   return (
-    <PublicLayout>
+    <>
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
         <div className="container px-4 mx-auto">
@@ -148,6 +147,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-    </PublicLayout>
+    </>
   );
 }

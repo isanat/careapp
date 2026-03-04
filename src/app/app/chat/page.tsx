@@ -69,6 +69,8 @@ export default function ChatPage() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [usePolling, setUsePolling] = useState(false);
 
   // Fetch conversations from API
   const fetchConversations = useCallback(async () => {
@@ -101,19 +103,22 @@ export default function ChatPage() {
     }
   }, []);
 
-  // Fetch chat auth token and connect to socket
+  // Fetch chat auth token and connect to socket (with polling fallback for Vercel)
   useEffect(() => {
     if (status !== "authenticated" || !session?.user) return;
 
     let newSocket: Socket | null = null;
     let cancelled = false;
+    let connectionAttempts = 0;
+    const MAX_ATTEMPTS = 2;
 
     async function connectWithAuth() {
       try {
         // Fetch a signed token from the server
         const tokenRes = await fetch('/api/chat/token');
         if (!tokenRes.ok) {
-          console.error('Failed to fetch chat token');
+          console.warn('Failed to fetch chat token, using HTTP polling for messages');
+          if (!cancelled) setUsePolling(true);
           return;
         }
         const { token } = await tokenRes.json();
@@ -124,14 +129,22 @@ export default function ChatPage() {
         newSocket = io(socketUrl, {
           transports: ["websocket"],
           auth: { token },
+          reconnectionAttempts: MAX_ATTEMPTS,
+          timeout: 5000,
         });
 
         newSocket.on("connect", () => {
           console.log("Connected to chat server (authenticated)");
+          connectionAttempts = 0;
         });
 
         newSocket.on("connect_error", (err) => {
-          console.error("Chat connection error:", err.message);
+          connectionAttempts++;
+          if (connectionAttempts >= MAX_ATTEMPTS) {
+            console.log("WebSocket unavailable, falling back to HTTP polling");
+            newSocket?.disconnect();
+            if (!cancelled) setUsePolling(true);
+          }
         });
 
         newSocket.on("message:receive", (message: Message) => {
@@ -144,7 +157,8 @@ export default function ChatPage() {
 
         queueMicrotask(() => setSocket(newSocket));
       } catch (error) {
-        console.error('Error connecting to chat:', error);
+        console.warn('Error connecting to chat, using HTTP polling:', error);
+        if (!cancelled) setUsePolling(true);
       }
     }
 
@@ -157,6 +171,23 @@ export default function ChatPage() {
       }
     };
   }, [status, session]);
+
+  // HTTP polling fallback when WebSocket is unavailable (e.g., on Vercel)
+  useEffect(() => {
+    if (!usePolling || !selectedConversation) return;
+
+    // Poll for new messages every 3 seconds
+    pollingIntervalRef.current = setInterval(() => {
+      fetchMessages(selectedConversation.id);
+    }, 3000);
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, [usePolling, selectedConversation, fetchMessages]);
 
   // Load conversations on mount
   useEffect(() => {
