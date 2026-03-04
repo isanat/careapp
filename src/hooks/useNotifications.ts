@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
+import { apiFetch } from '@/lib/api-client';
 
 export interface Notification {
   id: string;
@@ -46,7 +47,7 @@ export function useNotifications(): UseNotificationsReturn {
   const fetchNotifications = useCallback(async (unreadOnly = false) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/notifications?unreadOnly=${unreadOnly}&limit=20`);
+      const response = await apiFetch(`/api/notifications?unreadOnly=${unreadOnly}&limit=20`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch notifications');
@@ -65,7 +66,7 @@ export function useNotifications(): UseNotificationsReturn {
 
   const markAsRead = useCallback(async (notificationIds: string[]) => {
     try {
-      const response = await fetch('/api/notifications', {
+      const response = await apiFetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notificationIds }),
@@ -91,7 +92,7 @@ export function useNotifications(): UseNotificationsReturn {
 
   const markAllAsRead = useCallback(async () => {
     try {
-      const response = await fetch('/api/notifications', {
+      const response = await apiFetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ markAllAsRead: true }),

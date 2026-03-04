@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +37,7 @@ export default function GuidePage() {
     // Check if already accepted
     const checkAcceptance = async () => {
       try {
-        const response = await fetch("/api/guide/status");
+        const response = await apiFetch("/api/guide/status");
         if (response.ok) {
           const data = await response.json();
           setHasAccepted(data.accepted);
@@ -54,7 +55,7 @@ export default function GuidePage() {
   const handleAccept = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/guide/accept", {
+      const response = await apiFetch("/api/guide/accept", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });

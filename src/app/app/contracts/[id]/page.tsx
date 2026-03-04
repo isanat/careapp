@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -97,7 +98,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
     setError(null);
     try {
       // Fetch contract details
-      const contractsResponse = await fetch('/api/contracts');
+      const contractsResponse = await apiFetch('/api/contracts');
       if (!contractsResponse.ok) throw new Error(t.error);
       
       const contractsData = await contractsResponse.json();
@@ -109,7 +110,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
       
       // Fetch acceptance details
       try {
-        const acceptanceResponse = await fetch(`/api/contracts/${resolvedParams.id}/accept`);
+        const acceptanceResponse = await apiFetch(`/api/contracts/${resolvedParams.id}/accept`);
         if (acceptanceResponse.ok) {
           const acceptanceData = await acceptanceResponse.json();
           foundContract.acceptance = acceptanceData;
@@ -132,7 +133,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
     
     setIsAccepting(true);
     try {
-      const response = await fetch(`/api/contracts/${contract.id}/accept`, {
+      const response = await apiFetch(`/api/contracts/${contract.id}/accept`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

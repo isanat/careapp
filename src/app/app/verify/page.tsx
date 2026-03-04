@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 
 import { useState, useEffect } from "react";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,7 +47,7 @@ export default function VerifyPage() {
 
   const fetchKycStatus = async () => {
     try {
-      const response = await fetch("/api/kyc");
+      const response = await apiFetch("/api/kyc");
       if (response.ok) {
         const data = await response.json();
         setKycStatus(data);
@@ -68,7 +69,7 @@ export default function VerifyPage() {
     setError("");
 
     try {
-      const response = await fetch("/api/kyc", {
+      const response = await apiFetch("/api/kyc", {
         method: "POST",
       });
 

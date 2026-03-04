@@ -34,6 +34,7 @@ import {
 } from "@/components/icons";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 
 interface CaregiverDetails {
   id: string;
@@ -110,7 +111,7 @@ export default function AdminCaregiverDetailPage() {
   const fetchCaregiver = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/caregivers/${params.id}`);
+      const response = await apiFetch(`/api/admin/caregivers/${params.id}`);
       if (!response.ok) {
         throw new Error("Caregiver not found");
       }
@@ -147,7 +148,7 @@ export default function AdminCaregiverDetailPage() {
 
     setActionLoading(true);
     try {
-      const response = await fetch('/api/admin/caregivers/verify', {
+      const response = await apiFetch('/api/admin/caregivers/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -180,7 +181,7 @@ export default function AdminCaregiverDetailPage() {
   const handleFeature = async (featured: boolean) => {
     setActionLoading(true);
     try {
-      const response = await fetch(`/api/admin/caregivers/${params.id}/feature`, {
+      const response = await apiFetch(`/api/admin/caregivers/${params.id}/feature`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ featured }),

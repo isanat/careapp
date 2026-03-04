@@ -31,6 +31,7 @@ import {
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import { apiFetch } from "@/lib/api-client";
 
 interface Payment {
   id: string;
@@ -74,8 +75,8 @@ export default function AdminPaymentsPage() {
       if (search) params.set("search", search);
 
       const [paymentsRes, statsRes] = await Promise.all([
-        fetch(`/api/admin/payments?${params}`),
-        fetch("/api/admin/payments/stats"),
+        apiFetch(`/api/admin/payments?${params}`),
+        apiFetch("/api/admin/payments/stats"),
       ]);
 
       if (paymentsRes.ok) {
@@ -119,7 +120,7 @@ export default function AdminPaymentsPage() {
     if (!reason) return;
 
     try {
-      const response = await fetch(`/api/admin/payments/${paymentId}/refund`, {
+      const response = await apiFetch(`/api/admin/payments/${paymentId}/refund`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason }),

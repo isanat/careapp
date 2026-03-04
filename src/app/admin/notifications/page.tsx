@@ -19,6 +19,7 @@ import {
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api-client";
 
 interface AdminNotification {
   id: string;
@@ -43,7 +44,7 @@ export default function AdminNotificationsPage() {
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/notifications");
+      const response = await apiFetch("/api/admin/notifications");
       if (response.ok) {
         const data = await response.json();
         setNotifications(data.notifications || []);
@@ -61,7 +62,7 @@ export default function AdminNotificationsPage() {
 
   const markAsRead = async (id: string) => {
     try {
-      const response = await fetch(`/api/admin/notifications/${id}/read`, {
+      const response = await apiFetch(`/api/admin/notifications/${id}/read`, {
         method: "POST",
       });
       if (response.ok) {

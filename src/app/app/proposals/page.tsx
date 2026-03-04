@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -131,7 +132,7 @@ export default function ProposalsPage() {
   const fetchProposals = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/contracts');
+      const response = await apiFetch('/api/contracts');
       if (!response.ok) throw new Error("Erro ao carregar");
       const data = await response.json();
       const caregiverProposals = (data.contracts || []).filter(
@@ -153,7 +154,7 @@ export default function ProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(selectedProposal.id);
     try {
-      const response = await fetch(`/api/contracts/${selectedProposal.id}/accept`, {
+      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/accept`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -172,7 +173,7 @@ export default function ProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(selectedProposal.id);
     try {
-      const response = await fetch(`/api/contracts/${selectedProposal.id}/reject`, {
+      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/reject`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rejectionReason: rejectReason }),
@@ -229,7 +230,7 @@ export default function ProposalsPage() {
         return;
       }
 
-      const response = await fetch(`/api/contracts/${selectedProposal.id}/counter`, {
+      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/counter`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

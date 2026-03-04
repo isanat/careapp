@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -49,7 +50,7 @@ export default function WalletPage() {
 
   const fetchWallet = async () => {
     try {
-      const response = await fetch('/api/user/wallet');
+      const response = await apiFetch('/api/user/wallet');
       if (response.ok) {
         const data = await response.json();
         setWallet(data.wallet);
@@ -65,7 +66,7 @@ export default function WalletPage() {
     setIsProcessing(true);
     setError("");
     try {
-      const response = await fetch("/api/payments/activation", {
+      const response = await apiFetch("/api/payments/activation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: session.user.id, amount: purchaseAmount * 100 }),

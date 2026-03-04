@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +69,7 @@ export function PaymentSection({ contractId, onPaymentSuccess }: PaymentSectionP
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/payments/contract-fee", {
+      const response = await apiFetch("/api/payments/contract-fee", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

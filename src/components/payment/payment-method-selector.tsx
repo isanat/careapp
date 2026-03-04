@@ -18,6 +18,7 @@ import {
   IconExternalLink
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
+import { apiFetch } from "@/lib/api-client";
 
 type PaymentMethod = 'mbway' | 'multibanco' | 'cc' | 'stripe';
 
@@ -53,7 +54,7 @@ export function PaymentMethodSelector({
     try {
       // For Easypay methods
       if (['mbway', 'multibanco', 'cc'].includes(selectedMethod)) {
-        const response = await fetch('/api/payments/easypay', {
+        const response = await apiFetch('/api/payments/easypay', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -80,7 +81,7 @@ export function PaymentMethodSelector({
         }
       } else {
         // For Stripe
-        const response = await fetch('/api/payments/activation', {
+        const response = await apiFetch('/api/payments/activation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
         });

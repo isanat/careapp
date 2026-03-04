@@ -26,6 +26,7 @@ import {
 } from "@/components/icons";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
+import { apiFetch } from "@/lib/api-client";
 
 interface AuditLog {
   id: string;
@@ -59,7 +60,7 @@ export default function AdminLogsPage() {
       if (actionFilter !== "all") params.set("action", actionFilter);
       if (entityFilter !== "all") params.set("entityType", entityFilter);
 
-      const response = await fetch(`/api/admin/logs?${params}`);
+      const response = await apiFetch(`/api/admin/logs?${params}`);
       if (response.ok) {
         const data = await response.json();
         setLogs(data.logs || []);

@@ -38,6 +38,7 @@ import {
   IconMessageSquare,
 } from "@/components/icons";
 import { useToast } from "@/hooks/use-toast";
+import { apiFetch } from "@/lib/api-client";
 
 interface SupportTicket {
   id: string;
@@ -91,7 +92,7 @@ export default function AdminSupportPage() {
       if (statusFilter !== "all") params.set("status", statusFilter);
       if (priorityFilter !== "all") params.set("priority", priorityFilter);
 
-      const response = await fetch(`/api/admin/support?${params}`);
+      const response = await apiFetch(`/api/admin/support?${params}`);
       if (response.ok) {
         const data = await response.json();
         setTickets(data.tickets || []);
@@ -111,7 +112,7 @@ export default function AdminSupportPage() {
   const handleUpdateStatus = async (ticketId: string, newStatus: string) => {
     setUpdating(true);
     try {
-      const response = await fetch(`/api/admin/support/${ticketId}`, {
+      const response = await apiFetch(`/api/admin/support/${ticketId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus, resolution }),

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { IconLoader2 } from "@/components/icons";
+import { apiFetch } from "@/lib/api-client";
 
 interface AdminGuardProps {
   children: React.ReactNode;
@@ -24,7 +25,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
       // Check if user has admin role
       const checkAdmin = async () => {
         try {
-          const response = await fetch("/api/admin/auth");
+          const response = await apiFetch("/api/admin/auth");
           if (response.ok) {
             const data = await response.json();
             setIsAdmin(data.isAdmin);

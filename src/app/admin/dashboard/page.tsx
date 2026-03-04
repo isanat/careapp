@@ -18,6 +18,7 @@ import {
   IconRefresh,
 } from "@/components/icons";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api-client";
 
 interface DashboardStats {
   kpis: {
@@ -55,7 +56,7 @@ export default function AdminDashboardPage() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/admin/dashboard/stats");
+      const response = await apiFetch("/api/admin/dashboard/stats");
       if (!response.ok) throw new Error("Failed to fetch stats");
       const data = await response.json();
       setStats(data);

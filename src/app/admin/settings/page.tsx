@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,8 +94,8 @@ export default function AdminSettingsPage() {
     setLoading(true);
     try {
       const [settingsRes, integrationsRes] = await Promise.all([
-        fetch("/api/admin/settings"),
-        fetch("/api/admin/settings/integrations"),
+        apiFetch("/api/admin/settings"),
+        apiFetch("/api/admin/settings/integrations"),
       ]);
 
       if (settingsRes.ok) {
@@ -115,7 +116,7 @@ export default function AdminSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch("/api/admin/settings", {
+      const response = await apiFetch("/api/admin/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
@@ -144,7 +145,7 @@ export default function AdminSettingsPage() {
 
   const testConnection = async (integration: string) => {
     try {
-      const response = await fetch(`/api/admin/settings/test-integration`, {
+      const response = await apiFetch(`/api/admin/settings/test-integration`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ integration }),

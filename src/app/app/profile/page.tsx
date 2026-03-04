@@ -59,6 +59,7 @@ import {
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/hooks/useNotifications";
+import { apiFetch } from "@/lib/api-client";
 
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
@@ -76,11 +77,34 @@ const SERVICE_TYPES = [
 ];
 
 const DOCUMENT_TYPES = [
-  { id: "CC", label: "Cartão de Cidadão" },
-  { id: "PASSPORT", label: "Passaporte" },
-  { id: "NIF", label: "NIF" },
-  { id: "RESIDENCE", label: "Título de Residência" },
+  { id: "CC", label: "Cartão de Cidadão", placeholder: "12345678 1 ZZ2", maxLength: 15 },
+  { id: "PASSPORT", label: "Passaporte", placeholder: "AA123456", maxLength: 9 },
+  { id: "RESIDENCE", label: "Título de Residência", placeholder: "Número do título", maxLength: 20 },
 ];
+
+/** Validate Portuguese NIF (9 digits with check digit) */
+function validateNIF(nif: string): boolean {
+  if (!/^\d{9}$/.test(nif)) return false;
+  const digits = nif.split("").map(Number);
+  const checkSum = digits.slice(0, 8).reduce((sum, d, i) => sum + d * (9 - i), 0);
+  const remainder = checkSum % 11;
+  const checkDigit = remainder < 2 ? 0 : 11 - remainder;
+  return checkDigit === digits[8];
+}
+
+/** Format Portuguese phone: ensures +351 prefix */
+function formatPhonePT(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (digits.startsWith("351")) {
+    const num = digits.slice(3);
+    if (num.length <= 3) return `+351 ${num}`;
+    if (num.length <= 6) return `+351 ${num.slice(0, 3)} ${num.slice(3)}`;
+    return `+351 ${num.slice(0, 3)} ${num.slice(3, 6)} ${num.slice(6, 9)}`;
+  }
+  if (digits.length <= 3) return `+351 ${digits}`;
+  if (digits.length <= 6) return `+351 ${digits.slice(0, 3)} ${digits.slice(3)}`;
+  return `+351 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
+}
 
 interface ProfileData {
   name: string;
@@ -143,7 +167,7 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/user/profile");
+      const response = await apiFetch("/api/user/profile");
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -191,8 +215,21 @@ export default function ProfilePage() {
     setIsSaving(true);
     setError(null);
     setSuccess(null);
+
+    // Validate NIF before saving
+    if (formData.nif && formData.nif.length > 0 && formData.nif.length !== 9) {
+      setError("O NIF deve ter exatamente 9 dígitos");
+      setIsSaving(false);
+      return;
+    }
+    if (formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif)) {
+      setError("NIF inválido - verifique o número");
+      setIsSaving(false);
+      return;
+    }
+
     try {
-      const response = await fetch("/api/user/profile", {
+      const response = await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -205,7 +242,7 @@ export default function ProfilePage() {
 
       await response.json();
 
-      setSuccess("Salvo!");
+      setSuccess("Guardado com sucesso!");
       setIsEditing(false);
       if (formData.name !== session?.user?.name) await update({ name: formData.name });
       fetchProfile();
@@ -247,7 +284,7 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
-      const response = await fetch("/api/user/account", { method: "DELETE" });
+      const response = await apiFetch("/api/user/account", { method: "DELETE" });
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Erro ao apagar conta");
@@ -276,7 +313,7 @@ export default function ProfilePage() {
       formData.append("file", file);
       formData.append("type", "profile");
 
-      const response = await fetch("/api/upload", {
+      const response = await apiFetch("/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -287,13 +324,13 @@ export default function ProfilePage() {
       setFormData(prev => ({ ...prev, profileImage: data.url }));
       
       // Save immediately
-      await fetch("/api/user/profile", {
+      await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profileImage: data.url }),
       });
       
-      setSuccess("Foto atualizada!");
+      setSuccess("Foto atualizada com sucesso!");
       fetchProfile();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar foto");
@@ -312,7 +349,7 @@ export default function ProfilePage() {
       formDataUpload.append("file", file);
       formDataUpload.append("type", "background_check");
 
-      const response = await fetch("/api/upload", {
+      const response = await apiFetch("/api/upload", {
         method: "POST",
         body: formDataUpload,
       });
@@ -322,7 +359,7 @@ export default function ProfilePage() {
       const data = await response.json();
       
       // Update background check status
-      await fetch("/api/user/profile", {
+      await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -337,7 +374,7 @@ export default function ProfilePage() {
         backgroundCheckStatus: "SUBMITTED"
       }));
       
-      setSuccess("Comprovante enviado! Aguarde verificação.");
+      setSuccess("Comprovativo enviado! Aguarde verificação.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar documento");
     } finally {
@@ -514,48 +551,62 @@ export default function ProfilePage() {
                 <span className="text-sm font-medium">Documentos Pessoais</span>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">NIF (Número de Identificação Fiscal)</Label>
-                  <Input 
-                    value={formData.nif || ""} 
-                    onChange={(e) => setFormData({...formData, nif: e.target.value})} 
-                    disabled={!isEditing} 
-                    className="h-9 mt-0.5" 
+                  <Input
+                    value={formData.nif || ""}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 9);
+                      setFormData({...formData, nif: val});
+                    }}
+                    disabled={!isEditing}
+                    className={`h-9 mt-0.5 ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-red-400" : ""}`}
                     placeholder="123456789"
                     maxLength={9}
+                    inputMode="numeric"
                   />
+                  {formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) && (
+                    <p className="text-[10px] text-red-500 mt-0.5">NIF inválido - verifique os dígitos</p>
+                  )}
+                  {formData.nif && formData.nif.length === 9 && validateNIF(formData.nif) && (
+                    <p className="text-[10px] text-green-600 mt-0.5 flex items-center gap-0.5"><IconCheck className="h-2.5 w-2.5" />NIF válido</p>
+                  )}
                 </div>
-                
-                <div className="grid grid-cols-2 gap-2">
+
+                <div>
+                  <Label className="text-xs text-muted-foreground">Tipo de Documento de Identificação</Label>
+                  <Select
+                    value={formData.documentType || ""}
+                    onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})}
+                    disabled={!isEditing}
+                  >
+                    <SelectTrigger className="h-9 mt-0.5">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                      {DOCUMENT_TYPES.map((doc) => (
+                        <SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.documentType && (
                   <div>
-                    <Label className="text-xs text-muted-foreground">Tipo de Documento</Label>
-                    <Select 
-                      value={formData.documentType || ""} 
-                      onValueChange={(value) => setFormData({...formData, documentType: value})}
+                    <Label className="text-xs text-muted-foreground">
+                      Número do {DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.label || "Documento"}
+                    </Label>
+                    <Input
+                      value={formData.documentNumber || ""}
+                      onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
                       disabled={!isEditing}
-                    >
-                      <SelectTrigger className="h-9 mt-0.5">
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background border shadow-lg">
-                        {DOCUMENT_TYPES.map((doc) => (
-                          <SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Número do Documento</Label>
-                    <Input 
-                      value={formData.documentNumber || ""} 
-                      onChange={(e) => setFormData({...formData, documentNumber: e.target.value})} 
-                      disabled={!isEditing} 
-                      className="h-9 mt-0.5" 
-                      placeholder="000000000"
+                      className="h-9 mt-0.5"
+                      placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
+                      maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
                     />
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -571,8 +622,8 @@ export default function ProfilePage() {
                 </div>
                 
                 <p className="text-xs text-muted-foreground mb-3">
-                  Para trabalhar como cuidador, é necessário apresentar comprovante de antecedentes criminais.
-                  Você pode obter online em justica.gov.pt
+                  Para trabalhar como cuidador, é necessário apresentar o registo criminal.
+                  Pode obtê-lo online em justica.gov.pt
                 </p>
                 
                 <div className="flex items-center gap-2">
@@ -588,7 +639,7 @@ export default function ProfilePage() {
                     ) : (
                       <IconUpload className="h-4 w-4 mr-1" />
                     )}
-                    Enviar Comprovante
+                    Enviar Comprovativo
                   </Button>
                   <input
                     id="backgroundCheckInput"
@@ -682,8 +733,17 @@ export default function ProfilePage() {
               <Input type="email" value={formData.email} disabled className="h-9 mt-0.5 bg-muted" />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">{t.auth.phone}</Label>
-              <Input type="tel" value={formData.phone || ""} onChange={(e) => setFormData({...formData, phone: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="+351 912 345 678" />
+              <Label className="text-xs text-muted-foreground">Telemóvel</Label>
+              <Input
+                type="tel"
+                value={formData.phone || ""}
+                onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
+                disabled={!isEditing}
+                className="h-9 mt-0.5"
+                placeholder="+351 912 345 678"
+                inputMode="tel"
+              />
+              <p className="text-[10px] text-muted-foreground mt-0.5">Formato: +351 9XX XXX XXX</p>
             </div>
             <Separator className="my-2" />
             <div className="grid grid-cols-2 gap-2">
@@ -693,7 +753,14 @@ export default function ProfilePage() {
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">Telefone</Label>
-                <Input value={formData.emergencyPhone || ""} onChange={(e) => setFormData({...formData, emergencyPhone: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="+351..." />
+                <Input
+                  value={formData.emergencyPhone || ""}
+                  onChange={(e) => setFormData({...formData, emergencyPhone: formatPhonePT(e.target.value)})}
+                  disabled={!isEditing}
+                  className="h-9 mt-0.5"
+                  placeholder="+351 912 345 678"
+                  inputMode="tel"
+                />
               </div>
             </div>
           </TabsContent>

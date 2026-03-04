@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { io, Socket } from "socket.io-client";
+import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,7 +73,7 @@ export default function ChatPage() {
   // Fetch conversations from API
   const fetchConversations = useCallback(async () => {
     try {
-      const response = await fetch('/api/chat/rooms');
+      const response = await apiFetch('/api/chat/rooms');
       if (response.ok) {
         const data = await response.json();
         setConversations(data.chatRooms || []);
@@ -88,7 +89,7 @@ export default function ChatPage() {
   const fetchMessages = useCallback(async (chatRoomId: string) => {
     setIsLoadingMessages(true);
     try {
-      const response = await fetch(`/api/chat/messages?chatRoomId=${chatRoomId}`);
+      const response = await apiFetch(`/api/chat/messages?chatRoomId=${chatRoomId}`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
@@ -212,7 +213,7 @@ export default function ChatPage() {
 
     // Save to database
     try {
-      await fetch('/api/chat/messages', {
+      await apiFetch('/api/chat/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

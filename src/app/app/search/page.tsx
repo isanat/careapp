@@ -24,6 +24,7 @@ import {
 } from "@/components/icons";
 import { SERVICE_TYPES } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+import { apiFetch } from "@/lib/api-client";
 
 interface Caregiver {
   id: string;
@@ -99,7 +100,7 @@ export default function SearchPage() {
 
   const fetchCaregivers = async () => {
     try {
-      const response = await fetch('/api/caregivers');
+      const response = await apiFetch('/api/caregivers');
       if (response.ok) {
         const data = await response.json();
         setCaregivers(data.caregivers || []);
@@ -113,7 +114,7 @@ export default function SearchPage() {
 
   const fetchFamilies = async () => {
     try {
-      const response = await fetch('/api/families');
+      const response = await apiFetch('/api/families');
       if (response.ok) {
         const data = await response.json();
         setFamilies(data.families || []);

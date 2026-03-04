@@ -24,6 +24,7 @@ import {
   IconCreditCard,
   IconFileText,
 } from "@/components/icons";
+import { apiFetch } from "@/lib/api-client";
 
 interface AnalyticsData {
   kpis: {
@@ -52,7 +53,7 @@ export default function AdminAnalyticsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/analytics/overview?days=${period}`);
+      const response = await apiFetch(`/api/admin/analytics/overview?days=${period}`);
       if (response.ok) {
         setData(await response.json());
       }
