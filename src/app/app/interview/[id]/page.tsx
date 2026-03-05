@@ -3,25 +3,22 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppShell } from "@/components/layout/app-shell";
 import { VideoRoom } from "@/components/video/video-room";
-import { 
-  IconVideo, 
-  IconClock, 
-  IconCheck, 
-  IconX, 
+import {
+  IconVideo,
+  IconClock,
+  IconCheck,
+  IconX,
   IconLoader2,
   IconStar,
   IconAlertCircle,
-  IconExternalLink,
-  IconMessageSquare
+  IconExternalLink
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 import { apiFetch } from "@/lib/api-client";
@@ -55,7 +52,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<string>("video");
   
   // Questionnaire state
   const [communicationRating, setCommunicationRating] = useState(3);
@@ -112,7 +108,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
       
       // Update local state
       setInterview({ ...interview, status: "IN_PROGRESS" });
-      setActiveTab("video");
     } catch (err) {
       setError("Falha ao iniciar entrevista");
     }
@@ -129,7 +124,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
       });
       
       setInterview({ ...interview, status: "COMPLETED" });
-      setActiveTab("questionnaire");
     } catch (err) {
       setError("Falha ao finalizar entrevista");
     }
@@ -187,9 +181,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   if (isLoading) {
     return (
       <AppShell>
-        <div className="animate-pulse space-y-6 max-w-4xl mx-auto">
-          <div className="h-32 bg-muted rounded-lg" />
-          <div className="h-96 bg-muted rounded-lg" />
+        <div className="animate-pulse space-y-5 max-w-4xl mx-auto">
+          <div className="h-28 bg-muted rounded-2xl" />
+          <div className="h-[60vh] bg-muted rounded-2xl" />
         </div>
       </AppShell>
     );
@@ -198,16 +192,16 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   if (!interview) {
     return (
       <AppShell>
-        <Card className="border-destructive/20 max-w-2xl mx-auto">
-          <CardContent className="pt-6 text-center">
-            <IconAlertCircle className="h-12 w-12 mx-auto text-destructive mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Erro</h2>
-            <p className="text-muted-foreground">{error}</p>
-            <Button className="mt-4" onClick={() => router.push("/app/dashboard")}>
-              Voltar ao Dashboard
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="text-center py-16 px-6 max-w-md mx-auto">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center ring-4 ring-destructive/20">
+            <IconAlertCircle className="h-10 w-10 text-destructive" />
+          </div>
+          <h2 className="text-xl font-bold mb-2">Erro</h2>
+          <p className="text-muted-foreground text-sm mb-6">{error}</p>
+          <Button className="rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
+            Voltar ao Dashboard
+          </Button>
+        </div>
       </AppShell>
     );
   }
@@ -232,317 +226,282 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   };
 
   return (
-    <AppShell>
-      <div className="space-y-6 max-w-4xl mx-auto">
+    <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
+      <div className="space-y-5 max-w-4xl mx-auto pb-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <IconVideo className="h-6 w-6" />
-              Entrevista em Vídeo
-            </h1>
-            <p className="text-muted-foreground">
+        <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md gradient-violet">
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <IconVideo className="h-5 w-5" />
+                <span className="text-sm font-medium opacity-80">Entrevista em Video</span>
+              </div>
+              {getStatusBadge()}
+            </div>
+            <h1 className="text-xl font-bold">
               {isFamily ? "Entrevista com" : "Entrevista da"} {otherPartyName}
-            </p>
+            </h1>
+            {interview.status === "SCHEDULED" && (
+              <div className="flex items-center gap-2 mt-2 text-sm opacity-80">
+                <IconClock className="h-4 w-4" />
+                <span>
+                  {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
+                    weekday: "short", day: "numeric", month: "short"
+                  })} as {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
+                    hour: "2-digit", minute: "2-digit"
+                  })} ({interview.durationMinutes} min)
+                </span>
+              </div>
+            )}
           </div>
-          {getStatusBadge()}
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+          <div className="absolute -right-2 -bottom-6 h-32 w-32 rounded-full bg-white/5" />
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-start gap-3">
+            <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+            <p className="text-destructive text-sm">{error}</p>
+          </div>
+        )}
 
         {/* Scheduled Status - Before Interview */}
         {interview.status === "SCHEDULED" && (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <IconClock className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">
-                      {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric"
-                      })}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })} • {interview.durationMinutes} minutos
-                    </p>
+          <div className="space-y-4">
+            {/* Preparation Tips */}
+            <div className="bg-surface rounded-2xl p-5 shadow-card border border-border/50">
+              <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <IconVideo className="h-4 w-4 text-primary" />
+                </span>
+                Preparacao
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { icon: "\uD83C\uDFA5", text: "Verifique se sua camera e microfone funcionam" },
+                  { icon: "\uD83D\uDD07", text: "Escolha um local silencioso e bem iluminado" },
+                  { icon: "\uD83D\uDCDD", text: "Tenha suas perguntas anotadas" },
+                  { icon: "\uD83D\uDD12", text: "A entrevista e privada e segura" },
+                ].map((tip, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm">
+                    <span className="text-lg flex-shrink-0">{tip.icon}</span>
+                    <span className="text-muted-foreground">{tip.text}</span>
                   </div>
-                </div>
+                ))}
               </div>
+            </div>
 
-              <div className="bg-muted/50 rounded-lg p-4 mb-6">
-                <h3 className="font-medium mb-2">Preparação para a Entrevista</h3>
-                <ul className="text-sm text-muted-foreground space-y-2">
-                  <li>• Verifique se sua câmera e microfone estão funcionando</li>
-                  <li>• Escolha um local silencioso e bem iluminado</li>
-                  <li>• Tenha suas perguntas anotadas</li>
-                  <li>• A entrevista será gravada apenas com consentimento</li>
-                </ul>
-              </div>
-
-              <Button onClick={handleStartInterview} className="w-full" size="lg">
-                <IconVideo className="h-4 w-4 mr-2" />
-                Entrar na Sala de Entrevista
-              </Button>
-            </CardContent>
-          </Card>
+            {/* Enter Room Button */}
+            <Button
+              onClick={handleStartInterview}
+              size="lg"
+              className="w-full h-16 text-lg font-semibold rounded-2xl shadow-lg shadow-primary/25 bg-primary hover:bg-primary/90"
+            >
+              <IconVideo className="h-6 w-6 mr-3" />
+              Entrar na Sala de Entrevista
+            </Button>
+          </div>
         )}
 
         {/* In Progress - Video Room */}
         {interview.status === "IN_PROGRESS" && (
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="video">
-                <IconVideo className="h-4 w-4 mr-2" />
-                Vídeo
-              </TabsTrigger>
-              <TabsTrigger value="info">
-                <IconMessageSquare className="h-4 w-4 mr-2" />
-                Informações
-              </TabsTrigger>
-            </TabsList>
+          <div className="space-y-3">
+            {/* Video takes full available height */}
+            <VideoRoom
+              roomName={roomName}
+              displayName={session?.user?.name || "Usuario"}
+              email={session?.user?.email}
+              subject={`Entrevista: ${otherPartyName}`}
+              isModerator={isFamily}
+              enableLobby={true}
+              enablePrejoinPage={true}
+              onLeave={handleLeaveMeeting}
+              className="h-[calc(100vh-220px)] min-h-[400px]"
+            />
 
-            <TabsContent value="video" className="mt-4">
-              <div className="space-y-4">
-                <VideoRoom
-                  roomName={roomName}
-                  displayName={session?.user?.name || "Usuário"}
-                  email={session?.user?.email}
-                  subject={`Entrevista: ${isFamily ? interview.caregiverName : interview.familyName}`}
-                  isModerator={isFamily}
-                  enableLobby={true}
-                  enablePrejoinPage={true}
-                  onLeave={handleLeaveMeeting}
-                  className="h-[600px]"
-                />
-                
-                <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => window.open(interview.videoRoomUrl, "_blank")}
-                  >
-                    <IconExternalLink className="h-4 w-4 mr-2" />
-                    Abrir em Nova Aba
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    onClick={handleCompleteInterview}
-                  >
-                    <IconCheck className="h-4 w-4 mr-2" />
-                    Finalizar Entrevista
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="info" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Detalhes da Entrevista</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Família</p>
-                      <p className="font-medium">{interview.familyName}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Cuidador(a)</p>
-                      <p className="font-medium">{interview.caregiverName}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Duração Prevista</p>
-                      <p className="font-medium">{interview.durationMinutes} minutos</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Status</p>
-                      <p className="font-medium">Em andamento</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => window.open(interview.videoRoomUrl, "_blank")}
+                className="flex-1 h-12 rounded-xl"
+              >
+                <IconExternalLink className="h-4 w-4 mr-2" />
+                Nova Aba
+              </Button>
+              <Button
+                variant="destructive"
+                size="lg"
+                onClick={handleCompleteInterview}
+                className="flex-1 h-12 rounded-xl"
+              >
+                <IconCheck className="h-4 w-4 mr-2" />
+                Finalizar
+              </Button>
+            </div>
+          </div>
         )}
 
         {/* Completed - Questionnaire (Family only) */}
         {interview.status === "COMPLETED" && isFamily && !interview.familyCompletedAt && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Questionário Pós-Entrevista</CardTitle>
-              <CardDescription>
-                Por favor, avalie sua experiência com {interview.caregiverName}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Communication Rating */}
-              <div className="space-y-2">
-                <Label>Comunicação</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[communicationRating]}
-                    onValueChange={([value]) => setCommunicationRating(value)}
-                    min={1}
-                    max={5}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: communicationRating }).map((_, i) => (
-                      <IconStar key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+          <div className="bg-surface rounded-2xl p-5 shadow-card border border-border/50 space-y-6">
+            <div>
+              <h2 className="text-lg font-bold">Questionario Pos-Entrevista</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Avalie sua experiencia com {interview.caregiverName}
+              </p>
+            </div>
+
+            {/* Ratings */}
+            {[
+              { label: "Comunicacao", value: communicationRating, setter: setCommunicationRating },
+              { label: "Experiencia e Qualificacoes", value: experienceRating, setter: setExperienceRating },
+              { label: "Pontualidade", value: punctualityRating, setter: setPunctualityRating },
+            ].map(({ label, value, setter }) => (
+              <div key={label} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm">{label}</Label>
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setter(i + 1)}
+                        className="p-0.5"
+                      >
+                        <IconStar className={`h-5 w-5 transition-colors ${
+                          i < value ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"
+                        }`} />
+                      </button>
                     ))}
                   </div>
                 </div>
+                <Slider
+                  value={[value]}
+                  onValueChange={([v]) => setter(v)}
+                  min={1}
+                  max={5}
+                  step={1}
+                  className="flex-1"
+                />
               </div>
+            ))}
 
-              {/* Experience Rating */}
-              <div className="space-y-2">
-                <Label>Experiência e Qualificações</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[experienceRating]}
-                    onValueChange={([value]) => setExperienceRating(value)}
-                    min={1}
-                    max={5}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: experienceRating }).map((_, i) => (
-                      <IconStar key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Punctuality Rating */}
-              <div className="space-y-2">
-                <Label>Pontualidade</Label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[punctualityRating]}
-                    onValueChange={([value]) => setPunctualityRating(value)}
-                    min={1}
-                    max={5}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: punctualityRating }).map((_, i) => (
-                      <IconStar key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Recommendation */}
-              <div className="flex items-center justify-between">
-                <Label>Recomendaria este cuidador?</Label>
+            {/* Recommendation */}
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+              <Label className="text-sm">Recomendaria este cuidador?</Label>
+              <div className="flex gap-2">
                 <Button
                   variant={wouldRecommend ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setWouldRecommend(!wouldRecommend)}
+                  onClick={() => setWouldRecommend(true)}
+                  className="rounded-lg"
                 >
-                  {wouldRecommend ? <IconCheck className="h-4 w-4 mr-1" /> : null}
-                  {wouldRecommend ? "Sim" : "Não"}
+                  <IconCheck className="h-3.5 w-3.5 mr-1" />
+                  Sim
+                </Button>
+                <Button
+                  variant={!wouldRecommend ? "destructive" : "outline"}
+                  size="sm"
+                  onClick={() => setWouldRecommend(false)}
+                  className="rounded-lg"
+                >
+                  <IconX className="h-3.5 w-3.5 mr-1" />
+                  Nao
                 </Button>
               </div>
+            </div>
 
-              {/* Proceed with Contract */}
-              <div className="flex items-center justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
+            {/* Proceed with Contract */}
+            <div className={`p-4 rounded-xl border-2 transition-colors ${
+              proceedWithContract ? "border-primary bg-primary/5" : "border-border bg-muted/30"
+            }`}>
+              <div className="flex items-center justify-between">
                 <div>
                   <Label className="text-base font-semibold">Prosseguir com Contrato?</Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     Confirmar que deseja contratar este cuidador
                   </p>
                 </div>
                 <Button
                   variant={proceedWithContract ? "default" : "outline"}
+                  size="lg"
                   onClick={() => setProceedWithContract(!proceedWithContract)}
+                  className="rounded-xl h-12 px-6"
                 >
-                  {proceedWithContract ? <IconCheck className="h-4 w-4 mr-1" /> : null}
-                  {proceedWithContract ? "Sim, Prosseguir" : "Ainda Não"}
+                  {proceedWithContract ? <IconCheck className="h-4 w-4 mr-1.5" /> : null}
+                  {proceedWithContract ? "Sim!" : "Ainda Nao"}
                 </Button>
               </div>
+            </div>
 
-              {/* Notes */}
-              <div className="space-y-2">
-                <Label>Observações Adicionais (opcional)</Label>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Alguma observação adicional sobre a entrevista..."
-                  rows={3}
-                />
-              </div>
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label className="text-sm">Observacoes (opcional)</Label>
+              <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Alguma observacao adicional..."
+                rows={3}
+                className="rounded-xl resize-none"
+              />
+            </div>
 
-              {/* Submit */}
-              <Button 
-                onClick={handleSubmitQuestionnaire} 
-                disabled={isSubmitting}
-                className="w-full"
-              >
-                {isSubmitting ? (
-                  <>
-                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    <IconCheck className="h-4 w-4 mr-2" />
-                    Enviar Questionário
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+            {/* Submit */}
+            <Button
+              onClick={handleSubmitQuestionnaire}
+              disabled={isSubmitting}
+              size="lg"
+              className="w-full h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/25"
+            >
+              {isSubmitting ? (
+                <>
+                  <IconLoader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <IconCheck className="h-5 w-5 mr-2" />
+                  Enviar Questionario
+                </>
+              )}
+            </Button>
+          </div>
         )}
 
         {/* Already Completed */}
         {interview.familyCompletedAt && (
-          <Card className="border-green-500/20 bg-green-500/5">
-            <CardContent className="pt-6 text-center">
-              <IconCheck className="h-12 w-12 mx-auto text-green-500 mb-4" />
-              <h2 className="text-xl font-semibold text-green-600">Questionário Enviado</h2>
-              <p className="text-muted-foreground mt-1">
-                {proceedWithContract 
-                  ? "O contrato está aguardando a aceitação do cuidador."
-                  : "Seu feedback foi registrado."
-                }
-              </p>
-              <Button className="mt-4" onClick={() => router.push("/app/dashboard")}>
-                Voltar ao Dashboard
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="text-center py-12 px-6">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
+              <IconCheck className="h-10 w-10 text-green-500" />
+            </div>
+            <h2 className="text-xl font-bold text-green-600 mb-2">Questionario Enviado</h2>
+            <p className="text-muted-foreground text-sm">
+              {proceedWithContract
+                ? "O contrato esta aguardando a aceitacao do cuidador."
+                : "Seu feedback foi registrado."}
+            </p>
+            <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
+              Voltar ao Dashboard
+            </Button>
+          </div>
         )}
 
         {/* Caregiver View - Completed */}
         {interview.status === "COMPLETED" && !isFamily && (
-          <Card className="border-green-500/20 bg-green-500/5">
-            <CardContent className="pt-6 text-center">
-              <IconCheck className="h-12 w-12 mx-auto text-green-500 mb-4" />
-              <h2 className="text-xl font-semibold text-green-600">Entrevista Concluída</h2>
-              <p className="text-muted-foreground mt-1">
-                A família irá avaliar a entrevista e você será notificado sobre o resultado.
-              </p>
-              <Button className="mt-4" onClick={() => router.push("/app/dashboard")}>
-                Voltar ao Dashboard
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {error && (
-          <Card className="border-destructive/20 bg-destructive/5">
-            <CardContent className="pt-4">
-              <p className="text-destructive text-sm">{error}</p>
-            </CardContent>
-          </Card>
+          <div className="text-center py-12 px-6">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
+              <IconCheck className="h-10 w-10 text-green-500" />
+            </div>
+            <h2 className="text-xl font-bold text-green-600 mb-2">Entrevista Concluida</h2>
+            <p className="text-muted-foreground text-sm">
+              A familia ira avaliar a entrevista e voce sera notificado sobre o resultado.
+            </p>
+            <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
+              Voltar ao Dashboard
+            </Button>
+          </div>
         )}
       </div>
     </AppShell>

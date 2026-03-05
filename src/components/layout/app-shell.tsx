@@ -38,6 +38,7 @@ import { LanguageSelector } from "@/components/ui/language-selector";
 
 interface AppShellProps {
   children: React.ReactNode;
+  hideBottomNav?: boolean;
 }
 
 // Hook to fetch user wallet data
@@ -80,7 +81,7 @@ function useUnreadCount() {
   return count;
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const router = useRouter();
@@ -311,7 +312,7 @@ export function AppShell({ children }: AppShellProps) {
       </div>
 
       {/* Mobile Bottom Navigation - 5 tabs, one-handed friendly */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50 safe-area-inset-bottom lg:hidden">
+      <nav className={cn("fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
         <div className="flex items-center justify-around h-[4.5rem] px-1">
           {mobileNavItems.map((item) => {
             const active = isActiveRoute(item.href);
