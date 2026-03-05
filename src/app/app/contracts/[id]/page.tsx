@@ -229,7 +229,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
         {contract && !isLoading && (
           <>
             {/* Contract Title Card */}
-            <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md bg-gradient-to-br from-slate-800 to-slate-900">
+            <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md gradient-secondary">
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-1">
                   <IconContract className="h-4 w-4 opacity-60" />

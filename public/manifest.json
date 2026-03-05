@@ -1,11 +1,11 @@
 {
   "name": "Senior Care App",
   "short_name": "Senior Care",
-  "description": "Plataforma de cuidados para idosos - Conectando famílias e cuidadores",
+  "description": "Plataforma de cuidados para idosos - Conectando familias e cuidadores",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2F6F6D",
+  "background_color": "#F5F8FB",
+  "theme_color": "#0D2237",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
@@ -28,7 +28,7 @@
     {
       "name": "Buscar Cuidadores",
       "short_name": "Buscar",
-      "description": "Encontrar cuidadores disponíveis",
+      "description": "Encontrar cuidadores disponiveis",
       "url": "/app/search",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },

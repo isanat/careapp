@@ -6,25 +6,25 @@
 @theme inline {
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-poppins);
+  --font-sans: var(--font-roboto);
+  --font-heading: var(--font-roboto);
 
-  /* Primary (Sky Blue - Trust) */
+  /* Primary (Orange - Action/CTA) */
   --color-primary: var(--color-primary);
   --color-primary-foreground: var(--color-primary-foreground);
   --color-primary-light: var(--color-primary-light);
   --color-primary-dark: var(--color-primary-dark);
 
-  /* Secondary (Violet - Premium) */
+  /* Secondary (Blue - Identity) */
   --color-secondary: var(--color-secondary);
   --color-secondary-foreground: var(--color-secondary-foreground);
   --color-secondary-light: var(--color-secondary-light);
 
-  /* Accent (Amber - Warm CTA) */
+  /* Accent (Light Orange) */
   --color-accent: var(--color-accent);
   --color-accent-foreground: var(--color-accent-foreground);
 
-  /* Warm (Rose - Care) */
+  /* Warm (Rose - Notifications) */
   --color-warm: var(--color-warm);
   --color-warm-foreground: var(--color-warm-foreground);
   --color-warm-light: var(--color-warm-light);
@@ -90,22 +90,22 @@
   /* Border radius base */
   --radius: 0.875rem;
 
-  /* Primary - Sky Blue (#0EA5E9) - Trust, Health */
-  --color-primary: #0EA5E9;
+  /* Primary - Orange (#FF8B2D) - Action/CTA */
+  --color-primary: #FF8B2D;
   --color-primary-foreground: #FFFFFF;
-  --color-primary-light: #38BDF8;
-  --color-primary-dark: #0284C7;
+  --color-primary-light: #FFA55B;
+  --color-primary-dark: #E67A20;
 
-  /* Secondary - Violet (#8B5CF6) - Premium */
-  --color-secondary: #8B5CF6;
+  /* Secondary - Blue (#3F77AF) - Identity/Headers */
+  --color-secondary: #3F77AF;
   --color-secondary-foreground: #FFFFFF;
-  --color-secondary-light: #A78BFA;
+  --color-secondary-light: #DDEAF4;
 
-  /* Accent - Amber (#F59E0B) - Warm CTA */
-  --color-accent: #F59E0B;
-  --color-accent-foreground: #1C1917;
+  /* Accent - Light Orange (#FFC279) */
+  --color-accent: #FFC279;
+  --color-accent-foreground: #0D2237;
 
-  /* Warm - Rose (#F43F5E) - Care, Heart */
+  /* Warm - Rose (#F43F5E) - Notifications */
   --color-warm: #F43F5E;
   --color-warm-foreground: #FFFFFF;
   --color-warm-light: #FB7185;
@@ -126,42 +126,42 @@
   --color-error-light: #FCA5A5;
 
   /* Background & Surface - Light Mode */
-  --color-background: #F8FAFC;
+  --color-background: #F5F8FB;
   --color-surface: #FFFFFF;
-  --color-foreground: #0F172A;
+  --color-foreground: #0D2237;
 
   /* Muted */
-  --color-muted: #F1F5F9;
-  --color-muted-foreground: #64748B;
+  --color-muted: #DDEAF4;
+  --color-muted-foreground: #5A5A5A;
 
   /* Border & Input */
-  --color-border: #E2E8F0;
-  --color-input: #E2E8F0;
-  --color-ring: #0EA5E9;
+  --color-border: #DDEAF4;
+  --color-input: #DDEAF4;
+  --color-ring: #FF8B2D;
 
   /* Popover & Card */
   --color-popover: #FFFFFF;
-  --color-popover-foreground: #0F172A;
+  --color-popover-foreground: #0D2237;
   --color-card: #FFFFFF;
-  --color-card-foreground: #0F172A;
+  --color-card-foreground: #0D2237;
 }
 
 /* Dark Mode */
 .dark {
-  /* Primary */
-  --color-primary: #38BDF8;
-  --color-primary-foreground: #0C4A6E;
-  --color-primary-light: #7DD3FC;
-  --color-primary-dark: #0EA5E9;
+  /* Primary - Orange stays vibrant */
+  --color-primary: #FFA55B;
+  --color-primary-foreground: #0D2237;
+  --color-primary-light: #FFC279;
+  --color-primary-dark: #FF8B2D;
 
-  /* Secondary */
-  --color-secondary: #A78BFA;
-  --color-secondary-foreground: #2E1065;
-  --color-secondary-light: #C4B5FD;
+  /* Secondary - Blue lighter for dark mode */
+  --color-secondary: #6B9FD4;
+  --color-secondary-foreground: #0D2237;
+  --color-secondary-light: #3F77AF;
 
   /* Accent */
-  --color-accent: #FBBF24;
-  --color-accent-foreground: #1C1917;
+  --color-accent: #FFC279;
+  --color-accent-foreground: #0D2237;
 
   /* Warm */
   --color-warm: #FB7185;
@@ -184,24 +184,24 @@
   --color-error-light: #FCA5A5;
 
   /* Background & Surface - Dark Mode */
-  --color-background: #0F172A;
-  --color-surface: #1E293B;
-  --color-foreground: #F1F5F9;
+  --color-background: #0D2237;
+  --color-surface: #1A3550;
+  --color-foreground: #F5F8FB;
 
   /* Muted */
-  --color-muted: #1E293B;
-  --color-muted-foreground: #94A3B8;
+  --color-muted: #1A3550;
+  --color-muted-foreground: #9A9A9A;
 
   /* Border & Input */
-  --color-border: #334155;
-  --color-input: #334155;
-  --color-ring: #38BDF8;
+  --color-border: #214D7A;
+  --color-input: #214D7A;
+  --color-ring: #FFA55B;
 
   /* Popover & Card */
-  --color-popover: #1E293B;
-  --color-popover-foreground: #F1F5F9;
-  --color-card: #1E293B;
-  --color-card-foreground: #F1F5F9;
+  --color-popover: #1A3550;
+  --color-popover-foreground: #F5F8FB;
+  --color-card: #1A3550;
+  --color-card-foreground: #F5F8FB;
 }
 
 @layer base {
@@ -265,36 +265,36 @@
     padding-top: env(safe-area-inset-top, 0);
   }
 
-  /* Gradient utilities */
+  /* Gradient utilities - Orange/Blue palette */
   .gradient-primary {
-    background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+    background: linear-gradient(135deg, #FF8B2D 0%, #FFA55B 100%);
   }
-  .gradient-violet {
-    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  .gradient-secondary {
+    background: linear-gradient(135deg, #0D2237 0%, #214D7A 100%);
   }
   .gradient-warm {
     background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
   }
   .gradient-amber {
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    background: linear-gradient(135deg, #FFC279 0%, #FF8B2D 100%);
   }
   .gradient-success {
     background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   }
   .gradient-surface {
-    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+    background: linear-gradient(135deg, #F5F8FB 0%, #DDEAF4 100%);
   }
   .dark .gradient-surface {
-    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    background: linear-gradient(135deg, #1A3550 0%, #0D2237 100%);
   }
 
   /* Glass effect */
   .glass {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
   .dark .glass {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(13, 34, 55, 0.9);
   }
 }

@@ -369,7 +369,7 @@ export default function ProfilePage() {
     <AppShell>
       <div className="space-y-5">
         {/* Profile Header Card */}
-        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-violet'}`}>
+        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
           <div className="relative z-10 flex items-center gap-4">
             <div className="relative">
               <Avatar className="h-18 w-18 ring-4 ring-white/20 cursor-pointer" onClick={handlePhotoClick}>

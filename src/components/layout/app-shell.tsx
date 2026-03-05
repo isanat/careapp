@@ -137,8 +137,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Header - Clean & Minimal */}
-      <header className="sticky top-0 z-50 glass border-b border-border/50 safe-area-inset-top">
+      {/* Top Header - Clean white, dark blue text */}
+      <header className="sticky top-0 z-50 bg-white dark:bg-surface border-b border-border/50 safe-area-inset-top">
         <div className="px-4 lg:px-6 mx-auto max-w-7xl">
           <div className="flex h-14 lg:h-16 items-center justify-between">
             {/* Left: Logo & Mobile Menu */}
@@ -153,7 +153,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
               </Button>
               <Link href="/app/dashboard" className="flex items-center gap-2">
                 <IconLogo className="h-8 w-8" />
-                <span className="font-bold text-lg hidden sm:inline bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+                <span className="font-bold text-lg hidden sm:inline text-foreground">
                   {APP_NAME}
                 </span>
               </Link>
@@ -250,7 +250,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         {/* Sidebar (Desktop) */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-40 w-64 bg-surface border-r border-border/50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 shadow-soft lg:shadow-none",
+            "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-surface border-r border-border/50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 shadow-soft lg:shadow-none",
             sidebarOpen ? "translate-x-0" : "-translate-x-full",
             "top-14 lg:top-0"
           )}
@@ -311,8 +311,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation - 5 tabs, one-handed friendly */}
-      <nav className={cn("fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
+      {/* Mobile Bottom Navigation - White bg, orange active icons */}
+      <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface border-t border-border/50 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
         <div className="flex items-center justify-around h-[4.5rem] px-1">
           {mobileNavItems.map((item) => {
             const active = isActiveRoute(item.href);
@@ -326,12 +326,12 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                   "flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-w-[56px] rounded-xl transition-all duration-200",
                   active
                     ? "text-primary"
-                    : "text-muted-foreground active:scale-95"
+                    : "text-[#9A9A9A] active:scale-95"
                 )}
               >
                 <div className={cn(
-                  "relative flex items-center justify-center h-8 w-8 rounded-xl transition-all duration-200",
-                  active && "bg-primary/10 scale-110"
+                  "relative flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200",
+                  active && "bg-primary/15 scale-110"
                 )}>
                   <Icon className={cn("h-[22px] w-[22px]", active && "text-primary")} />
                   {item.href === "/app/chat" && unreadCount > 0 && (
@@ -342,7 +342,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 </div>
                 <span className={cn(
                   "text-[11px] font-medium leading-tight",
-                  active ? "text-primary font-semibold" : "text-muted-foreground"
+                  active ? "text-primary font-semibold" : "text-[#9A9A9A]"
                 )}>
                   {item.label}
                 </span>
