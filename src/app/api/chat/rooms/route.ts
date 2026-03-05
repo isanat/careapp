@@ -132,8 +132,8 @@ export async function POST(request: NextRequest) {
 
     // Create chat room
     await db.execute({
-      sql: `INSERT INTO ChatRoom (id, type, referenceType, referenceId, isActive, createdAt) VALUES (?, 'direct', ?, ?, 1, ?)`,
-      args: [chatRoomId, referenceType || null, referenceId || null, now]
+      sql: `INSERT INTO ChatRoom (id, type, referenceType, referenceId, isActive, createdAt, updatedAt) VALUES (?, 'direct', ?, ?, 1, ?, ?)`,
+      args: [chatRoomId, referenceType || null, referenceId || null, now, now]
     });
 
     // Add participants

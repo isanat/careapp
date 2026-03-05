@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO Interview (
         id, familyUserId, caregiverUserId, contractId, status,
-        scheduledAt, durationMinutes, videoRoomUrl, videoProvider, createdAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        scheduledAt, durationMinutes, videoRoomUrl, videoProvider, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         interviewId,
         session.user.id,
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
         durationMinutes,
         videoRoomUrl,
         "jitsi",
+        new Date().toISOString(),
         new Date().toISOString()
       ]
     });

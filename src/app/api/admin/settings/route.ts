@@ -67,8 +67,8 @@ export async function PATCH(request: NextRequest) {
     if (existingResult.rows.length === 0) {
       // Create default settings
       await db.execute({
-        sql: `INSERT INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents)
-          VALUES ('platform-settings-v1', ?, ?, ?, ?)`,
+        sql: `INSERT INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents, updatedAt)
+          VALUES ('platform-settings-v1', ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
         args: [activationCostEurCents || 3500, contractFeeEurCents || 500, platformFeePercent || 15, tokenPriceEurCents || 1]
       });
     } else {
