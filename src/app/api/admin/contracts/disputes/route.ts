@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
           c.startDate, c.endDate, c.createdAt, c.updatedAt,
           uf.name as familyName, uf.email as familyEmail,
           uc.name as caregiverName, uc.email as caregiverEmail,
-          e.status as escrowStatus, e.amountEurCents as escrowAmount
+          e.status as escrowStatus, e.totalAmountCents as escrowAmount
         FROM Contract c
         JOIN User uf ON c.familyUserId = uf.id
         JOIN User uc ON c.caregiverUserId = uc.id

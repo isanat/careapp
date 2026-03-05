@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         JOIN Contract c ON e.contractId = c.id
         JOIN User uf ON c.familyUserId = uf.id
         JOIN User uc ON c.caregiverUserId = uc.id
-        ORDER BY e.createdAt DESC
+        ORDER BY e.capturedAt DESC
       `,
       args: []
     });
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       stats: {
         total: result.rows.length,
         heldCount: held.length,
-        heldAmount: held.reduce((sum: number, r: any) => sum + (Number(r.amountEurCents) || 0), 0)
+        heldAmount: held.reduce((sum: number, r: any) => sum + (Number(r.totalAmountCents) || 0), 0)
       }
     });
   } catch (error) {

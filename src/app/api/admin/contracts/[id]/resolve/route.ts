@@ -24,7 +24,7 @@ export async function POST(
     // Get contract and escrow info
     const contract = await db.execute({
       sql: `
-        SELECT c.*, e.id as escrowId, e.amountEurCents as escrowAmount, e.platformFeeEurCents
+        SELECT c.*, e.id as escrowId, e.totalAmountCents as escrowAmount, e.platformFeeCents
         FROM Contract c
         LEFT JOIN EscrowPayment e ON c.id = e.contractId
         WHERE c.id = ? AND c.status = 'DISPUTED'

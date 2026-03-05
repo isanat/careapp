@@ -88,7 +88,7 @@ export async function POST(
       success: true,
       message: 'Escrow released',
       escrowId: id,
-      amountCents: e.amountEurCents
+      amountCents: e.totalAmountCents
     });
   } catch (error) {
     console.error('Error releasing escrow:', error);
