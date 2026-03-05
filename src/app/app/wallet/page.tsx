@@ -1,22 +1,20 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppShell } from "@/components/layout/app-shell";
-import { 
-  IconWallet, 
-  IconArrowUp, 
+import {
+  IconWallet,
+  IconArrowUp,
   IconArrowDown,
   IconEuro,
   IconLoader2,
-  IconAlert
+  IconAlert,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
@@ -84,7 +82,12 @@ export default function WalletPage() {
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="p-4 space-y-2"><div className="h-20 bg-muted rounded-lg animate-pulse" /><div className="h-32 bg-muted rounded-lg animate-pulse" /></div>
+        <div className="space-y-4 animate-pulse">
+          <Skeleton className="h-32 w-full rounded-2xl" />
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <Skeleton className="h-16 w-full rounded-xl" />
+          <Skeleton className="h-16 w-full rounded-xl" />
+        </div>
       </AppShell>
     );
   }
@@ -92,102 +95,153 @@ export default function WalletPage() {
   if (!wallet) {
     return (
       <AppShell>
-        <div className="text-center py-12">
-          <IconWallet className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground mb-3">Carteira não encontrada</p>
-          <Button size="sm" asChild><Link href="/auth/payment">Ativar conta</Link></Button>
+        <div className="text-center py-16">
+          <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
+            <IconWallet className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="font-semibold mb-1">Carteira nao encontrada</h3>
+          <p className="text-sm text-muted-foreground mb-4">Active a sua conta para comecar</p>
+          <Button asChild className="rounded-xl">
+            <Link href="/auth/payment">Ativar conta</Link>
+          </Button>
         </div>
       </AppShell>
     );
   }
 
   const balanceEur = (wallet.balanceEurCents / 100).toFixed(2);
+  const isFamily = session?.user?.role === "FAMILY";
 
   return (
     <AppShell>
-      <div className="space-y-3">
+      <div className="space-y-5">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 sticky top-0 z-10 bg-background border-b">
-          <h1 className="text-lg font-semibold">{t.wallet.title}</h1>
-        </div>
+        <h1 className="text-2xl font-bold">{t.wallet.title}</h1>
 
         {error && (
-          <div className="mx-4 p-2 bg-red-500/10 text-red-600 rounded-lg text-xs flex items-center gap-2">
-            <IconAlert className="h-3 w-3" />{error}
+          <div className="p-3 bg-error/5 border border-error/20 text-error rounded-xl text-sm flex items-center gap-2">
+            <IconAlert className="h-4 w-4 shrink-0" />{error}
           </div>
         )}
 
-        {/* Balance */}
-        <div className="mx-4 p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/20 rounded-full">
-                <IconEuro className="h-5 w-5 text-primary" />
-              </div>
+        {/* Balance Card */}
+        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-violet'}`}>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">€{balanceEur}</p>
-                <p className="text-xs text-muted-foreground">{t.wallet.balance}</p>
+                <p className="text-sm font-medium opacity-90">{t.wallet.balance}</p>
+                <p className="text-4xl font-bold mt-1">{"\u20AC"}{balanceEur}</p>
               </div>
+              <Button
+                size="sm"
+                onClick={handlePurchase}
+                disabled={isProcessing}
+                className="bg-white/20 hover:bg-white/30 text-white border-0 rounded-xl h-10 px-4"
+              >
+                {isProcessing ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <IconEuro className="h-4 w-4 mr-1.5" />}
+                {t.wallet.addFunds || "Adicionar"}
+              </Button>
             </div>
-            <Button size="sm" onClick={handlePurchase} disabled={isProcessing}>
-              {isProcessing ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <IconEuro className="h-4 w-4 mr-1" />}
-              {t.wallet.addFunds || "Adicionar"}
-            </Button>
           </div>
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+          <div className="absolute -right-2 -bottom-6 h-32 w-32 rounded-full bg-white/5" />
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="history" className="px-4">
-          <TabsList className="grid w-full grid-cols-2 h-9">
-            <TabsTrigger value="history" className="text-xs py-1.5">Histórico</TabsTrigger>
-            <TabsTrigger value="add" className="text-xs py-1.5">Adicionar</TabsTrigger>
+        <Tabs defaultValue="history">
+          <TabsList className="w-full grid grid-cols-2 h-10 rounded-xl bg-muted p-1">
+            <TabsTrigger value="history" className="rounded-lg text-sm data-[state=active]:shadow-sm">
+              Historico
+            </TabsTrigger>
+            <TabsTrigger value="add" className="rounded-lg text-sm data-[state=active]:shadow-sm">
+              Adicionar
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="history" className="mt-3 space-y-1">
+          <TabsContent value="history" className="mt-4 space-y-2">
             {transactions.length > 0 ? (
               transactions.map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between p-2 bg-muted/30 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className={`p-1.5 rounded-full ${tx.type === "CREDIT" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
-                      {tx.type === "CREDIT" ? <IconArrowUp className="h-3 w-3" /> : <IconArrowDown className="h-3 w-3" />}
+                <div key={tx.id} className="flex items-center justify-between p-3 bg-surface rounded-xl shadow-card border border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
+                      tx.type === "CREDIT" ? "bg-success/10" : "bg-error/10"
+                    }`}>
+                      {tx.type === "CREDIT"
+                        ? <IconArrowUp className="h-4 w-4 text-success" />
+                        : <IconArrowDown className="h-4 w-4 text-error" />
+                      }
                     </div>
                     <div>
-                      <p className="text-xs font-medium truncate max-w-[160px]">{tx.description || tx.reason}</p>
-                      <p className="text-[10px] text-muted-foreground">{new Date(tx.date).toLocaleDateString('pt-PT')}</p>
+                      <p className="text-sm font-medium truncate max-w-[180px]">{tx.description || tx.reason}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(tx.date).toLocaleDateString('pt-PT')}</p>
                     </div>
                   </div>
-                  <span className={`text-xs font-medium ${tx.type === "CREDIT" ? "text-green-600" : "text-red-600"}`}>
-                    {tx.type === "CREDIT" ? "+" : "-"}€{(tx.eurCents / 100).toFixed(2)}
+                  <span className={`text-sm font-semibold ${
+                    tx.type === "CREDIT" ? "text-success" : "text-error"
+                  }`}>
+                    {tx.type === "CREDIT" ? "+" : "-"}{"\u20AC"}{(tx.eurCents / 100).toFixed(2)}
                   </span>
                 </div>
               ))
             ) : (
-              <div className="py-8 text-center text-muted-foreground">
-                <IconWallet className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                <p className="text-xs">{t.wallet.noTransactions}</p>
+              <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
+                <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
+                  <IconWallet className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground">{t.wallet.noTransactions}</p>
               </div>
             )}
           </TabsContent>
 
-          <TabsContent value="add" className="mt-3 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-sm">€</span>
-              <Input type="number" min={10} max={1000} value={purchaseAmount} onChange={(e) => setPurchaseAmount(Number(e.target.value))} className="h-9" />
+          <TabsContent value="add" className="mt-4 space-y-4">
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Valor a adicionar</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-bold text-muted-foreground">{"\u20AC"}</span>
+                  <Input
+                    type="number"
+                    min={10}
+                    max={1000}
+                    value={purchaseAmount}
+                    onChange={(e) => setPurchaseAmount(Number(e.target.value))}
+                    className="h-12 text-lg font-semibold rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2">
+                {[25, 50, 100, 200].map((amount) => (
+                  <Button
+                    key={amount}
+                    variant={purchaseAmount === amount ? "default" : "outline"}
+                    onClick={() => setPurchaseAmount(amount)}
+                    className="h-10 rounded-xl font-semibold"
+                  >
+                    {"\u20AC"}{amount}
+                  </Button>
+                ))}
+              </div>
+
+              <Button
+                className="w-full h-12 rounded-xl text-base font-semibold"
+                onClick={handlePurchase}
+                disabled={isProcessing}
+              >
+                {isProcessing
+                  ? <IconLoader2 className="h-5 w-5 animate-spin" />
+                  : `Pagar ${"\u20AC"}${purchaseAmount}`
+                }
+              </Button>
+              <p className="text-xs text-center text-muted-foreground">Processado de forma segura</p>
             </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[25, 50, 100, 200].map((amount) => (
-                <Button key={amount} variant="outline" size="sm" onClick={() => setPurchaseAmount(amount)}>
-                  €{amount}
-                </Button>
-              ))}
-            </div>
-            <Button className="w-full h-10" onClick={handlePurchase} disabled={isProcessing}>
-              {isProcessing ? <IconLoader2 className="h-4 w-4 animate-spin" /> : `Pagar €${purchaseAmount}`}
-            </Button>
-            <p className="text-[10px] text-center text-muted-foreground">Processado por Stripe</p>
           </TabsContent>
         </Tabs>
       </div>
     </AppShell>
   );
+}
+
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`bg-muted animate-pulse rounded-lg ${className}`} />;
 }

@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { io, Socket } from "socket.io-client";
 import { apiFetch } from "@/lib/api-client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,7 +21,6 @@ import {
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
-// Chat service port
 const CHAT_PORT = 3003;
 
 interface Message {
@@ -54,7 +52,7 @@ interface Conversation {
 export default function ChatPage() {
   const { data: session, status } = useSession();
   const { t } = useI18n();
-  
+
   const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -62,17 +60,15 @@ export default function ChatPage() {
   const [newMessage, setNewMessage] = useState("");
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileShowChat, setMobileShowChat] = useState(false);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [usePolling, setUsePolling] = useState(false);
 
-  // Fetch conversations from API
   const fetchConversations = useCallback(async () => {
     try {
       const response = await apiFetch('/api/chat/rooms');
@@ -87,7 +83,6 @@ export default function ChatPage() {
     }
   }, []);
 
-  // Fetch messages for a conversation
   const fetchMessages = useCallback(async (chatRoomId: string) => {
     setIsLoadingMessages(true);
     try {
@@ -103,7 +98,6 @@ export default function ChatPage() {
     }
   }, []);
 
-  // Fetch chat auth token and connect to socket (with polling fallback for Vercel)
   useEffect(() => {
     if (status !== "authenticated" || !session?.user) return;
 
@@ -114,15 +108,12 @@ export default function ChatPage() {
 
     async function connectWithAuth() {
       try {
-        // Fetch a signed token from the server
         const tokenRes = await fetch('/api/chat/token');
         if (!tokenRes.ok) {
-          console.warn('Failed to fetch chat token, using HTTP polling for messages');
           if (!cancelled) setUsePolling(true);
           return;
         }
         const { token } = await tokenRes.json();
-
         if (cancelled) return;
 
         const socketUrl = `/?XTransformPort=${CHAT_PORT}`;
@@ -133,98 +124,59 @@ export default function ChatPage() {
           timeout: 5000,
         });
 
-        newSocket.on("connect", () => {
-          console.log("Connected to chat server (authenticated)");
-          connectionAttempts = 0;
-        });
-
-        newSocket.on("connect_error", (err) => {
+        newSocket.on("connect", () => { connectionAttempts = 0; });
+        newSocket.on("connect_error", () => {
           connectionAttempts++;
           if (connectionAttempts >= MAX_ATTEMPTS) {
-            console.log("WebSocket unavailable, falling back to HTTP polling");
             newSocket?.disconnect();
             if (!cancelled) setUsePolling(true);
           }
         });
-
         newSocket.on("message:receive", (message: Message) => {
           setMessages((prev) => [...prev, message]);
         });
-
         newSocket.on("typing:indicator", (data: { userId: string; userName: string; isTyping: boolean }) => {
           setTypingUser(data.isTyping ? data.userName : null);
         });
 
         queueMicrotask(() => setSocket(newSocket));
-      } catch (error) {
-        console.warn('Error connecting to chat, using HTTP polling:', error);
+      } catch {
         if (!cancelled) setUsePolling(true);
       }
     }
 
     connectWithAuth();
-
-    return () => {
-      cancelled = true;
-      if (newSocket) {
-        newSocket.disconnect();
-      }
-    };
+    return () => { cancelled = true; newSocket?.disconnect(); };
   }, [status, session]);
 
-  // HTTP polling fallback when WebSocket is unavailable (e.g., on Vercel)
   useEffect(() => {
     if (!usePolling || !selectedConversation) return;
-
-    // Poll for new messages every 3 seconds
     pollingIntervalRef.current = setInterval(() => {
       fetchMessages(selectedConversation.id);
     }, 3000);
-
     return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
-      }
+      if (pollingIntervalRef.current) { clearInterval(pollingIntervalRef.current); pollingIntervalRef.current = null; }
     };
   }, [usePolling, selectedConversation, fetchMessages]);
 
-  // Load conversations on mount
-  useEffect(() => {
-    if (status === "authenticated") {
-      fetchConversations();
-    }
-  }, [status, fetchConversations]);
+  useEffect(() => { if (status === "authenticated") fetchConversations(); }, [status, fetchConversations]);
 
-  // Load messages when conversation selected
   useEffect(() => {
     if (selectedConversation) {
       fetchMessages(selectedConversation.id);
-      
-      // Join the room via socket
-      if (socket) {
-        socket.emit("room:join", { chatRoomId: selectedConversation.id });
-      }
+      if (socket) socket.emit("room:join", { chatRoomId: selectedConversation.id });
     }
   }, [selectedConversation, socket, fetchMessages]);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  // Handle typing
   const handleTyping = useCallback(() => {
     if (socket && selectedConversation) {
       socket.emit("typing:start", { chatRoomId: selectedConversation.id });
-      
-      setTimeout(() => {
-        socket.emit("typing:stop", { chatRoomId: selectedConversation.id });
-      }, 2000);
+      setTimeout(() => { socket.emit("typing:stop", { chatRoomId: selectedConversation.id }); }, 2000);
     }
   }, [socket, selectedConversation]);
 
-  // Send message
   const handleSend = async () => {
     if (!newMessage.trim() || !selectedConversation || !session?.user) return;
 
@@ -237,21 +189,13 @@ export default function ChatPage() {
       recipientId: selectedConversation.participant.id,
     };
 
-    // Send via socket for real-time
-    if (socket) {
-      socket.emit("message:send", messageData);
-    }
+    if (socket) socket.emit("message:send", messageData);
 
-    // Save to database
     try {
       await apiFetch('/api/chat/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatRoomId: selectedConversation.id,
-          content: newMessage.trim(),
-          messageType: 'text',
-        }),
+        body: JSON.stringify({ chatRoomId: selectedConversation.id, content: newMessage.trim(), messageType: 'text' }),
       });
     } catch (error) {
       console.error('Error saving message:', error);
@@ -261,77 +205,75 @@ export default function ChatPage() {
     inputRef.current?.focus();
   };
 
-  // Handle key press
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
   return (
     <AppShell>
       <div className="h-[calc(100vh-8rem)]">
-        <div className="grid h-full lg:grid-cols-[300px_1fr] gap-4">
+        <div className="grid h-full lg:grid-cols-[320px_1fr] gap-3">
           {/* Conversations List */}
-          <Card className={`${mobileShowChat ? "hidden" : "block"} lg:block`}>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{t.chat.title}</CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={fetchConversations}>
+          <div className={`bg-surface rounded-2xl shadow-card border border-border/50 flex flex-col ${mobileShowChat ? "hidden" : "flex"} lg:flex`}>
+            <div className="p-4 border-b border-border/50">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold">{t.chat.title}</h2>
+                <div className="flex gap-1.5">
+                  <Button variant="ghost" size="icon" onClick={fetchConversations} className="h-8 w-8 rounded-lg">
                     <IconRefresh className="h-4 w-4" />
                   </Button>
-                  <Badge variant="secondary">{conversations.length}</Badge>
+                  <Badge variant="secondary" className="rounded-lg">{conversations.length}</Badge>
                 </div>
               </div>
-              <div className="relative mt-2">
+              <div className="relative">
                 <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder={t.search.placeholder} className="pl-10" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                <Input
+                  placeholder={t.search.placeholder}
+                  className="pl-10 h-9 rounded-xl bg-muted border-0"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ScrollArea className="h-[calc(100vh-16rem)]">
-                {isLoadingConversations ? (
-                  <div className="p-4 space-y-3">
-                    {[1, 2, 3].map((i) => (
-                      <Skeleton key={i} className="h-16 w-full" />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-1 p-2">
-                    {conversations.filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase())).map((conv) => (
+            </div>
+
+            <ScrollArea className="flex-1">
+              {isLoadingConversations ? (
+                <div className="p-3 space-y-2">
+                  {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-16 w-full rounded-xl" />))}
+                </div>
+              ) : (
+                <div className="p-2 space-y-0.5">
+                  {conversations
+                    .filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .map((conv) => (
                       <button
                         key={conv.id}
                         onClick={() => { setSelectedConversation(conv); setMobileShowChat(true); }}
-                        className={`w-full p-3 rounded-lg text-left transition-colors hover:bg-muted ${
-                          selectedConversation?.id === conv.id ? "bg-muted" : ""
+                        className={`w-full p-3 rounded-xl text-left transition-all hover:bg-muted/70 ${
+                          selectedConversation?.id === conv.id ? "bg-primary/5 border border-primary/20" : ""
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar>
-                            <AvatarFallback>
+                          <Avatar className="h-10 w-10 rounded-xl">
+                            <AvatarFallback className="rounded-xl text-sm font-semibold bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
                               {conv.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <p className="font-medium truncate">{conv.participant?.name || "Usuário"}</p>
+                              <p className="text-sm font-semibold truncate">{conv.participant?.name || "Usuario"}</p>
                               {conv.lastMessage && (
-                                <span className="text-xs text-muted-foreground">
-                                  {new Date(conv.lastMessage.createdAt).toLocaleDateString("pt-PT", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                  })}
+                                <span className="text-[10px] text-muted-foreground">
+                                  {new Date(conv.lastMessage.createdAt).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" })}
                                 </span>
                               )}
                             </div>
-                            <div className="flex items-center justify-between">
-                              <p className="text-sm text-muted-foreground truncate">
+                            <div className="flex items-center justify-between mt-0.5">
+                              <p className="text-xs text-muted-foreground truncate pr-2">
                                 {conv.lastMessage?.content || t.chat.noMessages}
                               </p>
                               {conv.unreadCount > 0 && (
-                                <Badge className="h-5 w-5 p-0 flex items-center justify-center text-xs">
+                                <Badge className="h-5 min-w-[20px] px-1.5 flex items-center justify-center text-[10px] bg-primary rounded-full">
                                   {conv.unreadCount}
                                 </Badge>
                               )}
@@ -340,120 +282,102 @@ export default function ChatPage() {
                         </div>
                       </button>
                     ))}
-                    
-                    {conversations.length === 0 && (
-                      <div className="p-4 text-center text-muted-foreground">
-                        <IconChat className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">{t.chat.noChats}</p>
+
+                  {conversations.length === 0 && (
+                    <div className="p-6 text-center text-muted-foreground">
+                      <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
+                        <IconChat className="h-6 w-6" />
                       </div>
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
-            </CardContent>
-          </Card>
+                      <p className="text-sm">{t.chat.noChats}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </ScrollArea>
+          </div>
 
           {/* Chat Area */}
-          <Card className={`flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
+          <div className={`bg-surface rounded-2xl shadow-card border border-border/50 flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
-                <CardHeader className="pb-3 border-b">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="lg:hidden"
-                        onClick={() => setMobileShowChat(false)}
-                      >
-                        <IconArrowLeft className="h-4 w-4" />
-                      </Button>
-                      <Avatar>
-                        <AvatarFallback>
-                          {selectedConversation.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{selectedConversation.participant?.name || "Usuário"}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {selectedConversation.participant?.title || selectedConversation.participant?.role}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                    </div>
+                <div className="p-3 border-b border-border/50 flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="lg:hidden h-8 w-8 rounded-lg"
+                    onClick={() => setMobileShowChat(false)}
+                  >
+                    <IconArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Avatar className="h-9 w-9 rounded-xl">
+                    <AvatarFallback className="rounded-xl text-xs font-semibold bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                      {selectedConversation.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-semibold">{selectedConversation.participant?.name || "Usuario"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedConversation.participant?.title || selectedConversation.participant?.role}
+                    </p>
                   </div>
-                </CardHeader>
+                </div>
 
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4">
                   {isLoadingMessages ? (
-                    <div className="space-y-4">
-                      {[1, 2, 3].map((i) => (
-                        <Skeleton key={i} className="h-12 w-3/4" />
-                      ))}
+                    <div className="space-y-3">
+                      {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-10 w-3/4 rounded-xl" />))}
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {messages.map((message) => {
                         const isOwn = message.senderId === session?.user?.id;
-                        
                         return (
-                          <div
-                            key={message.id}
-                            className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
-                          >
-                            <div
-                              className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                                isOwn
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted"
-                              }`}
-                            >
-                              <p className="text-sm">{message.content}</p>
-                              <p className={`text-xs mt-1 ${isOwn ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                                {new Date(message.createdAt).toLocaleTimeString("pt-PT", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
+                          <div key={message.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+                            <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
+                              isOwn
+                                ? "bg-primary text-white rounded-br-md"
+                                : "bg-muted rounded-bl-md"
+                            }`}>
+                              <p className="text-sm leading-relaxed">{message.content}</p>
+                              <p className={`text-[10px] mt-1 ${isOwn ? "text-white/60" : "text-muted-foreground"}`}>
+                                {new Date(message.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
                               </p>
                             </div>
                           </div>
                         );
                       })}
-                      
-                      {/* Typing indicator */}
+
                       {typingUser && (
                         <div className="flex justify-start">
-                          <div className="bg-muted rounded-lg px-4 py-2">
-                            <p className="text-sm text-muted-foreground">
-                              {typingUser}...
-                            </p>
+                          <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-2.5">
+                            <p className="text-sm text-muted-foreground">{typingUser}...</p>
                           </div>
                         </div>
                       )}
-                      
                       <div ref={messagesEndRef} />
                     </div>
                   )}
                 </ScrollArea>
 
                 {/* Message Input */}
-                <div className="p-4 border-t">
+                <div className="p-3 border-t border-border/50">
                   <div className="flex items-center gap-2">
                     <Input
                       ref={inputRef}
                       value={newMessage}
-                      onChange={(e) => {
-                        setNewMessage(e.target.value);
-                        handleTyping();
-                      }}
+                      onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
                       onKeyDown={handleKeyPress}
                       placeholder={t.chat.placeholder}
-                      className="flex-1"
+                      className="flex-1 h-11 rounded-xl bg-muted border-0"
                     />
-                    <Button onClick={handleSend} disabled={!newMessage.trim()}>
+                    <Button
+                      onClick={handleSend}
+                      disabled={!newMessage.trim()}
+                      size="icon"
+                      className="h-11 w-11 rounded-xl shrink-0"
+                    >
                       <IconSend className="h-4 w-4" />
                     </Button>
                   </div>
@@ -462,15 +386,15 @@ export default function ChatPage() {
             ) : (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                  <IconChat className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">{t.chat.new}</h3>
-                  <p className="text-muted-foreground">
-                    {t.chat.noChats}
-                  </p>
+                  <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
+                    <IconChat className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-semibold mb-1">{t.chat.new}</h3>
+                  <p className="text-sm text-muted-foreground">{t.chat.noChats}</p>
                 </div>
               </div>
             )}
-          </Card>
+          </div>
         </div>
       </div>
     </AppShell>

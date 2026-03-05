@@ -31,7 +31,8 @@ export async function GET(request: NextRequest) {
       count: result.rows.length
     });
   } catch (error) {
-    console.error('Error listing disputes:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error('Error listing disputes:', msg);
+    return NextResponse.json({ error: 'Internal server error', detail: msg }, { status: 500 });
   }
 }

@@ -75,17 +75,18 @@ export async function POST(
 
       // Add ledger entry
       await db.execute({
-        sql: `INSERT INTO TokenLedger (id, userId, type, reason, amountTokens, description, referenceType, referenceId, createdAt)
-              VALUES (?, ?, 'DEBIT', 'REFUND', ?, 'Tokens deducted due to refund', 'PAYMENT', ?, CURRENT_TIMESTAMP)`,
-        args: [generateId("tl"), p.userId, -refundTokens, id]
+        sql: `INSERT INTO TokenLedger (id, userId, type, reason, amountTokens, amountEurCents, description, referenceType, referenceId, createdAt)
+              VALUES (?, ?, 'DEBIT', 'ADJUSTMENT', ?, ?, 'Tokens deducted due to refund', 'PAYMENT', ?, CURRENT_TIMESTAMP)`,
+        args: [generateId("tl"), p.userId, -refundTokens, -refundAmountCents, id]
       });
     }
 
     // Log action
     await db.execute({
-      sql: `INSERT INTO AdminAction (adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
-            VALUES (?, 'REFUND', 'PAYMENT', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
+            VALUES (?, ?, 'REFUND', 'PAYMENT', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
+        generateId("action"),
         adminUserId,
         id,
         JSON.stringify({ status: 'COMPLETED', tokens: p.tokensAmount }),

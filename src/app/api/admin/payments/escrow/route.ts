@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       stats: {
         total: result.rows.length,
         heldCount: held.length,
-        heldAmount: held.reduce((sum: number, r: any) => sum + (r.totalAmountCents || 0), 0)
+        heldAmount: held.reduce((sum: number, r: any) => sum + (Number(r.totalAmountCents) || 0), 0)
       }
     });
   } catch (error) {

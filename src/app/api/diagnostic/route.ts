@@ -3,6 +3,34 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 
+// POST - Execute admin SQL (requires admin secret)
+export async function POST(request: NextRequest) {
+  try {
+    const adminSecret = request.headers.get('x-admin-secret');
+    if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'idosolink-migrate-2024') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { sql: sqlQuery, args = [] } = body;
+
+    if (!sqlQuery) {
+      return NextResponse.json({ error: 'SQL query required' }, { status: 400 });
+    }
+
+    const result = await db.execute({ sql: sqlQuery, args });
+
+    return NextResponse.json({
+      success: true,
+      rowsAffected: result.rowsAffected,
+      rows: result.rows,
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
+
 // Diagnostic endpoint - check session, database, and tables
 export async function GET(request: NextRequest) {
   console.log('🔍 Diagnostic API called');

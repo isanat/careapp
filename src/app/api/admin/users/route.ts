@@ -190,9 +190,9 @@ export async function POST(request: NextRequest) {
     // Create user
     await db.execute({
       sql: `INSERT INTO User (
-        id, name, email, phone, passwordHash, role, status, 
-        emailVerified, createdAt, updatedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        id, name, email, phone, passwordHash, role, status,
+        verificationStatus, createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', 'UNVERIFIED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
       args: [
         userId,
         name,

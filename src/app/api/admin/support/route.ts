@@ -65,15 +65,15 @@ export async function GET(request: NextRequest) {
     // Get tickets with user info
     const ticketsResult = await db.execute({
       sql: `
-        SELECT 
-          st.id, st.userId, st.subject, st.description, st.category,
-          st.status, st.priority, st.assignedToId, st.resolution,
+        SELECT
+          st.id, st.userId, st.subject, st.message,
+          st.status, st.priority, st.assignedTo,
           st.createdAt, st.updatedAt, st.resolvedAt,
           u.name as userName, u.email as userEmail
         FROM SupportTicket st
         LEFT JOIN User u ON st.userId = u.id
         WHERE ${whereClause}
-        ORDER BY 
+        ORDER BY
           CASE st.priority
             WHEN 'urgent' THEN 1
             WHEN 'high' THEN 2
@@ -124,12 +124,10 @@ export async function GET(request: NextRequest) {
       userName: row.userName || "Unknown",
       userEmail: row.userEmail || "",
       subject: row.subject,
-      description: row.description,
-      category: row.category,
+      message: row.message,
       status: row.status,
       priority: row.priority,
-      assignedToId: row.assignedToId,
-      resolution: row.resolution,
+      assignedTo: row.assignedTo,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       resolvedAt: row.resolvedAt,
@@ -167,9 +165,9 @@ export async function POST(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
-    const { userId, subject, description, category, priority } = body;
+    const { userId, subject, message, priority } = body;
 
-    if (!userId || !subject || !description) {
+    if (!userId || !subject || !message) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -181,16 +179,15 @@ export async function POST(request: NextRequest) {
 
     await db.execute({
       sql: `
-        INSERT INTO SupportTicket (id, userId, subject, description, category, priority, status, createdAt, updatedAt)
-        VALUES (?, ?, ?, ?, ?, ?, 'open', ?, ?)
+        INSERT INTO SupportTicket (id, userId, subject, message, priority, status, createdAt, updatedAt)
+        VALUES (?, ?, ?, ?, ?, 'OPEN', ?, ?)
       `,
       args: [
         id,
         userId,
         subject,
-        description,
-        category || "general",
-        priority || "normal",
+        message,
+        priority || "NORMAL",
         now,
         now,
       ],
@@ -202,10 +199,9 @@ export async function POST(request: NextRequest) {
         id,
         userId,
         subject,
-        description,
-        category: category || "general",
-        priority: priority || "normal",
-        status: "open",
+        message,
+        priority: priority || "NORMAL",
+        status: "OPEN",
         createdAt: now,
       },
     });

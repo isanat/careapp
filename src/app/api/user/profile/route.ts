@@ -205,6 +205,36 @@ export async function PUT(request: NextRequest) {
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
 
+    // Check phone uniqueness before updating
+    if (body.phone !== undefined && body.phone !== null && body.phone !== '') {
+      const phoneCheck = await db.execute({
+        sql: `SELECT id FROM User WHERE phone = ? AND id != ?`,
+        args: [body.phone, userId]
+      });
+      if (phoneCheck.rows.length > 0) {
+        return NextResponse.json(
+          { error: 'Este número de telefone já está associado a outra conta.' },
+          { status: 409 }
+        );
+      }
+    }
+
+    // Ensure optional columns exist before updating (auto-migration)
+    const optionalColumns = [
+      { name: 'profileImage', def: 'TEXT' },
+      { name: 'nif', def: 'TEXT' },
+      { name: 'documentType', def: 'TEXT' },
+      { name: 'documentNumber', def: 'TEXT' },
+      { name: 'backgroundCheckStatus', def: "TEXT DEFAULT 'PENDING'" },
+      { name: 'backgroundCheckUrl', def: 'TEXT' },
+    ];
+    for (const col of optionalColumns) {
+      try {
+        await db.execute({ sql: `ALTER TABLE User ADD COLUMN ${col.name} ${col.def}`, args: [] });
+        console.log(`Added missing column User.${col.name}`);
+      } catch { /* column already exists */ }
+    }
+
     // Build update query for User table
     const userUpdates: string[] = [];
     const userArgs: any[] = [];
@@ -252,46 +282,23 @@ export async function PUT(request: NextRequest) {
           args: userArgs
         });
       } catch (dbError) {
-        // If update fails (possibly due to missing columns), try with only basic fields
-        console.warn('Full user update failed, trying basic fields:', dbError);
-        const basicUpdates: string[] = [];
-        const basicArgs: any[] = [];
-
-        if (body.name !== undefined) { basicUpdates.push('name = ?'); basicArgs.push(body.name); }
-        if (body.phone !== undefined) { basicUpdates.push('phone = ?'); basicArgs.push(body.phone); }
-        if (body.profileImage !== undefined) { basicUpdates.push('profileImage = ?'); basicArgs.push(body.profileImage); }
-
-        if (basicUpdates.length > 0) {
-          basicUpdates.push('updatedAt = CURRENT_TIMESTAMP');
-          basicArgs.push(userId);
-          await db.execute({
-            sql: `UPDATE User SET ${basicUpdates.join(', ')} WHERE id = ?`,
-            args: basicArgs
-          });
-        }
-
-        // Try to add missing columns and retry document fields
-        const docColumns = [
-          { name: 'nif', value: body.nif },
-          { name: 'documentType', value: body.documentType },
-          { name: 'documentNumber', value: body.documentNumber },
-          { name: 'backgroundCheckStatus', value: body.backgroundCheckStatus },
-          { name: 'backgroundCheckUrl', value: body.backgroundCheckUrl },
-        ];
-        for (const col of docColumns) {
-          if (col.value !== undefined) {
-            try {
-              await db.execute({ sql: `ALTER TABLE User ADD COLUMN ${col.name} TEXT`, args: [] });
-            } catch { /* column may already exist */ }
-            try {
-              await db.execute({
-                sql: `UPDATE User SET ${col.name} = ? WHERE id = ?`,
-                args: [col.value, userId]
-              });
-            } catch (e) {
-              console.warn(`Failed to update ${col.name}:`, e);
-            }
+        // If update still fails, try with only core fields
+        console.warn('User update failed, trying core fields only:', dbError);
+        try {
+          const coreUpdates: string[] = [];
+          const coreArgs: any[] = [];
+          if (body.name !== undefined) { coreUpdates.push('name = ?'); coreArgs.push(body.name); }
+          if (body.phone !== undefined) { coreUpdates.push('phone = ?'); coreArgs.push(body.phone); }
+          if (coreUpdates.length > 0) {
+            coreUpdates.push('updatedAt = CURRENT_TIMESTAMP');
+            coreArgs.push(userId);
+            await db.execute({
+              sql: `UPDATE User SET ${coreUpdates.join(', ')} WHERE id = ?`,
+              args: coreArgs
+            });
           }
+        } catch (coreError) {
+          console.error('Core user update also failed:', coreError);
         }
       }
     }
@@ -304,6 +311,23 @@ export async function PUT(request: NextRequest) {
       const hourlyRateCents = body.hourlyRateEur
         ? Math.round(Number(body.hourlyRateEur) * 100)
         : null;
+
+      // Ensure profile row exists
+      try {
+        const existing = await db.execute({
+          sql: `SELECT id FROM ProfileCaregiver WHERE userId = ?`,
+          args: [userId]
+        });
+        if (existing.rows.length === 0) {
+          const profileId = crypto.randomUUID();
+          await db.execute({
+            sql: `INSERT INTO ProfileCaregiver (id, userId, hourlyRateEur, verificationStatus, totalContracts, totalHoursWorked, averageRating, totalReviews, createdAt, updatedAt) VALUES (?, ?, 1500, 'UNVERIFIED', 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+            args: [profileId, userId]
+          });
+        }
+      } catch (e) {
+        console.warn('Error ensuring ProfileCaregiver exists:', e);
+      }
 
       try {
         await db.execute({
@@ -336,6 +360,28 @@ export async function PUT(request: NextRequest) {
     }
 
     if (isFamily) {
+      // Ensure elderNeeds column exists
+      try {
+        await db.execute({ sql: `ALTER TABLE ProfileFamily ADD COLUMN elderNeeds TEXT`, args: [] });
+      } catch { /* column already exists */ }
+
+      // Ensure profile row exists
+      try {
+        const existing = await db.execute({
+          sql: `SELECT id FROM ProfileFamily WHERE userId = ?`,
+          args: [userId]
+        });
+        if (existing.rows.length === 0) {
+          const profileId = crypto.randomUUID();
+          await db.execute({
+            sql: `INSERT INTO ProfileFamily (id, userId, createdAt, updatedAt) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+            args: [profileId, userId]
+          });
+        }
+      } catch (e) {
+        console.warn('Error ensuring ProfileFamily exists:', e);
+      }
+
       try {
         await db.execute({
           sql: `UPDATE ProfileFamily

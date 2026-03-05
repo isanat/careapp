@@ -106,26 +106,26 @@ export async function POST(request: NextRequest) {
       ]
     });
 
-    // Generate wallet
-    const walletData = generateWallet();
+    // Generate wallet (gracefully handle missing WALLET_ENCRYPTION_KEY)
+    let walletAddress = '';
     const walletId = generateId();
-
-    // Create wallet (using Turso)
-    await db.execute({
-      sql: `INSERT INTO Wallet (id, userId, address, encryptedPrivateKey, salt, balanceTokens, balanceEurCents, walletType, isExported, createdAt, updatedAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-      args: [
-        walletId,
-        userId,
-        walletData.address,
-        walletData.encryptedPrivateKey,
-        walletData.salt,
-        0,
-        0,
-        "custodial",
-        0
-      ]
-    });
+    try {
+      const walletData = generateWallet();
+      walletAddress = walletData.address;
+      await db.execute({
+        sql: `INSERT INTO Wallet (id, userId, address, encryptedPrivateKey, salt, balanceTokens, balanceEurCents, walletType, isExported, createdAt, updatedAt)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        args: [walletId, userId, walletData.address, walletData.encryptedPrivateKey, walletData.salt, 0, 0, "custodial", 0]
+      });
+    } catch (walletErr) {
+      console.warn("Wallet creation failed, creating placeholder:", walletErr instanceof Error ? walletErr.message : walletErr);
+      walletAddress = `0x${userId.replace(/[^a-f0-9]/gi, '').padEnd(40, '0').slice(0, 40)}`;
+      await db.execute({
+        sql: `INSERT INTO Wallet (id, userId, address, balanceTokens, balanceEurCents, walletType, isExported, createdAt, updatedAt)
+              VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        args: [walletId, userId, walletAddress, 0, 0, "custodial", 0]
+      });
+    }
 
     // Create profile based on role (using Turso)
     if (role === "FAMILY") {
@@ -173,15 +173,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       userId: userId,
-      walletAddress: walletData.address,
+      walletAddress: walletAddress,
       termsAccepted: requiredTerms,
       acceptedAt: now,
       ipAddress: ipAddress !== 'unknown' ? ipAddress : null, // Don't return 'unknown' to client
     });
   } catch (error) {
-    console.error("Registration error:", error);
+    const msg = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+    console.error("Registration error:", msg, error instanceof Error ? error.stack : '');
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", detail: msg },
       { status: 500 }
     );
   }

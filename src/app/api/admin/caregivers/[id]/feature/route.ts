@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // POST - Set featured status
 export async function POST(
@@ -33,9 +34,9 @@ export async function POST(
 
     // Log action
     await db.execute({
-      sql: `INSERT INTO AdminAction (adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
-            VALUES (?, 'SET_FEATURED', 'CAREGIVER', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-      args: [adminUserId, id, `{"featured": ${oldValue}}`, `{"featured": ${newValue}}`, reason || '', request.headers.get('x-forwarded-for') || 'unknown']
+      sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
+            VALUES (?, ?, 'SET_FEATURED', 'CAREGIVER', ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      args: [generateId("action"), adminUserId, id, `{"featured": ${oldValue}}`, `{"featured": ${newValue}}`, reason || '', request.headers.get('x-forwarded-for') || 'unknown']
     });
 
     return NextResponse.json({

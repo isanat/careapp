@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
 
     // === Top Performers (Caregivers) ===
     const topCaregiversResult = await db.execute({
-      sql: `SELECT 
+      sql: `SELECT
         u.id,
         u.name,
         u.email,
@@ -130,8 +130,7 @@ export async function GET(request: NextRequest) {
         pc.totalHoursWorked,
         pc.averageRating,
         pc.totalReviews,
-        pc.verificationStatus,
-        pc.featured
+        pc.verificationStatus
       FROM User u
       JOIN ProfileCaregiver pc ON u.id = pc.userId
       WHERE pc.totalContracts > 0
