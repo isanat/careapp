@@ -108,7 +108,6 @@ export async function GET(request: NextRequest) {
         c.title,
         c.status,
         c.totalEurCents,
-        c.totalTokens,
         c.createdAt,
         (SELECT COALESCE(SUM(amountEurCents), 0) FROM Payment WHERE contractId = c.id AND status = 'COMPLETED') as totalPaid,
         uf.name as familyName,

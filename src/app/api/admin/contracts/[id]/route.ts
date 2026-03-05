@@ -30,11 +30,12 @@ export async function GET(
       return NextResponse.json({ error: 'Contract not found' }, { status: 404 });
     }
 
-    // Get acceptance logs
-    const acceptance = await db.execute({
-      sql: `SELECT * FROM ContractAcceptance WHERE contractId = ?`,
-      args: [id]
-    });
+    // Get acceptance info from contract itself
+    const c = contract.rows[0] as any;
+    const acceptance = {
+      familyAcceptedAt: c.acceptedByFamilyAt,
+      caregiverAcceptedAt: c.acceptedByCaregiverAt,
+    };
 
     // Get payments
     const payments = await db.execute({
@@ -56,7 +57,7 @@ export async function GET(
 
     return NextResponse.json({
       contract: contract.rows[0],
-      acceptance: acceptance.rows[0] || null,
+      acceptance,
       payments: payments.rows,
       escrow: escrow.rows[0] || null,
       reviews: reviews.rows

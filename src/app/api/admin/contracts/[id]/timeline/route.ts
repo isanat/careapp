@@ -33,28 +33,20 @@ export async function GET(
       details: 'Contract created'
     });
 
-    // Acceptance
-    const acceptance = await db.execute({
-      sql: `SELECT * FROM ContractAcceptance WHERE contractId = ?`,
-      args: [id]
-    });
-
-    if (acceptance.rows.length > 0) {
-      const a = acceptance.rows[0] as any;
-      if (a.acceptedByFamilyAt) {
-        timeline.push({
-          event: 'FAMILY_ACCEPTED',
-          timestamp: a.acceptedByFamilyAt,
-          details: `Family accepted (IP: ${a.familyIpAddress || 'unknown'})`
-        });
-      }
-      if (a.acceptedByCaregiverAt) {
-        timeline.push({
-          event: 'CAREGIVER_ACCEPTED',
-          timestamp: a.acceptedByCaregiverAt,
-          details: `Caregiver accepted (IP: ${a.caregiverIpAddress || 'unknown'})`
-        });
-      }
+    // Acceptance (stored directly on Contract)
+    if (c.acceptedByFamilyAt) {
+      timeline.push({
+        event: 'FAMILY_ACCEPTED',
+        timestamp: c.acceptedByFamilyAt,
+        details: 'Family accepted the contract'
+      });
+    }
+    if (c.acceptedByCaregiverAt) {
+      timeline.push({
+        event: 'CAREGIVER_ACCEPTED',
+        timestamp: c.acceptedByCaregiverAt,
+        details: 'Caregiver accepted the contract'
+      });
     }
 
     // Payments

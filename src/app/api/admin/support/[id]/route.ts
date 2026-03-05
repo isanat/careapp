@@ -46,9 +46,8 @@ export async function GET(
       id: msg.id,
       ticketId: msg.ticketId,
       senderId: msg.senderId,
-      senderType: msg.senderType,
-      senderName: msg.senderName,
-      content: msg.content,
+      senderRole: msg.senderRole,
+      message: msg.message,
       attachments: msg.attachments ? JSON.parse(msg.attachments as string) : [],
       createdAt: msg.createdAt,
     }));
@@ -61,14 +60,11 @@ export async function GET(
         userEmail: ticket.userEmail || "",
         userRole: ticket.userRole,
         subject: ticket.subject,
-        description: ticket.description,
-        category: ticket.category,
+        message: ticket.message,
         status: ticket.status,
         priority: ticket.priority,
-        assignedToId: ticket.assignedToId,
-        resolution: ticket.resolution,
+        assignedTo: ticket.assignedTo,
         resolvedAt: ticket.resolvedAt,
-        resolvedById: ticket.resolvedById,
         createdAt: ticket.createdAt,
         updatedAt: ticket.updatedAt,
       },
@@ -96,7 +92,7 @@ export async function PATCH(
     const { id } = await params;
     const ticketId = id;
     const body = await request.json();
-    const { status, priority, assignedToId, resolution } = body;
+    const { status, priority, assignedTo } = body;
 
     const now = new Date().toISOString();
 
@@ -108,11 +104,9 @@ export async function PATCH(
       updates.push("status = ?");
       args.push(status);
 
-      if (status === "resolved") {
+      if (status === "resolved" || status === "RESOLVED") {
         updates.push("resolvedAt = ?");
-        updates.push("resolvedById = ?");
         args.push(now);
-        args.push(adminUserId);
       }
     }
 
@@ -121,14 +115,9 @@ export async function PATCH(
       args.push(priority);
     }
 
-    if (assignedToId !== undefined) {
-      updates.push("assignedToId = ?");
-      args.push(assignedToId);
-    }
-
-    if (resolution !== undefined) {
-      updates.push("resolution = ?");
-      args.push(resolution);
+    if (assignedTo !== undefined) {
+      updates.push("assignedTo = ?");
+      args.push(assignedTo);
     }
 
     args.push(ticketId);

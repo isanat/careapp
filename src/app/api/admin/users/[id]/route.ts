@@ -293,7 +293,7 @@ export async function PATCH(
         u.role,
         u.status,
         u.createdAt,
-        COALESCE(w.balance, 0) as walletBalance,
+        COALESCE(w.balanceTokens, 0) as walletBalance,
         COALESCE(pc.verificationStatus, 'UNVERIFIED') as kycStatus
       FROM User u
       LEFT JOIN Wallet w ON u.id = w.userId

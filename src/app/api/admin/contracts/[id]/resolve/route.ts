@@ -24,7 +24,7 @@ export async function POST(
     // Get contract and escrow info
     const contract = await db.execute({
       sql: `
-        SELECT c.*, e.id as escrowId, e.totalAmountCents, e.caregiverAmountCents, e.platformFeeCents
+        SELECT c.*, e.id as escrowId, e.amountEurCents as escrowAmount, e.platformFeeEurCents
         FROM Contract c
         LEFT JOIN EscrowPayment e ON c.id = e.contractId
         WHERE c.id = ? AND c.status = 'DISPUTED'
@@ -42,16 +42,17 @@ export async function POST(
     let familyAmount = 0;
     let caregiverAmount = 0;
 
+    const totalAmount = Number(c.totalEurCents) || 0;
+
     if (decision === 'favor_family') {
-      familyAmount = c.totalAmountCents || c.totalEurCents || 0;
+      familyAmount = totalAmount;
       caregiverAmount = 0;
     } else if (decision === 'favor_caregiver') {
       familyAmount = 0;
-      caregiverAmount = c.caregiverAmountCents || (c.totalEurCents * 0.85);
+      caregiverAmount = Math.round(totalAmount * 0.85);
     } else if (decision === 'split' && familyPercentage !== undefined) {
-      const total = c.totalAmountCents || c.totalEurCents || 0;
-      familyAmount = Math.round(total * (familyPercentage / 100));
-      caregiverAmount = Math.round(total * ((100 - familyPercentage) / 100));
+      familyAmount = Math.round(totalAmount * (familyPercentage / 100));
+      caregiverAmount = Math.round(totalAmount * ((100 - familyPercentage) / 100));
     }
 
     // Update contract status
