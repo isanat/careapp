@@ -50,7 +50,7 @@ export async function GET(
       title: row.title,
       bio: row.bio,
       city: row.city,
-      services: row.services ? String(row.services).split(',') : [],
+      services: row.services ? (() => { try { return JSON.parse(String(row.services)); } catch { return String(row.services).split(',').filter(Boolean); } })() : [],
       hourlyRateEur: Number(row.hourlyRateEur) || 0,
       averageRating: Number(row.averageRating) || 0,
       totalReviews: Number(row.totalReviews) || 0,
