@@ -176,63 +176,50 @@ export default function SearchPage() {
 
   return (
     <AppShell>
-      <div className="space-y-4">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold">{t.search.title}</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            {isCaregiver
-              ? "Encontre familias que procuram cuidadores"
-              : t.search.placeholder}
-          </p>
-        </div>
-
-        {/* Search Bar */}
+      <div className="space-y-3">
+        {/* Header + Search inline */}
         <div className="flex gap-2">
           <div className="relative flex-1">
             <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={isCaregiver ? "Pesquisar familias..." : "Pesquisar por nome ou servico..."}
+              placeholder={isCaregiver ? "Pesquisar familias..." : "Nome, servico ou cidade..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-11 rounded-xl bg-surface border-border/50 shadow-card"
+              className="pl-9 h-9 rounded-lg bg-surface border-border/50"
             />
           </div>
           <Button
             variant="outline"
-            className="h-11 px-3 rounded-xl border-border/50 shadow-card"
+            className="h-9 w-9 p-0 rounded-lg"
             onClick={() => setShowFilters(!showFilters)}
           >
             <IconFilter className="h-4 w-4" />
           </Button>
         </div>
 
-        {/* Filters Panel */}
+        {/* Filters - compact */}
         {showFilters && (
-          <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-4 animate-slide-down">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.search.filters}</label>
+                <label className="text-[10px] font-medium text-muted-foreground mb-1 block">{t.search.filters}</label>
                 <Select value={selectedService} onValueChange={setSelectedService}>
-                  <SelectTrigger className="h-10 rounded-xl">
+                  <SelectTrigger className="h-8 rounded-lg text-xs">
                     <SelectValue placeholder={t.all} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t.all}</SelectItem>
                     {Object.entries(SERVICE_TYPES).map(([key, value]) => (
-                      <SelectItem key={key} value={key}>
-                        {value}
-                      </SelectItem>
+                      <SelectItem key={key} value={key}>{value}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-
               {!isCaregiver && (
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.search.sortBy || "Ordenar por"}</label>
+                  <label className="text-[10px] font-medium text-muted-foreground mb-1 block">{t.search.sortBy || "Ordenar"}</label>
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="h-10 rounded-xl">
+                    <SelectTrigger className="h-8 rounded-lg text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -245,205 +232,137 @@ export default function SearchPage() {
                 </div>
               )}
             </div>
-
             {!isCaregiver && (
               <div>
-                <div className="flex justify-between mb-2">
-                  <label className="text-xs font-medium text-muted-foreground">Preco maximo: {"\u20AC"}{maxPrice}{t.search.perHour}</label>
-                </div>
-                <Slider
-                  value={[maxPrice]}
-                  onValueChange={([value]) => setMaxPrice(value)}
-                  min={10}
-                  max={50}
-                  step={1}
-                />
+                <label className="text-[10px] font-medium text-muted-foreground mb-1 block">Max: {"\u20AC"}{maxPrice}{t.search.perHour}</label>
+                <Slider value={[maxPrice]} onValueChange={([value]) => setMaxPrice(value)} min={10} max={50} step={1} />
               </div>
             )}
           </div>
         )}
 
-        {/* Results Count */}
+        {/* Count */}
         {!isLoading && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground">
             {isCaregiver
-              ? `${filteredFamilies.length} familias encontradas`
-              : `${filteredCaregivers.length} ${t.search.resultsFound || "cuidadores encontrados"}`
+              ? `${filteredFamilies.length} familias`
+              : `${filteredCaregivers.length} ${t.search.resultsFound || "cuidadores"}`
             }
           </p>
         )}
 
         {/* Loading */}
         {isLoading && (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
-                <div className="flex gap-3">
-                  <Skeleton className="h-14 w-14 rounded-xl" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-3 w-28" />
-                    <Skeleton className="h-3 w-20" />
-                  </div>
-                </div>
-              </div>
+          <div className="space-y-2">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-14 rounded-xl" />
             ))}
           </div>
         )}
 
-        {/* ============= CAREGIVER CARDS (for families) ============= */}
+        {/* Caregiver list - compact rows */}
         {!isLoading && !isCaregiver && (
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {filteredCaregivers.map((caregiver) => (
               <Link key={caregiver.id} href={`/app/caregivers/${caregiver.id}`} className="block">
-                <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover hover:border-primary/20 transition-all">
-                  <div className="flex gap-3">
-                    {/* Avatar */}
-                    <Avatar className="h-14 w-14 rounded-xl">
-                      <AvatarFallback className="rounded-xl text-sm font-semibold bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
-                        {caregiver.name.split(" ").map((n) => n[0]).join("")}
-                      </AvatarFallback>
-                    </Avatar>
+                <div className="bg-surface rounded-xl p-2.5 border border-border/30 hover:bg-muted/30 transition-all flex items-center gap-2.5">
+                  <Avatar className="h-10 w-10 rounded-lg shrink-0">
+                    <AvatarFallback className="rounded-lg text-xs font-semibold bg-primary/10 text-primary">
+                      {caregiver.name.split(" ").map((n) => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
 
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-base truncate">{caregiver.name}</h3>
-                        {caregiver.verificationStatus === "VERIFIED" && (
-                          <Badge className="bg-success/10 text-success border-success/20 text-[10px] px-1.5 py-0" variant="outline">
-                            <IconShield className="h-3 w-3 mr-0.5" />
-                            {t.search.verified}
-                          </Badge>
-                        )}
-                      </div>
-                      {caregiver.title && (
-                        <p className="text-sm text-muted-foreground truncate">{caregiver.title}</p>
-                      )}
-
-                      {/* Rating + Location */}
-                      <div className="flex items-center gap-3 mt-1.5 text-sm">
-                        <div className="flex items-center gap-1">
-                          <IconStar className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                          <span className="font-medium">{caregiver.averageRating?.toFixed(1) || '0.0'}</span>
-                          <span className="text-muted-foreground text-xs">({caregiver.totalReviews || 0})</span>
-                        </div>
-                        {caregiver.city && (
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <IconMapPin className="h-3.5 w-3.5" />
-                            <span className="text-xs">{caregiver.city}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Services */}
-                      {caregiver.services && caregiver.services.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {caregiver.services.slice(0, 3).map((service, index) => (
-                            <Badge key={index} variant="outline" className="text-[10px] px-1.5 py-0 rounded-md bg-muted/50">
-                              {service}
-                            </Badge>
-                          ))}
-                          {caregiver.services.length > 3 && (
-                            <span className="text-[10px] text-muted-foreground self-center">+{caregiver.services.length - 3}</span>
-                          )}
-                        </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-sm font-semibold truncate">{caregiver.name}</h3>
+                      {caregiver.verificationStatus === "VERIFIED" && (
+                        <IconShield className="h-3.5 w-3.5 text-success shrink-0" />
                       )}
                     </div>
-
-                    {/* Price + Arrow */}
-                    <div className="flex flex-col items-end justify-between">
-                      <div className="text-right">
-                        <p className="text-base font-bold text-primary">{"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(0)}</p>
-                        <p className="text-[10px] text-muted-foreground">/hora</p>
-                      </div>
-                      <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                      <span className="flex items-center gap-0.5">
+                        <IconStar className="h-3 w-3 text-amber-500 fill-amber-500" />
+                        {caregiver.averageRating?.toFixed(1) || '0.0'}
+                        <span className="text-[10px]">({caregiver.totalReviews || 0})</span>
+                      </span>
+                      {caregiver.city && (
+                        <span className="flex items-center gap-0.5 truncate">
+                          <IconMapPin className="h-3 w-3" />
+                          {caregiver.city}
+                        </span>
+                      )}
                     </div>
                   </div>
+
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-bold text-primary">{"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(0)}</p>
+                    <p className="text-[9px] text-muted-foreground">/hora</p>
+                  </div>
+                  <IconChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                 </div>
               </Link>
             ))}
 
             {filteredCaregivers.length === 0 && (
-              <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
-                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
-                  <IconSearch className="h-7 w-7 text-muted-foreground" />
-                </div>
-                <h3 className="font-semibold mb-1">{t.search.noResults}</h3>
-                <p className="text-sm text-muted-foreground">{t.search.placeholder}</p>
+              <div className="text-center py-8 bg-surface rounded-xl border border-border/30">
+                <IconSearch className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
+                <p className="text-xs font-medium">{t.search.noResults}</p>
+                <p className="text-[10px] text-muted-foreground">{t.search.placeholder}</p>
               </div>
             )}
           </div>
         )}
 
-        {/* ============= FAMILY CARDS (for caregivers) ============= */}
+        {/* Family list - compact rows */}
         {!isLoading && isCaregiver && (
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {filteredFamilies.map((family) => (
-              <div key={family.id} className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover transition-all">
-                <div className="flex gap-3">
-                  <Avatar className="h-14 w-14 rounded-xl">
-                    <AvatarFallback className="rounded-xl text-sm font-semibold bg-gradient-to-br from-secondary/20 to-secondary/5 text-secondary">
+              <div key={family.id} className="bg-surface rounded-xl p-2.5 border border-border/30 hover:bg-muted/30 transition-all">
+                <div className="flex items-center gap-2.5">
+                  <Avatar className="h-10 w-10 rounded-lg shrink-0">
+                    <AvatarFallback className="rounded-lg text-xs font-semibold bg-secondary/10 text-secondary">
                       {family.name.split(" ").map((n) => n[0]).join("")}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-base truncate">{family.name}</h3>
-                      <Badge className="bg-secondary/10 text-secondary border-secondary/20 text-[10px] px-1.5 py-0" variant="outline">
-                        <IconFamily className="h-3 w-3 mr-0.5" />
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-sm font-semibold truncate">{family.name}</h3>
+                      <Badge className="bg-secondary/10 text-secondary border-0 text-[9px] px-1 py-0 h-4">
+                        <IconFamily className="h-2.5 w-2.5 mr-0.5" />
                         Familia
                       </Badge>
                     </div>
-
-                    {family.city && (
-                      <div className="flex items-center gap-1 mt-0.5 text-muted-foreground">
-                        <IconMapPin className="h-3.5 w-3.5" />
-                        <span className="text-xs">{family.city}</span>
-                      </div>
-                    )}
-
-                    {family.elderName && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Idoso(a): {family.elderName}{family.elderAge ? `, ${family.elderAge} anos` : ""}
-                      </p>
-                    )}
-
-                    {family.elderNeeds && (
-                      <p className="text-sm text-foreground mt-1.5 line-clamp-2">{family.elderNeeds}</p>
-                    )}
-
-                    {family.preferredServices && family.preferredServices.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {family.preferredServices.slice(0, 3).map((service, index) => (
-                          <Badge key={index} variant="outline" className="text-[10px] px-1.5 py-0 rounded-md bg-muted/50">
-                            {serviceLabels[service] || service}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                      {family.city && (
+                        <span className="flex items-center gap-0.5">
+                          <IconMapPin className="h-3 w-3" />
+                          {family.city}
+                        </span>
+                      )}
+                      {family.elderName && (
+                        <span className="truncate">{family.elderName}{family.elderAge ? `, ${family.elderAge}a` : ""}</span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 mt-3 pt-3 border-t border-border/50">
-                  <Button asChild size="sm" className="flex-1 h-9 rounded-xl">
-                    <Link href={`/app/families/${family.id}`}>Ver Perfil</Link>
-                  </Button>
-                  <Button variant="outline" asChild size="sm" className="flex-1 h-9 rounded-xl">
-                    <Link href={`/app/messages?userId=${family.id}`}>Mensagem</Link>
-                  </Button>
+                  <div className="flex gap-1 shrink-0">
+                    <Button asChild size="sm" className="h-7 text-[10px] px-2">
+                      <Link href={`/app/families/${family.id}`}>Ver</Link>
+                    </Button>
+                    <Button variant="outline" asChild size="sm" className="h-7 text-[10px] px-2">
+                      <Link href={`/app/messages?userId=${family.id}`}>Msg</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
 
             {filteredFamilies.length === 0 && (
-              <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
-                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
-                  <IconSearch className="h-7 w-7 text-muted-foreground" />
-                </div>
-                <h3 className="font-semibold mb-1">Nenhuma familia encontrada</h3>
-                <p className="text-sm text-muted-foreground">Tente ajustar os filtros</p>
+              <div className="text-center py-8 bg-surface rounded-xl border border-border/30">
+                <IconSearch className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
+                <p className="text-xs font-medium">Nenhuma familia encontrada</p>
+                <p className="text-[10px] text-muted-foreground">Tente ajustar os filtros</p>
               </div>
             )}
           </div>

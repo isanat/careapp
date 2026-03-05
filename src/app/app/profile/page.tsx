@@ -367,51 +367,43 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="space-y-5">
-        {/* Profile Header Card */}
-        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
-          <div className="relative z-10 flex items-center gap-4">
-            <div className="relative">
-              <Avatar className="h-18 w-18 ring-4 ring-white/20 cursor-pointer" onClick={handlePhotoClick}>
-                {formData.profileImage ? (
-                  <AvatarImage src={formData.profileImage} alt={formData.name} />
-                ) : null}
-                <AvatarFallback className="text-xl font-bold bg-white/20 text-white">
-                  {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <button
-                className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-white text-primary flex items-center justify-center shadow-md hover:scale-110 transition-transform"
-                onClick={handlePhotoClick}
-                disabled={uploadingPhoto}
-              >
-                {uploadingPhoto ? <IconLoader2 className="h-3.5 w-3.5 animate-spin" /> : <IconCamera className="h-3.5 w-3.5" />}
-              </button>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold truncate">{session?.user?.name}</h2>
-              {isCaregiver && formData.title && (
-                <p className="text-sm opacity-80 truncate">{formData.title}{formData.city ? ` - ${formData.city}` : ""}</p>
-              )}
-              <p className="text-xs opacity-60">{formData.email}</p>
-            </div>
+      <div className="space-y-3">
+        {/* Profile Header - compact */}
+        <div className={`rounded-xl px-4 py-3 text-white flex items-center gap-3 ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
+          <div className="relative shrink-0">
+            <Avatar className="h-12 w-12 ring-2 ring-white/20 cursor-pointer" onClick={handlePhotoClick}>
+              {formData.profileImage ? (
+                <AvatarImage src={formData.profileImage} alt={formData.name} />
+              ) : null}
+              <AvatarFallback className="text-sm font-bold bg-white/20 text-white">
+                {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <button
+              className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-white text-primary flex items-center justify-center shadow-sm"
+              onClick={handlePhotoClick}
+              disabled={uploadingPhoto}
+            >
+              {uploadingPhoto ? <IconLoader2 className="h-2.5 w-2.5 animate-spin" /> : <IconCamera className="h-2.5 w-2.5" />}
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
           </div>
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
-          <div className="absolute -right-2 -bottom-6 h-32 w-32 rounded-full bg-white/5" />
-        </div>
-
-        {/* Edit/Save Button */}
-        <div className="flex justify-end">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-base font-bold truncate">{session?.user?.name}</h2>
+            {isCaregiver && formData.title && (
+              <p className="text-xs opacity-80 truncate">{formData.title}{formData.city ? ` - ${formData.city}` : ""}</p>
+            )}
+            <p className="text-[10px] opacity-60">{formData.email}</p>
+          </div>
           <Button
             size="sm"
             variant={isEditing ? "default" : "outline"}
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             disabled={isSaving}
-            className="rounded-xl"
+            className="bg-white/20 hover:bg-white/30 text-white border-0 h-7 text-[10px] px-2"
           >
-            {isSaving ? <IconLoader2 className="h-4 w-4 animate-spin" /> :
-             isEditing ? <IconCheck className="h-4 w-4 mr-1.5" /> : <IconEdit className="h-4 w-4 mr-1.5" />}
+            {isSaving ? <IconLoader2 className="h-3 w-3 animate-spin" /> :
+             isEditing ? <IconCheck className="h-3 w-3 mr-0.5" /> : <IconEdit className="h-3 w-3 mr-0.5" />}
             {isEditing ? t.save : t.profile.editProfile}
           </Button>
         </div>
@@ -432,19 +424,19 @@ export default function ProfilePage() {
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-1.5">
             {[
               { value: profile?.totalContracts || 0, label: "Contratos", color: "text-primary" },
               { value: profile?.totalReviews || 0, label: "Avaliacoes", color: "text-secondary" },
               { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", color: "text-amber-500", icon: true },
               { value: `\u20AC${formData.hourlyRateEur || 0}`, label: "/hora", color: "text-success" },
             ].map((stat, i) => (
-              <div key={i} className="bg-surface rounded-2xl p-3 text-center shadow-card border border-border/50">
-                <p className={`text-lg font-bold ${stat.color} flex items-center justify-center gap-0.5`}>
-                  {stat.icon && <IconStar className="h-4 w-4 fill-amber-400 text-amber-400" />}
+              <div key={i} className="bg-surface rounded-lg p-2 text-center border border-border/30">
+                <p className={`text-sm font-bold ${stat.color} flex items-center justify-center gap-0.5`}>
+                  {stat.icon && <IconStar className="h-3 w-3 fill-amber-400 text-amber-400" />}
                   {stat.value}
                 </p>
-                <p className="text-[11px] text-muted-foreground">{stat.label}</p>
+                <p className="text-[9px] text-muted-foreground">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -452,26 +444,26 @@ export default function ProfilePage() {
 
         {/* Tabs */}
         <Tabs defaultValue="about">
-          <TabsList className={`w-full h-10 rounded-xl bg-muted p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'}`}>
-            <TabsTrigger value="about" className="rounded-lg text-xs data-[state=active]:shadow-sm">Info</TabsTrigger>
-            <TabsTrigger value="documents" className="rounded-lg text-xs data-[state=active]:shadow-sm">Docs</TabsTrigger>
-            {isCaregiver && <TabsTrigger value="services" className="rounded-lg text-xs data-[state=active]:shadow-sm">Servicos</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder" className="rounded-lg text-xs data-[state=active]:shadow-sm">Idoso</TabsTrigger>}
-            <TabsTrigger value="contact" className="rounded-lg text-xs data-[state=active]:shadow-sm">Contato</TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-lg text-xs data-[state=active]:shadow-sm">Config</TabsTrigger>
+          <TabsList className={`w-full h-8 rounded-lg bg-muted p-0.5 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            <TabsTrigger value="about" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Info</TabsTrigger>
+            <TabsTrigger value="documents" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Docs</TabsTrigger>
+            {isCaregiver && <TabsTrigger value="services" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Servicos</TabsTrigger>}
+            {isFamily && <TabsTrigger value="elder" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Idoso</TabsTrigger>}
+            <TabsTrigger value="contact" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Contato</TabsTrigger>
+            <TabsTrigger value="settings" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Config</TabsTrigger>
           </TabsList>
 
           {/* Info Tab */}
-          <TabsContent value="about" className="mt-4 space-y-3">
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+          <TabsContent value="about" className="mt-3 space-y-2">
+            <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label className="text-xs text-muted-foreground">{t.auth.name}</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
+                  <Label className="text-[10px] text-muted-foreground">{t.auth.name}</Label>
+                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">{t.profile.city}</Label>
-                  <Input value={formData.city || ""} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Cidade" />
+                  <Label className="text-[10px] text-muted-foreground">{t.profile.city}</Label>
+                  <Input value={formData.city || ""} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Cidade" />
                 </div>
               </div>
 
@@ -480,11 +472,11 @@ export default function ProfilePage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <Label className="text-xs text-muted-foreground">Titulo Profissional</Label>
-                      <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Ex: Enfermeira" />
+                      <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Ex: Enfermeira" />
                     </div>
                     <div>
                       <Label className="text-xs text-muted-foreground">Anos de Experiencia</Label>
-                      <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
+                      <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
                     </div>
                   </div>
                   <div>
@@ -497,8 +489,8 @@ export default function ProfilePage() {
           </TabsContent>
 
           {/* Documents Tab */}
-          <TabsContent value="documents" className="mt-4 space-y-3">
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+          <TabsContent value="documents" className="mt-3 space-y-2">
+            <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
               <div className="flex items-center gap-2 mb-1">
                 <IconFileText className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-semibold">Documentos Pessoais</span>
@@ -510,7 +502,7 @@ export default function ProfilePage() {
                   value={formData.nif || ""}
                   onChange={(e) => { const val = e.target.value.replace(/\D/g, "").slice(0, 9); setFormData({...formData, nif: val}); }}
                   disabled={!isEditing}
-                  className={`h-10 mt-1 rounded-xl ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-error" : ""}`}
+                  className={`h-8 mt-0.5 text-xs ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-error" : ""}`}
                   placeholder="123456789"
                   maxLength={9}
                   inputMode="numeric"
@@ -526,7 +518,7 @@ export default function ProfilePage() {
               <div>
                 <Label className="text-xs text-muted-foreground">Tipo de Documento</Label>
                 <Select value={formData.documentType || ""} onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})} disabled={!isEditing}>
-                  <SelectTrigger className="h-10 mt-1 rounded-xl"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+                  <SelectTrigger className="h-8 mt-0.5 text-xs"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
                   <SelectContent className="bg-surface border shadow-soft-md z-50">
                     {DOCUMENT_TYPES.map((doc) => (<SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>))}
                   </SelectContent>
@@ -542,7 +534,7 @@ export default function ProfilePage() {
                     value={formData.documentNumber || ""}
                     onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
                     disabled={!isEditing}
-                    className="h-10 mt-1 rounded-xl"
+                    className="h-8 mt-0.5 text-xs"
                     placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
                     maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
                   />
@@ -552,7 +544,7 @@ export default function ProfilePage() {
 
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
-              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
+              <div className="bg-surface rounded-xl p-3 border border-border/30">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <IconShield className="h-4 w-4 text-muted-foreground" />
@@ -578,7 +570,7 @@ export default function ProfilePage() {
               </div>
             )}
 
-            <div className="bg-warning/5 border border-warning/20 rounded-2xl p-4">
+            <div className="bg-warning/5 border border-warning/20 rounded-xl p-3">
               <div className="flex gap-2">
                 <IconAlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                 <div className="text-xs text-muted-foreground">
@@ -591,8 +583,8 @@ export default function ProfilePage() {
 
           {/* Services Tab */}
           {isCaregiver && (
-            <TabsContent value="services" className="mt-4 space-y-3">
-              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
+            <TabsContent value="services" className="mt-3 space-y-2">
+              <div className="bg-surface rounded-xl p-3 border border-border/30">
                 <div className="grid grid-cols-2 gap-2">
                   {SERVICE_TYPES.map((service) => (
                     <label key={service.id} className={`flex items-center gap-2 p-3 border rounded-xl text-sm cursor-pointer transition-all ${
@@ -616,12 +608,12 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">Idiomas</Label>
-                    <Input value={formData.languages || ""} onChange={(e) => setFormData({...formData, languages: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="PT, EN..." />
+                    <Input value={formData.languages || ""} onChange={(e) => setFormData({...formData, languages: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="PT, EN..." />
                   </div>
                 </div>
                 <div className="mt-3">
                   <Label className="text-xs text-muted-foreground">Certificacoes</Label>
-                  <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Curso de Cuidador..." />
+                  <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Curso de Cuidador..." />
                 </div>
               </div>
             </TabsContent>
@@ -630,15 +622,15 @@ export default function ProfilePage() {
           {/* Elder Tab */}
           {isFamily && (
             <TabsContent value="elder" className="mt-4">
-              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+              <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="text-xs text-muted-foreground">Nome do Idoso</Label>
-                    <Input value={formData.elderName || ""} onChange={(e) => setFormData({...formData, elderName: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
+                    <Input value={formData.elderName || ""} onChange={(e) => setFormData({...formData, elderName: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
                   </div>
                   <div>
                     <Label className="text-xs text-muted-foreground">Idade</Label>
-                    <Input type="number" value={formData.elderAge || ""} onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
+                    <Input type="number" value={formData.elderAge || ""} onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
                   </div>
                 </div>
                 <div>
@@ -651,10 +643,10 @@ export default function ProfilePage() {
 
           {/* Contact Tab */}
           <TabsContent value="contact" className="mt-4">
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+            <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
               <div>
                 <Label className="text-xs text-muted-foreground">{t.auth.email}</Label>
-                <Input type="email" value={formData.email} disabled className="h-10 mt-1 rounded-xl bg-muted" />
+                <Input type="email" value={formData.email} disabled className="h-8 mt-0.5 text-xs bg-muted" />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">Telemovel</Label>
@@ -663,7 +655,7 @@ export default function ProfilePage() {
                   value={formData.phone || ""}
                   onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
                   disabled={!isEditing}
-                  className="h-10 mt-1 rounded-xl"
+                  className="h-8 mt-0.5 text-xs"
                   placeholder="+351 912 345 678"
                   inputMode="tel"
                 />
@@ -672,7 +664,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">Contato de Emergencia</Label>
-                  <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Nome" />
+                  <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Nome" />
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Telefone</Label>
@@ -680,7 +672,7 @@ export default function ProfilePage() {
                     value={formData.emergencyPhone || ""}
                     onChange={(e) => setFormData({...formData, emergencyPhone: formatPhonePT(e.target.value)})}
                     disabled={!isEditing}
-                    className="h-10 mt-1 rounded-xl"
+                    className="h-8 mt-0.5 text-xs"
                     placeholder="+351 912 345 678"
                     inputMode="tel"
                   />
@@ -692,7 +684,7 @@ export default function ProfilePage() {
           {/* Settings Tab */}
           <TabsContent value="settings" className="mt-4 space-y-2">
             {/* Push Notifications */}
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
+            <div className="bg-surface rounded-xl p-3 border border-border/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -719,7 +711,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Theme */}
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 flex items-center justify-between">
+            <div className="bg-surface rounded-xl p-3 border border-border/30 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-xl bg-secondary/10 flex items-center justify-center">
                   <IconShield className="h-4 w-4 text-secondary" />
@@ -730,13 +722,13 @@ export default function ProfilePage() {
             </div>
 
             {/* Language */}
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 flex items-center justify-between">
+            <div className="bg-surface rounded-xl p-3 border border-border/30 flex items-center justify-between">
               <span className="text-sm font-medium">Idioma</span>
               <LanguageSelector />
             </div>
 
             {/* Terms */}
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 flex items-center justify-between">
+            <div className="bg-surface rounded-xl p-3 border border-border/30 flex items-center justify-between">
               <span className="text-sm">Termos / Privacidade</span>
               <div className="flex gap-1">
                 <Button size="sm" variant="ghost" asChild className="h-7 text-xs px-2"><a href="/termos" target="_blank">Termos</a></Button>
