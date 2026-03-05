@@ -23,6 +23,11 @@ export interface InterviewQuestionnaire {
   wouldRecommend: boolean;
   notes?: string;
   proceedWithContract: boolean;
+  // Legal/platform protection fields
+  interviewConductedProperly?: boolean;
+  agreedCareExpectations?: boolean;
+  noMisrepresentation?: boolean;
+  platformLiabilityAck?: boolean;
 }
 
 /**
@@ -123,6 +128,10 @@ export function formatQuestionnaireJson(questionnaire: InterviewQuestionnaire): 
     wouldRecommend: questionnaire.wouldRecommend,
     notes: questionnaire.notes || null,
     proceedWithContract: questionnaire.proceedWithContract,
+    interviewConductedProperly: questionnaire.interviewConductedProperly ?? true,
+    agreedCareExpectations: questionnaire.agreedCareExpectations ?? false,
+    noMisrepresentation: questionnaire.noMisrepresentation ?? false,
+    platformLiabilityAck: questionnaire.platformLiabilityAck ?? false,
     completedAt: new Date().toISOString(),
   });
 }
