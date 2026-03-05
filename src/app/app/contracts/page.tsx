@@ -91,21 +91,18 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-5">
+      <div className="space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">{t.contracts.title}</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">{t.dashboard.viewAll}</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={fetchContracts} disabled={isLoading} size="icon" className="h-9 w-9 rounded-xl">
-              <IconRefresh className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <h1 className="text-lg font-bold">{t.contracts.title}</h1>
+          <div className="flex gap-1.5">
+            <Button variant="outline" onClick={fetchContracts} disabled={isLoading} size="icon" className="h-8 w-8">
+              <IconRefresh className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
             {isFamily && (
-              <Button asChild className="h-9 rounded-xl">
+              <Button asChild size="sm">
                 <Link href="/app/contracts/new">
-                  <IconPlus className="h-4 w-4 mr-1.5" />
+                  <IconPlus className="h-3.5 w-3.5 mr-1" />
                   {t.contracts.new}
                 </Link>
               </Button>
@@ -115,9 +112,9 @@ export default function ContractsPage() {
 
         {/* Error */}
         {error && (
-          <div className="bg-error/5 border border-error/20 rounded-2xl p-4">
-            <p className="text-sm text-error">{error}</p>
-            <Button variant="outline" onClick={fetchContracts} size="sm" className="mt-2">
+          <div className="bg-error/5 border border-error/20 rounded-xl p-3">
+            <p className="text-xs text-error">{error}</p>
+            <Button variant="outline" onClick={fetchContracts} size="sm" className="mt-1.5 h-7 text-xs">
               {t.submit}
             </Button>
           </div>
@@ -125,17 +122,9 @@ export default function ContractsPage() {
 
         {/* Loading */}
         {isLoading && (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
-                <div className="flex gap-3">
-                  <Skeleton className="h-10 w-10 rounded-xl" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-3 w-28" />
-                  </div>
-                </div>
-              </div>
+              <Skeleton key={i} className="h-16 rounded-xl" />
             ))}
           </div>
         )}
@@ -143,34 +132,31 @@ export default function ContractsPage() {
         {/* Tabs */}
         {!isLoading && !error && (
           <Tabs defaultValue="active">
-            <TabsList className="w-full grid grid-cols-3 h-10 rounded-xl bg-muted p-1">
-              <TabsTrigger value="active" className="rounded-lg text-xs data-[state=active]:shadow-sm">
+            <TabsList className="w-full grid grid-cols-3 h-9 rounded-lg bg-muted p-0.5">
+              <TabsTrigger value="active" className="rounded-md text-xs data-[state=active]:shadow-sm">
                 {t.contracts.active} ({activeContracts.length})
               </TabsTrigger>
-              <TabsTrigger value="pending" className="rounded-lg text-xs data-[state=active]:shadow-sm">
+              <TabsTrigger value="pending" className="rounded-md text-xs data-[state=active]:shadow-sm">
                 {t.contracts.pending} ({pendingContracts.length})
               </TabsTrigger>
-              <TabsTrigger value="completed" className="rounded-lg text-xs data-[state=active]:shadow-sm">
+              <TabsTrigger value="completed" className="rounded-md text-xs data-[state=active]:shadow-sm">
                 {t.contracts.completed} ({completedContracts.length})
               </TabsTrigger>
             </TabsList>
 
             {["active", "pending", "completed"].map((tab) => {
               const items = tab === "active" ? activeContracts : tab === "pending" ? pendingContracts : completedContracts;
-              const emptyIcon = tab === "active" ? IconContract : tab === "pending" ? IconClock : IconCheck;
-              const EmptyIcon = emptyIcon;
+              const EmptyIcon = tab === "active" ? IconContract : tab === "pending" ? IconClock : IconCheck;
 
               return (
-                <TabsContent key={tab} value={tab} className="mt-4 space-y-3">
+                <TabsContent key={tab} value={tab} className="mt-3 space-y-1.5">
                   {items.map((contract) => (
                     <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
                   ))}
                   {items.length === 0 && (
-                    <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
-                      <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
-                        <EmptyIcon className="h-7 w-7 text-muted-foreground" />
-                      </div>
-                      <p className="text-sm text-muted-foreground">{t.contracts.noContracts}</p>
+                    <div className="text-center py-8 bg-surface rounded-xl border border-border/30">
+                      <EmptyIcon className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
+                      <p className="text-xs text-muted-foreground">{t.contracts.noContracts}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -185,60 +171,36 @@ export default function ContractsPage() {
 
 function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily: boolean; t: any }) {
   const statusLabel = CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status;
-  const totalEur = contract.totalEurCents ? contract.totalEurCents / 100 : 0;
   const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
   const config = statusConfig[contract.status] || statusConfig.DRAFT;
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="block">
-      <div className={`bg-surface rounded-2xl p-4 shadow-card border border-border/50 border-l-4 ${config.border} hover:shadow-card-hover transition-all`}>
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold truncate">{contract.title || t.contracts.title}</h3>
-            </div>
-            <Badge className={`${config.bg} ${config.color} border-0 text-[10px] mt-1`}>
+      <div className={`bg-surface rounded-xl py-2.5 px-3 border border-border/30 border-l-[3px] ${config.border} hover:bg-muted/30 transition-all flex items-center gap-3`}>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold truncate">{contract.title || t.contracts.title}</h3>
+            <Badge className={`${config.bg} ${config.color} border-0 text-[9px] px-1.5 py-0 h-4`}>
               {statusLabel}
             </Badge>
           </div>
-          <IconChevronRight className="h-4 w-4 text-muted-foreground mt-1 shrink-0" />
+          <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+            <span className="flex items-center gap-0.5">
+              <IconUser className="h-3 w-3" />
+              {contract.otherParty?.name || t.none}
+            </span>
+            {contract.startDate && (
+              <span className="flex items-center gap-0.5">
+                <IconCalendar className="h-3 w-3" />
+                {new Date(contract.startDate).toLocaleDateString('pt-PT')}
+              </span>
+            )}
+            {hourlyRate > 0 && (
+              <span className="font-medium text-foreground">{"\u20AC"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
+            )}
+          </div>
         </div>
-
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-2">
-          <div className="flex items-center gap-1">
-            <IconUser className="h-3.5 w-3.5" />
-            <span className="text-xs">{contract.otherParty?.name || t.none}</span>
-          </div>
-          {contract.startDate && (
-            <div className="flex items-center gap-1">
-              <IconCalendar className="h-3.5 w-3.5" />
-              <span className="text-xs">{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
-            </div>
-          )}
-          {hourlyRate > 0 && (
-            <div className="flex items-center gap-1">
-              <IconEuro className="h-3.5 w-3.5" />
-              <span className="text-xs font-medium">{"\u20AC"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
-            </div>
-          )}
-        </div>
-
-        {contract.serviceTypes && contract.serviceTypes.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {contract.serviceTypes.slice(0, 3).map((service, index) => (
-              <Badge key={index} variant="outline" className="text-[10px] px-1.5 py-0 rounded-md bg-muted/50">
-                {service}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        {contract.status === "PENDING_ACCEPTANCE" && !isFamily && (
-          <div className="flex gap-2 mt-3 pt-3 border-t border-border/50">
-            <Button size="sm" className="flex-1 h-8 rounded-lg text-xs">{t.yes}</Button>
-            <Button size="sm" variant="outline" className="flex-1 h-8 rounded-lg text-xs">{t.no}</Button>
-          </div>
-        )}
+        <IconChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
       </div>
     </Link>
   );

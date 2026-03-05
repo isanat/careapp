@@ -140,7 +140,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
       {/* Top Header - Clean white, dark blue text */}
       <header className="sticky top-0 z-50 bg-white dark:bg-surface border-b border-border/50 safe-area-inset-top">
         <div className="px-4 lg:px-6 mx-auto max-w-7xl">
-          <div className="flex h-14 lg:h-16 items-center justify-between">
+          <div className="flex h-12 lg:h-14 items-center justify-between">
             {/* Left: Logo & Mobile Menu */}
             <div className="flex items-center gap-3">
               <Button
@@ -246,13 +246,13 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         </div>
       </header>
 
-      <div className="flex-1 flex pb-[4.5rem] lg:pb-0">
+      <div className="flex-1 flex pb-[3.5rem] lg:pb-0">
         {/* Sidebar (Desktop) */}
         <aside
           className={cn(
             "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-surface border-r border-border/50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 shadow-soft lg:shadow-none",
             sidebarOpen ? "translate-x-0" : "-translate-x-full",
-            "top-14 lg:top-0"
+            "top-12 lg:top-0"
           )}
         >
           <nav className="p-3 space-y-1 mt-2 lg:mt-4">
@@ -306,14 +306,14 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-5xl mx-auto px-4 lg:px-6 py-4 lg:py-6">
+        <main className="flex-1 w-full max-w-5xl mx-auto px-3 lg:px-6 py-3 lg:py-5">
           {children}
         </main>
       </div>
 
       {/* Mobile Bottom Navigation - White bg, orange active icons */}
       <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface border-t border-border/50 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
-        <div className="flex items-center justify-around h-[4.5rem] px-1">
+        <div className="flex items-center justify-around h-[3.5rem] px-1">
           {mobileNavItems.map((item) => {
             const active = isActiveRoute(item.href);
             const Icon = item.icon;
@@ -330,10 +330,10 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 )}
               >
                 <div className={cn(
-                  "relative flex items-center justify-center h-8 w-8 rounded-full transition-all duration-200",
-                  active && "bg-primary/15 scale-110"
+                  "relative flex items-center justify-center h-7 w-7 rounded-full transition-all duration-200",
+                  active && "bg-primary/15"
                 )}>
-                  <Icon className={cn("h-[22px] w-[22px]", active && "text-primary")} />
+                  <Icon className={cn("h-5 w-5", active && "text-primary")} />
                   {item.href === "/app/chat" && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-warm text-[9px] font-bold text-white">
                       {unreadCount > 9 ? "9+" : unreadCount}

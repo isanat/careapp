@@ -92,14 +92,14 @@ export default function DashboardPage() {
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="space-y-4 animate-pulse">
-          <Skeleton className="h-8 w-48 rounded-lg" />
-          <Skeleton className="h-28 w-full rounded-2xl" />
-          <div className="grid grid-cols-2 gap-3">
-            <Skeleton className="h-24 rounded-2xl" />
-            <Skeleton className="h-24 rounded-2xl" />
-            <Skeleton className="h-24 rounded-2xl" />
-            <Skeleton className="h-24 rounded-2xl" />
+        <div className="space-y-3 animate-pulse">
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-16 w-full rounded-xl" />
+          <div className="grid grid-cols-4 gap-2">
+            <Skeleton className="h-14 rounded-xl" />
+            <Skeleton className="h-14 rounded-xl" />
+            <Skeleton className="h-14 rounded-xl" />
+            <Skeleton className="h-14 rounded-xl" />
           </div>
         </div>
       </AppShell>
@@ -111,21 +111,16 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-5">
-        {/* Welcome Header */}
+      <div className="space-y-3">
+        {/* Welcome + Status inline */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {t.dashboard.welcome}, {firstName}!
-            </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {isFamily ? t.dashboard.familyPanel : t.dashboard.caregiverPanel}
-            </p>
-          </div>
+          <h1 className="text-lg font-bold text-foreground">
+            {t.dashboard.welcome}, {firstName}!
+          </h1>
           <Badge
             className={session?.user?.status === "ACTIVE"
-              ? "bg-success/10 text-success border-success/20 hover:bg-success/20"
-              : "bg-warning/10 text-warning border-warning/20 hover:bg-warning/20"
+              ? "bg-success/10 text-success border-success/20"
+              : "bg-warning/10 text-warning border-warning/20"
             }
             variant="outline"
           >
@@ -133,238 +128,167 @@ export default function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Balance Card - Gradient */}
+        {/* Balance - compact inline */}
         <Link href="/app/wallet" className="block">
-          <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
-            <div className="relative z-10">
-              <p className="text-sm font-medium opacity-90">{t.wallet.balance}</p>
-              <p className="text-3xl font-bold mt-1">
-                {"\u20AC"}{balanceEur}
-              </p>
-              <p className="text-xs opacity-75 mt-1">
-                {stats?.tokenBalance?.toLocaleString() || 0} tokens
-              </p>
+          <div className={`rounded-xl px-4 py-3 text-white flex items-center justify-between ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
+            <div>
+              <p className="text-xs opacity-80">{t.wallet.balance}</p>
+              <p className="text-xl font-bold">{"\u20AC"}{balanceEur}</p>
             </div>
-            {/* Decorative circles */}
-            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
-            <div className="absolute -right-2 -bottom-6 h-32 w-32 rounded-full bg-white/5" />
+            <div className="text-right">
+              <p className="text-xs opacity-70">{stats?.tokenBalance?.toLocaleString() || 0} tokens</p>
+              <IconChevronRight className="h-4 w-4 ml-auto opacity-60" />
+            </div>
           </div>
         </Link>
 
-        {/* Stats Grid - 2x2 with icons */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover transition-shadow">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconContract className="h-4 w-4 text-primary" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold">{stats?.activeContracts || 0}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{t.nav.contracts}</p>
+        {/* Stats - 4 columns, ultra compact */}
+        <div className="grid grid-cols-4 gap-2">
+          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
+            <IconContract className="h-4 w-4 text-primary mx-auto" />
+            <p className="text-lg font-bold mt-0.5">{stats?.activeContracts || 0}</p>
+            <p className="text-[10px] text-muted-foreground">{t.nav.contracts}</p>
           </div>
-
-          <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover transition-shadow">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-xl bg-secondary/10 flex items-center justify-center">
-                <IconClock className="h-4 w-4 text-secondary" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold">{stats?.totalHours || 0}h</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Horas</p>
+          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
+            <IconClock className="h-4 w-4 text-secondary mx-auto" />
+            <p className="text-lg font-bold mt-0.5">{stats?.totalHours || 0}h</p>
+            <p className="text-[10px] text-muted-foreground">Horas</p>
           </div>
-
-          <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover transition-shadow">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                <IconStar className="h-4 w-4 text-amber-500" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold">{stats?.rating?.toFixed(1) || '-'}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Nota</p>
+          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
+            <IconStar className="h-4 w-4 text-amber-500 mx-auto" />
+            <p className="text-lg font-bold mt-0.5">{stats?.rating?.toFixed(1) || '-'}</p>
+            <p className="text-[10px] text-muted-foreground">Nota</p>
           </div>
-
-          <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover transition-shadow">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-xl bg-success/10 flex items-center justify-center">
-                <IconEuro className="h-4 w-4 text-success" />
-              </div>
-            </div>
-            <p className="text-2xl font-bold">{stats?.tokenBalance?.toLocaleString() || 0}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Tokens</p>
+          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
+            <IconEuro className="h-4 w-4 text-success mx-auto" />
+            <p className="text-lg font-bold mt-0.5">{stats?.tokenBalance?.toLocaleString() || 0}</p>
+            <p className="text-[10px] text-muted-foreground">Tokens</p>
           </div>
         </div>
 
-        {/* Quick Actions - Large touchable buttons */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Quick Actions - horizontal row */}
+        <div className="flex gap-2">
           {isFamily && (
-            <Link href="/app/search" className="block">
-              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover hover:border-primary/30 transition-all group">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
-                  <IconSearch className="h-5 w-5 text-primary" />
+            <Link href="/app/search" className="flex-1">
+              <div className="bg-surface rounded-xl p-3 border border-border/50 hover:border-primary/30 transition-all flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <IconSearch className="h-4 w-4 text-primary" />
                 </div>
-                <p className="text-sm font-semibold">{t.nav.searchCaregivers}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Encontrar cuidador</p>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold truncate">{t.nav.searchCaregivers}</p>
+                  <p className="text-[10px] text-muted-foreground">Encontrar</p>
+                </div>
               </div>
             </Link>
           )}
           {isCaregiver && (
-            <Link href="/app/proposals" className="block">
-              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover hover:border-secondary/30 transition-all group">
-                <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3 group-hover:bg-secondary/20 transition-colors">
-                  <IconInbox className="h-5 w-5 text-secondary" />
+            <Link href="/app/proposals" className="flex-1">
+              <div className="bg-surface rounded-xl p-3 border border-border/50 hover:border-secondary/30 transition-all flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                  <IconInbox className="h-4 w-4 text-secondary" />
                 </div>
-                <p className="text-sm font-semibold">Propostas</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Ver solicitacoes</p>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold truncate">Propostas</p>
+                  <p className="text-[10px] text-muted-foreground">Solicitacoes</p>
+                </div>
               </div>
             </Link>
           )}
-          <Link href="/app/contracts" className="block">
-            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover hover:border-accent/30 transition-all group">
-              <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center mb-3 group-hover:bg-accent/20 transition-colors">
-                <IconContract className="h-5 w-5 text-accent" />
+          <Link href="/app/contracts" className="flex-1">
+            <div className="bg-surface rounded-xl p-3 border border-border/50 hover:border-accent/30 transition-all flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                <IconContract className="h-4 w-4 text-accent-foreground" />
               </div>
-              <p className="text-sm font-semibold">{t.contracts.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{t.dashboard.viewAll}</p>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold truncate">{t.contracts.title}</p>
+                <p className="text-[10px] text-muted-foreground">{t.dashboard.viewAll}</p>
+              </div>
             </div>
           </Link>
         </div>
 
-        {/* Next Steps - if any */}
+        {/* Next Steps - compact list */}
         {pendingSteps.length > 0 && (
-          <div className="bg-surface rounded-2xl p-4 shadow-card border border-warning/20">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="h-8 w-8 rounded-xl bg-warning/10 flex items-center justify-center">
-                <IconAlertCircle className="h-4 w-4 text-warning" />
-              </div>
-              <span className="text-sm font-semibold">{t.dashboard.nextSteps.title}</span>
+          <div className="bg-warning/5 rounded-xl p-3 border border-warning/20">
+            <div className="flex items-center gap-2 mb-2">
+              <IconAlertCircle className="h-4 w-4 text-warning" />
+              <span className="text-xs font-semibold">{t.dashboard.nextSteps.title}</span>
             </div>
-            <div className="space-y-2">
-              {pendingSteps.map((step) => (
-                <Link key={step.key} href={step.href} className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-colors group">
-                  <step.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span className="flex-1 text-sm">{step.label}</span>
-                  <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </Link>
-              ))}
-            </div>
+            {pendingSteps.map((step) => (
+              <Link key={step.key} href={step.href} className="flex items-center gap-2 py-1.5 hover:bg-warning/5 rounded-lg px-1 transition-colors">
+                <step.icon className="h-4 w-4 text-muted-foreground" />
+                <span className="flex-1 text-xs">{step.label}</span>
+                <IconChevronRight className="h-3 w-3 text-muted-foreground" />
+              </Link>
+            ))}
           </div>
         )}
 
-        {/* All set message */}
+        {/* All set - single line */}
         {pendingSteps.length === 0 && (
-          <div className="bg-success/5 rounded-2xl p-4 border border-success/20 flex items-center gap-3">
-            <div className="h-8 w-8 rounded-xl bg-success/10 flex items-center justify-center">
-              <IconCheck className="h-4 w-4 text-success" />
-            </div>
-            <span className="text-sm text-success font-medium">{t.dashboard.allSet}</span>
+          <div className="bg-success/5 rounded-xl px-3 py-2 border border-success/20 flex items-center gap-2">
+            <IconCheck className="h-4 w-4 text-success" />
+            <span className="text-xs text-success font-medium">{t.dashboard.allSet}</span>
           </div>
         )}
 
-        {/* Platform Value - Why stay */}
-        <div className="bg-surface rounded-2xl p-4 shadow-card border border-primary/10">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
-              <IconShield className="h-4 w-4 text-primary" />
-            </div>
-            <span className="text-sm font-semibold">Beneficios da Plataforma</span>
+        {/* Platform Benefits - compact 2-col */}
+        <div className="bg-surface rounded-xl p-3 border border-primary/10">
+          <div className="flex items-center gap-2 mb-2">
+            <IconShield className="h-4 w-4 text-primary" />
+            <span className="text-xs font-semibold">Beneficios da Plataforma</span>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {isFamily ? (
-              <>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Cuidadores Verificados</p>
-                    <p className="text-[10px] text-muted-foreground">KYC e antecedentes</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Contratos Juridicos</p>
-                    <p className="text-[10px] text-muted-foreground">Assinatura digital</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Pagamento Seguro</p>
-                    <p className="text-[10px] text-muted-foreground">Protecao financeira</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Recibos Fiscais</p>
-                    <p className="text-[10px] text-muted-foreground">Validos para IRS</p>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Pagamento Garantido</p>
-                    <p className="text-[10px] text-muted-foreground">Receba pontualmente</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Perfil Verificado</p>
-                    <p className="text-[10px] text-muted-foreground">Mais familias confiam</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Reputacao Publica</p>
-                    <p className="text-[10px] text-muted-foreground">Avaliacoes verificaveis</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
-                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-medium">Protecao Juridica</p>
-                    <p className="text-[10px] text-muted-foreground">Contrato formal</p>
-                  </div>
-                </div>
-              </>
-            )}
+          <div className="grid grid-cols-2 gap-1.5">
+            {(isFamily
+              ? [
+                  { title: "Cuidadores Verificados", sub: "KYC e antecedentes" },
+                  { title: "Contratos Juridicos", sub: "Assinatura digital" },
+                  { title: "Pagamento Seguro", sub: "Protecao financeira" },
+                  { title: "Recibos Fiscais", sub: "Validos para IRS" },
+                ]
+              : [
+                  { title: "Pagamento Garantido", sub: "Receba pontualmente" },
+                  { title: "Perfil Verificado", sub: "Mais familias confiam" },
+                  { title: "Reputacao Publica", sub: "Avaliacoes verificaveis" },
+                  { title: "Protecao Juridica", sub: "Contrato formal" },
+                ]
+            ).map((item, i) => (
+              <div key={i} className="flex items-center gap-1.5 py-1 px-2 bg-muted/30 rounded-lg">
+                <IconCheck className="h-3 w-3 text-success shrink-0" />
+                <span className="text-[10px] font-medium truncate">{item.title}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Recent Activity - compact list */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-base font-semibold">{t.dashboard.recentActivity}</span>
-            <Link href="/app/wallet" className="text-sm text-primary font-medium hover:underline">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold">{t.dashboard.recentActivity}</span>
+            <Link href="/app/wallet" className="text-xs text-primary font-medium">
               {t.dashboard.viewAll}
             </Link>
           </div>
 
           {recentActivity.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-surface rounded-xl shadow-card border border-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${
-                      activity.type === "credit"
-                        ? "bg-success/10"
-                        : "bg-error/10"
+                <div key={index} className="flex items-center justify-between py-2 px-3 bg-surface rounded-lg border border-border/30">
+                  <div className="flex items-center gap-2">
+                    <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${
+                      activity.type === "credit" ? "bg-success/10" : "bg-error/10"
                     }`}>
                       {activity.type === "credit"
-                        ? <IconArrowUp className="h-4 w-4 text-success" />
-                        : <IconArrowDown className="h-4 w-4 text-error" />
+                        ? <IconArrowUp className="h-3.5 w-3.5 text-success" />
+                        : <IconArrowDown className="h-3.5 w-3.5 text-error" />
                       }
                     </div>
                     <div>
-                      <p className="text-sm font-medium truncate max-w-[180px]">{activity.description}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
+                      <p className="text-xs font-medium truncate max-w-[160px]">{activity.description}</p>
+                      <p className="text-[10px] text-muted-foreground">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
                     </div>
                   </div>
-                  <span className={`text-sm font-semibold ${
+                  <span className={`text-xs font-semibold ${
                     activity.type === "credit" ? "text-success" : "text-error"
                   }`}>
                     {activity.type === "credit" ? "+" : ""}{activity.amount}
@@ -373,11 +297,9 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 bg-surface rounded-2xl shadow-card border border-border/50">
-              <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
-                <IconWallet className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <p className="text-sm text-muted-foreground">{t.dashboard.noActivity}</p>
+            <div className="text-center py-6 bg-surface rounded-xl border border-border/30">
+              <IconWallet className="h-5 w-5 text-muted-foreground mx-auto mb-1" />
+              <p className="text-xs text-muted-foreground">{t.dashboard.noActivity}</p>
             </div>
           )}
         </div>
