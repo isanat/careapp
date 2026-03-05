@@ -40,6 +40,7 @@ const mainNavItems: NavItem[] = [
   { label: "Cuidadores", href: "/admin/caregivers", icon: IconHeartHandshake, badgeKey: "pendingCaregivers" },
   { label: "Contratos", href: "/admin/contracts", icon: IconFileText, badgeKey: "pendingContracts" },
   { label: "Pagamentos", href: "/admin/payments", icon: IconCreditCard },
+  { label: "Auditoria", href: "/admin/audit", icon: IconBarChart },
 ];
 
 const secondaryNavItems: NavItem[] = [
