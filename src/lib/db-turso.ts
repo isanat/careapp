@@ -1,4 +1,5 @@
 import { createClient, type Client } from '@libsql/client';
+import { runAutoMigrations } from './db-migrate';
 
 // Check if we're using Turso (production) or local SQLite
 const tursoUrl = process.env.TURSO_DATABASE_URL;
@@ -23,6 +24,8 @@ if (isTurso) {
   db.execute({ sql: 'PRAGMA foreign_keys = ON', args: [] }).catch(() => {
     console.warn('[DB] PRAGMA foreign_keys not supported on this backend');
   });
+  // Run auto-migrations on startup
+  runAutoMigrations(db);
   console.log('✅ Connected to Turso database');
 } else if (hasLocalDb) {
   // Local SQLite connection (development)
@@ -33,6 +36,8 @@ if (isTurso) {
   db.execute({ sql: 'PRAGMA foreign_keys = ON', args: [] }).catch(() => {
     console.warn('[DB] PRAGMA foreign_keys not supported on this backend');
   });
+  // Run auto-migrations on startup
+  runAutoMigrations(db);
   console.log('✅ Connected to local SQLite database');
 } else if (isBuildTime) {
   // During build time without database credentials, create a mock client
@@ -49,7 +54,7 @@ if (isTurso) {
   console.error('❌ CRITICAL: No database configured!');
   console.error('Please set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN for production');
   console.error('Or set DATABASE_URL for local development');
-  
+
   // Create a mock client that throws errors
   db = {
     execute: async () => {
@@ -58,7 +63,7 @@ if (isTurso) {
     batch: async () => {
       throw new Error('Database not configured. Please set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN environment variables.');
     },
-    transaction: async () => ({ 
+    transaction: async () => ({
       execute: async () => {
         throw new Error('Database not configured. Please set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN environment variables.');
       }
