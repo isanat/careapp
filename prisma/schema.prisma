@@ -712,7 +712,8 @@ model Interview {
   questionnaireJson String? // JSON with ratings and notes
   familyCompletedAt DateTime?
   
-  // Caregiver feedback
+  // Caregiver feedback (caregiver fills after interview)
+  caregiverQuestionnaireJson String?
   caregiverNotes    String?
   caregiverCompletedAt DateTime?
   

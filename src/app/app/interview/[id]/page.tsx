@@ -3,11 +3,12 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AppShell } from "@/components/layout/app-shell";
 import { VideoRoom } from "@/components/video/video-room";
 import {
@@ -18,7 +19,9 @@ import {
   IconLoader2,
   IconStar,
   IconAlertCircle,
-  IconExternalLink
+  IconExternalLink,
+  IconContract,
+  IconChat,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 import { apiFetch } from "@/lib/api-client";
@@ -41,7 +44,14 @@ interface Interview {
     proceedWithContract?: boolean;
     notes?: string;
   } | null;
+  caregiverQuestionnaire: {
+    familyRating?: number;
+    clarityRating?: number;
+    notes?: string;
+    platformLiabilityAck?: boolean;
+  } | null;
   familyCompletedAt?: string;
+  caregiverCompletedAt?: string;
 }
 
 export default function InterviewPage({ params }: { params: Promise<{ id: string }> }) {
@@ -52,7 +62,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  
+
   // Questionnaire state
   const [communicationRating, setCommunicationRating] = useState(3);
   const [experienceRating, setExperienceRating] = useState(3);
@@ -60,7 +70,21 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   const [wouldRecommend, setWouldRecommend] = useState(true);
   const [proceedWithContract, setProceedWithContract] = useState(false);
   const [notes, setNotes] = useState("");
-  
+
+  // Legal acknowledgement fields
+  const [interviewConducted, setInterviewConducted] = useState(false);
+  const [agreedExpectations, setAgreedExpectations] = useState(false);
+  const [noMisrepresentation, setNoMisrepresentation] = useState(false);
+  const [platformLiabilityAck, setPlatformLiabilityAck] = useState(false);
+
+  // Caregiver questionnaire state
+  const [cgFamilyRating, setCgFamilyRating] = useState(3);
+  const [cgClarityRating, setCgClarityRating] = useState(3);
+  const [cgNotes, setCgNotes] = useState("");
+  const [cgInterviewConducted, setCgInterviewConducted] = useState(false);
+  const [cgPlatformAck, setCgPlatformAck] = useState(false);
+  const [cgNoMisrepresentation, setCgNoMisrepresentation] = useState(false);
+
   const paramsRef = useRef(params);
 
   useEffect(() => {
@@ -71,8 +95,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
         if (response.ok) {
           const data = await response.json();
           setInterview(data.interview);
-          
-          // Pre-fill questionnaire if exists
           if (data.interview.questionnaire) {
             setCommunicationRating(data.interview.questionnaire.communicationRating || 3);
             setExperienceRating(data.interview.questionnaire.experienceRating || 3);
@@ -82,56 +104,47 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             setNotes(data.interview.questionnaire.notes || "");
           }
         } else {
-          setError("Entrevista não encontrada");
+          setError("Entrevista nao encontrada");
         }
-      } catch (err) {
+      } catch {
         setError("Falha ao carregar entrevista");
       } finally {
         setIsLoading(false);
       }
     };
-
-    if (status === "authenticated") {
-      loadInterview();
-    }
+    if (status === "authenticated") loadInterview();
   }, [status]);
 
   const handleStartInterview = async () => {
     if (!interview) return;
-    
     try {
       await apiFetch(`/api/interviews/${interview.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "IN_PROGRESS" })
       });
-      
-      // Update local state
       setInterview({ ...interview, status: "IN_PROGRESS" });
-    } catch (err) {
+    } catch {
       setError("Falha ao iniciar entrevista");
     }
   };
 
   const handleCompleteInterview = async () => {
     if (!interview) return;
-    
     try {
       await apiFetch(`/api/interviews/${interview.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "COMPLETED" })
       });
-      
       setInterview({ ...interview, status: "COMPLETED" });
-    } catch (err) {
+    } catch {
       setError("Falha ao finalizar entrevista");
     }
   };
 
   const handleSubmitQuestionnaire = async () => {
     if (!interview) return;
-    
     setIsSubmitting(true);
     try {
       const response = await apiFetch(`/api/interviews/${interview.id}`, {
@@ -144,39 +157,90 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             punctualityRating,
             wouldRecommend,
             proceedWithContract,
-            notes
+            notes,
+            interviewConductedProperly: interviewConducted,
+            agreedCareExpectations: agreedExpectations,
+            noMisrepresentation,
+            platformLiabilityAck,
           }
         })
       });
+      if (response.ok) {
+        const data = await response.json();
+        if (proceedWithContract && data.contractId) {
+          router.push(`/app/contracts/new?caregiverId=${interview.caregiverUserId}`);
+        } else {
+          router.push("/app/dashboard?interview=completed");
+        }
+      } else {
+        setError("Falha ao enviar questionario");
+      }
+    } catch {
+      setError("Falha ao enviar questionario");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
+  const handleSubmitCaregiverQuestionnaire = async () => {
+    if (!interview) return;
+    setIsSubmitting(true);
+    try {
+      const response = await apiFetch(`/api/interviews/${interview.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionnaire: {
+            familyRating: cgFamilyRating,
+            clarityRating: cgClarityRating,
+            notes: cgNotes,
+            interviewConductedProperly: cgInterviewConducted,
+            noMisrepresentation: cgNoMisrepresentation,
+            platformLiabilityAck: cgPlatformAck,
+          }
+        })
+      });
       if (response.ok) {
         router.push("/app/dashboard?interview=completed");
       } else {
-        setError("Falha ao enviar questionário");
+        setError("Falha ao enviar feedback");
       }
-    } catch (err) {
-      setError("Falha ao enviar questionário");
+    } catch {
+      setError("Falha ao enviar feedback");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleLeaveMeeting = async () => {
-    // Automatically mark as completed when leaving
     if (interview?.status === "IN_PROGRESS") {
       await handleCompleteInterview();
     }
   };
 
-  // Extract room name from URL (format: https://meet.jit.si/roomName)
   const getRoomName = (url: string): string => {
     try {
-      const urlObj = new URL(url);
-      return urlObj.pathname.replace('/', '');
+      return new URL(url).pathname.replace('/', '');
     } catch {
       return url;
     }
   };
+
+  // Star rating component
+  const StarRating = ({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) => (
+    <div className="flex items-center justify-between py-2">
+      <span className="text-sm font-medium">{label}</span>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map(i => (
+          <button key={i} onClick={() => onChange(i)} className="p-0.5 touch-manipulation">
+            <IconStar className={`h-6 w-6 transition-colors ${
+              i <= value ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20"
+            }`} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   if (isLoading) {
     return (
@@ -212,18 +276,15 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
   const getStatusBadge = () => {
     switch (interview.status) {
-      case "SCHEDULED":
-        return <Badge variant="secondary">Agendada</Badge>;
-      case "IN_PROGRESS":
-        return <Badge className="bg-green-500">Em Andamento</Badge>;
-      case "COMPLETED":
-        return <Badge className="bg-primary">Concluída</Badge>;
-      case "CANCELLED":
-        return <Badge variant="destructive">Cancelada</Badge>;
-      default:
-        return null;
+      case "SCHEDULED": return <Badge variant="secondary">Agendada</Badge>;
+      case "IN_PROGRESS": return <Badge className="bg-green-500">Em Andamento</Badge>;
+      case "COMPLETED": return <Badge className="bg-primary">Concluida</Badge>;
+      case "CANCELLED": return <Badge variant="destructive">Cancelada</Badge>;
+      default: return null;
     }
   };
+
+  const allLegalChecked = interviewConducted && noMisrepresentation && platformLiabilityAck;
 
   return (
     <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
@@ -266,10 +327,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           </div>
         )}
 
-        {/* Scheduled Status - Before Interview */}
+        {/* ====== SCHEDULED ====== */}
         {interview.status === "SCHEDULED" && (
           <div className="space-y-4">
-            {/* Preparation Tips */}
             <div className="bg-surface rounded-2xl p-5 shadow-card border border-border/50">
               <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -291,8 +351,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 ))}
               </div>
             </div>
-
-            {/* Enter Room Button */}
             <Button
               onClick={handleStartInterview}
               size="lg"
@@ -304,10 +362,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           </div>
         )}
 
-        {/* In Progress - Video Room */}
+        {/* ====== IN PROGRESS ====== */}
         {interview.status === "IN_PROGRESS" && (
           <div className="space-y-3">
-            {/* Video takes full available height */}
             <VideoRoom
               roomName={roomName}
               displayName={session?.user?.name || "Usuario"}
@@ -319,8 +376,6 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               onLeave={handleLeaveMeeting}
               className="h-[calc(100vh-220px)] min-h-[400px]"
             />
-
-            {/* Action buttons */}
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -344,114 +399,162 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           </div>
         )}
 
-        {/* Completed - Questionnaire (Family only) */}
+        {/* ====== COMPLETED - Questionnaire (Family) ====== */}
         {interview.status === "COMPLETED" && isFamily && !interview.familyCompletedAt && (
-          <div className="bg-surface rounded-2xl p-5 shadow-card border border-border/50 space-y-6">
+          <div className="space-y-5 max-w-lg mx-auto">
             <div>
-              <h2 className="text-lg font-bold">Questionario Pos-Entrevista</h2>
+              <h2 className="text-lg font-bold">Feedback da Entrevista</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Avalie sua experiencia com {interview.caregiverName}
+                Avalie a entrevista com {interview.caregiverName}. Este registro protege ambas as partes.
               </p>
             </div>
 
-            {/* Ratings */}
-            {[
-              { label: "Comunicacao", value: communicationRating, setter: setCommunicationRating },
-              { label: "Experiencia e Qualificacoes", value: experienceRating, setter: setExperienceRating },
-              { label: "Pontualidade", value: punctualityRating, setter: setPunctualityRating },
-            ].map(({ label, value, setter }) => (
-              <div key={label} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm">{label}</Label>
-                  <div className="flex items-center gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setter(i + 1)}
-                        className="p-0.5"
-                      >
-                        <IconStar className={`h-5 w-5 transition-colors ${
-                          i < value ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"
-                        }`} />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <Slider
-                  value={[value]}
-                  onValueChange={([v]) => setter(v)}
-                  min={1}
-                  max={5}
-                  step={1}
-                  className="flex-1"
-                />
-              </div>
-            ))}
+            {/* Section 1: About the interview itself */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                Avaliacao da Entrevista
+              </p>
+              <StarRating label="Comunicacao" value={communicationRating} onChange={setCommunicationRating} />
+              <StarRating label="Experiencia demonstrada" value={experienceRating} onChange={setExperienceRating} />
+              <StarRating label="Pontualidade" value={punctualityRating} onChange={setPunctualityRating} />
+            </div>
 
-            {/* Recommendation */}
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
-              <Label className="text-sm">Recomendaria este cuidador?</Label>
+            {/* Section 2: Recommendation */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Recomendacao
+              </p>
               <div className="flex gap-2">
-                <Button
-                  variant={wouldRecommend ? "default" : "outline"}
-                  size="sm"
+                <button
                   onClick={() => setWouldRecommend(true)}
-                  className="rounded-lg"
+                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                    wouldRecommend ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-border"
+                  }`}
                 >
-                  <IconCheck className="h-3.5 w-3.5 mr-1" />
-                  Sim
-                </Button>
-                <Button
-                  variant={!wouldRecommend ? "destructive" : "outline"}
-                  size="sm"
+                  <span className="text-xl block mb-1">{"\uD83D\uDC4D"}</span>
+                  <span className={`text-sm font-medium ${wouldRecommend ? "text-green-600" : ""}`}>Recomendo</span>
+                </button>
+                <button
                   onClick={() => setWouldRecommend(false)}
-                  className="rounded-lg"
+                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                    !wouldRecommend ? "border-red-500 bg-red-50 dark:bg-red-950/20" : "border-border"
+                  }`}
                 >
-                  <IconX className="h-3.5 w-3.5 mr-1" />
-                  Nao
-                </Button>
+                  <span className="text-xl block mb-1">{"\uD83D\uDC4E"}</span>
+                  <span className={`text-sm font-medium ${!wouldRecommend ? "text-red-600" : ""}`}>Nao recomendo</span>
+                </button>
               </div>
             </div>
 
-            {/* Proceed with Contract */}
-            <div className={`p-4 rounded-xl border-2 transition-colors ${
-              proceedWithContract ? "border-primary bg-primary/5" : "border-border bg-muted/30"
+            {/* Section 3: Legal acknowledgements */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3.5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Confirmacoes Importantes
+              </p>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={interviewConducted}
+                  onCheckedChange={(c) => setInterviewConducted(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Confirmo que a entrevista em video foi realizada e que ambas as partes
+                  participaram de forma voluntaria.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={agreedExpectations}
+                  onCheckedChange={(c) => setAgreedExpectations(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Discutimos as expectativas de cuidado, horarios e responsabilidades
+                  durante a entrevista.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={noMisrepresentation}
+                  onCheckedChange={(c) => setNoMisrepresentation(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Declaro que as informacoes que forneci sao verdadeiras e que nao houve
+                  distorcao de informacoes por qualquer parte.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={platformLiabilityAck}
+                  onCheckedChange={(c) => setPlatformLiabilityAck(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Entendo que a plataforma atua apenas como intermediaria para conectar familias
+                  e cuidadores, nao sendo responsavel pela qualidade ou resultado dos servicos prestados.
+                </span>
+              </label>
+            </div>
+
+            {/* Section 4: Proceed with contract? */}
+            <div className={`rounded-2xl border-2 p-4 transition-all ${
+              proceedWithContract ? "border-primary bg-primary/5" : "border-border"
             }`}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-base font-semibold">Prosseguir com Contrato?</Label>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Confirmar que deseja contratar este cuidador
-                  </p>
-                </div>
-                <Button
-                  variant={proceedWithContract ? "default" : "outline"}
-                  size="lg"
-                  onClick={() => setProceedWithContract(!proceedWithContract)}
-                  className="rounded-xl h-12 px-6"
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Proximo Passo
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setProceedWithContract(true)}
+                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                    proceedWithContract ? "border-primary bg-primary/10" : "border-border hover:border-primary/30"
+                  }`}
                 >
-                  {proceedWithContract ? <IconCheck className="h-4 w-4 mr-1.5" /> : null}
-                  {proceedWithContract ? "Sim!" : "Ainda Nao"}
-                </Button>
+                  <IconContract className={`h-6 w-6 mx-auto mb-1 ${proceedWithContract ? "text-primary" : "text-muted-foreground"}`} />
+                  <span className={`text-sm font-medium block ${proceedWithContract ? "text-primary" : ""}`}>
+                    Criar Contrato
+                  </span>
+                  <span className="text-xs text-muted-foreground">Prosseguir com este cuidador</span>
+                </button>
+                <button
+                  onClick={() => setProceedWithContract(false)}
+                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                    !proceedWithContract ? "border-muted-foreground/30 bg-muted/30" : "border-border hover:border-muted-foreground/30"
+                  }`}
+                >
+                  <IconClock className={`h-6 w-6 mx-auto mb-1 ${!proceedWithContract ? "text-muted-foreground" : "text-muted-foreground/50"}`} />
+                  <span className={`text-sm font-medium block ${!proceedWithContract ? "" : "text-muted-foreground"}`}>
+                    Ainda nao
+                  </span>
+                  <span className="text-xs text-muted-foreground">Salvar para depois</span>
+                </button>
               </div>
             </div>
 
             {/* Notes */}
-            <div className="space-y-2">
-              <Label className="text-sm">Observacoes (opcional)</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Observacoes sobre a entrevista (opcional)</Label>
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Alguma observacao adicional..."
+                placeholder="O que foi discutido, acordos verbais, impressoes gerais..."
                 rows={3}
-                className="rounded-xl resize-none"
+                className="rounded-xl text-base resize-none"
               />
+              <p className="text-xs text-muted-foreground">
+                Estas notas ficam registradas para sua referencia e seguranca.
+              </p>
             </div>
 
             {/* Submit */}
             <Button
               onClick={handleSubmitQuestionnaire}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !allLegalChecked}
               size="lg"
               className="w-full h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/25"
             >
@@ -463,40 +566,178 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               ) : (
                 <>
                   <IconCheck className="h-5 w-5 mr-2" />
-                  Enviar Questionario
+                  {proceedWithContract ? "Enviar e Criar Contrato" : "Enviar Feedback"}
                 </>
               )}
             </Button>
+
+            {!allLegalChecked && (
+              <p className="text-xs text-center text-muted-foreground">
+                Marque todas as confirmacoes para continuar.
+              </p>
+            )}
           </div>
         )}
 
-        {/* Already Completed */}
-        {interview.familyCompletedAt && (
-          <div className="text-center py-12 px-6">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
-              <IconCheck className="h-10 w-10 text-green-500" />
+        {/* ====== Already Completed (Family) ====== */}
+        {interview.familyCompletedAt && isFamily && (
+          <div className="space-y-5 max-w-lg mx-auto">
+            <div className="text-center py-8">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
+                <IconCheck className="h-10 w-10 text-green-500" />
+              </div>
+              <h2 className="text-xl font-bold text-green-600 mb-2">Feedback Enviado</h2>
+              <p className="text-muted-foreground text-sm">
+                {proceedWithContract
+                  ? "O contrato esta sendo preparado."
+                  : "Seu feedback foi registrado com sucesso."}
+              </p>
             </div>
-            <h2 className="text-xl font-bold text-green-600 mb-2">Questionario Enviado</h2>
-            <p className="text-muted-foreground text-sm">
-              {proceedWithContract
-                ? "O contrato esta aguardando a aceitacao do cuidador."
-                : "Seu feedback foi registrado."}
-            </p>
-            <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
+
+            {/* Quick actions to contact/contract caregiver */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Acoes com {interview.caregiverName}
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button variant="outline" asChild className="h-12 rounded-xl">
+                  <Link href={`/app/chat?userId=${interview.caregiverUserId}`}>
+                    <IconChat className="h-4 w-4 mr-2" />
+                    Enviar Mensagem
+                  </Link>
+                </Button>
+                <Button asChild className="h-12 rounded-xl">
+                  <Link href={`/app/contracts/new?caregiverId=${interview.caregiverUserId}`}>
+                    <IconContract className="h-4 w-4 mr-2" />
+                    Criar Contrato
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            <Button
+              variant="outline"
+              className="w-full h-12 rounded-xl"
+              onClick={() => router.push("/app/dashboard")}
+            >
               Voltar ao Dashboard
             </Button>
           </div>
         )}
 
-        {/* Caregiver View - Completed */}
-        {interview.status === "COMPLETED" && !isFamily && (
+        {/* ====== COMPLETED - Caregiver Questionnaire ====== */}
+        {interview.status === "COMPLETED" && !isFamily && !interview.caregiverCompletedAt && (
+          <div className="space-y-5 max-w-lg mx-auto">
+            <div>
+              <h2 className="text-lg font-bold">Feedback da Entrevista</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Avalie a entrevista com a familia {interview.familyName}. Este registo protege ambas as partes.
+              </p>
+            </div>
+
+            {/* Ratings */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                Avaliacao da Familia
+              </p>
+              <StarRating label="Respeito e cordialidade" value={cgFamilyRating} onChange={setCgFamilyRating} />
+              <StarRating label="Clareza nas expectativas" value={cgClarityRating} onChange={setCgClarityRating} />
+            </div>
+
+            {/* Legal confirmations */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3.5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Confirmacoes Importantes
+              </p>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={cgInterviewConducted}
+                  onCheckedChange={(c) => setCgInterviewConducted(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Confirmo que a entrevista em video foi realizada e que ambas as partes
+                  participaram de forma voluntaria.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={cgNoMisrepresentation}
+                  onCheckedChange={(c) => setCgNoMisrepresentation(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Declaro que as informacoes que forneci sobre minhas qualificacoes e
+                  experiencia sao verdadeiras.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={cgPlatformAck}
+                  onCheckedChange={(c) => setCgPlatformAck(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Entendo que a plataforma atua apenas como intermediaria para conectar familias
+                  e cuidadores, nao sendo responsavel pela qualidade ou resultado dos servicos prestados.
+                </span>
+              </label>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Observacoes sobre a entrevista (opcional)</Label>
+              <Textarea
+                value={cgNotes}
+                onChange={(e) => setCgNotes(e.target.value)}
+                placeholder="Impressoes sobre a familia, o que foi discutido, acordos verbais..."
+                rows={3}
+                className="rounded-xl text-base resize-none"
+              />
+            </div>
+
+            {/* Submit */}
+            <Button
+              onClick={handleSubmitCaregiverQuestionnaire}
+              disabled={isSubmitting || !cgInterviewConducted || !cgNoMisrepresentation || !cgPlatformAck}
+              size="lg"
+              className="w-full h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/25"
+            >
+              {isSubmitting ? (
+                <>
+                  <IconLoader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <IconCheck className="h-5 w-5 mr-2" />
+                  Enviar Feedback
+                </>
+              )}
+            </Button>
+
+            {(!cgInterviewConducted || !cgNoMisrepresentation || !cgPlatformAck) && (
+              <p className="text-xs text-center text-muted-foreground">
+                Marque todas as confirmacoes para continuar.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ====== Caregiver - Already submitted questionnaire ====== */}
+        {interview.status === "COMPLETED" && !isFamily && interview.caregiverCompletedAt && (
           <div className="text-center py-12 px-6">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
               <IconCheck className="h-10 w-10 text-green-500" />
             </div>
-            <h2 className="text-xl font-bold text-green-600 mb-2">Entrevista Concluida</h2>
+            <h2 className="text-xl font-bold text-green-600 mb-2">Feedback Enviado</h2>
             <p className="text-muted-foreground text-sm">
-              A familia ira avaliar a entrevista e voce sera notificado sobre o resultado.
+              {interview.familyCompletedAt
+                ? "Ambas as partes completaram o feedback. Voce sera notificado sobre proximos passos."
+                : "A familia ainda esta avaliando a entrevista. Voce sera notificado quando houver novidades."}
             </p>
             <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
               Voltar ao Dashboard

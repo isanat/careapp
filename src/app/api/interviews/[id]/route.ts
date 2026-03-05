@@ -56,6 +56,7 @@ export async function GET(
         familyName: interview.family_name,
         caregiverName: interview.caregiver_name,
         questionnaire: interview.questionnaireJson ? JSON.parse(interview.questionnaireJson as string) : null,
+        caregiverQuestionnaire: interview.caregiverQuestionnaireJson ? JSON.parse(interview.caregiverQuestionnaireJson as string) : null,
         familyCompletedAt: interview.familyCompletedAt,
         caregiverCompletedAt: interview.caregiverCompletedAt
       }
@@ -125,6 +126,23 @@ export async function PATCH(
 
     // Track newly created contract ID for the response
     let newContractId: string | null = null;
+
+    // Handle caregiver questionnaire submission
+    if (questionnaire && interview.caregiverUserId === session.user.id) {
+      const caregiverQuestionnaireJson = JSON.stringify({
+        ...questionnaire,
+        completedAt: new Date().toISOString(),
+      });
+
+      await db.execute({
+        sql: `UPDATE Interview
+              SET caregiverQuestionnaireJson = ?, caregiverCompletedAt = ?, updatedAt = ?
+              WHERE id = ?`,
+        args: [caregiverQuestionnaireJson, new Date().toISOString(), new Date().toISOString(), id]
+      });
+
+      return NextResponse.json({ success: true });
+    }
 
     // Handle questionnaire submission (family only)
     if (questionnaire && interview.familyUserId === session.user.id) {
