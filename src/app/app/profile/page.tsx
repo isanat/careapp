@@ -1,10 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-
 import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,13 +61,13 @@ import { apiFetch } from "@/lib/api-client";
 
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
-  { id: "MEDICATION", label: "Medicação" },
+  { id: "MEDICATION", label: "Medicacao" },
   { id: "MOBILITY", label: "Mobilidade" },
   { id: "COMPANIONSHIP", label: "Companhia" },
-  { id: "MEAL_PREPARATION", label: "Refeições" },
-  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas" },
+  { id: "MEAL_PREPARATION", label: "Refeicoes" },
+  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domesticas" },
   { id: "TRANSPORTATION", label: "Transporte" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva" },
+  { id: "COGNITIVE_SUPPORT", label: "Estimulacao Cognitiva" },
   { id: "NIGHT_CARE", label: "Cuidados Noturnos" },
   { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos" },
   { id: "PHYSIOTHERAPY", label: "Fisioterapia" },
@@ -77,12 +75,11 @@ const SERVICE_TYPES = [
 ];
 
 const DOCUMENT_TYPES = [
-  { id: "CC", label: "Cartão de Cidadão", placeholder: "12345678 1 ZZ2", maxLength: 15 },
+  { id: "CC", label: "Cartao de Cidadao", placeholder: "12345678 1 ZZ2", maxLength: 15 },
   { id: "PASSPORT", label: "Passaporte", placeholder: "AA123456", maxLength: 9 },
-  { id: "RESIDENCE", label: "Título de Residência", placeholder: "Número do título", maxLength: 20 },
+  { id: "RESIDENCE", label: "Titulo de Residencia", placeholder: "Numero do titulo", maxLength: 20 },
 ];
 
-/** Validate Portuguese NIF (9 digits with check digit) */
 function validateNIF(nif: string): boolean {
   if (!/^\d{9}$/.test(nif)) return false;
   const digits = nif.split("").map(Number);
@@ -92,7 +89,6 @@ function validateNIF(nif: string): boolean {
   return checkDigit === digits[8];
 }
 
-/** Format Portuguese phone: ensures +351 prefix */
 function formatPhonePT(value: string): string {
   const digits = value.replace(/\D/g, "");
   if (digits.startsWith("351")) {
@@ -139,7 +135,7 @@ export default function ProfilePage() {
   const { t } = useI18n();
   const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported, pushError } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -149,7 +145,7 @@ export default function ProfilePage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
-  
+
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
@@ -168,14 +164,11 @@ export default function ProfilePage() {
     setIsLoading(true);
     try {
       const response = await apiFetch("/api/user/profile");
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error("Erro ao carregar perfil: " + errorText);
       }
-
       const data = await response.json();
-      
       setProfile(data.profile);
       setFormData({
         name: data.user?.name || "",
@@ -216,14 +209,13 @@ export default function ProfilePage() {
     setError(null);
     setSuccess(null);
 
-    // Validate NIF before saving
     if (formData.nif && formData.nif.length > 0 && formData.nif.length !== 9) {
-      setError("O NIF deve ter exatamente 9 dígitos");
+      setError("O NIF deve ter exatamente 9 digitos");
       setIsSaving(false);
       return;
     }
     if (formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif)) {
-      setError("NIF inválido - verifique o número");
+      setError("NIF invalido - verifique o numero");
       setIsSaving(false);
       return;
     }
@@ -242,13 +234,11 @@ export default function ProfilePage() {
       }
 
       await response.json();
-
       setSuccess("Guardado com sucesso!");
       setIsEditing(false);
       if (formData.name !== session?.user?.name) await update({ name: formData.name });
       fetchProfile();
     } catch (err) {
-      console.error('❌ Erro ao salvar:', err);
       setError(err instanceof Error ? err.message : "Erro ao salvar");
     } finally {
       setIsSaving(false);
@@ -270,12 +260,9 @@ export default function ProfilePage() {
     try {
       const granted = await requestPushPermission();
       if (granted) {
-        const success = await subscribeToPush();
-        if (!success && pushError) {
-          setError(pushError);
-        } else if (success) {
-          setSuccess("Notificações ativadas!");
-        }
+        const ok = await subscribeToPush();
+        if (!ok && pushError) setError(pushError);
+        else if (ok) setSuccess("Notificacoes ativadas!");
       }
     } finally {
       setPushLoading(false);
@@ -300,38 +287,26 @@ export default function ProfilePage() {
     signOut({ callbackUrl: "/" });
   };
 
-  const handlePhotoClick = () => {
-    fileInputRef.current?.click();
-  };
+  const handlePhotoClick = () => { fileInputRef.current?.click(); };
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploadingPhoto(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", "profile");
-
-      const response = await apiFetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("type", "profile");
+      const response = await apiFetch("/api/upload", { method: "POST", body: fd });
       if (!response.ok) throw new Error("Erro ao enviar foto");
-      
       const data = await response.json();
       setFormData(prev => ({ ...prev, profileImage: data.url }));
-      
-      // Save immediately
       await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ profileImage: data.url }),
       });
-      
-      setSuccess("Foto atualizada com sucesso!");
+      setSuccess("Foto atualizada!");
       fetchProfile();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar foto");
@@ -343,39 +318,21 @@ export default function ProfilePage() {
   const handleBackgroundCheckUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploadingPhoto(true);
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append("file", file);
-      formDataUpload.append("type", "background_check");
-
-      const response = await apiFetch("/api/upload", {
-        method: "POST",
-        body: formDataUpload,
-      });
-
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("type", "background_check");
+      const response = await apiFetch("/api/upload", { method: "POST", body: fd });
       if (!response.ok) throw new Error("Erro ao enviar documento");
-      
       const data = await response.json();
-      
-      // Update background check status
       await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          backgroundCheckUrl: data.url,
-          backgroundCheckStatus: "SUBMITTED"
-        }),
+        body: JSON.stringify({ backgroundCheckUrl: data.url, backgroundCheckStatus: "SUBMITTED" }),
       });
-      
-      setFormData(prev => ({ 
-        ...prev, 
-        backgroundCheckUrl: data.url,
-        backgroundCheckStatus: "SUBMITTED"
-      }));
-      
-      setSuccess("Comprovativo enviado! Aguarde verificação.");
+      setFormData(prev => ({ ...prev, backgroundCheckUrl: data.url, backgroundCheckStatus: "SUBMITTED" }));
+      setSuccess("Comprovativo enviado!");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar documento");
     } finally {
@@ -386,10 +343,10 @@ export default function ProfilePage() {
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="space-y-3 p-4">
-          <Skeleton className="h-16 w-full rounded-lg" />
-          <Skeleton className="h-24 w-full rounded-lg" />
-          <Skeleton className="h-32 w-full rounded-lg" />
+        <div className="space-y-4 animate-pulse">
+          <Skeleton className="h-20 w-full rounded-2xl" />
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <Skeleton className="h-32 w-full rounded-2xl" />
         </div>
       </AppShell>
     );
@@ -398,9 +355,9 @@ export default function ProfilePage() {
   const getBackgroundCheckBadge = () => {
     switch (formData.backgroundCheckStatus) {
       case "VERIFIED":
-        return <Badge className="bg-green-500"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</Badge>;
+        return <Badge className="bg-success/10 text-success border-success/20" variant="outline"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</Badge>;
       case "SUBMITTED":
-        return <Badge className="bg-yellow-500"><IconClock className="h-3 w-3 mr-1" />Em análise</Badge>;
+        return <Badge className="bg-warning/10 text-warning border-warning/20" variant="outline"><IconClock className="h-3 w-3 mr-1" />Em analise</Badge>;
       case "REJECTED":
         return <Badge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
       default:
@@ -410,134 +367,129 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="space-y-3">
-        {/* Botão de editar/salvar no topo direito - mostrado apenas no header do AppShell */}
-        <div className="flex justify-end px-4 py-2">
-          <Button 
+      <div className="space-y-5">
+        {/* Profile Header Card */}
+        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-violet'}`}>
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="relative">
+              <Avatar className="h-18 w-18 ring-4 ring-white/20 cursor-pointer" onClick={handlePhotoClick}>
+                {formData.profileImage ? (
+                  <AvatarImage src={formData.profileImage} alt={formData.name} />
+                ) : null}
+                <AvatarFallback className="text-xl font-bold bg-white/20 text-white">
+                  {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <button
+                className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-white text-primary flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+                onClick={handlePhotoClick}
+                disabled={uploadingPhoto}
+              >
+                {uploadingPhoto ? <IconLoader2 className="h-3.5 w-3.5 animate-spin" /> : <IconCamera className="h-3.5 w-3.5" />}
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-bold truncate">{session?.user?.name}</h2>
+              {isCaregiver && formData.title && (
+                <p className="text-sm opacity-80 truncate">{formData.title}{formData.city ? ` - ${formData.city}` : ""}</p>
+              )}
+              <p className="text-xs opacity-60">{formData.email}</p>
+            </div>
+          </div>
+          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+          <div className="absolute -right-2 -bottom-6 h-32 w-32 rounded-full bg-white/5" />
+        </div>
+
+        {/* Edit/Save Button */}
+        <div className="flex justify-end">
+          <Button
             size="sm"
             variant={isEditing ? "default" : "outline"}
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             disabled={isSaving}
+            className="rounded-xl"
           >
-            {isSaving ? <IconLoader2 className="h-4 w-4 animate-spin" /> : 
-             isEditing ? <IconCheck className="h-4 w-4 mr-1" /> : <IconEdit className="h-4 w-4 mr-1" />}
+            {isSaving ? <IconLoader2 className="h-4 w-4 animate-spin" /> :
+             isEditing ? <IconCheck className="h-4 w-4 mr-1.5" /> : <IconEdit className="h-4 w-4 mr-1.5" />}
             {isEditing ? t.save : t.profile.editProfile}
           </Button>
         </div>
 
-        {error && <Alert variant="destructive" className="mx-4"><IconAlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert>}
-        {success && <Alert className="mx-4 border-green-500/20 bg-green-500/5"><IconCheck className="h-4 w-4 text-green-500" /><AlertDescription className="text-green-600">{success}</AlertDescription></Alert>}
+        {/* Alerts */}
+        {error && (
+          <Alert variant="destructive" className="rounded-xl">
+            <IconAlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        {success && (
+          <Alert className="rounded-xl border-success/20 bg-success/5">
+            <IconCheck className="h-4 w-4 text-success" />
+            <AlertDescription className="text-success">{success}</AlertDescription>
+          </Alert>
+        )}
 
-        {/* Perfil com foto */}
-        <div className="px-4 py-3 flex items-center gap-3">
-          <div className="relative">
-            <Avatar className="h-16 w-16 cursor-pointer" onClick={handlePhotoClick}>
-              {formData.profileImage ? (
-                <AvatarImage src={formData.profileImage} alt={formData.name} />
-              ) : null}
-              <AvatarFallback className="text-lg bg-primary/10 text-primary">
-                {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <button 
-              className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors"
-              onClick={handlePhotoClick}
-              disabled={uploadingPhoto}
-            >
-              {uploadingPhoto ? (
-                <IconLoader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <IconCamera className="h-3 w-3" />
-              )}
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handlePhotoChange}
-            />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-lg">{session?.user?.name}</span>
-              <Badge variant="outline" className={isFamily ? "text-blue-600 border-blue-600" : "text-green-600 border-green-600"}>
-                {isFamily ? <IconFamily className="h-3 w-3 mr-1" /> : <IconCaregiver className="h-3 w-3 mr-1" />}
-                {isFamily ? t.auth.family : t.auth.caregiver}
-              </Badge>
-            </div>
-            {isCaregiver && formData.title && (
-              <p className="text-sm text-muted-foreground">{formData.title} {formData.city ? `• ${formData.city}` : ""}</p>
-            )}
-            <p className="text-xs text-muted-foreground">{formData.email}</p>
-          </div>
-        </div>
-
-        {/* Stats para caregiver */}
+        {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className="px-4 grid grid-cols-4 gap-2">
-            <div className="bg-muted/50 rounded-lg p-2 text-center">
-              <p className="text-lg font-bold text-primary">{profile?.totalContracts || 0}</p>
-              <p className="text-[10px] text-muted-foreground">Contratos</p>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-2 text-center">
-              <p className="text-lg font-bold text-primary">{profile?.totalReviews || 0}</p>
-              <p className="text-[10px] text-muted-foreground">Avaliações</p>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-2 text-center">
-              <p className="text-lg font-bold text-primary flex items-center justify-center gap-0.5">
-                <IconStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                {(profile?.averageRating || 0).toFixed(1)}
-              </p>
-              <p className="text-[10px] text-muted-foreground">Nota</p>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-2 text-center">
-              <p className="text-lg font-bold text-primary">€{formData.hourlyRateEur || 0}</p>
-              <p className="text-[10px] text-muted-foreground">/hora</p>
-            </div>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { value: profile?.totalContracts || 0, label: "Contratos", color: "text-primary" },
+              { value: profile?.totalReviews || 0, label: "Avaliacoes", color: "text-secondary" },
+              { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", color: "text-amber-500", icon: true },
+              { value: `\u20AC${formData.hourlyRateEur || 0}`, label: "/hora", color: "text-success" },
+            ].map((stat, i) => (
+              <div key={i} className="bg-surface rounded-2xl p-3 text-center shadow-card border border-border/50">
+                <p className={`text-lg font-bold ${stat.color} flex items-center justify-center gap-0.5`}>
+                  {stat.icon && <IconStar className="h-4 w-4 fill-amber-400 text-amber-400" />}
+                  {stat.value}
+                </p>
+                <p className="text-[11px] text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
           </div>
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="about" className="px-4">
-          <TabsList className={`grid w-full h-9 ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'}`}>
-            <TabsTrigger value="about" className="text-xs py-1.5">Info</TabsTrigger>
-            <TabsTrigger value="documents" className="text-xs py-1.5">Docs</TabsTrigger>
-            {isCaregiver && <TabsTrigger value="services" className="text-xs py-1.5">Serviços</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder" className="text-xs py-1.5">Idoso</TabsTrigger>}
-            <TabsTrigger value="contact" className="text-xs py-1.5">Contato</TabsTrigger>
-            <TabsTrigger value="settings" className="text-xs py-1.5">Config</TabsTrigger>
+        <Tabs defaultValue="about">
+          <TabsList className={`w-full h-10 rounded-xl bg-muted p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'}`}>
+            <TabsTrigger value="about" className="rounded-lg text-xs data-[state=active]:shadow-sm">Info</TabsTrigger>
+            <TabsTrigger value="documents" className="rounded-lg text-xs data-[state=active]:shadow-sm">Docs</TabsTrigger>
+            {isCaregiver && <TabsTrigger value="services" className="rounded-lg text-xs data-[state=active]:shadow-sm">Servicos</TabsTrigger>}
+            {isFamily && <TabsTrigger value="elder" className="rounded-lg text-xs data-[state=active]:shadow-sm">Idoso</TabsTrigger>}
+            <TabsTrigger value="contact" className="rounded-lg text-xs data-[state=active]:shadow-sm">Contato</TabsTrigger>
+            <TabsTrigger value="settings" className="rounded-lg text-xs data-[state=active]:shadow-sm">Config</TabsTrigger>
           </TabsList>
 
           {/* Info Tab */}
-          <TabsContent value="about" className="mt-3 space-y-2">
-            <div className="space-y-2">
-              <div className="grid grid-cols-2 gap-2">
+          <TabsContent value="about" className="mt-4 space-y-3">
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">{t.auth.name}</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" />
+                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">{t.profile.city}</Label>
-                  <Input value={formData.city || ""} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Cidade" />
+                  <Input value={formData.city || ""} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Cidade" />
                 </div>
               </div>
-              
+
               {isCaregiver && (
                 <>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label className="text-xs text-muted-foreground">Título Profissional</Label>
-                      <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Ex: Enfermeira" />
+                      <Label className="text-xs text-muted-foreground">Titulo Profissional</Label>
+                      <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Ex: Enfermeira" />
                     </div>
                     <div>
-                      <Label className="text-xs text-muted-foreground">Anos de Experiência</Label>
-                      <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-9 mt-0.5" />
+                      <Label className="text-xs text-muted-foreground">Anos de Experiencia</Label>
+                      <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Bio / Sobre você</Label>
-                    <Textarea value={formData.bio || ""} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={2} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Descreva sua experiência e especialidades..." />
+                    <Label className="text-xs text-muted-foreground">Bio / Sobre voce</Label>
+                    <Textarea value={formData.bio || ""} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={3} disabled={!isEditing} className="mt-1 text-sm rounded-xl" placeholder="Descreva sua experiencia..." />
                   </div>
                 </>
               )}
@@ -545,130 +497,93 @@ export default function ProfilePage() {
           </TabsContent>
 
           {/* Documents Tab */}
-          <TabsContent value="documents" className="mt-3 space-y-2">
-            <div className="p-3 bg-muted/30 rounded-lg">
-              <div className="flex items-center gap-2 mb-3">
+          <TabsContent value="documents" className="mt-4 space-y-3">
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+              <div className="flex items-center gap-2 mb-1">
                 <IconFileText className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Documentos Pessoais</span>
+                <span className="text-sm font-semibold">Documentos Pessoais</span>
               </div>
-              
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground">NIF (Número de Identificação Fiscal)</Label>
-                  <Input
-                    value={formData.nif || ""}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "").slice(0, 9);
-                      setFormData({...formData, nif: val});
-                    }}
-                    disabled={!isEditing}
-                    className={`h-9 mt-0.5 ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-red-400" : ""}`}
-                    placeholder="123456789"
-                    maxLength={9}
-                    inputMode="numeric"
-                  />
-                  {formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) && (
-                    <p className="text-[10px] text-red-500 mt-0.5">NIF inválido - verifique os dígitos</p>
-                  )}
-                  {formData.nif && formData.nif.length === 9 && validateNIF(formData.nif) && (
-                    <p className="text-[10px] text-green-600 mt-0.5 flex items-center gap-0.5"><IconCheck className="h-2.5 w-2.5" />NIF válido</p>
-                  )}
-                </div>
 
-                <div>
-                  <Label className="text-xs text-muted-foreground">Tipo de Documento de Identificação</Label>
-                  <Select
-                    value={formData.documentType || ""}
-                    onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})}
-                    disabled={!isEditing}
-                  >
-                    <SelectTrigger className="h-9 mt-0.5">
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg z-50">
-                      {DOCUMENT_TYPES.map((doc) => (
-                        <SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {formData.documentType && (
-                  <div>
-                    <Label className="text-xs text-muted-foreground">
-                      Número do {DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.label || "Documento"}
-                    </Label>
-                    <Input
-                      value={formData.documentNumber || ""}
-                      onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
-                      disabled={!isEditing}
-                      className="h-9 mt-0.5"
-                      placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
-                      maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
-                    />
-                  </div>
+              <div>
+                <Label className="text-xs text-muted-foreground">NIF</Label>
+                <Input
+                  value={formData.nif || ""}
+                  onChange={(e) => { const val = e.target.value.replace(/\D/g, "").slice(0, 9); setFormData({...formData, nif: val}); }}
+                  disabled={!isEditing}
+                  className={`h-10 mt-1 rounded-xl ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-error" : ""}`}
+                  placeholder="123456789"
+                  maxLength={9}
+                  inputMode="numeric"
+                />
+                {formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) && (
+                  <p className="text-xs text-error mt-1">NIF invalido</p>
+                )}
+                {formData.nif && formData.nif.length === 9 && validateNIF(formData.nif) && (
+                  <p className="text-xs text-success mt-1 flex items-center gap-1"><IconCheck className="h-3 w-3" />NIF valido</p>
                 )}
               </div>
+
+              <div>
+                <Label className="text-xs text-muted-foreground">Tipo de Documento</Label>
+                <Select value={formData.documentType || ""} onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})} disabled={!isEditing}>
+                  <SelectTrigger className="h-10 mt-1 rounded-xl"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+                  <SelectContent className="bg-surface border shadow-soft-md z-50">
+                    {DOCUMENT_TYPES.map((doc) => (<SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {formData.documentType && (
+                <div>
+                  <Label className="text-xs text-muted-foreground">
+                    Numero do {DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.label || "Documento"}
+                  </Label>
+                  <Input
+                    value={formData.documentNumber || ""}
+                    onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
+                    disabled={!isEditing}
+                    className="h-10 mt-1 rounded-xl"
+                    placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
+                    maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Antecedentes Criminais - Apenas Cuidadores */}
+            {/* Background Check - Caregivers only */}
             {isCaregiver && (
-              <div className="p-3 bg-muted/30 rounded-lg">
+              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <IconShield className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">Antecedentes Criminais</span>
+                    <span className="text-sm font-semibold">Antecedentes Criminais</span>
                   </div>
                   {getBackgroundCheckBadge()}
                 </div>
-                
-                <p className="text-xs text-muted-foreground mb-3">
-                  Para trabalhar como cuidador, é necessário apresentar o registo criminal.
-                  Pode obtê-lo online em justica.gov.pt
-                </p>
-                
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => document.getElementById('backgroundCheckInput')?.click()}
-                    disabled={uploadingPhoto}
-                    className="flex-1"
-                  >
-                    {uploadingPhoto ? (
-                      <IconLoader2 className="h-4 w-4 animate-spin mr-1" />
-                    ) : (
-                      <IconUpload className="h-4 w-4 mr-1" />
-                    )}
-                    Enviar Comprovativo
-                  </Button>
-                  <input
-                    id="backgroundCheckInput"
-                    type="file"
-                    accept="image/*,.pdf"
-                    className="hidden"
-                    onChange={handleBackgroundCheckUpload}
-                  />
-                </div>
-                
+                <p className="text-xs text-muted-foreground mb-3">Para trabalhar como cuidador, e necessario apresentar o registo criminal.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => document.getElementById('backgroundCheckInput')?.click()}
+                  disabled={uploadingPhoto}
+                  className="w-full rounded-xl"
+                >
+                  {uploadingPhoto ? <IconLoader2 className="h-4 w-4 animate-spin mr-1.5" /> : <IconUpload className="h-4 w-4 mr-1.5" />}
+                  Enviar Comprovativo
+                </Button>
+                <input id="backgroundCheckInput" type="file" accept="image/*,.pdf" className="hidden" onChange={handleBackgroundCheckUpload} />
                 {formData.backgroundCheckUrl && (
-                  <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
-                    <IconCheck className="h-3 w-3" />
-                    Documento enviado
-                  </p>
+                  <p className="text-xs text-success mt-2 flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado</p>
                 )}
               </div>
             )}
 
-            <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <div className="bg-warning/5 border border-warning/20 rounded-2xl p-4">
               <div className="flex gap-2">
-                <IconAlertCircle className="h-4 w-4 text-yellow-600 shrink-0 mt-0.5" />
-                <div className="text-xs text-yellow-700 dark:text-yellow-400">
-                  <p className="font-medium mb-1">Segurança dos dados</p>
-                  <p className="text-yellow-600/80 dark:text-yellow-400/80">
-                    Seus documentos são armazenados de forma segura e criptografada.
-                    Apenas a equipe de verificação tem acesso.
-                  </p>
+                <IconAlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+                <div className="text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground mb-0.5">Seguranca dos dados</p>
+                  <p>Seus documentos sao armazenados de forma segura e criptografada.</p>
                 </div>
               </div>
             </div>
@@ -676,151 +591,152 @@ export default function ProfilePage() {
 
           {/* Services Tab */}
           {isCaregiver && (
-            <TabsContent value="services" className="mt-3 space-y-2">
-              <div className="grid grid-cols-2 gap-1.5">
-                {SERVICE_TYPES.map((service) => (
-                  <label key={service.id} className={`flex items-center gap-2 p-2 border rounded-md text-xs cursor-pointer transition-all ${formData.services?.includes(service.id) ? "border-primary bg-primary/5" : "hover:border-primary/50"} ${!isEditing ? "pointer-events-none opacity-80" : ""}`}>
-                    <Checkbox checked={formData.services?.includes(service.id)} onCheckedChange={() => handleServiceToggle(service.id)} disabled={!isEditing} className="h-4 w-4" />
-                    <span>{service.label}</span>
-                  </label>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <div>
-                  <Label className="text-xs text-muted-foreground">€/hora</Label>
-                  <div className="relative mt-0.5">
-                    <IconEuro className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input type="number" step="0.50" value={formData.hourlyRateEur || ""} onChange={(e) => setFormData({...formData, hourlyRateEur: parseFloat(e.target.value) || 0})} className="h-9 pl-8" disabled={!isEditing} />
+            <TabsContent value="services" className="mt-4 space-y-3">
+              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
+                <div className="grid grid-cols-2 gap-2">
+                  {SERVICE_TYPES.map((service) => (
+                    <label key={service.id} className={`flex items-center gap-2 p-3 border rounded-xl text-sm cursor-pointer transition-all ${
+                      formData.services?.includes(service.id) ? "border-primary bg-primary/5 shadow-sm" : "hover:border-primary/30"
+                    } ${!isEditing ? "pointer-events-none opacity-80" : ""}`}>
+                      <Checkbox checked={formData.services?.includes(service.id)} onCheckedChange={() => handleServiceToggle(service.id)} disabled={!isEditing} className="h-4 w-4" />
+                      <span className="text-xs">{service.label}</span>
+                    </label>
+                  ))}
+                </div>
+
+                <Separator className="my-4" />
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">{"\u20AC"}/hora</Label>
+                    <div className="relative mt-1">
+                      <IconEuro className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                      <Input type="number" step="0.50" value={formData.hourlyRateEur || ""} onChange={(e) => setFormData({...formData, hourlyRateEur: parseFloat(e.target.value) || 0})} className="h-10 pl-8 rounded-xl" disabled={!isEditing} />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Idiomas</Label>
+                    <Input value={formData.languages || ""} onChange={(e) => setFormData({...formData, languages: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="PT, EN..." />
                   </div>
                 </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Idiomas</Label>
-                  <Input value={formData.languages || ""} onChange={(e) => setFormData({...formData, languages: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="PT, EN..." />
+                <div className="mt-3">
+                  <Label className="text-xs text-muted-foreground">Certificacoes</Label>
+                  <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Curso de Cuidador..." />
                 </div>
-              </div>
-              
-              <div>
-                <Label className="text-xs text-muted-foreground">Certificações e Cursos</Label>
-                <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Ex: Curso de Cuidador, Primeiros Socorros..." />
               </div>
             </TabsContent>
           )}
 
           {/* Elder Tab */}
           {isFamily && (
-            <TabsContent value="elder" className="mt-3 space-y-2">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Nome do Idoso</Label>
-                  <Input value={formData.elderName || ""} onChange={(e) => setFormData({...formData, elderName: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" />
+            <TabsContent value="elder" className="mt-4">
+              <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Nome do Idoso</Label>
+                    <Input value={formData.elderName || ""} onChange={(e) => setFormData({...formData, elderName: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Idade</Label>
+                    <Input type="number" value={formData.elderAge || ""} onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" />
+                  </div>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Idade</Label>
-                  <Input type="number" value={formData.elderAge || ""} onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-9 mt-0.5" />
+                  <Label className="text-xs text-muted-foreground">Necessidades Especificas</Label>
+                  <Textarea value={formData.elderNeeds || ""} onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})} rows={3} disabled={!isEditing} className="mt-1 text-sm rounded-xl" placeholder="Descreva as necessidades..." />
                 </div>
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Necessidades Específicas</Label>
-                <Textarea value={formData.elderNeeds || ""} onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})} rows={3} disabled={!isEditing} className="mt-0.5 text-sm" placeholder="Descreva as necessidades de cuidados, medicamentos, mobilidade..." />
               </div>
             </TabsContent>
           )}
 
           {/* Contact Tab */}
-          <TabsContent value="contact" className="mt-3 space-y-2">
-            <div>
-              <Label className="text-xs text-muted-foreground">{t.auth.email}</Label>
-              <Input type="email" value={formData.email} disabled className="h-9 mt-0.5 bg-muted" />
-            </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Telemóvel</Label>
-              <Input
-                type="tel"
-                value={formData.phone || ""}
-                onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
-                disabled={!isEditing}
-                className="h-9 mt-0.5"
-                placeholder="+351 912 345 678"
-                inputMode="tel"
-              />
-              <p className="text-[10px] text-muted-foreground mt-0.5">Formato: +351 9XX XXX XXX</p>
-            </div>
-            <Separator className="my-2" />
-            <div className="grid grid-cols-2 gap-2">
+          <TabsContent value="contact" className="mt-4">
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-3">
               <div>
-                <Label className="text-xs text-muted-foreground">Contato de Emergência</Label>
-                <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-9 mt-0.5" placeholder="Nome" />
+                <Label className="text-xs text-muted-foreground">{t.auth.email}</Label>
+                <Input type="email" value={formData.email} disabled className="h-10 mt-1 rounded-xl bg-muted" />
               </div>
               <div>
-                <Label className="text-xs text-muted-foreground">Telefone</Label>
+                <Label className="text-xs text-muted-foreground">Telemovel</Label>
                 <Input
-                  value={formData.emergencyPhone || ""}
-                  onChange={(e) => setFormData({...formData, emergencyPhone: formatPhonePT(e.target.value)})}
+                  type="tel"
+                  value={formData.phone || ""}
+                  onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
                   disabled={!isEditing}
-                  className="h-9 mt-0.5"
+                  className="h-10 mt-1 rounded-xl"
                   placeholder="+351 912 345 678"
                   inputMode="tel"
                 />
+              </div>
+              <Separator />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Contato de Emergencia</Label>
+                  <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-10 mt-1 rounded-xl" placeholder="Nome" />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">Telefone</Label>
+                  <Input
+                    value={formData.emergencyPhone || ""}
+                    onChange={(e) => setFormData({...formData, emergencyPhone: formatPhonePT(e.target.value)})}
+                    disabled={!isEditing}
+                    className="h-10 mt-1 rounded-xl"
+                    placeholder="+351 912 345 678"
+                    inputMode="tel"
+                  />
+                </div>
               </div>
             </div>
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className="mt-3 space-y-1">
-            {/* Notificações */}
-            <div className="p-3 border rounded-lg">
+          <TabsContent value="settings" className="mt-4 space-y-2">
+            {/* Push Notifications */}
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <IconBell className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <IconBell className="h-4 w-4 text-primary" />
+                  </div>
                   <div>
-                    <p className="text-sm font-medium">Notificações Push</p>
-                    <p className="text-[10px] text-muted-foreground">Alertas em tempo real</p>
+                    <p className="text-sm font-medium">Notificacoes Push</p>
+                    <p className="text-xs text-muted-foreground">Alertas em tempo real</p>
                   </div>
                 </div>
                 {isPushSupported ? (
                   isPushEnabled ? (
-                    <Badge variant="outline" className="text-green-600 border-green-600 text-xs">Ativo</Badge>
+                    <Badge className="bg-success/10 text-success border-success/20" variant="outline">Ativo</Badge>
                   ) : (
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={handleEnablePush} 
-                      className="h-7 text-xs"
-                      disabled={pushLoading}
-                    >
-                      {pushLoading ? (
-                        <IconLoader2 className="h-3 w-3 animate-spin mr-1" />
-                      ) : null}
-                      Ativar
+                    <Button size="sm" variant="outline" onClick={handleEnablePush} className="h-8 rounded-lg text-xs" disabled={pushLoading}>
+                      {pushLoading && <IconLoader2 className="h-3 w-3 animate-spin mr-1" />}Ativar
                     </Button>
                   )
                 ) : (
                   <span className="text-xs text-muted-foreground">N/A</span>
                 )}
               </div>
-              {pushError && !isPushEnabled && (
-                <p className="text-[10px] text-red-500 mt-2">{pushError}</p>
-              )}
+              {pushError && !isPushEnabled && <p className="text-xs text-error mt-2">{pushError}</p>}
             </div>
 
-            {/* Tema */}
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center gap-2">
-                <IconShield className="h-4 w-4 text-muted-foreground" />
+            {/* Theme */}
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-xl bg-secondary/10 flex items-center justify-center">
+                  <IconShield className="h-4 w-4 text-secondary" />
+                </div>
                 <span className="text-sm font-medium">Tema</span>
               </div>
               <ThemeToggle />
             </div>
 
-            {/* Idioma */}
-            <div className="flex items-center justify-between p-3 border rounded-lg">
+            {/* Language */}
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 flex items-center justify-between">
               <span className="text-sm font-medium">Idioma</span>
               <LanguageSelector />
             </div>
 
-            {/* Termos */}
-            <div className="flex items-center justify-between p-3 border rounded-lg">
+            {/* Terms */}
+            <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 flex items-center justify-between">
               <span className="text-sm">Termos / Privacidade</span>
               <div className="flex gap-1">
                 <Button size="sm" variant="ghost" asChild className="h-7 text-xs px-2"><a href="/termos" target="_blank">Termos</a></Button>
@@ -828,10 +744,10 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Separator className="my-2" />
+            <Separator />
 
             {/* Logout */}
-            <Button variant="outline" className="w-full h-10" onClick={() => signOut({ callbackUrl: "/" })}>
+            <Button variant="outline" className="w-full h-11 rounded-xl" onClick={() => signOut({ callbackUrl: "/" })}>
               <IconLogout className="h-4 w-4 mr-2" />
               {t.auth.logout}
             </Button>
@@ -839,19 +755,19 @@ export default function ProfilePage() {
             {/* Delete Account */}
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" className="w-full h-9 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950">
+                <Button variant="ghost" className="w-full h-10 text-error hover:text-error hover:bg-error/5 rounded-xl">
                   <IconTrash className="h-4 w-4 mr-2" />
                   Apagar conta
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-background border shadow-lg">
+              <DialogContent className="bg-surface border shadow-soft-lg rounded-2xl">
                 <DialogHeader>
                   <DialogTitle>Apagar conta?</DialogTitle>
-                  <DialogDescription>Esta ação é irreversível. Todos os seus dados serão excluídos.</DialogDescription>
+                  <DialogDescription>Esta acao e irreversivel. Todos os seus dados serao excluidos.</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting}>Cancelar</Button>
-                  <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting}>
+                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting} className="rounded-xl">Cancelar</Button>
+                  <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting} className="rounded-xl">
                     {isDeleting ? <IconLoader2 className="h-4 w-4 mr-2 animate-spin" /> : <IconTrash className="h-4 w-4 mr-2" />}
                     Apagar
                   </Button>
@@ -859,7 +775,7 @@ export default function ProfilePage() {
               </DialogContent>
             </Dialog>
 
-            <p className="text-center text-[10px] text-muted-foreground pt-2">{APP_NAME} v1.0.0</p>
+            <p className="text-center text-xs text-muted-foreground pt-2">{APP_NAME} v1.0.0</p>
           </TabsContent>
         </Tabs>
       </div>

@@ -3,11 +3,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -21,6 +19,8 @@ import {
   IconEuro,
   IconShield,
   IconFamily,
+  IconFilter,
+  IconChevronRight,
 } from "@/components/icons";
 import { SERVICE_TYPES } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -79,6 +79,7 @@ export default function SearchPage() {
   const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
   const [families, setFamilies] = useState<Family[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [maxPrice, setMaxPrice] = useState(50);
@@ -126,11 +127,8 @@ export default function SearchPage() {
     }
   };
 
-  // Filter caregivers (for families)
   const filteredCaregivers = useMemo(() => {
     let results = [...caregivers];
-
-    // Filter by search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       results = results.filter(
@@ -141,16 +139,10 @@ export default function SearchPage() {
           c.city?.toLowerCase().includes(term)
       );
     }
-
-    // Filter by price (hourlyRateEur is in cents)
     results = results.filter((c) => (c.hourlyRateEur / 100) <= maxPrice);
-
-    // Filter by service
     if (selectedService !== "all") {
       results = results.filter((c) => c.services?.some(s => s.includes(selectedService)));
     }
-
-    // Sort
     if (sortBy === "rating") {
       results.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
     } else if (sortBy === "price") {
@@ -160,14 +152,11 @@ export default function SearchPage() {
     } else if (sortBy === "distance") {
       results.sort((a, b) => (a.distanceKm ?? 9999) - (b.distanceKm ?? 9999));
     }
-
     return results;
   }, [caregivers, searchTerm, maxPrice, selectedService, sortBy]);
 
-  // Filter families (for caregivers)
   const filteredFamilies = useMemo(() => {
     let results = [...families];
-
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       results = results.filter(
@@ -177,53 +166,55 @@ export default function SearchPage() {
           f.elderNeeds?.toLowerCase().includes(term)
       );
     }
-
-    // Filter by service
     if (selectedService !== "all") {
       results = results.filter((f) =>
         f.preferredServices?.some(s => s.includes(selectedService))
       );
     }
-
     return results;
   }, [families, searchTerm, selectedService]);
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold">{t.search.title}</h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-0.5">
             {isCaregiver
               ? "Encontre familias que procuram cuidadores"
               : t.search.placeholder}
           </p>
         </div>
 
-        {/* Search & Filters */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {/* Search */}
-              <div className="lg:col-span-2">
-                <Label>{t.search.title}</Label>
-                <div className="relative mt-1.5">
-                  <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder={isCaregiver ? "Pesquisar familias por nome, cidade..." : t.search.placeholder}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+        {/* Search Bar */}
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={isCaregiver ? "Pesquisar familias..." : "Pesquisar por nome ou servico..."}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-11 rounded-xl bg-surface border-border/50 shadow-card"
+            />
+          </div>
+          <Button
+            variant="outline"
+            className="h-11 px-3 rounded-xl border-border/50 shadow-card"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <IconFilter className="h-4 w-4" />
+          </Button>
+        </div>
 
-              {/* Service Filter */}
+        {/* Filters Panel */}
+        {showFilters && (
+          <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 space-y-4 animate-slide-down">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>{t.search.filters}</Label>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.search.filters}</label>
                 <Select value={selectedService} onValueChange={setSelectedService}>
-                  <SelectTrigger className="mt-1.5">
+                  <SelectTrigger className="h-10 rounded-xl">
                     <SelectValue placeholder={t.all} />
                   </SelectTrigger>
                   <SelectContent>
@@ -237,12 +228,11 @@ export default function SearchPage() {
                 </Select>
               </div>
 
-              {/* Sort (only for caregiver search) */}
               {!isCaregiver && (
                 <div>
-                  <Label>{t.search.sortBy || "Ordenar por"}</Label>
+                  <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t.search.sortBy || "Ordenar por"}</label>
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="mt-1.5">
+                    <SelectTrigger className="h-10 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -256,11 +246,10 @@ export default function SearchPage() {
               )}
             </div>
 
-            {/* Price Slider (only for caregiver search) */}
             {!isCaregiver && (
-              <div className="mt-6">
+              <div>
                 <div className="flex justify-between mb-2">
-                  <Label>€{maxPrice}{t.search.perHour}</Label>
+                  <label className="text-xs font-medium text-muted-foreground">Preco maximo: {"\u20AC"}{maxPrice}{t.search.perHour}</label>
                 </div>
                 <Slider
                   value={[maxPrice]}
@@ -271,271 +260,191 @@ export default function SearchPage() {
                 />
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        )}
 
         {/* Results Count */}
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">
+        {!isLoading && (
+          <p className="text-sm text-muted-foreground">
             {isCaregiver
-              ? filteredFamilies.length > 0
-                ? `${filteredFamilies.length} familias encontradas`
-                : ""
-              : filteredCaregivers.length > 0
-                ? `${filteredCaregivers.length} ${t.search.resultsFound || "cuidadores encontrados"}`
-                : ""}
+              ? `${filteredFamilies.length} familias encontradas`
+              : `${filteredCaregivers.length} ${t.search.resultsFound || "cuidadores encontrados"}`
+            }
           </p>
-        </div>
+        )}
 
-        {/* Loading State */}
+        {/* Loading */}
         {isLoading && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <div className="flex gap-4">
-                    <Skeleton className="h-16 w-16 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-48" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
+              <div key={i} className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
+                <div className="flex gap-3">
+                  <Skeleton className="h-14 w-14 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-28" />
+                    <Skeleton className="h-3 w-20" />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}
 
-        {/* ============= FAMILY SEARCH VIEW (for caregivers) ============= */}
-        {!isLoading && isCaregiver && (
-          <div className="grid gap-4">
-            {filteredFamilies.map((family) => (
-              <Card key={family.id} className="overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="flex flex-col md:flex-row">
-                    {/* Avatar & Basic Info */}
-                    <div className="p-6 flex-shrink-0">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="h-16 w-16">
-                          <AvatarFallback className="text-lg bg-primary/10 text-primary">
-                            {family.name.split(" ").map((n) => n[0]).join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-lg">{family.name}</h3>
-                            <Badge variant="secondary" className="text-xs bg-blue-500/10 text-blue-600">
-                              <IconFamily className="h-3 w-3 mr-1" />
-                              Familia
-                            </Badge>
-                          </div>
-                          {family.city && (
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                              <IconMapPin className="h-4 w-4" />
-                              <span>{family.city}</span>
-                            </div>
-                          )}
-                          {family.elderName && (
-                            <p className="text-sm text-muted-foreground">
-                              Idoso(a): {family.elderName}
-                              {family.elderAge ? `, ${family.elderAge} anos` : ""}
-                            </p>
-                          )}
-                        </div>
+        {/* ============= CAREGIVER CARDS (for families) ============= */}
+        {!isLoading && !isCaregiver && (
+          <div className="space-y-3">
+            {filteredCaregivers.map((caregiver) => (
+              <Link key={caregiver.id} href={`/app/caregivers/${caregiver.id}`} className="block">
+                <div className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover hover:border-primary/20 transition-all">
+                  <div className="flex gap-3">
+                    {/* Avatar */}
+                    <Avatar className="h-14 w-14 rounded-xl">
+                      <AvatarFallback className="rounded-xl text-sm font-semibold bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                        {caregiver.name.split(" ").map((n) => n[0]).join("")}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-base truncate">{caregiver.name}</h3>
+                        {caregiver.verificationStatus === "VERIFIED" && (
+                          <Badge className="bg-success/10 text-success border-success/20 text-[10px] px-1.5 py-0" variant="outline">
+                            <IconShield className="h-3 w-3 mr-0.5" />
+                            {t.search.verified}
+                          </Badge>
+                        )}
                       </div>
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex-1 p-6 bg-muted/30">
-                      {/* Elder Needs */}
-                      {family.elderNeeds && (
-                        <div className="mb-3">
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Necessidades</p>
-                          <p className="text-sm line-clamp-2">{family.elderNeeds}</p>
-                        </div>
+                      {caregiver.title && (
+                        <p className="text-sm text-muted-foreground truncate">{caregiver.title}</p>
                       )}
 
-                      {/* Mobility Level */}
-                      {family.mobilityLevel && (
-                        <div className="mb-3">
-                          <p className="text-xs font-medium text-muted-foreground mb-1">Mobilidade</p>
-                          <p className="text-sm">{family.mobilityLevel}</p>
+                      {/* Rating + Location */}
+                      <div className="flex items-center gap-3 mt-1.5 text-sm">
+                        <div className="flex items-center gap-1">
+                          <IconStar className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                          <span className="font-medium">{caregiver.averageRating?.toFixed(1) || '0.0'}</span>
+                          <span className="text-muted-foreground text-xs">({caregiver.totalReviews || 0})</span>
                         </div>
-                      )}
+                        {caregiver.city && (
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <IconMapPin className="h-3.5 w-3.5" />
+                            <span className="text-xs">{caregiver.city}</span>
+                          </div>
+                        )}
+                      </div>
 
-                      {/* Preferred Services */}
-                      {family.preferredServices && family.preferredServices.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {family.preferredServices.slice(0, 4).map((service, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {serviceLabels[service] || service}
+                      {/* Services */}
+                      {caregiver.services && caregiver.services.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {caregiver.services.slice(0, 3).map((service, index) => (
+                            <Badge key={index} variant="outline" className="text-[10px] px-1.5 py-0 rounded-md bg-muted/50">
+                              {service}
                             </Badge>
                           ))}
-                          {family.preferredServices.length > 4 && (
-                            <span className="text-xs text-muted-foreground">
-                              +{family.preferredServices.length - 4}
-                            </span>
+                          {caregiver.services.length > 3 && (
+                            <span className="text-[10px] text-muted-foreground self-center">+{caregiver.services.length - 3}</span>
                           )}
                         </div>
                       )}
-
-                      {/* Budget */}
-                      {family.budgetRange && (
-                        <div className="flex items-center gap-1 text-sm">
-                          <IconEuro className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-semibold">{family.budgetRange}</span>
-                        </div>
-                      )}
                     </div>
 
-                    {/* Actions */}
-                    <div className="p-6 flex flex-col justify-center gap-2 border-l bg-background">
-                      <Button asChild>
-                        <Link href={`/app/families/${family.id}`}>
-                          Ver Perfil
-                        </Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <Link href={`/app/messages?userId=${family.id}`}>
-                          Mensagem
-                        </Link>
-                      </Button>
+                    {/* Price + Arrow */}
+                    <div className="flex flex-col items-end justify-between">
+                      <div className="text-right">
+                        <p className="text-base font-bold text-primary">{"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(0)}</p>
+                        <p className="text-[10px] text-muted-foreground">/hora</p>
+                      </div>
+                      <IconChevronRight className="h-4 w-4 text-muted-foreground" />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </Link>
             ))}
 
-            {filteredFamilies.length === 0 && (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <IconSearch className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">Nenhuma familia encontrada</h3>
-                  <p className="text-muted-foreground">
-                    Tente ajustar os filtros de pesquisa
-                  </p>
-                </CardContent>
-              </Card>
+            {filteredCaregivers.length === 0 && (
+              <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
+                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
+                  <IconSearch className="h-7 w-7 text-muted-foreground" />
+                </div>
+                <h3 className="font-semibold mb-1">{t.search.noResults}</h3>
+                <p className="text-sm text-muted-foreground">{t.search.placeholder}</p>
+              </div>
             )}
           </div>
         )}
 
-        {/* ============= CAREGIVER SEARCH VIEW (for families) ============= */}
-        {!isLoading && !isCaregiver && (
-          <div className="grid gap-4">
-            {filteredCaregivers.map((caregiver) => (
-              <Card key={caregiver.id} className="overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="flex flex-col md:flex-row">
-                    {/* Avatar & Basic Info */}
-                    <div className="p-6 flex-shrink-0">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="h-16 w-16">
-                          <AvatarFallback className="text-lg bg-primary/10 text-primary">
-                            {caregiver.name.split(" ").map((n) => n[0]).join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-lg">{caregiver.name}</h3>
-                            {caregiver.verificationStatus === "VERIFIED" && (
-                              <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600">
-                                <IconShield className="h-3 w-3 mr-1" />
-                                {t.search.verified}
-                              </Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-muted-foreground">{caregiver.title}</p>
-                          <div className="flex items-center gap-3 text-sm">
-                            <div className="flex items-center gap-1">
-                              <IconStar className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                              <span className="font-medium">{caregiver.averageRating?.toFixed(1) || '0.0'}</span>
-                              <span className="text-muted-foreground">
-                                ({caregiver.totalReviews || 0})
-                              </span>
-                            </div>
-                            {caregiver.city && (
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <IconMapPin className="h-4 w-4" />
-                                <span>{caregiver.city}</span>
-                              </div>
-                            )}
-                            {caregiver.distanceKm != null && (
-                              <div className="flex items-center gap-1 text-muted-foreground">
-                                <IconMapPin className="h-4 w-4" />
-                                <span>{caregiver.distanceKm.toFixed(1)} km</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+        {/* ============= FAMILY CARDS (for caregivers) ============= */}
+        {!isLoading && isCaregiver && (
+          <div className="space-y-3">
+            {filteredFamilies.map((family) => (
+              <div key={family.id} className="bg-surface rounded-2xl p-4 shadow-card border border-border/50 hover:shadow-card-hover transition-all">
+                <div className="flex gap-3">
+                  <Avatar className="h-14 w-14 rounded-xl">
+                    <AvatarFallback className="rounded-xl text-sm font-semibold bg-gradient-to-br from-secondary/20 to-secondary/5 text-secondary">
+                      {family.name.split(" ").map((n) => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-base truncate">{family.name}</h3>
+                      <Badge className="bg-secondary/10 text-secondary border-secondary/20 text-[10px] px-1.5 py-0" variant="outline">
+                        <IconFamily className="h-3 w-3 mr-0.5" />
+                        Familia
+                      </Badge>
+                    </div>
+
+                    {family.city && (
+                      <div className="flex items-center gap-1 mt-0.5 text-muted-foreground">
+                        <IconMapPin className="h-3.5 w-3.5" />
+                        <span className="text-xs">{family.city}</span>
                       </div>
-                    </div>
+                    )}
 
-                    {/* Details */}
-                    <div className="flex-1 p-6 bg-muted/30">
-                      {caregiver.bio && (
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                          {caregiver.bio}
-                        </p>
-                      )}
+                    {family.elderName && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Idoso(a): {family.elderName}{family.elderAge ? `, ${family.elderAge} anos` : ""}
+                      </p>
+                    )}
 
-                      {/* Services */}
-                      {caregiver.services && caregiver.services.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {caregiver.services.slice(0, 4).map((service, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {service}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
+                    {family.elderNeeds && (
+                      <p className="text-sm text-foreground mt-1.5 line-clamp-2">{family.elderNeeds}</p>
+                    )}
 
-                      {/* Stats & Price */}
-                      <div className="flex flex-wrap items-center gap-4 text-sm">
-                        {caregiver.experienceYears && (
-                          <div className="flex items-center gap-1">
-                            <IconClock className="h-4 w-4 text-muted-foreground" />
-                            <span>{caregiver.experienceYears} {t.profile.experience}</span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-1">
-                          <IconEuro className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-semibold">€{(caregiver.hourlyRateEur / 100).toFixed(0)}{t.search.perHour}</span>
-                        </div>
-                        <div className="text-muted-foreground">
-                          {caregiver.totalContracts || 0} {t.contracts.title}
-                        </div>
+                    {family.preferredServices && family.preferredServices.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {family.preferredServices.slice(0, 3).map((service, index) => (
+                          <Badge key={index} variant="outline" className="text-[10px] px-1.5 py-0 rounded-md bg-muted/50">
+                            {serviceLabels[service] || service}
+                          </Badge>
+                        ))}
                       </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="p-6 flex flex-col justify-center gap-2 border-l bg-background">
-                      <Button asChild>
-                        <Link href={`/app/caregivers/${caregiver.id}`}>
-                          {t.profile.title}
-                        </Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <Link href={`/app/contracts/new?caregiverId=${caregiver.id}`}>
-                          {t.contracts.new}
-                        </Link>
-                      </Button>
-                    </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2 mt-3 pt-3 border-t border-border/50">
+                  <Button asChild size="sm" className="flex-1 h-9 rounded-xl">
+                    <Link href={`/app/families/${family.id}`}>Ver Perfil</Link>
+                  </Button>
+                  <Button variant="outline" asChild size="sm" className="flex-1 h-9 rounded-xl">
+                    <Link href={`/app/messages?userId=${family.id}`}>Mensagem</Link>
+                  </Button>
+                </div>
+              </div>
             ))}
 
-            {filteredCaregivers.length === 0 && (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <IconSearch className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">{t.search.noResults}</h3>
-                  <p className="text-muted-foreground">
-                    {t.search.placeholder}
-                  </p>
-                </CardContent>
-              </Card>
+            {filteredFamilies.length === 0 && (
+              <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
+                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
+                  <IconSearch className="h-7 w-7 text-muted-foreground" />
+                </div>
+                <h3 className="font-semibold mb-1">Nenhuma familia encontrada</h3>
+                <p className="text-sm text-muted-foreground">Tente ajustar os filtros</p>
+              </div>
             )}
           </div>
         )}

@@ -4,21 +4,21 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
-import { 
-  IconContract, 
+import {
+  IconContract,
   IconPlus,
   IconClock,
   IconCheck,
   IconEuro,
   IconCalendar,
   IconUser,
-  IconRefresh
+  IconRefresh,
+  IconChevronRight,
 } from "@/components/icons";
 import { CONTRACT_STATUS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -43,14 +43,14 @@ interface Contract {
   };
 }
 
-const statusColors: Record<string, string> = {
-  DRAFT: "bg-gray-500",
-  PENDING_ACCEPTANCE: "bg-yellow-500",
-  PENDING_PAYMENT: "bg-orange-500",
-  ACTIVE: "bg-green-500",
-  COMPLETED: "bg-blue-500",
-  CANCELLED: "bg-red-500",
-  DISPUTED: "bg-purple-500",
+const statusConfig: Record<string, { color: string; bg: string; border: string }> = {
+  DRAFT: { color: "text-muted-foreground", bg: "bg-muted", border: "border-l-muted-foreground" },
+  PENDING_ACCEPTANCE: { color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-950/30", border: "border-l-amber-500" },
+  PENDING_PAYMENT: { color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-950/30", border: "border-l-orange-500" },
+  ACTIVE: { color: "text-success", bg: "bg-success/5", border: "border-l-success" },
+  COMPLETED: { color: "text-primary", bg: "bg-primary/5", border: "border-l-primary" },
+  CANCELLED: { color: "text-error", bg: "bg-error/5", border: "border-l-error" },
+  DISPUTED: { color: "text-secondary", bg: "bg-secondary/5", border: "border-l-secondary" },
 };
 
 export default function ContractsPage() {
@@ -61,9 +61,7 @@ export default function ContractsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      fetchContracts();
-    }
+    if (status === "authenticated") fetchContracts();
   }, [status]);
 
   const fetchContracts = async () => {
@@ -71,13 +69,10 @@ export default function ContractsPage() {
     setError(null);
     try {
       const response = await apiFetch('/api/contracts');
-      if (!response.ok) {
-        throw new Error(t.error);
-      }
+      if (!response.ok) throw new Error(t.error);
       const data = await response.json();
       setContracts(data.contracts || []);
     } catch (err: any) {
-      console.error('Error fetching contracts:', err);
       setError(err.message || t.error);
     } finally {
       setIsLoading(false);
@@ -96,24 +91,21 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">{t.contracts.title}</h1>
-            <p className="text-muted-foreground">
-              {t.dashboard.viewAll}
-            </p>
+            <p className="text-sm text-muted-foreground mt-0.5">{t.dashboard.viewAll}</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={fetchContracts} disabled={isLoading}>
-              <IconRefresh className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              {t.search.filters}
+            <Button variant="outline" onClick={fetchContracts} disabled={isLoading} size="icon" className="h-9 w-9 rounded-xl">
+              <IconRefresh className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
             {isFamily && (
-              <Button asChild>
+              <Button asChild className="h-9 rounded-xl">
                 <Link href="/app/contracts/new">
-                  <IconPlus className="h-4 w-4 mr-2" />
+                  <IconPlus className="h-4 w-4 mr-1.5" />
                   {t.contracts.new}
                 </Link>
               </Button>
@@ -121,33 +113,29 @@ export default function ContractsPage() {
           </div>
         </div>
 
-        {/* Error State */}
+        {/* Error */}
         {error && (
-          <Card className="border-red-500">
-            <CardContent className="pt-6">
-              <p className="text-red-500">{error}</p>
-              <Button variant="outline" onClick={fetchContracts} className="mt-2">
-                {t.submit}
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="bg-error/5 border border-error/20 rounded-2xl p-4">
+            <p className="text-sm text-error">{error}</p>
+            <Button variant="outline" onClick={fetchContracts} size="sm" className="mt-2">
+              {t.submit}
+            </Button>
+          </div>
         )}
 
-        {/* Loading State */}
+        {/* Loading */}
         {isLoading && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="pt-6">
-                  <div className="flex gap-4">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-48" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
+              <div key={i} className="bg-surface rounded-2xl p-4 shadow-card border border-border/50">
+                <div className="flex gap-3">
+                  <Skeleton className="h-10 w-10 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-28" />
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -155,62 +143,39 @@ export default function ContractsPage() {
         {/* Tabs */}
         {!isLoading && !error && (
           <Tabs defaultValue="active">
-            <TabsList>
-              <TabsTrigger value="active">
+            <TabsList className="w-full grid grid-cols-3 h-10 rounded-xl bg-muted p-1">
+              <TabsTrigger value="active" className="rounded-lg text-xs data-[state=active]:shadow-sm">
                 {t.contracts.active} ({activeContracts.length})
               </TabsTrigger>
-              <TabsTrigger value="pending">
+              <TabsTrigger value="pending" className="rounded-lg text-xs data-[state=active]:shadow-sm">
                 {t.contracts.pending} ({pendingContracts.length})
               </TabsTrigger>
-              <TabsTrigger value="completed">
+              <TabsTrigger value="completed" className="rounded-lg text-xs data-[state=active]:shadow-sm">
                 {t.contracts.completed} ({completedContracts.length})
               </TabsTrigger>
             </TabsList>
 
-            {/* Active Contracts */}
-            <TabsContent value="active" className="mt-6 space-y-4">
-              {activeContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
-              ))}
-              {activeContracts.length === 0 && (
-                <Card>
-                  <CardContent className="py-12 text-center">
-                    <IconContract className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">{t.contracts.noContracts}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
+            {["active", "pending", "completed"].map((tab) => {
+              const items = tab === "active" ? activeContracts : tab === "pending" ? pendingContracts : completedContracts;
+              const emptyIcon = tab === "active" ? IconContract : tab === "pending" ? IconClock : IconCheck;
+              const EmptyIcon = emptyIcon;
 
-            {/* Pending Contracts */}
-            <TabsContent value="pending" className="mt-6 space-y-4">
-              {pendingContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
-              ))}
-              {pendingContracts.length === 0 && (
-                <Card>
-                  <CardContent className="py-12 text-center">
-                    <IconClock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">{t.contracts.noContracts}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
-
-            {/* Completed Contracts */}
-            <TabsContent value="completed" className="mt-6 space-y-4">
-              {completedContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
-              ))}
-              {completedContracts.length === 0 && (
-                <Card>
-                  <CardContent className="py-12 text-center">
-                    <IconCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">{t.contracts.noContracts}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
+              return (
+                <TabsContent key={tab} value={tab} className="mt-4 space-y-3">
+                  {items.map((contract) => (
+                    <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
+                  ))}
+                  {items.length === 0 && (
+                    <div className="text-center py-12 bg-surface rounded-2xl shadow-card border border-border/50">
+                      <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
+                        <EmptyIcon className="h-7 w-7 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">{t.contracts.noContracts}</p>
+                    </div>
+                  )}
+                </TabsContent>
+              );
+            })}
           </Tabs>
         )}
       </div>
@@ -222,73 +187,59 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
   const statusLabel = CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status;
   const totalEur = contract.totalEurCents ? contract.totalEurCents / 100 : 0;
   const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
+  const config = statusConfig[contract.status] || statusConfig.DRAFT;
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h3 className="font-semibold text-lg">{contract.title || t.contracts.title}</h3>
-              <Badge className={statusColors[contract.status]}>
-                {statusLabel}
-              </Badge>
+    <Link href={`/app/contracts/${contract.id}`} className="block">
+      <div className={`bg-surface rounded-2xl p-4 shadow-card border border-border/50 border-l-4 ${config.border} hover:shadow-card-hover transition-all`}>
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold truncate">{contract.title || t.contracts.title}</h3>
             </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <IconUser className="h-4 w-4" />
-                <span>{contract.otherParty?.name || t.none}</span>
-              </div>
-              {contract.startDate && (
-                <div className="flex items-center gap-1">
-                  <IconCalendar className="h-4 w-4" />
-                  <span>{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
-                </div>
-              )}
-              {hourlyRate > 0 && (
-                <div className="flex items-center gap-1">
-                  <IconEuro className="h-4 w-4" />
-                  <span>€{hourlyRate.toFixed(0)}{t.search.perHour}</span>
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              {contract.hoursPerWeek && (
-                <>
-                  <span className="text-muted-foreground">{contract.hoursPerWeek}h/semana</span>
-                  <span className="text-muted-foreground">•</span>
-                </>
-              )}
-              {totalEur > 0 && (
-                <span className="font-medium">€{totalEur.toFixed(0)}</span>
-              )}
-            </div>
-            {contract.serviceTypes && contract.serviceTypes.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {contract.serviceTypes.slice(0, 4).map((service, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {service}
-                  </Badge>
-                ))}
-              </div>
-            )}
+            <Badge className={`${config.bg} ${config.color} border-0 text-[10px] mt-1`}>
+              {statusLabel}
+            </Badge>
           </div>
-          
-          <div className="flex items-center gap-3">
-            {contract.status === "PENDING_ACCEPTANCE" && !isFamily && (
-              <div className="flex gap-2">
-                <Button size="sm">{t.yes}</Button>
-                <Button size="sm" variant="outline">{t.no}</Button>
-              </div>
-            )}
-            <Button variant="outline" asChild>
-              <Link href={`/app/contracts/${contract.id}`}>
-                {t.edit}
-              </Link>
-            </Button>
-          </div>
+          <IconChevronRight className="h-4 w-4 text-muted-foreground mt-1 shrink-0" />
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mt-2">
+          <div className="flex items-center gap-1">
+            <IconUser className="h-3.5 w-3.5" />
+            <span className="text-xs">{contract.otherParty?.name || t.none}</span>
+          </div>
+          {contract.startDate && (
+            <div className="flex items-center gap-1">
+              <IconCalendar className="h-3.5 w-3.5" />
+              <span className="text-xs">{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
+            </div>
+          )}
+          {hourlyRate > 0 && (
+            <div className="flex items-center gap-1">
+              <IconEuro className="h-3.5 w-3.5" />
+              <span className="text-xs font-medium">{"\u20AC"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
+            </div>
+          )}
+        </div>
+
+        {contract.serviceTypes && contract.serviceTypes.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {contract.serviceTypes.slice(0, 3).map((service, index) => (
+              <Badge key={index} variant="outline" className="text-[10px] px-1.5 py-0 rounded-md bg-muted/50">
+                {service}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {contract.status === "PENDING_ACCEPTANCE" && !isFamily && (
+          <div className="flex gap-2 mt-3 pt-3 border-t border-border/50">
+            <Button size="sm" className="flex-1 h-8 rounded-lg text-xs">{t.yes}</Button>
+            <Button size="sm" variant="outline" className="flex-1 h-8 rounded-lg text-xs">{t.no}</Button>
+          </div>
+        )}
+      </div>
+    </Link>
   );
 }
