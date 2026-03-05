@@ -125,7 +125,7 @@ export default function WalletPage() {
         )}
 
         {/* Balance Card */}
-        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-violet'}`}>
+        <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
           <div className="relative z-10">
             <div className="flex items-center justify-between">
               <div>

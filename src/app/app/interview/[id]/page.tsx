@@ -290,7 +290,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
       <div className="space-y-5 max-w-4xl mx-auto pb-6">
         {/* Header */}
-        <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md gradient-violet">
+        <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md gradient-secondary">
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">

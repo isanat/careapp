@@ -135,7 +135,7 @@ export default function DashboardPage() {
 
         {/* Balance Card - Gradient */}
         <Link href="/app/wallet" className="block">
-          <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-violet'}`}>
+          <div className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
             <div className="relative z-10">
               <p className="text-sm font-medium opacity-90">{t.wallet.balance}</p>
               <p className="text-3xl font-bold mt-1">
