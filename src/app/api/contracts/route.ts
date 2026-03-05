@@ -51,11 +51,11 @@ export async function GET(request: NextRequest) {
       otherParty: isFamily
         ? { id: row.caregiverUserId, name: row.caregiver_name, title: row.caregiver_title, city: row.caregiver_city }
         : { id: row.familyUserId, name: row.family_name, city: row.family_city },
-      // Additional family info for caregivers
+      // Additional family info for caregivers - contact details only for active/completed contracts
       family: !isFamily ? {
         name: row.family_name,
-        email: row.family_email,
-        phone: row.family_phone,
+        email: (row.status === 'ACTIVE' || row.status === 'COMPLETED') ? row.family_email : undefined,
+        phone: (row.status === 'ACTIVE' || row.status === 'COMPLETED') ? row.family_phone : undefined,
         city: row.family_city,
         elderName: row.elder_name,
         elderNeeds: row.elder_needs,

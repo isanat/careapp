@@ -181,12 +181,26 @@ export async function POST(
       });
     }
 
+    // Generate digital signature hash for legal proof
+    const signatureData = `${contractId}:${session.user.id}:${now}:${ipAddress}:${userAgent}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(signatureData);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const signatureHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
     return NextResponse.json({
       success: true,
       acceptedAt: now,
       ipAddress,
       bothAccepted,
-      newStatus: bothAccepted ? 'PENDING_PAYMENT' : 'PENDING_ACCEPTANCE'
+      newStatus: bothAccepted ? 'PENDING_PAYMENT' : 'PENDING_ACCEPTANCE',
+      digitalSignature: {
+        hash: signatureHash,
+        algorithm: 'SHA-256',
+        timestamp: now,
+        signedBy: session.user.id,
+      }
     });
   } catch (error) {
     console.error('Error accepting contract:', error);

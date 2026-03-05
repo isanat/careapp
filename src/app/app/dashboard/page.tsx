@@ -260,6 +260,81 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Platform Value - Why stay */}
+        <div className="bg-surface rounded-2xl p-4 shadow-card border border-primary/10">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
+              <IconShield className="h-4 w-4 text-primary" />
+            </div>
+            <span className="text-sm font-semibold">Beneficios da Plataforma</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {isFamily ? (
+              <>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Cuidadores Verificados</p>
+                    <p className="text-[10px] text-muted-foreground">KYC e antecedentes</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Contratos Juridicos</p>
+                    <p className="text-[10px] text-muted-foreground">Assinatura digital</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Pagamento Seguro</p>
+                    <p className="text-[10px] text-muted-foreground">Protecao financeira</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Recibos Fiscais</p>
+                    <p className="text-[10px] text-muted-foreground">Validos para IRS</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Pagamento Garantido</p>
+                    <p className="text-[10px] text-muted-foreground">Receba pontualmente</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Perfil Verificado</p>
+                    <p className="text-[10px] text-muted-foreground">Mais familias confiam</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Reputacao Publica</p>
+                    <p className="text-[10px] text-muted-foreground">Avaliacoes verificaveis</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 p-2.5 bg-muted/50 rounded-xl">
+                  <IconCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-medium">Protecao Juridica</p>
+                    <p className="text-[10px] text-muted-foreground">Contrato formal</p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Recent Activity */}
         <div>
           <div className="flex items-center justify-between mb-3">

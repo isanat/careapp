@@ -7,6 +7,7 @@ import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -116,6 +117,8 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptLiability, setAcceptLiability] = useState(false);
+  const [acceptNonCircumvention, setAcceptNonCircumvention] = useState(false);
+  const [digitalSignature, setDigitalSignature] = useState<{ hash: string; timestamp: string } | null>(null);
 
   useEffect(() => {
     if (status === "authenticated") fetchContract();
@@ -159,9 +162,12 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
+      const resData = await response.json();
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Erro");
+        throw new Error(resData.error || "Erro");
+      }
+      if (resData.digitalSignature) {
+        setDigitalSignature(resData.digitalSignature);
       }
       await fetchContract();
       setShowAcceptDialog(false);
@@ -442,6 +448,45 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
               </div>
             </div>
 
+            {/* Digital Signature Confirmation */}
+            {digitalSignature && (
+              <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <IconShield className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+                      Assinatura Digital Registrada
+                    </p>
+                    <p className="text-xs text-green-600 dark:text-green-500 mt-1">
+                      Hash: {digitalSignature.hash.slice(0, 16)}...{digitalSignature.hash.slice(-8)}
+                    </p>
+                    <p className="text-xs text-green-600 dark:text-green-500">
+                      Data: {new Date(digitalSignature.timestamp).toLocaleString("pt-PT")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Non-Circumvention Notice */}
+            {contract.acceptance?.familyAccepted && contract.acceptance?.caregiverAccepted && (
+              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <IconContract className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+                      Clausula de Nao-Circunvencao Ativa
+                    </p>
+                    <p className="text-xs text-amber-600 dark:text-amber-500 mt-1 leading-relaxed">
+                      Ambas as partes concordaram em manter a relacao profissional
+                      exclusivamente atraves da plataforma por 24 meses. Todos os pagamentos
+                      e comunicacoes devem ser realizados pela plataforma.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Accept Action */}
             {canAccept && userNeedsToAccept && (
               <div className="bg-primary/5 border-2 border-primary/30 rounded-2xl p-5 text-center space-y-4">
@@ -468,6 +513,11 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
             {/* Payment Section */}
             {contract.status === 'PENDING_PAYMENT' && isFamily && (
               <PaymentSection contractId={contract.id} onPaymentSuccess={fetchContract} />
+            )}
+
+            {/* Active Contract: Payments & Receipts */}
+            {contract.status === 'ACTIVE' && isFamily && (
+              <ActiveContractActions contractId={contract.id} />
             )}
 
             {/* Review Section */}
@@ -512,10 +562,29 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                 />
                 <span className="text-sm leading-relaxed">
                   Entendo que a plataforma atua como intermediaria e nao e responsavel
-                  pela qualidade ou resultado dos servicos. O aceite sera registrado
-                  com data, hora e endereco IP.
+                  pela qualidade ou resultado dos servicos.
                 </span>
               </label>
+
+              <label className="flex items-start gap-3 cursor-pointer p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                <Checkbox
+                  checked={acceptNonCircumvention}
+                  onCheckedChange={(c) => setAcceptNonCircumvention(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  <span className="font-semibold text-amber-700 dark:text-amber-400">Clausula de Nao-Circunvencao:</span>{" "}
+                  Concordo que qualquer relacao profissional iniciada atraves desta plataforma
+                  deve ser mantida e gerida pela plataforma por um periodo minimo de 24 meses.
+                  A contratacao direta fora da plataforma durante este periodo constitui
+                  violacao dos Termos de Uso e sujeita a penalizacao.
+                </span>
+              </label>
+
+              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 p-2 rounded-lg">
+                <IconShield className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>O aceite sera registrado digitalmente com assinatura SHA-256, data, hora e endereco IP.</span>
+              </div>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0">
@@ -524,7 +593,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
               </Button>
               <Button
                 onClick={handleAcceptContract}
-                disabled={isAccepting || !acceptTerms || !acceptLiability}
+                disabled={isAccepting || !acceptTerms || !acceptLiability || !acceptNonCircumvention}
               >
                 {isAccepting ? (
                   <>
@@ -543,5 +612,213 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
         </Dialog>
       </div>
     </AppShell>
+  );
+}
+
+// Sub-component for active contract actions (receipts + recurring payments)
+function ActiveContractActions({ contractId }: { contractId: string }) {
+  const [receipts, setReceipts] = useState<Array<{
+    id: string; receiptNumber: string; periodStart: string; periodEnd: string;
+    hoursWorked: number; totalAmountCents: number; createdAt: string;
+  }>>([]);
+  const [recurringPayment, setRecurringPayment] = useState<{
+    id: string; status: string; nextPaymentAt: string; amountCents: number;
+  } | null>(null);
+  const [isLoadingReceipts, setIsLoadingReceipts] = useState(true);
+  const [isSettingUp, setIsSettingUp] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [hoursWorked, setHoursWorked] = useState(0);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [receiptRes, rpRes] = await Promise.all([
+          apiFetch(`/api/contracts/${contractId}/receipt`),
+          apiFetch(`/api/payments/recurring?contractId=${contractId}`),
+        ]);
+        if (receiptRes.ok) {
+          const data = await receiptRes.json();
+          setReceipts(data.receipts || []);
+        }
+        if (rpRes.ok) {
+          const data = await rpRes.json();
+          setRecurringPayment(data.recurringPayment);
+        }
+      } catch {
+        // silent
+      } finally {
+        setIsLoadingReceipts(false);
+      }
+    }
+    load();
+  }, [contractId]);
+
+  const handleSetupRecurring = async () => {
+    setIsSettingUp(true);
+    try {
+      const res = await apiFetch('/api/payments/recurring', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contractId, billingDay: 1 }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRecurringPayment({
+          id: data.id,
+          status: 'ACTIVE',
+          nextPaymentAt: data.nextPaymentAt,
+          amountCents: data.amountCents,
+        });
+      }
+    } catch {
+      // silent
+    } finally {
+      setIsSettingUp(false);
+    }
+  };
+
+  const handleGenerateReceipt = async () => {
+    if (hoursWorked <= 0) return;
+    setIsGenerating(true);
+    try {
+      const now = new Date();
+      const periodStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+
+      const res = await apiFetch(`/api/contracts/${contractId}/receipt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ periodStart, periodEnd, hoursWorked }),
+      });
+      if (res.ok) {
+        // Refresh receipts
+        const refreshRes = await apiFetch(`/api/contracts/${contractId}/receipt`);
+        if (refreshRes.ok) {
+          const data = await refreshRes.json();
+          setReceipts(data.receipts || []);
+        }
+        setHoursWorked(0);
+      }
+    } catch {
+      // silent
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  if (isLoadingReceipts) return null;
+
+  return (
+    <>
+      {/* Recurring Payment */}
+      <div className="bg-surface rounded-2xl border border-border/50 p-4">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <IconClock className="h-3.5 w-3.5 inline mr-1" />
+          Pagamento Recorrente
+        </p>
+        {recurringPayment ? (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Status</span>
+              <Badge className={recurringPayment.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}>
+                {recurringPayment.status === 'ACTIVE' ? 'Ativo' : recurringPayment.status}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Valor mensal</span>
+              <span className="font-semibold">{Math.round(recurringPayment.amountCents / 100)}</span>
+            </div>
+            {recurringPayment.nextPaymentAt && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Proximo pagamento</span>
+                <span>{new Date(recurringPayment.nextPaymentAt).toLocaleDateString("pt-PT")}</span>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground mt-2">
+              O pagamento e processado automaticamente pela plataforma, garantindo
+              seguranca para ambas as partes.
+            </p>
+          </div>
+        ) : (
+          <div className="text-center space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Configure o pagamento mensal automatico para garantir que o cuidador
+              receba pontualmente e a plataforma possa fornecer protecao continua.
+            </p>
+            <Button
+              onClick={handleSetupRecurring}
+              disabled={isSettingUp}
+              className="w-full h-12 rounded-xl"
+            >
+              {isSettingUp ? (
+                <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <IconCalendar className="h-4 w-4 mr-2" />
+              )}
+              Ativar Pagamento Mensal
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Receipts */}
+      <div className="bg-surface rounded-2xl border border-border/50 p-4">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+          <IconContract className="h-3.5 w-3.5 inline mr-1" />
+          Recibos Fiscais
+        </p>
+
+        {/* Generate receipt */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex-1">
+            <Label className="text-xs text-muted-foreground">Horas trabalhadas este mes</Label>
+            <Input
+              type="number"
+              min={0}
+              max={200}
+              value={hoursWorked || ''}
+              onChange={(e) => setHoursWorked(Number(e.target.value) || 0)}
+              placeholder="0"
+              className="h-10 rounded-lg text-sm"
+            />
+          </div>
+          <Button
+            onClick={handleGenerateReceipt}
+            disabled={isGenerating || hoursWorked <= 0}
+            size="sm"
+            className="mt-5 rounded-lg"
+          >
+            {isGenerating ? <IconLoader2 className="h-4 w-4 animate-spin" /> : "Gerar Recibo"}
+          </Button>
+        </div>
+
+        {receipts.length > 0 ? (
+          <div className="space-y-2">
+            {receipts.map(receipt => (
+              <div key={receipt.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-sm font-medium">{receipt.receiptNumber}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(receipt.periodStart).toLocaleDateString("pt-PT")} -
+                    {" "}{new Date(receipt.periodEnd).toLocaleDateString("pt-PT")}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{Math.round(receipt.totalAmountCents / 100)}</p>
+                  <p className="text-xs text-muted-foreground">{receipt.hoursWorked}h</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-muted-foreground text-center py-3">
+            Nenhum recibo gerado ainda. Gere recibos mensalmente para fins fiscais.
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground mt-3">
+          Recibos gerados pela plataforma sao validos para declaracao de IRS/Seguranca Social.
+        </p>
+      </div>
+    </>
   );
 }

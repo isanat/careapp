@@ -899,6 +899,78 @@ model SupportTicketMessage {
   @@index([ticketId, createdAt])
 }
 
+// ==================== RECEIPTS ====================
+
+model Receipt {
+  id              String   @id @default(cuid())
+
+  // Contract and Users
+  contractId      String
+  familyUserId    String
+  caregiverUserId String
+
+  // Receipt Details
+  receiptNumber   String   @unique  // e.g., "RC-2026-000123"
+  periodStart     DateTime
+  periodEnd       DateTime
+  hoursWorked     Int
+  hourlyRateEurCents Int
+  totalAmountCents   Int
+  platformFeeCents   Int
+  caregiverAmountCents Int
+
+  // Tax info
+  familyNif       String?
+  caregiverNif    String?
+
+  // Status
+  status          String   @default("GENERATED") // GENERATED, SENT, DOWNLOADED
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+
+  @@index([contractId])
+  @@index([familyUserId, createdAt])
+  @@index([caregiverUserId, createdAt])
+}
+
+// ==================== RECURRING PAYMENTS ====================
+
+model RecurringPayment {
+  id              String   @id @default(cuid())
+
+  contractId      String
+  familyUserId    String
+  caregiverUserId String
+
+  // Payment details
+  amountCents     Int
+  platformFeeCents Int
+  caregiverAmountCents Int
+
+  // Billing period
+  billingDay      Int      @default(1) // Day of month
+  periodStart     DateTime
+  periodEnd       DateTime?
+
+  // Status
+  status          String   @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
+  lastPaymentAt   DateTime?
+  nextPaymentAt   DateTime?
+  failedAttempts  Int      @default(0)
+
+  // Stripe
+  stripeSubscriptionId   String?
+  stripeCustomerId       String?
+  stripePriceId          String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([contractId])
+  @@index([status, nextPaymentAt])
+}
+
 // ==================== FEATURE FLAGS ====================
 
 model FeatureFlag {

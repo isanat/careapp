@@ -11,6 +11,7 @@ const TERMS_TYPES: Record<string, { version: string; required: boolean }> = {
   contract_template: { version: '1.0', required: false },
   mediation_policy: { version: '1.0', required: true },
   cookie_policy: { version: '1.0', required: false },
+  non_circumvention: { version: '1.0', required: true },
 };
 
 // Get user's terms acceptance status
