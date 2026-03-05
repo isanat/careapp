@@ -44,7 +44,14 @@ interface Interview {
     proceedWithContract?: boolean;
     notes?: string;
   } | null;
+  caregiverQuestionnaire: {
+    familyRating?: number;
+    clarityRating?: number;
+    notes?: string;
+    platformLiabilityAck?: boolean;
+  } | null;
   familyCompletedAt?: string;
+  caregiverCompletedAt?: string;
 }
 
 export default function InterviewPage({ params }: { params: Promise<{ id: string }> }) {
@@ -69,6 +76,14 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   const [agreedExpectations, setAgreedExpectations] = useState(false);
   const [noMisrepresentation, setNoMisrepresentation] = useState(false);
   const [platformLiabilityAck, setPlatformLiabilityAck] = useState(false);
+
+  // Caregiver questionnaire state
+  const [cgFamilyRating, setCgFamilyRating] = useState(3);
+  const [cgClarityRating, setCgClarityRating] = useState(3);
+  const [cgNotes, setCgNotes] = useState("");
+  const [cgInterviewConducted, setCgInterviewConducted] = useState(false);
+  const [cgPlatformAck, setCgPlatformAck] = useState(false);
+  const [cgNoMisrepresentation, setCgNoMisrepresentation] = useState(false);
 
   const paramsRef = useRef(params);
 
@@ -162,6 +177,36 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
       }
     } catch {
       setError("Falha ao enviar questionario");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitCaregiverQuestionnaire = async () => {
+    if (!interview) return;
+    setIsSubmitting(true);
+    try {
+      const response = await apiFetch(`/api/interviews/${interview.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questionnaire: {
+            familyRating: cgFamilyRating,
+            clarityRating: cgClarityRating,
+            notes: cgNotes,
+            interviewConductedProperly: cgInterviewConducted,
+            noMisrepresentation: cgNoMisrepresentation,
+            platformLiabilityAck: cgPlatformAck,
+          }
+        })
+      });
+      if (response.ok) {
+        router.push("/app/dashboard?interview=completed");
+      } else {
+        setError("Falha ao enviar feedback");
+      }
+    } catch {
+      setError("Falha ao enviar feedback");
     } finally {
       setIsSubmitting(false);
     }
@@ -580,31 +625,119 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           </div>
         )}
 
-        {/* ====== Already Completed (non-family) ====== */}
-        {interview.familyCompletedAt && !isFamily && (
+        {/* ====== COMPLETED - Caregiver Questionnaire ====== */}
+        {interview.status === "COMPLETED" && !isFamily && !interview.caregiverCompletedAt && (
+          <div className="space-y-5 max-w-lg mx-auto">
+            <div>
+              <h2 className="text-lg font-bold">Feedback da Entrevista</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Avalie a entrevista com a familia {interview.familyName}. Este registo protege ambas as partes.
+              </p>
+            </div>
+
+            {/* Ratings */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-1">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                Avaliacao da Familia
+              </p>
+              <StarRating label="Respeito e cordialidade" value={cgFamilyRating} onChange={setCgFamilyRating} />
+              <StarRating label="Clareza nas expectativas" value={cgClarityRating} onChange={setCgClarityRating} />
+            </div>
+
+            {/* Legal confirmations */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3.5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Confirmacoes Importantes
+              </p>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={cgInterviewConducted}
+                  onCheckedChange={(c) => setCgInterviewConducted(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Confirmo que a entrevista em video foi realizada e que ambas as partes
+                  participaram de forma voluntaria.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={cgNoMisrepresentation}
+                  onCheckedChange={(c) => setCgNoMisrepresentation(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Declaro que as informacoes que forneci sobre minhas qualificacoes e
+                  experiencia sao verdadeiras.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 cursor-pointer">
+                <Checkbox
+                  checked={cgPlatformAck}
+                  onCheckedChange={(c) => setCgPlatformAck(c === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm leading-relaxed">
+                  Entendo que a plataforma atua apenas como intermediaria para conectar familias
+                  e cuidadores, nao sendo responsavel pela qualidade ou resultado dos servicos prestados.
+                </span>
+              </label>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Observacoes sobre a entrevista (opcional)</Label>
+              <Textarea
+                value={cgNotes}
+                onChange={(e) => setCgNotes(e.target.value)}
+                placeholder="Impressoes sobre a familia, o que foi discutido, acordos verbais..."
+                rows={3}
+                className="rounded-xl text-base resize-none"
+              />
+            </div>
+
+            {/* Submit */}
+            <Button
+              onClick={handleSubmitCaregiverQuestionnaire}
+              disabled={isSubmitting || !cgInterviewConducted || !cgNoMisrepresentation || !cgPlatformAck}
+              size="lg"
+              className="w-full h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/25"
+            >
+              {isSubmitting ? (
+                <>
+                  <IconLoader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <IconCheck className="h-5 w-5 mr-2" />
+                  Enviar Feedback
+                </>
+              )}
+            </Button>
+
+            {(!cgInterviewConducted || !cgNoMisrepresentation || !cgPlatformAck) && (
+              <p className="text-xs text-center text-muted-foreground">
+                Marque todas as confirmacoes para continuar.
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* ====== Caregiver - Already submitted questionnaire ====== */}
+        {interview.status === "COMPLETED" && !isFamily && interview.caregiverCompletedAt && (
           <div className="text-center py-12 px-6">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
               <IconCheck className="h-10 w-10 text-green-500" />
             </div>
-            <h2 className="text-xl font-bold text-green-600 mb-2">Entrevista Concluida</h2>
+            <h2 className="text-xl font-bold text-green-600 mb-2">Feedback Enviado</h2>
             <p className="text-muted-foreground text-sm">
-              A familia enviou o feedback. Voce sera notificado sobre os proximos passos.
-            </p>
-            <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
-              Voltar ao Dashboard
-            </Button>
-          </div>
-        )}
-
-        {/* ====== Caregiver - Completed but family hasn't submitted yet ====== */}
-        {interview.status === "COMPLETED" && !isFamily && !interview.familyCompletedAt && (
-          <div className="text-center py-12 px-6">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-500/10 flex items-center justify-center ring-4 ring-amber-500/20">
-              <IconClock className="h-10 w-10 text-amber-500" />
-            </div>
-            <h2 className="text-xl font-bold mb-2">Aguardando Feedback</h2>
-            <p className="text-muted-foreground text-sm">
-              A familia esta avaliando a entrevista. Voce sera notificado sobre o resultado.
+              {interview.familyCompletedAt
+                ? "Ambas as partes completaram o feedback. Voce sera notificado sobre proximos passos."
+                : "A familia ainda esta avaliando a entrevista. Voce sera notificado quando houver novidades."}
             </p>
             <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
               Voltar ao Dashboard
