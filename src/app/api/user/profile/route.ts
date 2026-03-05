@@ -15,25 +15,23 @@ export async function GET(request: NextRequest) {
     const isCaregiver = session.user.role === 'CAREGIVER';
     const isFamily = session.user.role === 'FAMILY';
 
-    // Get basic user info (with fallback for missing columns)
-    let userResult;
-    try {
-      userResult = await db.execute({
-        sql: `SELECT id, email, name, phone, role, status, profileImage,
-                     nif, documentType, documentNumber,
-                     backgroundCheckStatus, backgroundCheckUrl,
-                     createdAt
-              FROM User WHERE id = ?`,
-        args: [userId]
-      });
-    } catch {
-      // Fallback if newer columns don't exist yet
-      userResult = await db.execute({
-        sql: `SELECT id, email, name, phone, role, status, profileImage, createdAt
-              FROM User WHERE id = ?`,
-        args: [userId]
-      });
+    // Ensure optional columns exist (auto-migration)
+    const optionalUserCols = ['profileImage', 'nif', 'documentType', 'documentNumber', 'backgroundCheckStatus', 'backgroundCheckUrl'];
+    for (const col of optionalUserCols) {
+      try {
+        await db.execute({ sql: `ALTER TABLE User ADD COLUMN ${col} TEXT`, args: [] });
+      } catch { /* already exists */ }
     }
+
+    // Get basic user info
+    const userResult = await db.execute({
+      sql: `SELECT id, email, name, phone, role, status, profileImage,
+                   nif, documentType, documentNumber,
+                   backgroundCheckStatus, backgroundCheckUrl,
+                   createdAt
+            FROM User WHERE id = ?`,
+      args: [userId]
+    });
 
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -113,11 +111,25 @@ export async function GET(request: NextRequest) {
     }
 
     if (isFamily) {
-      const profileResult = await db.execute({
-        sql: `SELECT id, city, elderName, elderAge, elderNeeds, emergencyContactName, emergencyContactPhone
-              FROM ProfileFamily WHERE userId = ?`,
-        args: [userId]
-      });
+      // Ensure elderNeeds column exists
+      try {
+        await db.execute({ sql: `ALTER TABLE ProfileFamily ADD COLUMN elderNeeds TEXT`, args: [] });
+      } catch { /* already exists */ }
+
+      let profileResult;
+      try {
+        profileResult = await db.execute({
+          sql: `SELECT id, city, elderName, elderAge, elderNeeds, emergencyContactName, emergencyContactPhone
+                FROM ProfileFamily WHERE userId = ?`,
+          args: [userId]
+        });
+      } catch {
+        profileResult = await db.execute({
+          sql: `SELECT id, city, elderName, elderAge, emergencyContactName, emergencyContactPhone
+                FROM ProfileFamily WHERE userId = ?`,
+          args: [userId]
+        });
+      }
 
       if (profileResult.rows.length > 0) {
         const row = profileResult.rows[0];

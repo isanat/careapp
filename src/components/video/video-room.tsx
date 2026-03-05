@@ -2,12 +2,11 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { JitsiMeeting } from "@jitsi/react-sdk";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  IconVideo, 
-  IconLoader2, 
+import {
+  IconVideo,
+  IconLoader2,
   IconAlertCircle,
   IconExternalLink,
   IconPhoneOff
@@ -30,7 +29,7 @@ export interface VideoRoomProps {
   className?: string;
 }
 
-type MeetingState = 'loading' | 'prejoin' | 'in-meeting' | 'left' | 'error';
+type MeetingState = 'permission-check' | 'loading' | 'prejoin' | 'in-meeting' | 'left' | 'error';
 
 export function VideoRoom({
   roomName,
@@ -48,51 +47,76 @@ export function VideoRoom({
   onError,
   className = ""
 }: VideoRoomProps) {
-  const [meetingState, setMeetingState] = useState<MeetingState>('loading');
+  const [meetingState, setMeetingState] = useState<MeetingState>('permission-check');
   const [error, setError] = useState<string | null>(null);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Check media permissions before loading Jitsi
+  useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      setMeetingState('loading');
+    } catch (err: any) {
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setPermissionDenied(true);
+        setMeetingState('permission-check');
+      } else if (err.name === 'NotFoundError') {
+        // No devices found, proceed anyway (Jitsi handles this)
+        setMeetingState('loading');
+      } else {
+        setMeetingState('loading');
+      }
+    }
+  };
+
+  const handleRetryPermission = async () => {
+    setPermissionDenied(false);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      setMeetingState('loading');
+    } catch {
+      setPermissionDenied(true);
+    }
+  };
 
   // Handle Jitsi API events
   const handleApiReady = useCallback((api: any) => {
-    console.log('Jitsi API ready', api);
-    
-    // Register event listeners
     api.addListener('videoConferenceJoined', () => {
-      console.log('Joined video conference');
       setMeetingState('in-meeting');
     });
-    
+
     api.addListener('videoConferenceLeft', () => {
-      console.log('Left video conference');
       setMeetingState('left');
       onLeave?.();
     });
-    
-    api.addListener('participantLeft', (participant: any) => {
-      console.log('Participant left:', participant);
-    });
-    
+
     api.addListener('readyToClose', () => {
-      console.log('Meeting ready to close');
       setMeetingState('left');
       onLeave?.();
     });
-    
+
     api.addListener('errorOccurred', (errorData: any) => {
       console.error('Jitsi error:', errorData);
       setError(errorData?.message || 'Erro desconhecido');
       setMeetingState('error');
       onError?.(new Error(errorData?.message || 'Erro desconhecido'));
     });
-    
+
     setMeetingState(enablePrejoinPage ? 'prejoin' : 'in-meeting');
     onReady?.();
   }, [enablePrejoinPage, onReady, onLeave, onError]);
 
   // Handle loading error
-  const handleLoadError = useCallback((error: any) => {
-    console.error('Failed to load Jitsi:', error);
-    setError('Falha ao carregar vídeo. Verifique sua conexão.');
+  const handleLoadError = useCallback((loadErr: any) => {
+    console.error('Failed to load Jitsi:', loadErr);
+    setError('Falha ao carregar video. Verifique sua conexao.');
     setMeetingState('error');
     onError?.(new Error('Failed to load Jitsi'));
   }, [onError]);
@@ -103,79 +127,155 @@ export function VideoRoom({
     window.open(jitsiUrl, '_blank');
   }, [roomName]);
 
+  // Permission check screen
+  if (meetingState === 'permission-check' && permissionDenied) {
+    return (
+      <div className={`flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl ${className}`}>
+        <div className="max-w-sm mx-auto text-center px-6 py-12">
+          {/* Icon */}
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-500/10 flex items-center justify-center ring-4 ring-amber-500/20">
+            <IconVideo className="h-10 w-10 text-amber-400" />
+          </div>
+
+          <h3 className="text-xl font-bold text-white mb-3">
+            Permissao Necessaria
+          </h3>
+          <p className="text-slate-300 text-sm leading-relaxed mb-8">
+            Para participar da entrevista em video, precisamos de acesso a sua
+            <span className="text-white font-medium"> camera </span>
+            e ao seu
+            <span className="text-white font-medium"> microfone</span>.
+          </p>
+
+          {/* Step by step instructions */}
+          <div className="bg-slate-800/50 rounded-xl p-4 mb-8 text-left space-y-3">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Como permitir:</p>
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">1</span>
+              <p className="text-sm text-slate-300">Clique no icone de cadeado na barra do navegador</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">2</span>
+              <p className="text-sm text-slate-300">Ative a <span className="text-white font-medium">Camera</span> e o <span className="text-white font-medium">Microfone</span></p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">3</span>
+              <p className="text-sm text-slate-300">Clique em <span className="text-white font-medium">&quot;Tentar Novamente&quot;</span> abaixo</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Button
+              size="lg"
+              onClick={handleRetryPermission}
+              className="w-full h-14 text-base font-semibold rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25"
+            >
+              <IconVideo className="h-5 w-5 mr-2" />
+              Tentar Novamente
+            </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={openInNewTab}
+              className="w-full h-12 text-slate-400 hover:text-white hover:bg-slate-800"
+            >
+              <IconExternalLink className="h-4 w-4 mr-2" />
+              Abrir em nova aba
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Error state
   if (meetingState === 'error') {
     return (
-      <Card className={`border-destructive/20 ${className}`}>
-        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <IconAlertCircle className="h-12 w-12 text-destructive mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Erro no Vídeo</h3>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => {
-              setError(null);
-              setMeetingState('loading');
-            }}>
+      <div className={`flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl ${className}`}>
+        <div className="max-w-sm mx-auto text-center px-6 py-12">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center ring-4 ring-red-500/20">
+            <IconAlertCircle className="h-10 w-10 text-red-400" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-3">Erro no Video</h3>
+          <p className="text-slate-300 text-sm mb-8">{error}</p>
+          <div className="flex flex-col gap-3">
+            <Button
+              size="lg"
+              onClick={() => { setError(null); setMeetingState('loading'); }}
+              className="w-full h-14 text-base font-semibold rounded-xl"
+            >
               Tentar Novamente
             </Button>
-            <Button onClick={openInNewTab}>
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={openInNewTab}
+              className="w-full h-12 text-slate-400 hover:text-white hover:bg-slate-800"
+            >
               <IconExternalLink className="h-4 w-4 mr-2" />
               Abrir em Nova Aba
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   // Left meeting state
   if (meetingState === 'left') {
     return (
-      <Card className={className}>
-        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <IconPhoneOff className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Reunião Encerrada</h3>
-          <p className="text-muted-foreground mb-4">
-            A videoconferência foi finalizada.
-          </p>
-          <Button variant="outline" onClick={() => {
-            setMeetingState('loading');
-          }}>
-            Reentrar na Reunião
+      <div className={`flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl ${className}`}>
+        <div className="max-w-sm mx-auto text-center px-6 py-12">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-700/50 flex items-center justify-center ring-4 ring-slate-600/30">
+            <IconPhoneOff className="h-10 w-10 text-slate-400" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-3">Reuniao Encerrada</h3>
+          <p className="text-slate-300 text-sm mb-8">A videoconferencia foi finalizada.</p>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => setMeetingState('loading')}
+            className="w-full h-14 text-base rounded-xl border-slate-600 text-white hover:bg-slate-800"
+          >
+            Reentrar na Reuniao
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative rounded-2xl overflow-hidden bg-slate-950 ${className}`}>
       {/* Loading overlay */}
       {meetingState === 'loading' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-50 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-950 z-50">
           <div className="flex flex-col items-center gap-4">
-            <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Carregando sala de vídeo...</p>
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-primary/20">
+              <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+            <p className="text-slate-300 font-medium">Carregando sala de video...</p>
+            <p className="text-slate-500 text-sm">Isto pode levar alguns segundos</p>
           </div>
         </div>
       )}
 
-      {/* Header */}
+      {/* Compact Header */}
       {subject && (
-        <div className="flex items-center justify-between p-3 bg-muted/50 rounded-t-lg border-b">
-          <div className="flex items-center gap-2">
-            <IconVideo className="h-5 w-5 text-primary" />
-            <span className="font-medium">{subject}</span>
+        <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900/90 backdrop-blur border-b border-slate-800 z-10 relative">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
+            <span className="font-medium text-white text-sm truncate">{subject}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {isModerator && (
-              <Badge variant="secondary">Organizador</Badge>
+              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">Organizador</Badge>
             )}
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={openInNewTab}
               title="Abrir em nova aba"
+              className="text-slate-400 hover:text-white h-8 w-8 p-0"
             >
               <IconExternalLink className="h-4 w-4" />
             </Button>
@@ -184,10 +284,10 @@ export function VideoRoom({
       )}
 
       {/* Jitsi Meeting Container */}
-      <div 
+      <div
         ref={containerRef}
-        className="w-full h-full min-h-[500px] rounded-b-lg overflow-hidden"
-        style={{ height: subject ? 'calc(100% - 52px)' : '100%' }}
+        className="w-full"
+        style={{ height: subject ? 'calc(100% - 42px)' : '100%', minHeight: '500px' }}
       >
         <JitsiMeeting
           domain="meet.jit.si"
@@ -216,7 +316,7 @@ export function VideoRoom({
             SHOW_JITSI_WATERMARK: false,
             SHOW_WATERMARK_FOR_GUESTS: false,
             JITSI_WATERMARK_LINK: '',
-            
+
             TOOLBAR_BUTTONS: [
               'microphone',
               'camera',
@@ -235,22 +335,22 @@ export function VideoRoom({
               'mute-everyone',
               'mute-video-everyone'
             ],
-            
+
             FILM_STRIP_ONLY: false,
             VERTICAL_FILMSTRIP: true,
             HIDE_KICK_BUTTON_FOR_GUESTS: true,
-            
+
             DEFAULT_BACKGROUND: '#0a0a0a',
             DEFAULT_LOCAL_DISPLAY_NAME: 'eu',
             DEFAULT_REMOTE_DISPLAY_NAME: '',
-            
+
             ENABLE_RECORDING: enableRecording,
             ENABLE_SIMULCAST: true,
             ENABLE_WELCOME_PAGE: false,
             ENABLE_PREJOIN_PAGE: enablePrejoinPage,
             ENABLE_CLOSE_PAGE: true,
             SHOW_CHROME_EXTENSION_BANNER: false,
-            
+
             BRAND_WATERMARK_LINK: '',
             ENFORCE_NOTIFICATION_AUTO_SILENT: true,
           }}
@@ -262,7 +362,9 @@ export function VideoRoom({
           {...{ onError: handleLoadError } as any}
           getIFrameRef={(iframeRef) => {
             if (iframeRef) {
-              iframeRef.style.borderRadius = '0 0 0.5rem 0.5rem';
+              iframeRef.style.borderRadius = '0';
+              iframeRef.style.height = '100%';
+              iframeRef.style.width = '100%';
             }
           }}
         />
