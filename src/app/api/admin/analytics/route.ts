@@ -70,20 +70,28 @@ export async function GET(request: NextRequest) {
       args: []
     });
 
-    // Service distribution
-    const serviceResult = await db.execute({
-      sql: `SELECT 
-        service,
-        COUNT(*) as count
-      FROM (
-        SELECT json_each.value as service
-        FROM Contract, json_each(services)
-      )
-      GROUP BY service
-      ORDER BY count DESC
-      LIMIT 10`,
+    // Service distribution (from caregiver profiles)
+    const serviceRawResult = await db.execute({
+      sql: `SELECT services FROM ProfileCaregiver WHERE services IS NOT NULL AND services != ''`,
       args: []
     });
+    const serviceCounts: Record<string, number> = {};
+    for (const row of serviceRawResult.rows) {
+      try {
+        const services = JSON.parse(String(row.services));
+        if (Array.isArray(services)) {
+          for (const s of services) {
+            serviceCounts[s] = (serviceCounts[s] || 0) + 1;
+          }
+        }
+      } catch { /* skip malformed JSON */ }
+    }
+    const serviceResult = {
+      rows: Object.entries(serviceCounts)
+        .map(([service, count]) => ({ service, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10)
+    };
 
     // Summary stats
     const summaryResult = await db.execute({
