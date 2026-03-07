@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-  title: "Carreiras | IdosoLink",
-  description: "Junte-se à equipe do IdosoLink - vagas disponíveis",
+  title: "Carreiras | Senior Care",
+  description: "Junte-se à equipe do Senior Care - vagas disponíveis",
 };
 
 const jobs = [
@@ -47,7 +47,7 @@ export default function CarreirasPage() {
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Por que IdosoLink?</CardTitle>
+            <CardTitle>Por que Senior Care?</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
@@ -88,7 +88,7 @@ export default function CarreirasPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Envie seu currículo para talentos@idosolink.com e entraremos em contato 
+              Envie seu currículo para talentos@seniorcare.com e entraremos em contato 
               quando tivermos uma vaga adequada ao seu perfil.
             </p>
           </CardContent>

@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "GDPR - Proteção de Dados | IdosoLink",
-  description: "Como o IdosoLink cumpre o Regulamento Geral de Proteção de Dados da UE.",
+  title: "GDPR - Proteção de Dados | Senior Care",
+  description: "Como o Senior Care cumpre o Regulamento Geral de Proteção de Dados da UE.",
 };
 
 export default function GDPRPage() {
@@ -20,7 +20,7 @@ export default function GDPRPage() {
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
               O Regulamento Geral sobre a Proteção de Dados (GDPR) garante direitos fundamentais 
-              sobre seus dados pessoais. No IdosoLink, respeitamos todos esses direitos:
+              sobre seus dados pessoais. No Senior Care, respeitamos todos esses direitos:
             </p>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
               <li><strong>Direito de Acesso:</strong> Você pode solicitar uma cópia de todos os seus dados</li>
@@ -69,7 +69,7 @@ export default function GDPRPage() {
               Para exercer seus direitos ou esclarecer dúvidas sobre proteção de dados:
             </p>
             <p className="mt-2">
-              <strong>Email:</strong> dpo@idosolink.com
+              <strong>Email:</strong> dpo@seniorcare.com
             </p>
           </CardContent>
         </Card>

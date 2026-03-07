@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IconShield, IconLock, IconCheck, IconAlert } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "Segurança | IdosoLink",
-  description: "Saiba como o IdosoLink protege seus dados e garante transações seguras.",
+  title: "Segurança | Senior Care",
+  description: "Saiba como o Senior Care protege seus dados e garante transações seguras.",
 };
 
 export default function SegurancaPage() {
@@ -95,7 +95,7 @@ export default function SegurancaPage() {
         </Card>
 
         <p className="text-sm text-muted-foreground mt-8">
-          Para reportar vulnerabilidades de segurança: seguranca@idosolink.com
+          Para reportar vulnerabilidades de segurança: seguranca@seniorcare.com
         </p>
       </div>
     

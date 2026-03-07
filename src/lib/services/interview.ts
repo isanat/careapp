@@ -37,7 +37,7 @@ export function generateRoomName(familyId: string, caregiverId: string): string 
   const hash = Buffer.from(`${familyId}-${caregiverId}-${Date.now()}`).toString('base64')
     .replace(/[+/=]/g, '')
     .substring(0, 20);
-  return `idosolink-${hash}`;
+  return `seniorcare-${hash}`;
 }
 
 /**

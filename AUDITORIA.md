@@ -330,7 +330,7 @@ src/app/
 **Configuração recomendada:**
 ```javascript
 const options = {
-  roomName: "idosolink-unique-room-id",
+  roomName: "seniorcare-unique-room-id",
   width: "100%",
   height: 500,
   configOverwrite: {

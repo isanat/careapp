@@ -41,7 +41,7 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
-const LANGUAGE_KEY = "idosolink-language";
+const LANGUAGE_KEY = "seniorcare-language";
 
 const availableLanguages: { code: Language; name: string }[] = [
   { code: "pt", name: "Português" },

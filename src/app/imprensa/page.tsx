@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Imprensa | IdosoLink",
-  description: "Contato para imprensa e mídia - IdosoLink",
+  title: "Imprensa | Senior Care",
+  description: "Contato para imprensa e mídia - Senior Care",
 };
 
 export default function ImprensaPage() {
@@ -16,11 +16,11 @@ export default function ImprensaPage() {
         
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Sobre o IdosoLink</CardTitle>
+            <CardTitle>Sobre o Senior Care</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              O IdosoLink é uma plataforma de cuidado de idosos líder em Portugal. 
+              O Senior Care é uma plataforma de cuidado de idosos líder em Portugal. 
               Conectamos famílias a cuidadores verificados, com pagamentos transparentes 
               e contratos digitais seguros.
             </p>
@@ -34,7 +34,7 @@ export default function ImprensaPage() {
           <CardContent className="space-y-4">
             <div>
               <h3 className="font-semibold">Email</h3>
-              <p className="text-muted-foreground">imprensa@idosolink.com</p>
+              <p className="text-muted-foreground">imprensa@seniorcare.com</p>
             </div>
             <div>
               <h3 className="font-semibold">Telefone</h3>

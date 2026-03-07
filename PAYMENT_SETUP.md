@@ -1,4 +1,4 @@
-# Guia de Configuração de Pagamentos - IdosoLink
+# Guia de Configuração de Pagamentos - Senior Care
 
 ## 🇵🇹 Easypay (Principal - Portugal)
 

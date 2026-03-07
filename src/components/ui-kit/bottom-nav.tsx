@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Bottom Navigation
+ * Senior Care UI Kit - Bottom Navigation
  * App-style bottom nav for mobile
  * Large touch targets (44px+)
  */

@@ -28,10 +28,10 @@ const TERMS_CONTENT = {
 # Termos de Uso
 
 ## 1. Aceitação dos Termos
-Ao acessar e usar a plataforma IdosoLink, você concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não deve usar nossa plataforma.
+Ao acessar e usar a plataforma Senior Care, você concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não deve usar nossa plataforma.
 
 ## 2. Descrição do Serviço
-O IdosoLink é uma plataforma digital que conecta familiares que necessitam de cuidados para idosos com profissionais cuidadores verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão entre as partes.
+O Senior Care é uma plataforma digital que conecta familiares que necessitam de cuidados para idosos com profissionais cuidadores verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão entre as partes.
 
 ## 3. Cadastro e Conta
 - Você deve fornecer informações verdadeiras e precisas durante o cadastro
@@ -80,7 +80,7 @@ Cuidadores devem passar por verificação de identidade (Know Your Customer) atr
 - Tentar fraudar o sistema de pagamentos
 
 ## 10. Limitação de Responsabilidade
-O IdosoLink não se responsabiliza por:
+O Senior Care não se responsabiliza por:
 - Danos decorrentes de serviços prestados por cuidadores
 - Interrupções no serviço por força maior
 - Perda de dados por falhas técnicas
@@ -102,7 +102,7 @@ Versão: 1.0
 # Política de Privacidade
 
 ## 1. Introdução
-O IdosoLink está comprometido com a proteção de seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações.
+O Senior Care está comprometido com a proteção de seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações.
 
 ## 2. Dados Coletados
 Coletamos os seguintes dados:
@@ -167,7 +167,7 @@ Utilizamos cookies para:
 
 ## 11. Contato
 Para questões de privacidade, entre em contato:
-- Email: privacidade@idosolink.pt
+- Email: privacidade@seniorcare.pt
 - Endereço: Lisboa, Portugal
 
 ## 12. Alterações
@@ -184,7 +184,7 @@ Versão: 1.0
 # Política de Mediação
 
 ## 1. Introdução
-O IdosoLink oferece um serviço de mediação para resolver disputas entre familiares e cuidadores de forma justa e eficiente.
+O Senior Care oferece um serviço de mediação para resolver disputas entre familiares e cuidadores de forma justa e eficiente.
 
 ## 2. Escopo
 Esta política se aplica a:

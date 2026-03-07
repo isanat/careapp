@@ -75,7 +75,7 @@ export default function AjudaPage() {
                     <Link href="/contato">{t.ajudaPage.contactSupport}</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <a href="mailto:suporte@idosolink.com">suporte@idosolink.com</a>
+                    <a href="mailto:suporte@seniorcare.com">suporte@seniorcare.com</a>
                   </Button>
                 </div>
               </CardContent>

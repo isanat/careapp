@@ -4,7 +4,7 @@ import { db } from '@/lib/db-turso';
 // Complete migration for all admin tables
 export async function POST(request: NextRequest) {
   const adminSecret = request.headers.get('x-admin-secret');
-  if (adminSecret !== 'idosolink-migrate-2024') {
+  if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

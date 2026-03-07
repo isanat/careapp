@@ -1,5 +1,5 @@
 /**
- * Jitsi Meet Service for IdosoLink
+ * Jitsi Meet Service for Senior Care
  * 
  * Integration with Jitsi Meet (meet.jit.si) - Free and unlimited
  * 
@@ -27,10 +27,10 @@ export const JITSI_CONFIG = {
   appSecret: process.env.JITSI_APP_SECRET || '',
   
   // System account for host authentication (optional)
-  systemEmail: process.env.JITSI_SYSTEM_EMAIL || 'reunioes@idosolink.pt',
+  systemEmail: process.env.JITSI_SYSTEM_EMAIL || 'reunioes@seniorcare.pt',
   
   // Room settings
-  roomPrefix: 'idosolink',
+  roomPrefix: 'seniorcare',
   roomExpirationHours: 2,
 };
 
@@ -81,14 +81,14 @@ export interface JitsiMeetingOptions {
 
 /**
  * Generate a unique, secure room name
- * Format: idosolink-{hash}-{timestamp}
+ * Format: seniorcare-{hash}-{timestamp}
  * 
  * The hash is derived from the interview ID to make it:
  * - Hard to guess (security through obscurity)
  * - Deterministic (can regenerate if needed)
  */
 export function generateRoomName(interviewId: string, familyId: string, caregiverId: string): string {
-  const secret = process.env.NEXTAUTH_SECRET || 'idosolink-secret';
+  const secret = process.env.NEXTAUTH_SECRET || 'seniorcare-secret';
   const data = `${interviewId}-${familyId}-${caregiverId}-${Date.now()}`;
   const hash = crypto
     .createHmac('sha256', secret)
@@ -308,8 +308,8 @@ export function createInterviewRoom(
   
   // Generate JWT for the "system" (host)
   const jwtToken = generateJitsiJwt(roomName, {
-    id: 'idosolink-system',
-    name: 'IdosoLink',
+    id: 'seniorcare-system',
+    name: 'Senior Care',
     email: JITSI_CONFIG.systemEmail,
     role: 'host'
   });
@@ -319,7 +319,7 @@ export function createInterviewRoom(
     roomUrl,
     jwtToken: jwtToken || undefined,
     expiresAt,
-    hostName: 'IdosoLink',
+    hostName: 'Senior Care',
     subject: `Entrevista: ${familyName} ↔ ${caregiverName}`
   };
 }

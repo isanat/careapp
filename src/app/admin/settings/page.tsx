@@ -294,7 +294,7 @@ export default function AdminSettingsPage() {
                   onChange={(e) =>
                     setSettings({ ...settings, supportEmail: e.target.value })
                   }
-                  placeholder="suporte@idosolink.pt"
+                  placeholder="suporte@seniorcare.pt"
                 />
               </div>
               <div className="space-y-2">

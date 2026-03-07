@@ -1,5 +1,5 @@
 /**
- * IdosoLink Design Tokens
+ * Senior Care Design Tokens
  * Health & Care focused design system
  * NOT fintech/crypto aesthetic
  */

@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Alert Component
+ * Senior Care UI Kit - Alert Component
  * Soft, non-aggressive alerts
  * Health & Care focused
  */

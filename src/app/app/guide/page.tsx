@@ -249,7 +249,7 @@ export default function GuidePage() {
 
             <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
               <IconAlertCircle className="h-4 w-4 inline mr-2" />
-              Este guia é fornecido como referência. A plataforma IdosoLink atua 
+              Este guia é fornecido como referência. A plataforma Senior Care atua 
               como intermediário tecnológico e não se responsabiliza pela execução 
               dos serviços contratados.
             </div>

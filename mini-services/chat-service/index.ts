@@ -44,7 +44,7 @@ const io = new Server(httpServer, {
   cors: {
     origin: [
       "http://localhost:3000",
-      "https://idosolink.com",
+      "https://seniorcare.com",
       /\.space\.z\.ai$/,
     ],
     methods: ["GET", "POST"],
