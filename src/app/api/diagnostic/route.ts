@@ -7,7 +7,7 @@ import { db } from '@/lib/db-turso';
 export async function POST(request: NextRequest) {
   try {
     const adminSecret = request.headers.get('x-admin-secret');
-    if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'idosolink-migrate-2024') {
+    if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'seniorcare-migrate-2024') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

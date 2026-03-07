@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Card Component
+ * Senior Care UI Kit - Card Component
  * Health & Care focused design
  * Soft shadows, rounded corners
  */

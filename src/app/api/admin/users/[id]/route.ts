@@ -456,7 +456,7 @@ export async function DELETE(
     await db.execute({
       sql: `UPDATE User SET
         status = 'INACTIVE',
-        email = 'deleted_' || id || '@deleted.idosolink.pt',
+        email = 'deleted_' || id || '@deleted.seniorcare.pt',
         phone = NULL,
         passwordHash = NULL,
         updatedAt = CURRENT_TIMESTAMP
@@ -487,7 +487,7 @@ export async function DELETE(
           }),
           JSON.stringify({
             status: "INACTIVE",
-            email: `deleted_${id}@deleted.idosolink.pt`,
+            email: `deleted_${id}@deleted.seniorcare.pt`,
           }),
           ipAddress,
           userAgent,

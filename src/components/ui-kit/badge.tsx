@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Badge Component
+ * Senior Care UI Kit - Badge Component
  * Status badges with soft colors
  */
 

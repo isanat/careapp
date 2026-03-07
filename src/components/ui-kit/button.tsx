@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Button Component
+ * Senior Care UI Kit - Button Component
  * Health & Care focused design
  * Accessibility: 44px minimum touch target
  */

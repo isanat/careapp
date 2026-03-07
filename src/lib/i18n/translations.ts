@@ -261,7 +261,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introdução",
-          content: "Bem-vindo ao IdosoLink. Ao usar a nossa plataforma, concorda com estes Termos de Uso. A nossa plataforma conecta famílias a cuidadores de idosos qualificados, facilitando contratos e pagamentos de forma segura e transparente.",
+          content: "Bem-vindo ao Senior Care. Ao usar a nossa plataforma, concorda com estes Termos de Uso. A nossa plataforma conecta famílias a cuidadores de idosos qualificados, facilitando contratos e pagamentos de forma segura e transparente.",
         },
         eligibility: {
           title: "2. Elegibilidade",
@@ -279,7 +279,7 @@ export const translations = {
         },
         services: {
           title: "4. Serviços da Plataforma",
-          content: "O IdosoLink oferece:",
+          content: "O Senior Care oferece:",
           item1: "Marketplace para conexão entre famílias e cuidadores",
           item2: "Sistema de contratos digitais",
           item3: "Pagamentos seguros e protegidos",
@@ -301,7 +301,7 @@ export const translations = {
         },
         liability: {
           title: "7. Responsabilidade",
-          content: "O IdosoLink actua como intermediário, não sendo responsável pela qualidade dos serviços prestados pelos cuidadores. Recomendamos verificação de referências e documentos.",
+          content: "O Senior Care actua como intermediário, não sendo responsável pela qualidade dos serviços prestados pelos cuidadores. Recomendamos verificação de referências e documentos.",
         },
         termination: {
           title: "8. Rescisão",
@@ -314,7 +314,7 @@ export const translations = {
         contact: {
           title: "10. Contacto",
           content: "Para dúvidas sobre estes termos:",
-          email: "Email: termos@idosolink.pt",
+          email: "Email: termos@seniorcare.pt",
           address: "Morada: Lisboa, Portugal",
         },
       },
@@ -454,7 +454,7 @@ export const translations = {
         },
       },
       features: {
-        title: "Porquê escolher o IdosoLink?",
+        title: "Porquê escolher o Senior Care?",
         verified: {
           title: "Cuidadores Verificados",
           description: "Todos os cuidadores passam por verificação de identidade, antecedentes e qualificações.",
@@ -477,7 +477,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto para começar?",
-        subtitle: "Junte-se a milhares de famílias e cuidadores que confiam no IdosoLink",
+        subtitle: "Junte-se a milhares de famílias e cuidadores que confiam no Senior Care",
         button: "Criar Conta Gratuita",
       },
     },
@@ -532,7 +532,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto para começar?",
-        description: "Junte-se a milhares de famílias e cuidadores que já confiam no IdosoLink.",
+        description: "Junte-se a milhares de famílias e cuidadores que já confiam no Senior Care.",
       },
     },
     
@@ -547,7 +547,7 @@ export const translations = {
         support: "Suporte",
       },
       whyChoose: {
-        title: "Porquê escolher o IdosoLink?",
+        title: "Porquê escolher o Senior Care?",
         description: "Segurança, transparência e qualidade em cada etapa do cuidado.",
         verified: {
           title: "Cuidadores Verificados",
@@ -610,7 +610,7 @@ export const translations = {
       heroTitle: "Construa a sua carreira com segurança",
       heroDescription: "Mais do que apenas trabalhar, construa a sua reputação profissional e tenha uma carreira estável e reconhecida.",
       benefits: {
-        title: "Porquê ser cuidador no IdosoLink?",
+        title: "Porquê ser cuidador no Senior Care?",
         description: "Valorizamos o seu trabalho e construímos ferramentas para a sua carreira crescer.",
         profile: {
           title: "Perfil Profissional",
@@ -627,7 +627,7 @@ export const translations = {
       },
       earnings: {
         title: "Quanto pode ganhar?",
-        description: "Com o IdosoLink, recebe 90% de cada serviço prestado.",
+        description: "Com o Senior Care, recebe 90% de cada serviço prestado.",
         feesTitle: "Informações para Cuidadores",
         profile: "Perfil profissional",
         activation: "Grátis",
@@ -663,7 +663,7 @@ export const translations = {
       },
       cta: {
         title: "Comece a sua jornada hoje",
-        description: "Junte-se a milhares de cuidadores que já estão a construir as suas carreiras no IdosoLink.",
+        description: "Junte-se a milhares de cuidadores que já estão a construir as suas carreiras no Senior Care.",
         button: "Criar Perfil de Cuidador",
       },
     },
@@ -793,8 +793,8 @@ export const translations = {
       },
       info: {
         email: "Email",
-        emailValue: "contacto@idosolink.com",
-        emailSupport: "suporte@idosolink.com",
+        emailValue: "contacto@seniorcare.com",
+        emailSupport: "suporte@seniorcare.com",
         phone: "Telefone",
         phoneValue: "+351 912 345 678",
         phoneHours: "Segunda a Sexta, 9h às 18h",
@@ -811,7 +811,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Blog IdosoLink",
+      title: "Blog Senior Care",
       subtitle: "Dicas, artigos e novidades sobre cuidados com idosos e a nossa plataforma.",
       categories: {
         all: "Todos",
@@ -833,7 +833,7 @@ export const translations = {
           title: "Como Escolher o Cuidador Ideal para o seu Idoso",
           excerpt: "A escolha de um cuidador é uma decisão importante. Confira os principais factores a considerar.",
           category: "Dicas",
-          author: "Equipa IdosoLink",
+          author: "Equipa Senior Care",
           readTime: "5 min",
         },
         {
@@ -847,7 +847,7 @@ export const translations = {
           title: "Benefícios da Tecnologia para Idosos",
           excerpt: "Como dispositivos e aplicações podem melhorar a qualidade de vida dos mais velhos.",
           category: "Tecnologia",
-          author: "Equipa IdosoLink",
+          author: "Equipa Senior Care",
           readTime: "4 min",
         }
       ]
@@ -862,7 +862,7 @@ export const translations = {
       subtitle: "Somos uma empresa de tecnologia com propósito: transformar o cuidado de idosos através de confiança, transparência e valorização profissional.",
       mission: {
         title: "Nossa Missão",
-        paragraph1: "O IdosoLink nasceu da observação de um problema real: famílias lutando para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
+        paragraph1: "O Senior Care nasceu da observação de um problema real: famílias lutando para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
         paragraph2: "Usamos tecnologia de ponta para resolver problemas humanos: garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores sejam valorizados a longo prazo.",
         values: {
           care: "Cuidado",
@@ -906,7 +906,7 @@ export const translations = {
         title: "Entre em Contacto",
         subtitle: "Estamos aqui para ajudar. Entre em contacto connosco.",
         email: "Email",
-        emailValue: "contacto@idosolink.com",
+        emailValue: "contacto@seniorcare.com",
         phone: "Telefone",
         phoneValue: "+351 210 000 000",
         location: "Localização",
@@ -929,7 +929,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introdução",
-          content: "O IdosoLink está comprometido em proteger a privacidade dos seus utilizadores. Esta Política de Privacidade explica como recolhemos, usamos, armazenamos e protegemos as suas informações pessoais.",
+          content: "O Senior Care está comprometido em proteger a privacidade dos seus utilizadores. Esta Política de Privacidade explica como recolhemos, usamos, armazenamos e protegemos as suas informações pessoais.",
         },
         dataCollected: {
           title: "2. Informações que Recolhemos",
@@ -994,7 +994,7 @@ export const translations = {
           title: "8. Contacto",
           content: "Para exercer os seus direitos ou esclarecer dúvidas sobre privacidade, entre em contacto:",
           items: [
-            "Email: privacidade@idosolink.com",
+            "Email: privacidade@seniorcare.com",
             "Endereço: Av. da Liberdade, 123, 1250-096 Lisboa, Portugal"
           ],
         },
@@ -1265,7 +1265,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduction",
-          content: "Welcome to IdosoLink. By using our platform, you agree to these Terms of Use. Our platform connects families with qualified senior caregivers, facilitating contracts and payments securely and transparently.",
+          content: "Welcome to Senior Care. By using our platform, you agree to these Terms of Use. Our platform connects families with qualified senior caregivers, facilitating contracts and payments securely and transparently.",
         },
         eligibility: {
           title: "2. Eligibility",
@@ -1283,7 +1283,7 @@ export const translations = {
         },
         services: {
           title: "4. Platform Services",
-          content: "IdosoLink offers:",
+          content: "Senior Care offers:",
           item1: "Marketplace for connecting families and caregivers",
           item2: "Digital contract system",
           item3: "Secure and protected payments",
@@ -1305,7 +1305,7 @@ export const translations = {
         },
         liability: {
           title: "7. Liability",
-          content: "IdosoLink acts as an intermediary and is not responsible for the quality of services provided by caregivers. We recommend verifying references and documents.",
+          content: "Senior Care acts as an intermediary and is not responsible for the quality of services provided by caregivers. We recommend verifying references and documents.",
         },
         termination: {
           title: "8. Termination",
@@ -1318,7 +1318,7 @@ export const translations = {
         contact: {
           title: "10. Contact",
           content: "For questions about these terms:",
-          email: "Email: terms@idosolink.pt",
+          email: "Email: terms@seniorcare.pt",
           address: "Address: Lisbon, Portugal",
         },
       },
@@ -1458,7 +1458,7 @@ export const translations = {
         },
       },
       features: {
-        title: "Why choose IdosoLink?",
+        title: "Why choose Senior Care?",
         verified: {
           title: "Verified Caregivers",
           description: "All caregivers go through identity, background and qualification verification.",
@@ -1481,7 +1481,7 @@ export const translations = {
       },
       cta: {
         title: "Ready to get started?",
-        subtitle: "Join thousands of families and caregivers who trust IdosoLink",
+        subtitle: "Join thousands of families and caregivers who trust Senior Care",
         button: "Create Free Account",
       },
     },
@@ -1536,7 +1536,7 @@ export const translations = {
       },
       cta: {
         title: "Ready to get started?",
-        description: "Join thousands of families and caregivers who already trust IdosoLink.",
+        description: "Join thousands of families and caregivers who already trust Senior Care.",
       },
     },
     
@@ -1551,7 +1551,7 @@ export const translations = {
         support: "Support",
       },
       whyChoose: {
-        title: "Why choose IdosoLink?",
+        title: "Why choose Senior Care?",
         description: "Security, transparency and quality at every step of care.",
         verified: {
           title: "Verified Caregivers",
@@ -1614,7 +1614,7 @@ export const translations = {
       heroTitle: "Build your career with security",
       heroDescription: "More than just working, build your professional reputation and have a stable and recognized career.",
       benefits: {
-        title: "Why be a caregiver on IdosoLink?",
+        title: "Why be a caregiver on Senior Care?",
         description: "We value your work and build tools for your career to grow.",
         profile: {
           title: "Professional Profile",
@@ -1631,7 +1631,7 @@ export const translations = {
       },
       earnings: {
         title: "How much can you earn?",
-        description: "With IdosoLink, you receive 90% of each service provided.",
+        description: "With Senior Care, you receive 90% of each service provided.",
         feesTitle: "Information for Caregivers",
         profile: "Professional profile",
         activation: "Free",
@@ -1667,7 +1667,7 @@ export const translations = {
       },
       cta: {
         title: "Start your journey today",
-        description: "Join thousands of caregivers who are already building their careers at IdosoLink.",
+        description: "Join thousands of caregivers who are already building their careers at Senior Care.",
         button: "Create Caregiver Profile",
       },
     },
@@ -1797,8 +1797,8 @@ export const translations = {
       },
       info: {
         email: "Email",
-        emailValue: "contact@idosolink.com",
-        emailSupport: "support@idosolink.com",
+        emailValue: "contact@seniorcare.com",
+        emailSupport: "support@seniorcare.com",
         phone: "Phone",
         phoneValue: "+351 912 345 678",
         phoneHours: "Monday to Friday, 9am to 6pm",
@@ -1815,7 +1815,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "IdosoLink Blog",
+      title: "Senior Care Blog",
       subtitle: "Tips, articles and news about senior care and our platform.",
       categories: {
         all: "All",
@@ -1837,7 +1837,7 @@ export const translations = {
           title: "How to Choose the Ideal Caregiver for Your Senior",
           excerpt: "Choosing a caregiver is an important decision. Check out the main factors to consider.",
           category: "Tips",
-          author: "IdosoLink Team",
+          author: "Senior Care Team",
           readTime: "5 min",
         },
         {
@@ -1851,7 +1851,7 @@ export const translations = {
           title: "Technology Benefits for Seniors",
           excerpt: "How devices and apps can improve the quality of life for older adults.",
           category: "Technology",
-          author: "IdosoLink Team",
+          author: "Senior Care Team",
           readTime: "4 min",
         }
       ]
@@ -1866,7 +1866,7 @@ export const translations = {
       subtitle: "We are a technology company with a purpose: transforming senior care through trust, transparency and professional appreciation.",
       mission: {
         title: "Our Mission",
-        paragraph1: "IdosoLink was born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
+        paragraph1: "Senior Care was born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
         paragraph2: "We use cutting-edge technology to solve human problems: ensuring contracts are secure, payments are protected, and caregivers are valued long-term.",
         values: {
           care: "Care",
@@ -1910,7 +1910,7 @@ export const translations = {
         title: "Contact Us",
         subtitle: "We're here to help. Get in touch with us.",
         email: "Email",
-        emailValue: "contact@idosolink.com",
+        emailValue: "contact@seniorcare.com",
         phone: "Phone",
         phoneValue: "+351 210 000 000",
         location: "Location",
@@ -1933,7 +1933,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduction",
-          content: "IdosoLink is committed to protecting the privacy of its users. This Privacy Policy explains how we collect, use, store and protect your personal information.",
+          content: "Senior Care is committed to protecting the privacy of its users. This Privacy Policy explains how we collect, use, store and protect your personal information.",
         },
         dataCollected: {
           title: "2. Information We Collect",
@@ -1998,7 +1998,7 @@ export const translations = {
           title: "8. Contact",
           content: "To exercise your rights or clarify questions about privacy, contact us:",
           items: [
-            "Email: privacy@idosolink.com",
+            "Email: privacy@seniorcare.com",
             "Address: Av. da Liberdade, 123, 1250-096 Lisbon, Portugal"
           ],
         },
@@ -2011,7 +2011,7 @@ export const translations = {
   // ITALIANO
   // ============================================
   it: {
-    appName: "IdosoLink",
+    appName: "Senior Care",
     tagline: "Cura di Qualità per chi ami",
     loading: "Caricamento...",
     error: "Si è verificato un errore",
@@ -2269,7 +2269,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduzione",
-          content: "Benvenuto in IdosoLink. Utilizzando la nostra piattaforma, accetti questi Termini di Utilizzo. La nostra piattaforma connette famiglie a caregiver qualificati per anziani, facilitando contratti e pagamenti in modo sicuro e trasparente.",
+          content: "Benvenuto in Senior Care. Utilizzando la nostra piattaforma, accetti questi Termini di Utilizzo. La nostra piattaforma connette famiglie a caregiver qualificati per anziani, facilitando contratti e pagamenti in modo sicuro e trasparente.",
         },
         eligibility: {
           title: "2. Idoneità",
@@ -2287,7 +2287,7 @@ export const translations = {
         },
         services: {
           title: "4. Servizi della Piattaforma",
-          content: "IdosoLink offre:",
+          content: "Senior Care offre:",
           item1: "Marketplace per connettere famiglie e caregiver",
           item2: "Sistema di contratti digitali",
           item3: "Pagamenti sicuri e protetti",
@@ -2309,7 +2309,7 @@ export const translations = {
         },
         liability: {
           title: "7. Responsabilità",
-          content: "IdosoLink agisce come intermediario e non è responsabile della qualità dei servizi forniti dai caregiver. Raccomandiamo la verifica di referenze e documenti.",
+          content: "Senior Care agisce come intermediario e non è responsabile della qualità dei servizi forniti dai caregiver. Raccomandiamo la verifica di referenze e documenti.",
         },
         termination: {
           title: "8. Risoluzione",
@@ -2322,7 +2322,7 @@ export const translations = {
         contact: {
           title: "10. Contatti",
           content: "Per domande su questi termini:",
-          email: "Email: terms@idosolink.pt",
+          email: "Email: terms@seniorcare.pt",
           address: "Indirizzo: Lisbona, Portogallo",
         },
       },
@@ -2462,7 +2462,7 @@ export const translations = {
         },
       },
       features: {
-        title: "Perché scegliere IdosoLink?",
+        title: "Perché scegliere Senior Care?",
         verified: {
           title: "Caregiver Verificati",
           description: "Tutti i caregiver passano attraverso la verifica di identità, precedenti e qualifiche.",
@@ -2485,7 +2485,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto per iniziare?",
-        subtitle: "Unisciti a migliaia di famiglie e caregiver che si fidano di IdosoLink",
+        subtitle: "Unisciti a migliaia di famiglie e caregiver che si fidano di Senior Care",
         button: "Crea Account Gratuito",
       },
     },
@@ -2540,7 +2540,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto per iniziare?",
-        description: "Unisciti a migliaia di famiglie e caregiver che già si fidano di IdosoLink.",
+        description: "Unisciti a migliaia di famiglie e caregiver che già si fidano di Senior Care.",
       },
     },
     
@@ -2555,7 +2555,7 @@ export const translations = {
         support: "Supporto",
       },
       whyChoose: {
-        title: "Perché scegliere IdosoLink?",
+        title: "Perché scegliere Senior Care?",
         description: "Sicurezza, trasparenza e qualità in ogni fase dell'assistenza.",
         verified: {
           title: "Caregiver Verificati",
@@ -2618,7 +2618,7 @@ export const translations = {
       heroTitle: "Costruisci la tua carriera con sicurezza",
       heroDescription: "Più che solo lavorare, costruisci la tua reputazione professionale e hai una carriera stabile e riconosciuta.",
       benefits: {
-        title: "Perché essere caregiver su IdosoLink?",
+        title: "Perché essere caregiver su Senior Care?",
         description: "Valorizziamo il tuo lavoro e costruiamo strumenti per far crescere la tua carriera.",
         profile: {
           title: "Profilo Professionale",
@@ -2635,7 +2635,7 @@ export const translations = {
       },
       earnings: {
         title: "Quanto puoi guadagnare?",
-        description: "Con IdosoLink, ricevi il 90% di ogni servizio prestato.",
+        description: "Con Senior Care, ricevi il 90% di ogni servizio prestato.",
         feesTitle: "Informazioni per Caregiver",
         profile: "Profilo professionale",
         activation: "Gratuito",
@@ -2671,7 +2671,7 @@ export const translations = {
       },
       cta: {
         title: "Inizia il tuo viaggio oggi",
-        description: "Unisciti a migliaia di caregiver che stanno già costruendo le loro carriere su IdosoLink.",
+        description: "Unisciti a migliaia di caregiver che stanno già costruendo le loro carriere su Senior Care.",
         button: "Crea Profilo Caregiver",
       },
     },
@@ -2801,8 +2801,8 @@ export const translations = {
       },
       info: {
         email: "Email",
-        emailValue: "contatto@idosolink.com",
-        emailSupport: "supporto@idosolink.com",
+        emailValue: "contatto@seniorcare.com",
+        emailSupport: "supporto@seniorcare.com",
         phone: "Telefono",
         phoneValue: "+351 912 345 678",
         phoneHours: "Lunedi a Venerdì, 9:00 - 18:00",
@@ -2819,7 +2819,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Blog IdosoLink",
+      title: "Blog Senior Care",
       subtitle: "Consigli, articoli e novità sobre el cuidado de ancianos y nuestra plataforma.",
       categories: {
         all: "Tutti",
@@ -2841,7 +2841,7 @@ export const translations = {
           title: "Come Scegliere il Caregiver Ideale per il Tuo Anziano",
           excerpt: "La scelta del caregiver è una decision importante. Scopri i principali fattori da consider.",
           category: "Consigli",
-          author: "Team IdosoLink",
+          author: "Team Senior Care",
           readTime: "5 min",
         },
         {
@@ -2855,7 +2855,7 @@ export const translations = {
           title: "Benefici della Tecnologia for Seniors",
           excerpt: "How devices and apps can improve the quality of life for older adults.",
           category: "Tecnology",
-          author: "Team IdosoLink",
+          author: "Team Senior Care",
           readTime: "4 min",
         }
       ]
@@ -2870,7 +2870,7 @@ export const translations = {
       subtitle: "Siamo un'azienda tecnologica con purpose: transforming senior care through trust, transparency and and professional appreciation.",
       mission: {
         title: "La Nostra Missione",
-        paragraph1: "IdosoLink è born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
+        paragraph1: "Senior Care è born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
         paragraph2: "Weiamo cutting-edge technology to solve human problems: ensuring contracts are secure, payments are protected, and caregivers are valued long-term.",
         values: {
           care: "Cura",
@@ -2914,7 +2914,7 @@ export const translations = {
         title: "Contattaci",
         subtitle: "Siamo qui per aiutare. Contattaci.",
         email: "Email",
-        emailValue: "contatto@idosolink.com",
+        emailValue: "contatto@seniorcare.com",
         phone: "Telefono",
         phoneValue: "+351 210 000 000",
         location: "Localizzazione",
@@ -2937,7 +2937,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduzione",
-          content: "IdosoLink è impegnato a protezione della privacy dei suoi utenti. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, archiviamo e proteggiamo le sue informazioni personali.",
+          content: "Senior Care è impegnato a protezione della privacy dei suoi utenti. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, archiviamo e proteggiamo le sue informazioni personali.",
         },
         dataCollected: {
           title: "2. Informazioni che raccogliamo",
@@ -3002,7 +3002,7 @@ export const translations = {
           title: "8. Contacto",
           content: "Para ejercer sus derechos o aclarar dudas sobre privacidad, contacte:",
           items: [
-            "Email: privacidad@idosolink.com",
+            "Email: privacidad@seniorcare.com",
             "Dirección: Av. da Liberdade, 123, 1250-096 Lisbon, Portugal"
           ],
         },
@@ -3015,7 +3015,7 @@ export const translations = {
   // ESPAÑOL
   // ============================================
   es: {
-    appName: "IdosoLink",
+    appName: "Senior Care",
     tagline: "Cuidado de Calidad para quienes amas",
     loading: "Cargando...",
     error: "Se produjo un error",
@@ -3273,7 +3273,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introducción",
-          content: "Bienvenido a IdosoLink. Al usar nuestra plataforma, aceptas estos Términos de Uso. Nuestra plataforma conecta familias con cuidadores de ancianos calificados, facilitando contratos y pagos de manera segura y transparente.",
+          content: "Bienvenido a Senior Care. Al usar nuestra plataforma, aceptas estos Términos de Uso. Nuestra plataforma conecta familias con cuidadores de ancianos calificados, facilitando contratos y pagos de manera segura y transparente.",
         },
         eligibility: {
           title: "2. Elegibilidad",
@@ -3291,7 +3291,7 @@ export const translations = {
         },
         services: {
           title: "4. Servicios de la Plataforma",
-          content: "IdosoLink ofrece:",
+          content: "Senior Care ofrece:",
           item1: "Marketplace para conectar familias y cuidadores",
           item2: "Sistema de contratos digitales",
           item3: "Pagos seguros y protegidos",
@@ -3313,7 +3313,7 @@ export const translations = {
         },
         liability: {
           title: "7. Responsabilidad",
-          content: "IdosoLink actúa como intermediario y no es responsable de la calidad de los servicios prestados por los cuidadores. Recomendamos verificar referencias y documentos.",
+          content: "Senior Care actúa como intermediario y no es responsable de la calidad de los servicios prestados por los cuidadores. Recomendamos verificar referencias y documentos.",
         },
         termination: {
           title: "8. Resolución",
@@ -3326,7 +3326,7 @@ export const translations = {
         contact: {
           title: "10. Contacto",
           content: "Para preguntas sobre estos términos:",
-          email: "Email: terminos@idosolink.pt",
+          email: "Email: terminos@seniorcare.pt",
           address: "Dirección: Lisboa, Portugal",
         },
       },
@@ -3466,7 +3466,7 @@ export const translations = {
         },
       },
       features: {
-        title: "¿Por qué elegir IdosoLink?",
+        title: "¿Por qué elegir Senior Care?",
         verified: {
           title: "Cuidadores Verificados",
           description: "Todos los cuidadores pasan por verificación de identidad, antecedentes y calificaciones.",
@@ -3489,7 +3489,7 @@ export const translations = {
       },
       cta: {
         title: "¿Listo para comenzar?",
-        subtitle: "Únete a miles de familias y cuidadores que confían en IdosoLink",
+        subtitle: "Únete a miles de familias y cuidadores que confían en Senior Care",
         button: "Crear Cuenta Gratis",
       },
     },
@@ -3544,7 +3544,7 @@ export const translations = {
       },
       cta: {
         title: "¿Listo para comenzar?",
-        description: "Únete a miles de familias y cuidadores que ya confían en IdosoLink.",
+        description: "Únete a miles de familias y cuidadores que ya confían en Senior Care.",
       },
     },
     
@@ -3559,7 +3559,7 @@ export const translations = {
         support: "Soporte",
       },
       whyChoose: {
-        title: "¿Por qué elegir IdosoLink?",
+        title: "¿Por qué elegir Senior Care?",
         description: "Seguridad, transparencia y calidad en cada etapa del cuidado.",
         verified: {
           title: "Cuidadores Verificados",
@@ -3622,7 +3622,7 @@ export const translations = {
       heroTitle: "Construye tu carrera con seguridad",
       heroDescription: "Más que solo trabajar, construye tu reputación profesional y ten una carrera estable y reconocida.",
       benefits: {
-        title: "¿Por qué ser cuidador en IdosoLink?",
+        title: "¿Por qué ser cuidador en Senior Care?",
         description: "Valoramos tu trabajo y construimos herramientas para que tu carrera crezca.",
         profile: {
           title: "Perfil Profesional",
@@ -3639,7 +3639,7 @@ export const translations = {
       },
       earnings: {
         title: "¿Cuánto puedes ganar?",
-        description: "Con IdosoLink, recibes el 90% de cada servicio prestado.",
+        description: "Con Senior Care, recibes el 90% de cada servicio prestado.",
         feesTitle: "Información para Cuidadores",
         profile: "Perfil profesional",
         activation: "Gratis",
@@ -3675,7 +3675,7 @@ export const translations = {
       },
       cta: {
         title: "Comienza tu viaje hoy",
-        description: "Únete a miles de cuidadores que ya están construyendo sus carreras en IdosoLink.",
+        description: "Únete a miles de cuidadores que ya están construyendo sus carreras en Senior Care.",
         button: "Crear Perfil de Cuidador",
       },
     },
@@ -3805,8 +3805,8 @@ export const translations = {
       },
       info: {
         email: "Email",
-        emailValue: "contacto@idosolink.com",
-        emailSupport: "soporte@idosolink.com",
+        emailValue: "contacto@seniorcare.com",
+        emailSupport: "soporte@seniorcare.com",
         phone: "Teléfono",
         phoneValue: "+351 912 345 678",
         phoneHours: "Lunes a Viernes. 9:00 - 18:00",
@@ -3823,7 +3823,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Blog IdosoLink",
+      title: "Blog Senior Care",
       subtitle: "Consejos. artículos y novedades sobre el cuidado de ancianos y nuestra plataforma.",
       categories: {
         all: "Todos",
@@ -3845,7 +3845,7 @@ export const translations = {
           title: "Cómo Elegir el Cuidador Ideal para tu Anciano",
           excerpt: "La elección de un cuidador es una decisión importante. Consulta los principales factores a considerar.",
           category: "Consejos",
-          author: "Equipo IdosoLink",
+          author: "Equipo Senior Care",
           readTime: "5 min",
         },
         {
@@ -3859,7 +3859,7 @@ export const translations = {
           title: "Beneficios de la Tecnología para Ancianos",
           excerpt: "Cómo los dispositivos y aplicaciones pueden mejorar la calidad de vida de los adultos mayores.",
           category: "Tecnología",
-          author: "Equipo IdosoLink",
+          author: "Equipo Senior Care",
           readTime: "4 min",
         }
       ]
@@ -3874,7 +3874,7 @@ export const translations = {
       subtitle: "Somos una empresa tecnológica con propósito: transformar el cuidado de ancianos a través de confianza. transparencia y y valorización profesional.",
       mission: {
         title: "Nuestra Misión",
-        paragraph1: "IdosoLink nació de observar un problema real: familias luchando por encontrar cuidadores de confianza. y cuidadores profesionales sin reconocimiento ni valorización adecuada.",
+        paragraph1: "Senior Care nació de observar un problema real: familias luchando por encontrar cuidadores de confianza. y cuidadores profesionales sin reconocimiento ni valorización adecuada.",
         paragraph2: "Usamos tecnología de vanguardia para resolver problemas humanos: garantizar que los contratos sean seguros. los pagos estén protegidos y los cuidadores sean valorizados a largo plazo.",
         values: {
           care: "Cuidado",
@@ -3918,7 +3918,7 @@ export const translations = {
         title: "Contacto",
         subtitle: "Estamos aquí para ayudar. Contáctanos.",
         email: "Email",
-        emailValue: "contacto@idosolink.com",
+        emailValue: "contacto@seniorcare.com",
         phone: "Teléfono",
         phoneValue: "+351 210 000 000",
         location: "Ubicación",
@@ -3941,7 +3941,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introducción",
-          content: "IdosoLink se compromete a proteger la privacidad de sus usuarios. Esta Política de Privacidad explica cómo recopilamos. usamos. almacenamos y protegemos su información personal.",
+          content: "Senior Care se compromete a proteger la privacidad de sus usuarios. Esta Política de Privacidad explica cómo recopilamos. usamos. almacenamos y protegemos su información personal.",
         },
         dataCollected: {
           title: "2. Información que Recopilamos",
@@ -4006,7 +4006,7 @@ export const translations = {
           title: "8. Contacto",
           content: "Para ejercer tus derechos o aclarar dudas sobre privacidad. contacta:",
           items: [
-            "Email: privacidad@idosolink.com",
+            "Email: privacidad@seniorcare.com",
             "Dirección: Av. da Liberdade. 123. 1250-096 Lisboa. Portugal"
           ],
         },

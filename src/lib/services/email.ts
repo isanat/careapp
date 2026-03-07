@@ -34,7 +34,7 @@ export async function sendEmail(options: {
   const transport = getTransporter();
   if (!transport) return false;
 
-  const from = process.env.SMTP_FROM || `${APP_NAME} <noreply@idosolink.pt>`;
+  const from = process.env.SMTP_FROM || `${APP_NAME} <noreply@seniorcare.pt>`;
 
   await transport.sendMail({ from, ...options });
   return true;

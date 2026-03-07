@@ -1,5 +1,5 @@
 /**
- * IdosoLink Health Icons
+ * Senior Care Health Icons
  * Custom SVG icons with rounded, line style
  * Human, warm aesthetic - NOT fintech/crypto
  */

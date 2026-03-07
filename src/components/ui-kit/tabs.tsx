@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Tabs Component
+ * Senior Care UI Kit - Tabs Component
  * Mobile-first tab navigation
  */
 

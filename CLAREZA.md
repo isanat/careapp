@@ -1,8 +1,8 @@
-# 🎯 IdosoLink - Clareza do Projeto
+# 🎯 Senior Care - Clareza do Projeto
 
 ## O QUE É ESTE PROJETO?
 
-**IdosoLink** é uma plataforma que conecta **famílias** a **cuidadores de idosos**.
+**Senior Care** é uma plataforma que conecta **famílias** a **cuidadores de idosos**.
 
 ### O Problema que Resolve:
 - Famílias precisam encontrar cuidadores de confiança para seus idosos
@@ -239,4 +239,4 @@ Você tem uma plataforma quase completa, mas com muitas features que não são e
 ---
 
 *Documento criado em 25 de Fevereiro de 2025*
-*Para trazer clareza sobre o projeto IdosoLink*
+*Para trazer clareza sobre o projeto Senior Care*

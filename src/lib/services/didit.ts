@@ -98,7 +98,7 @@ export async function createKycSession(
         metadata: {
           user_email: userEmail,
           user_name: userName,
-          platform: "idosolink",
+          platform: "seniorcare",
         },
         // Configuration for caregiver verification
         features: {

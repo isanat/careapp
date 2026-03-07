@@ -10,7 +10,7 @@ const SENT_TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000';
 const CONTRACT_REGISTRY_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 async function setupTurso() {
-  console.log('🚀 Setting up IdosoLink database on Turso...\n');
+  console.log('🚀 Setting up Senior Care database on Turso...\n');
 
   try {
     // ==================== CREATE ALL TABLES ====================

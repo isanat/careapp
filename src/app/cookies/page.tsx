@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Política de Cookies | IdosoLink",
-  description: "Política de cookies do IdosoLink - como usamos cookies para melhorar sua experiência.",
+  title: "Política de Cookies | Senior Care",
+  description: "Política de cookies do Senior Care - como usamos cookies para melhorar sua experiência.",
 };
 
 export default function CookiesPage() {
@@ -20,7 +20,7 @@ export default function CookiesPage() {
           <CardContent>
             <p className="text-muted-foreground">
               Cookies são pequenos arquivos de texto armazenados no seu dispositivo que nos ajudam a 
-              melhorar sua experiência no IdosoLink. Eles permitem que lembremos suas preferências e 
+              melhorar sua experiência no Senior Care. Eles permitem que lembremos suas preferências e 
               entendamos como você usa nossa plataforma.
             </p>
           </CardContent>

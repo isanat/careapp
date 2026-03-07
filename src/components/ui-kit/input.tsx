@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit - Input Component
+ * Senior Care UI Kit - Input Component
  * Accessible form inputs for seniors
  * Large touch targets, clear labels
  */

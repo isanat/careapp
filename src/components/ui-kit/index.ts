@@ -1,5 +1,5 @@
 /**
- * IdosoLink UI Kit
+ * Senior Care UI Kit
  * Design System for Senior Care Platform
  * 
  * Health & Care focused - NOT fintech/crypto aesthetic

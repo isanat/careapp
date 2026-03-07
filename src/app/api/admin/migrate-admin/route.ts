@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check for admin secret to prevent unauthorized access
     const adminSecret = request.headers.get('x-admin-secret');
-    if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'idosolink-migrate-2024') {
+    if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'seniorcare-migrate-2024') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

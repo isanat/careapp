@@ -46,7 +46,7 @@ STRIPE_PUBLISHABLE_KEY=pk_live_51SvjgYJVhqFkiHpsfhfcO4yIyTXYM0fSLqQb6R876Dn15JiH
 1. Acesse: **https://dashboard.stripe.com/settings/connect**
 2. Clique em **"Get started"** ou **"Enable Connect"**
 3. Preencha as informações da sua plataforma:
-   - Platform name: `IdosoLink`
+   - Platform name: `Senior Care`
    - Platform URL: `https://careapp-pied.vercel.app`
    
 4. Após ativar, vá em **Settings** → **Connect** → **Settings**

@@ -10,7 +10,7 @@ const SENT_TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000';
 const CONTRACT_REGISTRY_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 async function updateTurso() {
-  console.log('🔄 Updating IdosoLink database on Turso...\n');
+  console.log('🔄 Updating Senior Care database on Turso...\n');
 
   const passwordHash = await bcrypt.hash('teste123', 10);
   const now = new Date().toISOString();

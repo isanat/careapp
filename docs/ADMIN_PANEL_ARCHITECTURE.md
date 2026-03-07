@@ -1,4 +1,4 @@
-# IdosoLink Admin Panel Architecture
+# Senior Care Admin Panel Architecture
 
 ## Complete Technical Specification
 
@@ -25,7 +25,7 @@
 
 ### 1.1 Purpose
 
-The Admin Panel provides comprehensive management capabilities for the IdosoLink platform, enabling administrators to:
+The Admin Panel provides comprehensive management capabilities for the Senior Care platform, enabling administrators to:
 - Monitor platform health and KPIs
 - Manage users, caregivers, and families
 - Handle contracts, disputes, and payments
@@ -1997,4 +1997,4 @@ ADMIN_RATE_LIMIT_ENABLED=true
 
 *Document Version: 1.0*
 *Last Updated: February 2025*
-*Author: IdosoLink Development Team*
+*Author: Senior Care Development Team*
