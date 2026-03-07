@@ -44,8 +44,14 @@ export async function POST(request: NextRequest) {
       });
 
       // Build reset URL and send email
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+      if (!baseUrl) {
+        console.error("NEXT_PUBLIC_APP_URL is not configured");
+        return NextResponse.json(
+          { error: "Internal server error" },
+          { status: 500 }
+        );
+      }
       const resetUrl = `${baseUrl}/auth/reset-password?token=${rawToken}&email=${encodeURIComponent(email)}`;
 
       await sendPasswordResetEmail(email, resetUrl);

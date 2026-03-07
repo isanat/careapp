@@ -5,7 +5,7 @@ import { db } from '@/lib/db-turso';
 // Also adds caregiverQuestionnaireJson to Interview if missing
 export async function POST(request: NextRequest) {
   const adminSecret = request.headers.get('x-admin-secret');
-  if (adminSecret !== 'seniorcare-migrate-2024') {
+  if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
