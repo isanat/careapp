@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import {
+  markNotificationAsRead,
+  deleteAdminNotification,
+} from '@/lib/services/admin-tables';
 import { generateId } from '@/lib/utils/id';
 
 // POST - Mark single notification as read
@@ -16,43 +20,27 @@ export async function POST(
     const { id } = await params;
 
     // Get admin profile for logging
-    const adminProfileResult = await db.execute({
+    const adminProfile = await db.execute({
       sql: `SELECT id FROM AdminUser WHERE userId = ? AND isActive = 1`,
-      args: [adminUserId]
+      args: [adminUserId],
     });
-    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
+    const adminProfileId = (adminProfile.rows[0]?.id as string) || null;
 
-    // Check if notification exists
-    const notificationResult = await db.execute({
-      sql: `SELECT * FROM AdminNotification WHERE id = ?`,
-      args: [id]
-    });
-
-    if (notificationResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Notification not found' }, { status: 404 });
-    }
-
-    // Mark as read
-    await db.execute({
-      sql: `UPDATE AdminNotification
-            SET isRead = 1,
-                readAt = CURRENT_TIMESTAMP,
-                readBy = ?
-            WHERE id = ?`,
-      args: [adminUserId, id]
-    });
+    // Mark as read using service
+    await markNotificationAsRead(id, adminUserId);
 
     // Log action
+    const actionId = generateId('action');
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, createdAt)
-            VALUES (?, ?, 'MARK_READ', 'ADMIN_NOTIFICATION', ?, ?, ?, CURRENT_TIMESTAMP)`,
+        VALUES (?, ?, 'MARK_READ', 'ADMIN_NOTIFICATION', ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
-        generateId("action"),
-        adminProfileId ?? '',
+        actionId,
+        adminProfileId || '',
         id,
         JSON.stringify({ isRead: false }),
-        JSON.stringify({ isRead: true, readBy: adminUserId })
-      ]
+        JSON.stringify({ isRead: true, readBy: adminUserId }),
+      ],
     });
 
     return NextResponse.json({
@@ -82,35 +70,23 @@ export async function DELETE(
     const { adminUserId } = auth;
 
     // Get admin profile for logging
-    const adminProfileResult = await db.execute({
+    const adminProfile = await db.execute({
       sql: `SELECT id FROM AdminUser WHERE userId = ? AND isActive = 1`,
-      args: [adminUserId]
+      args: [adminUserId],
     });
-    const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
+    const adminProfileId = (adminProfile.rows[0]?.id as string) || null;
 
     const { id } = await params;
 
-    // Check if notification exists
-    const notificationResult = await db.execute({
-      sql: `SELECT * FROM AdminNotification WHERE id = ?`,
-      args: [id]
-    });
-
-    if (notificationResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Notification not found' }, { status: 404 });
-    }
-
-    // Delete notification
-    await db.execute({
-      sql: `DELETE FROM AdminNotification WHERE id = ?`,
-      args: [id]
-    });
+    // Delete using service
+    await deleteAdminNotification(id);
 
     // Log action
+    const actionId = generateId('action');
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, createdAt)
-            VALUES (?, ?, 'DELETE_NOTIFICATION', 'ADMIN_NOTIFICATION', ?, CURRENT_TIMESTAMP)`,
-      args: [generateId("action"), adminProfileId ?? '', id]
+        VALUES (?, ?, 'DELETE_NOTIFICATION', 'ADMIN_NOTIFICATION', ?, CURRENT_TIMESTAMP)`,
+      args: [actionId, adminProfileId || '', id],
     });
 
     return NextResponse.json({

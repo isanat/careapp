@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import {
+  getModerationQueue,
+  resolveModerationItem,
+  createModerationItem,
+} from '@/lib/services/admin-tables';
 import { generateId } from '@/lib/utils/id';
 
 // GET - Moderation queue
@@ -10,10 +15,17 @@ export async function GET(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status') || 'PENDING';
+    const status = searchParams.get('status') as 'PENDING' | 'REVIEWING' | 'RESOLVED' | 'DISMISSED' | null;
     const type = searchParams.get('type'); // REVIEW, PROFILE, etc
 
-    // Get pending reviews
+    // Get moderation queue items
+    const queueItems = await getModerationQueue({
+      status: status || undefined,
+      entityType: type || undefined,
+      limit: 50,
+    });
+
+    // Get pending reviews that need moderation
     let reviews: Record<string, unknown>[] = [];
     if (!type || type === 'REVIEW') {
       const reviewsResult = await db.execute({
@@ -29,9 +41,9 @@ export async function GET(request: NextRequest) {
         WHERE r.isModerated = ?
         ORDER BY r.createdAt DESC
         LIMIT 20`,
-        args: [status === 'PENDING' ? 0 : 1]
+        args: [status === 'PENDING' || !status ? 0 : 1],
       });
-      reviews = reviewsResult.rows;
+      reviews = reviewsResult.rows as Record<string, unknown>[];
     }
 
     // Get low ratings (potential issues)
@@ -45,16 +57,18 @@ export async function GET(request: NextRequest) {
       WHERE pc.averageRating < 3.0 AND pc.totalReviews >= 3
       ORDER BY pc.averageRating ASC
       LIMIT 10`,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
+      queueItems,
       reviews,
       lowRatedCaregivers: lowRatingsResult.rows,
       stats: {
+        pendingItems: queueItems.filter((i) => i.status === 'PENDING').length,
         pendingReviews: reviews.length,
         lowRatedCount: lowRatingsResult.rows.length,
-      }
+      },
     });
   } catch (error) {
     console.error('Error fetching moderation queue:', error);
@@ -70,35 +84,44 @@ export async function POST(request: NextRequest) {
     const { adminUserId } = auth;
 
     const body = await request.json();
-    const { type, entityId, action, reason } = body;
-    // type: 'REVIEW', 'PROFILE'
-    // action: 'APPROVE', 'REJECT', 'HIDE'
+    const { type, entityId, action, reason, notes } = body;
+    // type: 'REVIEW', 'PROFILE', 'MESSAGE'
+    // action: 'APPROVE', 'REJECT', 'HIDE', 'WARN', 'BAN', 'DISMISS'
 
     const now = new Date().toISOString();
 
+    // Apply moderation action based on type
     if (type === 'REVIEW') {
-      const isPublic = action === 'APPROVE' ? 1 : 0;
+      const isPublic = action === 'APPROVE';
       await db.execute({
         sql: `UPDATE Review SET isModerated = 1, isPublic = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [isPublic, entityId]
+        args: [isPublic ? 1 : 0, entityId],
       });
     }
 
     // Log to moderation queue
+    const moderationId = generateId('mod');
     await db.execute({
-      sql: `INSERT INTO ModerationQueue (id, entityType, entityId, status, reviewedBy, action, notes, createdAt)
-        VALUES (?, ?, ?, 'REVIEWED', ?, ?, ?, ?)`,
-      args: [generateId("mod"), type, entityId, adminUserId, action, reason, now]
+      sql: `INSERT INTO ModerationQueue (id, entityType, entityId, reason, status, reviewedBy, reviewedAt, action, notes, createdAt)
+        VALUES (?, ?, ?, ?, 'RESOLVED', ?, ?, ?, ?, ?)`,
+      args: [moderationId, type, entityId, reason || '', adminUserId, now, action, notes || '', now],
     });
 
     // Log admin action
+    const actionId = generateId('action');
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, reason, createdAt)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [generateId("action"), adminUserId, `MODERATE_${action}`, type, entityId, reason, now]
+      args: [actionId, adminUserId, `MODERATE_${action}`, type, entityId, reason || '', now],
     });
 
-    return NextResponse.json({ success: true, type, entityId, action });
+    return NextResponse.json({
+      success: true,
+      type,
+      entityId,
+      action,
+      moderationId,
+    });
   } catch (error) {
     console.error('Error moderating content:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

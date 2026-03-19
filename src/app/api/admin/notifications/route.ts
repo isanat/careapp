@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import {
+  getAdminNotifications,
+  getUnreadNotificationCount,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from '@/lib/services/admin-tables';
 
 // GET - Admin notifications
 export async function GET(request: NextRequest) {
@@ -11,23 +16,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const unreadOnly = searchParams.get('unread') === 'true';
 
-    let sql = `SELECT * FROM AdminNotification`;
-    if (unreadOnly) {
-      sql += ` WHERE isRead = 0`;
-    }
-    sql += ` ORDER BY createdAt DESC LIMIT 50`;
-
-    const result = await db.execute({ sql, args: [] });
-
-    // Get unread count
-    const countResult = await db.execute({
-      sql: `SELECT COUNT(*) as count FROM AdminNotification WHERE isRead = 0`,
-      args: []
-    });
+    const notifications = await getAdminNotifications({ unreadOnly, limit: 50 });
+    const unreadCount = await getUnreadNotificationCount();
 
     return NextResponse.json({
-      notifications: result.rows,
-      unreadCount: countResult.rows[0]?.count || 0,
+      notifications,
+      unreadCount,
     });
   } catch (error) {
     console.error('Error fetching notifications:', error);
@@ -46,15 +40,9 @@ export async function PATCH(request: NextRequest) {
     const { notificationId, markAllRead } = body;
 
     if (markAllRead) {
-      await db.execute({
-        sql: `UPDATE AdminNotification SET isRead = 1, readAt = ?, readBy = ? WHERE isRead = 0`,
-        args: [new Date().toISOString(), adminUserId]
-      });
+      await markAllNotificationsAsRead(adminUserId);
     } else if (notificationId) {
-      await db.execute({
-        sql: `UPDATE AdminNotification SET isRead = 1, readAt = ?, readBy = ? WHERE id = ?`,
-        args: [new Date().toISOString(), adminUserId, notificationId]
-      });
+      await markNotificationAsRead(notificationId, adminUserId);
     }
 
     return NextResponse.json({ success: true });

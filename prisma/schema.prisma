@@ -982,9 +982,193 @@ model FeatureFlag {
   rolloutPercent  Int      @default(100) // Percentage of users to show feature
   targetRoles     String?  // JSON array of roles (e.g., ["FAMILY", "CAREGIVER"])
   metadata        String?  // JSON for additional config
-  
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
+
   @@index([enabled])
+}
+
+// ==================== ADMIN NOTIFICATIONS ====================
+
+model AdminNotification {
+  id          String   @id @default(cuid())
+
+  // Type and Content
+  type        String   // system, user, contract, payment, alert, etc.
+  title       String
+  message     String
+
+  // Reference
+  entityType  String?  // User, Contract, Payment, etc.
+  entityId    String?  // ID of related entity
+
+  // Severity
+  severity    String   @default("INFO") // INFO, WARNING, ERROR, CRITICAL
+
+  // Status
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+  readBy      String?  // Admin user ID who read it
+
+  createdAt   DateTime @default(now())
+
+  @@index([isRead, createdAt])
+  @@index([type, createdAt])
+}
+
+// ==================== API KEYS ====================
+
+model ApiKey {
+  id          String   @id @default(cuid())
+
+  // Identification
+  name        String   // Human-readable name
+  keyHash     String   @unique // Hashed API key
+  keyPrefix   String   // First 8 chars for identification (e.g., "sk_live_")
+
+  // Permissions
+  permissions String?  // JSON array of permissions
+
+  // Status
+  isActive    Boolean  @default(true)
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+
+  // Owner
+  createdBy   String   // Admin user ID
+
+  createdAt   DateTime @default(now())
+
+  @@index([isActive])
+  @@index([createdBy])
+}
+
+// ==================== EMAIL TEMPLATES ====================
+
+model EmailTemplate {
+  id          String   @id @default(cuid())
+
+  // Identification
+  key         String   @unique // e.g., "welcome", "password_reset", "contract_created"
+
+  // Content
+  subject     String   // Email subject (can use {{variables}})
+  bodyHtml    String   // HTML body
+  bodyText    String?  // Plain text version (optional)
+
+  // Variables
+  variables   String?  // JSON array of available variables
+
+  // Status
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// ==================== IMPERSONATION LOGS ====================
+
+model ImpersonationLog {
+  id              String   @id @default(cuid())
+
+  // Participants
+  adminUserId     String   // Admin who impersonated
+  targetUserId    String   // User being impersonated
+
+  // Reason
+  reason          String?  // Why impersonation was needed
+
+  // Timing
+  startedAt       DateTime @default(now())
+  endedAt         DateTime?
+  durationSeconds Int?     // Calculated duration
+
+  // Context
+  ipAddress       String?
+  userAgent       String?
+
+  @@index([adminUserId, startedAt])
+  @@index([targetUserId, startedAt])
+}
+
+// ==================== MODERATION QUEUE ====================
+
+model ModerationQueue {
+  id          String   @id @default(cuid())
+
+  // Entity being moderated
+  entityType  String   // Review, Profile, Message, etc.
+  entityId    String   // ID of the entity
+
+  // Reporter
+  reportedBy  String?  // User ID who reported (null if system)
+
+  // Reason
+  reason      String   // Why it needs moderation
+
+  // Status
+  status      String   @default("PENDING") // PENDING, REVIEWING, RESOLVED, DISMISSED
+
+  // Resolution
+  reviewedBy  String?  // Admin user ID
+  reviewedAt  DateTime?
+  action      String?  // DELETE, WARN, BAN, DISMISS
+  notes       String?  // Admin notes
+
+  createdAt   DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([entityType, entityId])
+}
+
+// ==================== PLATFORM METRICS ====================
+
+model PlatformMetric {
+  id          String   @id @default(cuid())
+
+  // Metric identification
+  metricKey   String   // e.g., "total_users", "revenue_mtd", "contracts_active"
+  metricValue String   // Value (stored as string for flexibility)
+
+  // Timing
+  computedAt  DateTime @default(now())
+  period      String?  // "daily", "weekly", "monthly", "all_time"
+
+  @@index([metricKey, computedAt])
+  @@index([period])
+}
+
+// ==================== SCHEDULED REPORTS ====================
+
+model ScheduledReport {
+  id          String   @id @default(cuid())
+
+  // Identification
+  name        String   // Human-readable name
+  reportType  String   // "users", "revenue", "contracts", "analytics"
+
+  // Schedule
+  frequency   String   // "daily", "weekly", "monthly"
+  recipients  String   // JSON array of email addresses
+
+  // Configuration
+  filters     String?  // JSON object with filters
+
+  // Execution tracking
+  lastRunAt   DateTime?
+  nextRunAt   DateTime?
+
+  // Status
+  isActive    Boolean  @default(true)
+
+  // Owner
+  createdBy   String   // Admin user ID
+
+  createdAt   DateTime @default(now())
+
+  @@index([isActive, nextRunAt])
+  @@index([createdBy])
 }
