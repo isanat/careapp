@@ -56,11 +56,11 @@ export default function FamiliasPage() {
                 <CardContent className="p-8">
                   <div className="grid grid-cols-2 gap-6">
                     <div className="text-center p-4 bg-background/50 rounded-xl">
-                      <p className="text-4xl font-bold text-primary">2.500+</p>
+                      <p className="text-4xl font-bold text-primary">50+</p>
                       <p className="text-sm text-muted-foreground">{t.forFamiliesPage.stats.caregivers}</p>
                     </div>
                     <div className="text-center p-4 bg-background/50 rounded-xl">
-                      <p className="text-4xl font-bold text-primary">15.000+</p>
+                      <p className="text-4xl font-bold text-primary">100+</p>
                       <p className="text-sm text-muted-foreground">{t.forFamiliesPage.stats.families}</p>
                     </div>
                     <div className="text-center p-4 bg-background/50 rounded-xl">

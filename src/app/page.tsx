@@ -57,11 +57,11 @@ export default function LandingPage() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 pt-8 border-t mt-8">
                 <div>
-                  <p className="text-3xl font-bold text-primary">2.500+</p>
+                  <p className="text-3xl font-bold text-primary">50+</p>
                   <p className="text-sm text-muted-foreground">{t.landing.stats.caregivers}</p>
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-primary">15.000+</p>
+                  <p className="text-3xl font-bold text-primary">100+</p>
                   <p className="text-sm text-muted-foreground">{t.landing.stats.families}</p>
                 </div>
                 <div>
