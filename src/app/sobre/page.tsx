@@ -71,22 +71,25 @@ export default function SobrePage() {
 
               <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
                 <CardContent className="p-8">
-                  <h3 className="text-xl font-semibold mb-6">{t.sobrePage.stats.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2">{t.sobrePage.stats.title}</h3>
+                  <p className="text-xs text-muted-foreground mb-6">
+                    Plataforma em fase de lançamento - Números actualizados em tempo real
+                  </p>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="text-center">
-                      <p className="text-4xl font-bold text-primary">2.500+</p>
+                      <p className="text-3xl font-bold text-primary">50+</p>
                       <p className="text-sm text-muted-foreground">{t.sobrePage.stats.caregivers}</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-4xl font-bold text-primary">15.000+</p>
+                      <p className="text-3xl font-bold text-primary">100+</p>
                       <p className="text-sm text-muted-foreground">{t.sobrePage.stats.families}</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-4xl font-bold text-primary">50.000+</p>
+                      <p className="text-3xl font-bold text-primary">500+</p>
                       <p className="text-sm text-muted-foreground">{t.sobrePage.stats.hours}</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-4xl font-bold text-primary">3</p>
+                      <p className="text-3xl font-bold text-primary">1</p>
                       <p className="text-sm text-muted-foreground">{t.sobrePage.stats.countries}</p>
                     </div>
                   </div>

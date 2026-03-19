@@ -24,7 +24,6 @@ import {
   IconFamily,
   IconCaregiver,
   IconShield,
-  IconWallet,
   IconLoader2
 } from "@/components/icons";
 import { APP_NAME, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
@@ -375,20 +374,36 @@ function RegisterPageContent() {
                 </div>
               </div>
 
-              {/* Activation Info */}
-              <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <IconShield className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{t.wallet.value}</span>
+              {/* Activation Fee Info - Only for Families */}
+              {role === "FAMILY" && (
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <IconShield className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Taxa de Ativação</span>
+                    <Badge>€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Taxa única para ativar a sua conta e ter acesso completo à plataforma. 
+                    Inclui verificação de segurança e suporte dedicado.
+                  </p>
                 </div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">{t.wallet.value}</span>
-                  <Badge>€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
+              )}
+
+              {/* Caregiver Info - No Payment Required */}
+              {role === "CAREGIVER" && (
+                <div className="p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <IconCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div>
+                      <span className="font-medium text-green-700 dark:text-green-300">Registo Gratuito</span>
+                      <p className="text-sm text-green-600 dark:text-green-400">
+                        Como cuidador, não precisa pagar taxa de ativação. 
+                        Crie o seu perfil e comece a receber propostas.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                   tokens
-                </p>
-              </div>
+              )}
 
               {/* Terms Acceptance Component */}
               <TermsAcceptance
@@ -420,11 +435,11 @@ function RegisterPageContent() {
             </Link>
           </div>
 
-          {/* Wallet Info */}
+          {/* Security Info */}
           <div className="pt-4 border-t">
             <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
-              <IconWallet className="h-4 w-4" />
-              <span>{t.wallet.title}</span>
+              <IconShield className="h-4 w-4" />
+              <span>Os seus dados estão protegidos e encriptados</span>
             </div>
           </div>
         </CardContent>

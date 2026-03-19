@@ -6,17 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   IconLogo, 
-  IconToken, 
   IconCare, 
   IconFamily, 
   IconCaregiver, 
-  IconTrust, 
-  IconWallet,
+  IconTrust,
   IconContract,
   IconChevronRight,
   IconShield,
-  IconCoins,
-  IconCheck
+  IconCreditCard,
+  IconCheck,
+  IconEuro
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -98,15 +97,16 @@ export default function ComoFuncionaPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-primary/20 rounded-full">
-                        <IconToken className="h-8 w-8 text-primary" />
+                        <IconShield className="h-8 w-8 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold">{t.howItWorksPage.steps.activation.fee}</p>
+                        <p className="font-semibold">Taxa de Ativação (apenas Famílias)</p>
                         <p className="text-sm text-muted-foreground">
-                          {t.howItWorksPage.steps.activation.feeDesc}
+                          Pagamento único de €35 para ter acesso completo à plataforma.
+                          Cuidadores não pagam taxa de ativação.
                         </p>
                       </div>
-                      <Badge className="bg-primary">1:1 {t.auth.email.startsWith('E') ? 'with Euro' : 'com Euro'}</Badge>
+                      <Badge className="bg-primary">€35</Badge>
                     </div>
                   </CardContent>
                 </Card>
@@ -184,23 +184,23 @@ export default function ComoFuncionaPage() {
                 <div className="grid md:grid-cols-3 gap-4">
                   <Card className="bg-green-500/5 border-green-500/20">
                     <CardContent className="p-4 text-center">
-                      <IconWallet className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                      <p className="font-semibold text-green-700">{t.howItWorksPage.steps.payments.wallet}</p>
-                      <p className="text-xs text-muted-foreground">{t.howItWorksPage.steps.payments.walletDesc}</p>
+                      <IconCreditCard className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                      <p className="font-semibold text-green-700">Pagamento Seguro</p>
+                      <p className="text-xs text-muted-foreground">Sistema protegido com Stripe e MB Way</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-yellow-500/5 border-yellow-500/20">
                     <CardContent className="p-4 text-center">
-                      <IconCoins className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-                      <p className="font-semibold text-yellow-700">{t.howItWorksPage.steps.payments.tips}</p>
-                      <p className="text-xs text-muted-foreground">{t.howItWorksPage.steps.payments.tipsDesc}</p>
+                      <IconEuro className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                      <p className="font-semibold text-yellow-700">Gorjetas</p>
+                      <p className="text-xs text-muted-foreground">Recompense bons cuidados</p>
                     </CardContent>
                   </Card>
                   <Card className="bg-primary/5 border-primary/20">
                     <CardContent className="p-4 text-center">
                       <IconTrust className="h-8 w-8 text-primary mx-auto mb-2" />
-                      <p className="font-semibold text-primary">{t.howItWorksPage.steps.payments.security}</p>
-                      <p className="text-xs text-muted-foreground">{t.howItWorksPage.steps.payments.securityDesc}</p>
+                      <p className="font-semibold text-primary">Garantia</p>
+                      <p className="text-xs text-muted-foreground">100% seguro e transparente</p>
                     </CardContent>
                   </Card>
                 </div>
