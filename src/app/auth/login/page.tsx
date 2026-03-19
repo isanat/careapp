@@ -4,12 +4,13 @@ import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { IconLogo, IconMail, IconLock, IconEye, IconEyeOff, IconAlert } from "@/components/icons";
+import { IconLogo, IconMail, IconLock, IconEye, IconEyeOff, IconAlert, IconLoader2 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
@@ -31,6 +32,16 @@ function LoginPageContent() {
     setIsLoading(true);
     setErrorMessage("");
 
+    if (!email || !password) {
+      const msg = "Por favor, preencha todos os campos";
+      setErrorMessage(msg);
+      toast.error(msg);
+      setIsLoading(false);
+      return;
+    }
+
+    toast.info("A verificar credenciais...");
+
     try {
       const result = await signIn("credentials", {
         email,
@@ -40,18 +51,23 @@ function LoginPageContent() {
 
       if (result?.error) {
         // Show error message
-        setErrorMessage("Email ou senha incorretos. Verifique seus dados e tente novamente.");
+        const msg = "Email ou senha incorretos. Verifique seus dados e tente novamente.";
+        setErrorMessage(msg);
+        toast.error(msg);
         setIsLoading(false);
       } else if (result?.ok) {
         // Login successful - use full page reload to ensure session is loaded
+        toast.success("Login efetuado com sucesso! A redirecionar...");
         window.location.href = callbackUrl;
       } else {
         setErrorMessage(t.error);
+        toast.error(t.error);
         setIsLoading(false);
       }
     } catch (err) {
       console.error("Login error:", err);
       setErrorMessage(t.error);
+      toast.error(t.error);
       setIsLoading(false);
     }
   };
@@ -167,7 +183,14 @@ function LoginPageContent() {
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? t.loading : t.auth.login}
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
+                  <span>{t.loading}</span>
+                </span>
+              ) : (
+                t.auth.login
+              )}
             </Button>
           </form>
 

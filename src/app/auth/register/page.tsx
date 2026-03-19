@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,26 +71,58 @@ function RegisterPageContent() {
     // Validation
     if (!acceptTerms) {
       console.log("Terms not accepted");
-      setErrorMessage(t.register?.termsRequired || "Você deve aceitar os termos para continuar");
+      const msg = t.register?.termsRequired || "Você deve aceitar os termos para continuar";
+      setErrorMessage(msg);
+      toast.error(msg);
       setIsLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       console.log("Passwords don't match");
-      setErrorMessage("As senhas não coincidem");
+      const msg = "As senhas não coincidem";
+      setErrorMessage(msg);
+      toast.error(msg);
       setIsLoading(false);
       return;
     }
 
     if (formData.password.length < 8) {
       console.log("Password too short");
-      setErrorMessage("A senha deve ter pelo menos 8 caracteres");
+      const msg = "A senha deve ter pelo menos 8 caracteres";
+      setErrorMessage(msg);
+      toast.error(msg);
+      setIsLoading(false);
+      return;
+    }
+
+    // Password strength validation
+    if (!/[a-z]/.test(formData.password)) {
+      const msg = "A senha deve conter pelo menos uma letra minúscula";
+      setErrorMessage(msg);
+      toast.error(msg);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/[A-Z]/.test(formData.password)) {
+      const msg = "A senha deve conter pelo menos uma letra maiúscula";
+      setErrorMessage(msg);
+      toast.error(msg);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!/[0-9]/.test(formData.password)) {
+      const msg = "A senha deve conter pelo menos um número";
+      setErrorMessage(msg);
+      toast.error(msg);
       setIsLoading(false);
       return;
     }
 
     console.log("Sending registration request...");
+    toast.info("A criar a sua conta...");
 
     try {
       const response = await fetch("/api/register", {
@@ -110,8 +143,11 @@ function RegisterPageContent() {
       console.log("Registration response:", data);
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao criar conta");
+        const errorMsg = data.error || data.detail || "Erro ao criar conta";
+        throw new Error(errorMsg);
       }
+
+      toast.success("Conta criada com sucesso! A fazer login...");
 
       console.log("Auto-login after registration...");
 
@@ -127,23 +163,29 @@ function RegisterPageContent() {
       if (loginResult?.error) {
         // If auto-login fails, redirect to login page with message
         console.log("Auto-login failed, redirecting to login");
+        toast.info("Conta criada! Por favor, faça login.");
         window.location.href = `/auth/login?message=account_created&email=${encodeURIComponent(formData.email)}`;
       } else if (loginResult?.ok) {
         // Different flows for Family and Caregiver
         console.log("Auto-login success, redirecting...");
         if (role === "FAMILY") {
           // Family: Onboarding Setup → KYC verification → Payment → Activation
+          toast.success("Bem-vindo! Vamos configurar a sua conta.");
           window.location.href = `/app/family-setup?userId=${data.userId}`;
         } else {
           // Caregiver: Profile Setup → KYC → Approval (NO PAYMENT)
+          toast.success("Bem-vindo! Vamos configurar o seu perfil.");
           window.location.href = `/app/profile/setup?userId=${data.userId}`;
         }
       } else {
+        toast.info("Conta criada! Por favor, faça login.");
         window.location.href = `/auth/login?message=account_created`;
       }
     } catch (error) {
       console.error("Registration error:", error);
-      setErrorMessage(error instanceof Error ? error.message : "Erro ao criar conta");
+      const errorMsg = error instanceof Error ? error.message : "Erro ao criar conta";
+      setErrorMessage(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -359,7 +401,14 @@ function RegisterPageContent() {
               <Turnstile onVerify={setTurnstileToken} />
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? t.loading : t.auth.register}
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <IconLoader2 className="h-4 w-4 animate-spin" />
+                    <span>{t.loading}</span>
+                  </span>
+                ) : (
+                  t.auth.register
+                )}
               </Button>
             </form>
           )}
