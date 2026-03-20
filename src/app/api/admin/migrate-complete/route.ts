@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 import { db } from '@/lib/db-turso';
 
 /**
  * Migration Status API
  * 
  * Este endpoint verifica o status das tabelas do banco de dados.
- * As tabelas agora são gerenciadas pelo Prisma, então este arquivo
- * apenas verifica se tudo está sincronizado.
+ * Todas as tabelas são gerenciadas pelo schema Prisma mas acessadas via libsql.
  */
 
 // GET - Show migration status
@@ -26,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     const tables = tablesResult.rows.map((row: { name: unknown }) => row.name as string);
 
-    // Prisma-managed models (synced with schema.prisma)
+    // All models managed by Prisma schema
     const prismaModels = [
       'User',
       'ProfileFamily',
@@ -57,7 +55,7 @@ export async function GET(request: NextRequest) {
       'Receipt',
       'RecurringPayment',
       'FeatureFlag',
-      // New models added to Prisma
+      // Orphan tables now in Prisma
       'AdminNotification',
       'ApiKey',
       'EmailTemplate',
@@ -70,32 +68,23 @@ export async function GET(request: NextRequest) {
     const existingPrismaModels = prismaModels.filter((t) => tables.includes(t));
     const missingPrismaModels = prismaModels.filter((t) => !tables.includes(t));
 
-    // Check KYC columns in User table
-    const userCols = await db.execute({ sql: `PRAGMA table_info(User)`, args: [] });
-    const kycCols = [
-      'kycSessionId',
-      'kycSessionToken',
-      'kycSessionCreatedAt',
-      'kycCompletedAt',
-      'kycConfidence',
-    ];
-    const existingKycCols = userCols.rows
-      .map((row: { name: unknown }) => row.name as string)
-      .filter((name: string) => kycCols.includes(name));
-
-    // Count admin users
-    const adminCount = await prisma.adminUser.count();
-
-    // Count records in orphan tables (now managed by Prisma)
-    const orphanTableStats = {
-      adminNotification: await prisma.adminNotification.count(),
-      apiKey: await prisma.apiKey.count(),
-      emailTemplate: await prisma.emailTemplate.count(),
-      impersonationLog: await prisma.impersonationLog.count(),
-      moderationQueue: await prisma.moderationQueue.count(),
-      platformMetric: await prisma.platformMetric.count(),
-      scheduledReport: await prisma.scheduledReport.count(),
-    };
+    // Count records in key tables
+    const tableStats: Record<string, number> = {};
+    const countTables = ['User', 'AdminUser', 'Contract', 'Payment', 'Review'];
+    
+    for (const table of countTables) {
+      if (tables.includes(table)) {
+        try {
+          const result = await db.execute({
+            sql: `SELECT COUNT(*) as count FROM "${table}"`,
+            args: [],
+          });
+          tableStats[table] = Number(result.rows[0]?.count || 0);
+        } catch {
+          tableStats[table] = 0;
+        }
+      }
+    }
 
     return NextResponse.json({
       status: 'healthy',
@@ -110,13 +99,7 @@ export async function GET(request: NextRequest) {
         missing: missingPrismaModels,
         synced: missingPrismaModels.length === 0,
       },
-      kycColumns: {
-        required: kycCols.length,
-        existing: existingKycCols.length,
-        missing: kycCols.filter((c) => !existingKycCols.includes(c)),
-      },
-      adminUsers: adminCount,
-      orphanTableStats,
+      tableStats,
       recommendation:
         missingPrismaModels.length > 0
           ? 'Run `bun run db:push` to sync Prisma schema with database'
@@ -134,7 +117,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Sync database with Prisma schema (deprecated - use prisma db push instead)
+// POST - Deprecated manual migration
 export async function POST(request: NextRequest) {
   const adminSecret = request.headers.get('x-admin-secret');
   if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
@@ -144,7 +127,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     message: 'Manual migration is deprecated',
     instruction: 'Use `bun run db:push` to sync Prisma schema with database',
-    alternative: 'Or use Prisma Studio: `bun run db:studio`',
-    note: 'All tables are now managed by Prisma schema. Run `bun run db:generate` to update Prisma Client.',
+    note: 'All tables are now managed by Prisma schema.',
   });
 }

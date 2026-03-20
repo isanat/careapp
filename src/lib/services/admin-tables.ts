@@ -5,8 +5,8 @@
  * Usa libsql diretamente para manter consistência com o resto do projeto.
  */
 
-import { db } from './db-turso';
-import { generateId } from './utils/id';
+import { db } from '@/lib/db-turso';
+import { generateId } from '@/lib/utils/id';
 
 // ==================== TYPES ====================
 
