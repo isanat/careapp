@@ -64,9 +64,19 @@ export async function GET(
       });
       if (profileResult.rows.length > 0) {
         const p = profileResult.rows[0];
+        // Safely parse services JSON
+        let specialties: string[] = [];
+        try {
+          if (p.services) {
+            specialties = JSON.parse(p.services as string);
+          }
+        } catch {
+          // If JSON parse fails, keep empty array
+          specialties = [];
+        }
         profile = {
           experience: Number(p.experienceYears || 0),
-          specialties: p.services ? JSON.parse(p.services as string) : [],
+          specialties,
           hourlyRate: Number(p.hourlyRateEur || 0),
           bio: p.bio as string,
           rating: Number(p.averageRating || 0),
@@ -127,7 +137,7 @@ export async function GET(
       sql: `SELECT
         tl.id,
         tl.amountTokens as amount,
-        tl.reason as description,
+        tl.description,
         tl.createdAt
       FROM TokenLedger tl
       WHERE tl.userId = ?
