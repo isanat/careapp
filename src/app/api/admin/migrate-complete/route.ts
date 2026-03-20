@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       args: [],
     });
 
-    const tables = tablesResult.rows.map((row: { name: unknown }) => row.name as string);
+    const tables = tablesResult.rows.map((row) => row.name as string);
 
     // All models managed by Prisma schema
     const prismaModels = [
