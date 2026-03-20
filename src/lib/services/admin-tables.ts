@@ -212,7 +212,7 @@ export async function validateApiKey(keyPrefix: string, keyHash: string): Promis
   // Update lastUsedAt
   await db.execute({
     sql: 'UPDATE ApiKey SET lastUsedAt = ? WHERE id = ?',
-    args: [new Date().toISOString(), (result.rows[0] as { id: string }).id],
+    args: [new Date().toISOString(), (result.rows[0] as unknown as { id: string }).id],
   });
   
   return result.rows[0] as unknown as ApiKey;
@@ -269,7 +269,7 @@ export async function upsertEmailTemplate(data: {
       sql: `UPDATE EmailTemplate SET subject = ?, bodyHtml = ?, bodyText = ?, variables = ?, updatedAt = ? WHERE key = ?`,
       args: [data.subject, data.bodyHtml, data.bodyText || null, data.variables || null, now, data.key],
     });
-    return (existing.rows[0] as { id: string }).id;
+    return (existing.rows[0] as unknown as { id: string }).id;
   } else {
     // Insert
     await db.execute({
@@ -312,7 +312,7 @@ export async function endImpersonation(id: string): Promise<void> {
   });
   
   if (log.rows.length > 0) {
-    const startedAt = new Date((log.rows[0] as { startedAt: string }).startedAt);
+    const startedAt = new Date((log.rows[0] as unknown as { startedAt: string }).startedAt);
     const durationSeconds = Math.floor((new Date().getTime() - startedAt.getTime()) / 1000);
     
     await db.execute({
