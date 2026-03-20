@@ -62,14 +62,15 @@ export default function NewUserPage() {
       <PageHeader
         title="Novo Usuário"
         description="Criar um novo usuário na plataforma"
-      >
-        <Link href="/admin/users">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-        </Link>
-      </PageHeader>
+        actions={
+          <Link href="/admin/users">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+          </Link>
+        }
+      />
 
       <Card>
         <CardHeader>
