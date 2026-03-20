@@ -14,144 +14,186 @@ export async function GET(
     const { id } = await params;
 
     // Get user basic info
-    const userResult = await db.execute({
-      sql: `SELECT
-        u.id,
-        u.name,
-        u.email,
-        u.phone,
-        u.role,
-        u.status,
-        u.createdAt,
-        u.lastLoginAt,
-        w.address as walletAddress,
-        w.balanceTokens as walletBalance
-      FROM User u
-      LEFT JOIN Wallet w ON u.id = w.userId
-      WHERE u.id = ?`,
-      args: [id],
-    });
+    let userResult;
+    try {
+      userResult = await db.execute({
+        sql: `SELECT
+          u.id,
+          u.name,
+          u.email,
+          u.phone,
+          u.role,
+          u.status,
+          u.createdAt,
+          u.lastLoginAt,
+          w.address as walletAddress,
+          w.balanceTokens as walletBalance
+        FROM User u
+        LEFT JOIN Wallet w ON u.id = w.userId
+        WHERE u.id = ?`,
+        args: [id],
+      });
+    } catch (dbError) {
+      console.error("Error fetching user base data:", dbError);
+      return NextResponse.json(
+        { error: "Database error fetching user", details: dbError instanceof Error ? dbError.message : "Unknown" },
+        { status: 500 }
+      );
+    }
 
     if (userResult.rows.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const userRow = userResult.rows[0];
+    const userRow = userResult.rows[0] as Record<string, unknown>;
+    const userRole = userRow.role as string;
 
     // Get KYC status
     let kycStatus = "UNVERIFIED";
-    if (userRow.role === "CAREGIVER") {
-      const kycResult = await db.execute({
-        sql: "SELECT verificationStatus FROM ProfileCaregiver WHERE userId = ?",
-        args: [id],
-      });
-      kycStatus = (kycResult.rows[0]?.verificationStatus as string) || "UNVERIFIED";
+    if (userRole === "CAREGIVER") {
+      try {
+        const kycResult = await db.execute({
+          sql: "SELECT verificationStatus FROM ProfileCaregiver WHERE userId = ?",
+          args: [id],
+        });
+        kycStatus = (kycResult.rows[0]?.verificationStatus as string) || "UNVERIFIED";
+      } catch (e) {
+        console.error("Error fetching KYC status:", e);
+      }
     }
 
     // Get profile data
-    let profile = {};
-    if (userRow.role === "CAREGIVER") {
-      const profileResult = await db.execute({
-        sql: `SELECT
-          experienceYears,
-          services,
-          hourlyRateEur,
-          bio,
-          averageRating,
-          totalReviews
-        FROM ProfileCaregiver WHERE userId = ?`,
-        args: [id],
-      });
-      if (profileResult.rows.length > 0) {
-        const p = profileResult.rows[0];
-        // Safely parse services JSON
-        let specialties: string[] = [];
-        try {
-          if (p.services) {
-            specialties = JSON.parse(p.services as string);
+    let profile: Record<string, unknown> = {};
+    if (userRole === "CAREGIVER") {
+      try {
+        const profileResult = await db.execute({
+          sql: `SELECT
+            experienceYears,
+            services,
+            hourlyRateEur,
+            bio,
+            averageRating,
+            totalReviews
+          FROM ProfileCaregiver WHERE userId = ?`,
+          args: [id],
+        });
+        if (profileResult.rows.length > 0) {
+          const p = profileResult.rows[0] as Record<string, unknown>;
+          // Safely parse services JSON
+          let specialties: string[] = [];
+          try {
+            if (p.services) {
+              specialties = JSON.parse(p.services as string);
+            }
+          } catch {
+            specialties = [];
           }
-        } catch {
-          // If JSON parse fails, keep empty array
-          specialties = [];
+          profile = {
+            experience: Number(p.experienceYears || 0),
+            specialties,
+            hourlyRate: Number(p.hourlyRateEur || 0),
+            bio: p.bio as string,
+            rating: Number(p.averageRating || 0),
+            totalReviews: Number(p.totalReviews || 0),
+          };
         }
-        profile = {
-          experience: Number(p.experienceYears || 0),
-          specialties,
-          hourlyRate: Number(p.hourlyRateEur || 0),
-          bio: p.bio as string,
-          rating: Number(p.averageRating || 0),
-          totalReviews: Number(p.totalReviews || 0),
-        };
+      } catch (e) {
+        console.error("Error fetching caregiver profile:", e);
       }
-    } else if (userRow.role === "FAMILY") {
-      const profileResult = await db.execute({
-        sql: `SELECT country, city, preferredLanguage FROM ProfileFamily WHERE userId = ?`,
-        args: [id],
-      });
-      if (profileResult.rows.length > 0) {
-        const p = profileResult.rows[0];
-        profile = {
-          country: p.country as string,
-          city: p.city as string,
-          preferredLanguage: p.preferredLanguage as string,
-        };
+    } else if (userRole === "FAMILY") {
+      try {
+        const profileResult = await db.execute({
+          sql: `SELECT country, city, preferredLanguage FROM ProfileFamily WHERE userId = ?`,
+          args: [id],
+        });
+        if (profileResult.rows.length > 0) {
+          const p = profileResult.rows[0] as Record<string, unknown>;
+          profile = {
+            country: p.country as string,
+            city: p.city as string,
+            preferredLanguage: p.preferredLanguage as string,
+          };
+        }
+      } catch (e) {
+        console.error("Error fetching family profile:", e);
       }
     }
 
     // Get wallet totals
-    const walletTotalsResult = await db.execute({
-      sql: `SELECT
-        COALESCE(SUM(CASE WHEN amountTokens > 0 THEN amountTokens ELSE 0 END), 0) as totalReceived,
-        COALESCE(SUM(CASE WHEN amountTokens < 0 THEN ABS(amountTokens) ELSE 0 END), 0) as totalSent
-      FROM TokenLedger WHERE userId = ?`,
-      args: [id],
-    });
-    const walletTotals = walletTotalsResult.rows[0];
+    let walletTotals: Record<string, unknown> = { totalReceived: 0, totalSent: 0 };
+    try {
+      const walletTotalsResult = await db.execute({
+        sql: `SELECT
+          COALESCE(SUM(CASE WHEN amountTokens > 0 THEN amountTokens ELSE 0 END), 0) as totalReceived,
+          COALESCE(SUM(CASE WHEN amountTokens < 0 THEN ABS(amountTokens) ELSE 0 END), 0) as totalSent
+        FROM TokenLedger WHERE userId = ?`,
+        args: [id],
+      });
+      walletTotals = (walletTotalsResult.rows[0] as Record<string, unknown>) || walletTotals;
+    } catch (e) {
+      console.error("Error fetching wallet totals:", e);
+    }
 
     // Get contracts
-    const contractsResult = await db.execute({
-      sql: `SELECT
-        c.id,
-        c.title,
-        c.status,
-        c.startDate,
-        c.endDate,
-        c.totalEurCents as value
-      FROM Contract c
-      WHERE c.familyUserId = ? OR c.caregiverUserId = ?
-      ORDER BY c.createdAt DESC
-      LIMIT 10`,
-      args: [id, id],
-    });
-    const contracts = contractsResult.rows.map((row) => ({
-      id: row.id as string,
-      title: row.title as string,
-      status: row.status as string,
-      startDate: row.startDate as string,
-      endDate: row.endDate as string,
-      value: Number(row.value || 0),
-    }));
+    let contracts: Array<Record<string, unknown>> = [];
+    try {
+      const contractsResult = await db.execute({
+        sql: `SELECT
+          c.id,
+          c.title,
+          c.status,
+          c.startDate,
+          c.endDate,
+          c.totalEurCents as value
+        FROM Contract c
+        WHERE c.familyUserId = ? OR c.caregiverUserId = ?
+        ORDER BY c.createdAt DESC
+        LIMIT 10`,
+        args: [id, id],
+      });
+      contracts = contractsResult.rows.map((row) => {
+        const r = row as Record<string, unknown>;
+        return {
+          id: r.id as string,
+          title: r.title as string,
+          status: r.status as string,
+          startDate: r.startDate as string,
+          endDate: r.endDate as string,
+          value: Number(r.value || 0),
+        };
+      });
+    } catch (e) {
+      console.error("Error fetching contracts:", e);
+    }
 
     // Get transactions
-    const transactionsResult = await db.execute({
-      sql: `SELECT
-        tl.id,
-        tl.amountTokens as amount,
-        tl.description,
-        tl.createdAt
-      FROM TokenLedger tl
-      WHERE tl.userId = ?
-      ORDER BY tl.createdAt DESC
-      LIMIT 20`,
-      args: [id],
-    });
-    const transactions = transactionsResult.rows.map((row) => ({
-      id: row.id as string,
-      type: Number(row.amount) > 0 ? "credit" : "debit",
-      amount: Number(row.amount),
-      description: row.description as string,
-      createdAt: row.createdAt as string,
-    }));
+    let transactions: Array<Record<string, unknown>> = [];
+    try {
+      const transactionsResult = await db.execute({
+        sql: `SELECT
+          tl.id,
+          tl.amountTokens as amount,
+          tl.description,
+          tl.createdAt
+        FROM TokenLedger tl
+        WHERE tl.userId = ?
+        ORDER BY tl.createdAt DESC
+        LIMIT 20`,
+        args: [id],
+      });
+      transactions = transactionsResult.rows.map((row) => {
+        const r = row as Record<string, unknown>;
+        return {
+          id: r.id as string,
+          type: Number(r.amount) > 0 ? "credit" : "debit",
+          amount: Number(r.amount),
+          description: r.description as string,
+          createdAt: r.createdAt as string,
+        };
+      });
+    } catch (e) {
+      console.error("Error fetching transactions:", e);
+    }
 
     // Generate activity from various sources
     const activity: Array<{
@@ -181,12 +223,14 @@ export async function GET(
 
     // Add contract activities
     contracts.forEach((c, i) => {
-      activity.push({
-        id: `act-contract-${i}`,
-        type: "contract_created",
-        description: `Contract "${c.title}" created`,
-        timestamp: c.startDate,
-      });
+      if (c.startDate) {
+        activity.push({
+          id: `act-contract-${i}`,
+          type: "contract_created",
+          description: `Contract "${c.title}" created`,
+          timestamp: c.startDate as string,
+        });
+      }
     });
 
     // Sort activity by timestamp
@@ -197,7 +241,7 @@ export async function GET(
       name: userRow.name as string,
       email: userRow.email as string,
       phone: userRow.phone as string,
-      role: userRow.role as "FAMILY" | "CAREGIVER" | "ADMIN",
+      role: userRole as "FAMILY" | "CAREGIVER" | "ADMIN",
       status: userRow.status as "ACTIVE" | "PENDING" | "SUSPENDED" | "INACTIVE",
       kycStatus: kycStatus as "VERIFIED" | "UNVERIFIED" | "PENDING_VERIFICATION" | "REJECTED",
       createdAt: userRow.createdAt as string,
@@ -217,8 +261,11 @@ export async function GET(
     return NextResponse.json({ user });
   } catch (error) {
     console.error("Admin user detail error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error("Error details:", { message: errorMessage, stack: errorStack });
     return NextResponse.json(
-      { error: "Failed to fetch user" },
+      { error: "Failed to fetch user", details: errorMessage },
       { status: 500 }
     );
   }
