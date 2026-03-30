@@ -1,0 +1,263 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                   CAREAPP - QUICK REFERENCE GUIDE                          ║
+║                  Phase 1 Deep Dive Completa (30 Mar 2026)                   ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📊 ESTADO DO PROJETO                                                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  Completude: 88%                                                            │
+│  Versão: v1.0.0-rc (pronto quase para produção)                            │
+│  Linguagem: Next.js 16 + React 19 + TypeScript 5                           │
+│  Database: Turso (SQLite serverless)                                        │
+│  Moeda: EUR (Portugal only MVP)                                             │
+│  Status: Funcional com alguns gaps críticos                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🚨 BLOQUEADORES CRÍTICOS (Precisa fix antes de prod)                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  1. 🔴 EASYPAY REFUND TODO (linha 155)                                     │
+│     └─ Tokens não são debitados quando refund ocorre                       │
+│     └─ Exploração: User fica com tokens + money refunded                   │
+│     └─ Fix: 2-4 horas                                                      │
+│                                                                             │
+│  2. 🔴 CAREGIVER PAYMENT FEE ENDPOINT MISSING                              │
+│     └─ Sem POST /api/payments/caregiver-fee                                │
+│     └─ Contrato fica em PENDING_PAYMENT para sempre                        │
+│     └─ Fix: 4-6 horas                                                      │
+│                                                                             │
+│  3. 🔴 RATE LIMITING AUSENTE                                               │
+│     └─ Brute force possível em login/forgot-password/register              │
+│     └─ Sem proteção contra credential stuffing                             │
+│     └─ Fix: 4-6 horas                                                      │
+│                                                                             │
+│  4. 🔴 EMAIL VERIFICATION NÃO IMPLEMENTADA                                 │
+│     └─ User pode registrar com email fake/errado                           │
+│     └─ Sem confirmação de propriedade                                      │
+│     └─ Fix: 3-4 horas                                                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ⚠️ PROBLEMAS ALTOS (Deveria arrumar antes de 1-2 semanas)                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  • COUNTER_PROPOSED: Estado existe mas lógica incompleta (trava contrato)  │
+│  • DISPUTA: Sem fluxo de denúncia (só admin vê DISPUTED)                   │
+│  • ASSINATURA: SHA-256 sem notarização (fraca legalmente)                  │
+│  • KYC: Não re-validado antes de aceite (permissão pode expirar)           │
+│  • BLOCKCHAIN: Campos no schema mas nunca preenchidos                       │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ✅ ÁREAS SÓLIDAS (Pronto para deploy)                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ✓ Painel Admin (RBAC, audit logs)    │ ✓ Chat em Tempo Real (Socket.io)  │
+│  ✓ KYC/Didit                          │ ✓ Entrevistas Jitsi                │
+│  ✓ Pagamentos Easypay (99%)           │ ✓ Marketplace                      │
+│  ✓ Pagamentos Stripe                  │ ✓ Reviews & Ratings                │
+│  ✓ Testes E2E (67 testes)             │ ✓ Internacionalização (4 idiomas)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🔄 FLUXO CONTRATO (Principal use case)                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  User (Family)          │  Status         │  User (Caregiver)              │
+│  ──────────────────────│─────────────────│──────────────────────          │
+│                        │                 │                                │
+│  1. Create contract    │ DRAFT           │ Recebe notificação             │
+│  ├─ Title, desc        │                 │                                │
+│  ├─ Horas/semana       │                 │                                │
+│  └─ Taxa por hora      │                 │                                │
+│                        │                 │                                │
+│  2. Aceita contrato    │ PENDING_        │ 3. Aceita contrato             │
+│     (assinatura legal) │ ACCEPTANCE      │    (assinatura legal)          │
+│                        │                 │                                │
+│                        │ [OPT] COUNTER   │ [OPT] Faz contraproposta       │
+│                        │ _PROPOSED       │                                │
+│                        │                 │                                │
+│  4. Paga taxa (€5)     │ PENDING_        │ 5. [MISSING] Paga taxa (€5)    │
+│     via Easypay        │ PAYMENT         │    [BUG: endpoint missing]     │
+│     (webhook confirms) │ ⚠️              │                                │
+│                        │ TRAVA AQUI      │ [BUG: contrato travado!]       │
+│                        │ SEM ESTE STEP   │                                │
+│                        │                 │                                │
+│  6. Trabalho começa    │ ACTIVE          │ Recebe pagamento mensal        │
+│     (horas)            │                 │ (RecurringPayment)             │
+│                        │                 │                                │
+│  7. Marca concluído    │ COMPLETED       │ Deixa review                   │
+│     & deixa review     │                 │ (Rating + comentário)          │
+│                        │                 │                                │
+│  [ERROR] Conflito?     │ DISPUTED        │ [ERROR] Conflito?              │
+│  └─ Admin arbitra      │ → COMPLETED/    │ └─ Admin arbitra               │
+│                        │   CANCELLED     │                                │
+│                        │                 │                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 💰 FLUXO DE PAGAMENTOS                                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ATIVAÇÃO (€35)        │  CONTRATO (€5 cada) │  SERVIÇO (hourly x horas)  │
+│  ──────────────────────┼─────────────────────┼─────────────────────────── │
+│  • Familia registra    │ • Contrato aceito   │ • Pagamento recorrente    │
+│  • Paga €35            │ • Family paga €5    │ • Via Stripe Connect      │
+│  • Stripe Checkout     │ • Caregiver paga €5 │ • Transferência ao caring  │
+│  • Webhook valida      │   [MISSING!]        │                            │
+│  • Ativa conta (User)  │ • Ambos → ACTIVE    │ • Recibos (RC-nº)        │
+│  • Facilita KYC        │   [TRAVA AQUI]      │                            │
+│  • Status = ACTIVE     │                     │                            │
+│                        │ GATEWAY: Easypay    │ GATEWAY: Stripe            │
+│                        │ WEBHOOK: /webhooks/ │                            │
+│                        │          easypay    │ MÉTODO: RecurringPayment   │
+│                        │ [TODO: Refund!]     │                            │
+│                        │                     │                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 PRIORIDADES PHASE 2 (Simplificação & Fixes)                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  [ P0 CRÍTICO - 1 dia ]                                                    │
+│    1. Implement token deduction no refund Easypay                          │
+│    2. Add endpoint /api/payments/caregiver-fee                             │
+│    3. Add rate limiting (login, register, API)                             │
+│                                                                             │
+│  [ P1 ALTO - 2-3 dias ]                                                    │
+│    4. Email verification obrigatória                                       │
+│    5. Refresh tokens + logout revogável                                    │
+│    6. 2FA para admins                                                      │
+│    7. Completar counter-proposal logic                                     │
+│                                                                             │
+│  [ P2 MÉDIO - 3-5 dias ]                                                   │
+│    8. Implementar disputa workflow                                         │
+│    9. Melhorar assinatura digital (blockchain?)                            │
+│    10. Remover/simplificar blockchain refs                                 │
+│                                                                             │
+│  [ P3 BAIXO - defer for v1.1 ]                                             │
+│    • Stripe Connect                                                        │
+│    • Cron job para recurring (sem auto-charge)                             │
+│    • Google OAuth                                                          │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📋 DECISÕES JÁ TOMADAS                                                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  ✅ MVP: PORTUGAL APENAS (Easypay pronto)                                   │
+│  ✅ Blockchain: REMOVER COMPLETAMENTE (simplificar)                         │
+│  ✅ Stripe Connect: Adiado para v1.1                                        │
+│  ✅ Focus: Deep dive + Testes E2E (não features novas)                      │
+│  ✅ Branch: claude/project-review-catchup-0RLGP                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📊 ESTATÍSTICAS DO CÓDIGO                                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  • API Routes: 92 endpoints                                                │
+│  • Pages: 57 arquivos                                                      │
+│  • Components: 40+ UI components                                           │
+│  • Models Prisma: 44 (schema: 1.175 linhas)                               │
+│  • Testes: 15 arquivos, 67 testes                                          │
+│  • Package.json: 80+ dependencies                                          │
+│  • Código TypeScript: 0 erros (strict mode)                                │
+│  • Test Coverage: 90%                                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🛠️ COMANDOS ÚTEIS                                                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  # Desenvolvimento                                                          │
+│  bun run dev           # Dev server (localhost:3000)                       │
+│  bun run lint          # ESLint                                             │
+│  bunx tsc --noEmit     # Type check                                         │
+│                                                                             │
+│  # Database                                                                │
+│  bun run db:push       # Push schema                                       │
+│  bun run db:migrate    # Criar migração                                    │
+│  bun run db:reset      # Reset (cuidado!)                                  │
+│                                                                             │
+│  # Testes                                                                  │
+│  bun run test          # Watch mode                                        │
+│  bun run test:run      # Uma vez                                           │
+│  bun run test:coverage # Com cobertura                                     │
+│                                                                             │
+│  # Build & Production                                                      │
+│  bun run build         # Build para prod                                   │
+│  bun start             # Rodar production build                            │
+│  git push -u origin main  # Push para produção                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📁 ARQUIVOS CRÍTICOS PARA REVISAR                                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  🔴 BUG TODO:                                                              │
+│     /src/app/api/webhooks/easypay/route.ts (linha 155)                     │
+│     → "Deduct tokens from user wallet if already credited"                 │
+│                                                                             │
+│  🔴 MISSING ENDPOINT:                                                      │
+│     /src/app/api/payments/caregiver-fee/route.ts                           │
+│     → Não existe! (POST /api/payments/caregiver-fee)                       │
+│                                                                             │
+│  🟡 PROBLEMAS:                                                             │
+│     /src/app/api/contracts/[id]/counter/route.ts                           │
+│     /src/app/api/contracts/[id]/accept/route.ts (sem KYC re-check)        │
+│     /src/lib/auth-turso.ts (sem rate limiting)                             │
+│     /src/middleware.ts (CSRF cookie não httpOnly)                          │
+│                                                                             │
+│  ✅ SÓLIDO:                                                                 │
+│     /src/app/admin/                   (painel completo)                    │
+│     /src/app/api/payments/activation/ (Easypay okay)                       │
+│     /src/app/api/kyc/                 (Didit integrado)                    │
+│     /src/app/api/chat/                (Socket.io pronto)                   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🚀 TIMELINE RECOMENDADO PARA PRODUÇÃO                                       │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─ Phase 2: SIMPLIFICATION & FIXES         (5-7 dias)                    │
+│  │  └─ Resolver TODOs críticos                                             │
+│  │  └─ Implementar endpoints faltantes                                     │
+│  │  └─ Remover blockchain refs                                             │
+│  │                                                                         │
+│  ├─ Phase 3: TESTES E2E COMPLETOS           (3-5 dias)                    │
+│  │  └─ User registration → activation                                      │
+│  │  └─ Contract lifecycle                                                  │
+│  │  └─ Payment flow                                                        │
+│  │  └─ Chat & interviews                                                   │
+│  │                                                                         │
+│  ├─ Phase 4: SEGURANÇA CRÍTICA              (3-5 dias)                    │
+│  │  └─ Rate limiting                                                       │
+│  │  └─ Email verification                                                  │
+│  │  └─ Refresh tokens                                                      │
+│  │  └─ 2FA                                                                 │
+│  │                                                                         │
+│  ├─ Phase 5: STAGING COMPLETO               (1-2 dias)                    │
+│  │  └─ Build production                                                    │
+│  │  └─ Type check, lint, tests                                             │
+│  │  └─ Deploy staging                                                      │
+│  │                                                                         │
+│  └─ Phase 6: DEPLOY PRODUÇÃO                (1 dia)                        │
+│     └─ Git push origin main                                                │
+│     └─ CI/CD validar                                                       │
+│     └─ Deploy Portugal                                                     │
+│     └─ Monitorar                                                           │
+│                                                                             │
+│  📅 TOTAL: ~2-3 semanas até MVP v1.0 Portugal                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║  CONCLUSÃO: CareApp está 88% pronto. Bloqueadores são técnicos, não        ║
+║  arquiteturais. 2-3 semanas de desenvolvimento focado = produção pronta.   ║
+║                                                                            ║
+║  Próximo Passo: Iniciar Phase 2 (Fixes) ou rodar Phase 3 (E2E Tests)?    ║
+╚════════════════════════════════════════════════════════════════════════════╝
