@@ -179,15 +179,7 @@ export async function GET(request: NextRequest) {
       console.error('Error getting platform settings:', e);
     }
 
-    try {
-      const holdersResult = await db.execute({
-        sql: `SELECT COUNT(DISTINCT userId) as count FROM Wallet WHERE balanceTokens > 0`,
-        args: []
-      });
-      tokenHolders = Number(holdersResult.rows[0]?.count) || 0;
-    } catch (e) {
-      console.error('Error counting token holders:', e);
-    }
+    tokenHolders = 0;
 
     // Period-based stats
     const dateFilter = `-${daysAgo} days`;
@@ -247,15 +239,7 @@ export async function GET(request: NextRequest) {
       console.error('Error getting refund stats:', e);
     }
 
-    try {
-      const tokenTxResult = await db.execute({
-        sql: `SELECT COUNT(*) as count FROM TokenLedger WHERE createdAt >= datetime('now', ?)`,
-        args: [dateFilter]
-      });
-      tokenTransactionsPeriod = Number(tokenTxResult.rows[0]?.count) || 0;
-    } catch (e) {
-      console.error('Error counting token transactions:', e);
-    }
+    tokenTransactionsPeriod = 0;
 
     // Average rating
     let avgRating = 0;

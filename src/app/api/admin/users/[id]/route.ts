@@ -26,10 +26,7 @@ export async function GET(
           u.status,
           u.createdAt,
           u.lastLoginAt,
-          w.address as walletAddress,
-          w.balanceTokens as walletBalance
         FROM User u
-        LEFT JOIN Wallet w ON u.id = w.userId
         WHERE u.id = ?`,
         args: [id],
       });
@@ -120,19 +117,7 @@ export async function GET(
     }
 
     // Get wallet totals
-    let walletTotals: Record<string, unknown> = { totalReceived: 0, totalSent: 0 };
-    try {
-      const walletTotalsResult = await db.execute({
-        sql: `SELECT
-          COALESCE(SUM(CASE WHEN amountTokens > 0 THEN amountTokens ELSE 0 END), 0) as totalReceived,
-          COALESCE(SUM(CASE WHEN amountTokens < 0 THEN ABS(amountTokens) ELSE 0 END), 0) as totalSent
-        FROM TokenLedger WHERE userId = ?`,
-        args: [id],
-      });
-      walletTotals = (walletTotalsResult.rows[0] as Record<string, unknown>) || walletTotals;
-    } catch (e) {
-      console.error("Error fetching wallet totals:", e);
-    }
+    const walletTotals: Record<string, unknown> = { totalReceived: 0, totalSent: 0 };
 
     // Get contracts
     let contracts: Array<Record<string, unknown>> = [];
@@ -166,34 +151,7 @@ export async function GET(
       console.error("Error fetching contracts:", e);
     }
 
-    // Get transactions
-    let transactions: Array<Record<string, unknown>> = [];
-    try {
-      const transactionsResult = await db.execute({
-        sql: `SELECT
-          tl.id,
-          tl.amountTokens as amount,
-          tl.description,
-          tl.createdAt
-        FROM TokenLedger tl
-        WHERE tl.userId = ?
-        ORDER BY tl.createdAt DESC
-        LIMIT 20`,
-        args: [id],
-      });
-      transactions = transactionsResult.rows.map((row) => {
-        const r = row as Record<string, unknown>;
-        return {
-          id: r.id as string,
-          type: Number(r.amount) > 0 ? "credit" : "debit",
-          amount: Number(r.amount),
-          description: r.description as string,
-          createdAt: r.createdAt as string,
-        };
-      });
-    } catch (e) {
-      console.error("Error fetching transactions:", e);
-    }
+    const transactions: Array<Record<string, unknown>> = [];
 
     // Generate activity from various sources
     const activity: Array<{
@@ -246,12 +204,6 @@ export async function GET(
       kycStatus: kycStatus as "VERIFIED" | "UNVERIFIED" | "PENDING_VERIFICATION" | "REJECTED",
       createdAt: userRow.createdAt as string,
       lastLoginAt: userRow.lastLoginAt as string,
-      wallet: {
-        address: (userRow.walletAddress as string) || "Not created",
-        balance: Number(userRow.walletBalance || 0),
-        totalReceived: Number(walletTotals?.totalReceived || 0),
-        totalSent: Number(walletTotals?.totalSent || 0),
-      },
       profile,
       contracts,
       transactions,
@@ -343,17 +295,9 @@ export async function PATCH(
     // Get updated user
     const userResult = await db.execute({
       sql: `SELECT
-        u.id,
-        u.name,
-        u.email,
-        u.phone,
-        u.role,
-        u.status,
-        u.createdAt,
-        COALESCE(w.balanceTokens, 0) as walletBalance,
+        u.id, u.name, u.email, u.phone, u.role, u.status, u.createdAt,
         COALESCE(pc.verificationStatus, 'UNVERIFIED') as kycStatus
       FROM User u
-      LEFT JOIN Wallet w ON u.id = w.userId
       LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
       WHERE u.id = ?`,
       args: [id],
@@ -417,7 +361,6 @@ export async function PATCH(
         phone: userAfter?.phone,
         role: userAfter?.role,
         status: userAfter?.status,
-        walletBalance: Number(userAfter?.walletBalance || 0),
         kycStatus: userAfter?.kycStatus,
         createdAt: userAfter?.createdAt,
       },
@@ -457,12 +400,7 @@ export async function DELETE(
 
     // Get current user state
     const userResult = await db.execute({
-      sql: `SELECT
-        u.id, u.name, u.email, u.phone, u.role, u.status,
-        w.balanceTokens as walletBalance
-      FROM User u
-      LEFT JOIN Wallet w ON u.id = w.userId
-      WHERE u.id = ?`,
+      sql: `SELECT id, name, email, phone, role, status FROM User WHERE id = ?`,
       args: [id],
     });
 
@@ -540,7 +478,6 @@ export async function DELETE(
             phone: userBefore.phone,
             role: userBefore.role,
             status: userBefore.status,
-            walletBalance: userBefore.walletBalance,
           }),
           JSON.stringify({
             status: "INACTIVE",

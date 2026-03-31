@@ -43,7 +43,7 @@ function getNotificationUrl(notification: Notification): string {
     case 'interview':
       return `/app/interview/${notification.referenceId}`;
     case 'payment':
-      return '/app/wallet';
+      return '/app/payments';
     case 'proposal':
       return '/app/proposals';
     default:

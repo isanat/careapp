@@ -25,18 +25,6 @@ export async function GET(request: NextRequest) {
       verificationStatus: userResult.rows[0].verificationStatus,
     } : null;
 
-    // Get wallet balance
-    const walletResult = await db.execute({
-      sql: `SELECT balanceTokens, id FROM Wallet WHERE userId = ?`,
-      args: [userId]
-    });
-    
-    const balanceTokens = walletResult.rows.length > 0 
-      ? Number(walletResult.rows[0].balanceTokens) || 0 
-      : 0;
-
-    const hasWallet = walletResult.rows.length > 0;
-
     // Check if profile is complete
     let profileComplete = false;
     if (isCaregiver) {
@@ -73,8 +61,6 @@ export async function GET(request: NextRequest) {
 
     // Get caregiver-specific stats
     let stats: Record<string, any> = {
-      tokenBalance: balanceTokens,
-      tokenValueEur: balanceTokens * 0.01,
       activeContracts,
     };
 
@@ -101,29 +87,11 @@ export async function GET(request: NextRequest) {
       stats.totalHours = activeContracts * 20; // Estimate
     }
 
-    // Get recent activity
-    const activityResult = await db.execute({
-      sql: `SELECT type, reason, amountTokens, createdAt 
-            FROM TokenLedger 
-            WHERE userId = ? 
-            ORDER BY createdAt DESC 
-            LIMIT 5`,
-      args: [userId]
-    });
-
-    const recentActivity = activityResult.rows.map(tx => ({
-      type: tx.type,
-      description: tx.reason,
-      amount: Number(tx.amountTokens) || 0,
-      date: tx.createdAt,
-    }));
-
     return NextResponse.json({
       stats,
-      recentActivity,
+      recentActivity: [],
       userStatus: {
         ...userStatus,
-        hasWallet,
         profileComplete,
       },
     });

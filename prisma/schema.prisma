@@ -43,11 +43,9 @@ enum VerificationStatus {
 }
 
 enum PaymentType {
-  ACTIVATION        // Pagamento de ativação (€25)
-  TOKEN_PURCHASE    // Compra adicional de tokens
-  CONTRACT_FEE      // Taxa de contrato (€5)
+  ACTIVATION        // Pagamento de ativação
+  CONTRACT_FEE      // Taxa de contrato
   SERVICE_PAYMENT   // Pagamento de serviço
-  REDEMPTION        // Resgate de tokens por €
 }
 
 enum PaymentStatus {
@@ -75,23 +73,6 @@ enum ContractStatus {
   DISPUTED            // Em disputa
 }
 
-enum LedgerType {
-  CREDIT    // Entrada de tokens
-  DEBIT     // Saída de tokens
-}
-
-enum TransactionReason {
-  ACTIVATION_BONUS     // Bônus de ativação
-  CONTRACT_FEE         // Taxa de contrato
-  SERVICE_PAYMENT      // Pagamento de serviço
-  TIP_RECEIVED         // Gorjeta recebida
-  TIP_SENT             // Gorjeta enviada
-  TOKEN_PURCHASE       // Compra de tokens
-  TOKEN_REDEMPTION     // Resgate de tokens
-  PLATFORM_FEE         // Taxa da plataforma
-  REFERRAL_BONUS       // Bônus de indicação
-  ADJUSTMENT           // Ajuste administrativo
-}
 
 enum ServiceType {
   PERSONAL_CARE      // Cuidados pessoais (higiene, banho)
@@ -166,8 +147,6 @@ model User {
   profileFamily     ProfileFamily?
   profileCaregiver  ProfileCaregiver?
   adminProfile      AdminUser?
-  wallet            Wallet?
-  ledgerEntries     TokenLedger[]
   payments          Payment[]
   contractsAsFamily   Contract[]  @relation("FamilyContracts")
   contractsAsCaregiver Contract[] @relation("CaregiverContracts")
@@ -279,65 +258,6 @@ model ProfileCaregiver {
   updatedAt       DateTime @updatedAt
 }
 
-// ==================== WALLET & TOKENS ====================
-
-model Wallet {
-  id              String  @id @default(cuid())
-  userId          String  @unique
-  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Endereço da carteira na blockchain
-  address         String  @unique  // Endereço público (0x...)
-  
-  // Chaves (encryptadas) - Account Abstraction
-  encryptedPrivateKey  String? // Chave privada encryptada
-  salt                String? // Salt para derivação
-  
-  // Balanços
-  balanceTokens    Int     @default(0)  // Saldo de SENT tokens
-  balanceEurCents  Int     @default(0)  // Saldo em centavos de euro (equivalente)
-  
-  // Metadados
-  walletType       String  @default("custodial") // custodial, non-custodial
-  isExported       Boolean @default(false) // Se o usuário exportou a chave
-  
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-}
-
-// Livro-razão de tokens (histórico)
-model TokenLedger {
-  id              String        @id @default(cuid())
-  userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Tipo e Razão
-  type            LedgerType
-  reason          TransactionReason
-  
-  // Valores
-  amountTokens    Int       // Quantidade de tokens
-  amountEurCents  Int       // Equivalente em centavos de euro
-  
-  // Referências
-  referenceType   String?   // Contract, Payment, Tip, etc.
-  referenceId     String?   // ID da referência
-  
-  // Blockchain
-  txHash          String?   // Hash da transação on-chain
-  
-  // Descrição amigável
-  description     String    // Descrição legível para o usuário
-  
-  // Metadata
-  metadata        String?   // JSON adicional
-  
-  createdAt       DateTime  @default(now())
-  
-  @@index([userId, createdAt])
-  @@index([userId, type])
-}
-
 // ==================== PAYMENTS ====================
 
 model Payment {
@@ -352,7 +272,6 @@ model Payment {
   
   // Valores
   amountEurCents  Int       // Valor em centavos de euro
-  tokensAmount    Int       @default(0)  // Quantidade de tokens (se aplicável)
   platformFee     Int       @default(0)  // Taxa da plataforma em centavos
   
   // Stripe
@@ -411,20 +330,13 @@ model Contract {
   startDate         DateTime?
   endDate           DateTime?
   
-  // Taxa de contrato (tokens)
-  familyFeeTokens   Int             @default(0)
-  caregiverFeeTokens Int            @default(0)
+  // Taxa de contrato
   familyFeePaid     Boolean         @default(false)
   caregiverFeePaid  Boolean         @default(false)
   
   // Aceite
   acceptedByFamilyAt    DateTime?
   acceptedByCaregiverAt DateTime?
-  
-  // Blockchain
-  onchainHash       String?         // Hash do contrato gravado on-chain
-  onchainTxHash     String?         // Hash da transação
-  onchainCreatedAt  DateTime?
   
   // Pagamentos
   totalPaidEurCents Int             @default(0)

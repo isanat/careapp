@@ -55,36 +55,7 @@ export async function POST(request: NextRequest) {
       // Get payment metadata
       const metadata = payment.metadata ? JSON.parse(payment.metadata as string) : {};
       const userId = payment.userId as string;
-      const tokensAmount = payment.tokensAmount as number;
-      const amountEurCents = payment.amountEurCents as number;
       const paymentType = payment.type as string;
-
-      // Credit tokens to user wallet
-      if (tokensAmount > 0) {
-        // Update wallet balance
-        await db.execute({
-          sql: `UPDATE Wallet SET balanceTokens = balanceTokens + ?, balanceEurCents = balanceEurCents + ?, updatedAt = ? WHERE userId = ?`,
-          args: [tokensAmount, amountEurCents, now, userId]
-        });
-
-        // Create ledger entry
-        const ledgerId = generateId("ledger");
-        await db.execute({
-          sql: `INSERT INTO TokenLedger (id, userId, type, reason, amountTokens, amountEurCents, description, referenceType, referenceId, createdAt)
-                VALUES (?, ?, 'CREDIT', ?, ?, ?, ?, ?, ?, ?)`,
-          args: [
-            ledgerId,
-            userId,
-            paymentType === 'ACTIVATION' ? 'ACTIVATION_BONUS' : 'TOKEN_PURCHASE',
-            tokensAmount,
-            amountEurCents,
-            paymentType === 'ACTIVATION' ? 'Bônus de ativação de conta' : 'Compra de tokens',
-            'payment',
-            payment.id,
-            now
-          ]
-        });
-      }
 
       // Update user status if activation payment
       if (paymentType === 'ACTIVATION') {
@@ -134,7 +105,7 @@ export async function POST(request: NextRequest) {
         args: [generateId("notif"), userId, now]
       });
 
-      console.log(`Payment ${payment.id} completed successfully. Credited ${tokensAmount} tokens to user ${userId}`);
+      console.log(`Payment ${payment.id} completed successfully for user ${userId}`);
 
     } else if (status_payment === 'failed' || status_payment === 'cancelled') {
       // Payment failed or cancelled
@@ -152,7 +123,6 @@ export async function POST(request: NextRequest) {
         args: [now, now, payment.id]
       });
 
-      // TODO: Deduct tokens from user wallet if already credited
       console.log(`Payment ${payment.id} refunded`);
 
     } else if (status_payment === 'pending') {

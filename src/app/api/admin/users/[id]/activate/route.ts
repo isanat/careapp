@@ -21,9 +21,7 @@ export async function POST(
     const userResult = await db.execute({
       sql: `SELECT
         u.id, u.name, u.email, u.role, u.status,
-        w.balance as walletBalance
       FROM User u
-      LEFT JOIN Wallet w ON u.id = w.userId
       WHERE u.id = ?`,
       args: [userId],
     });

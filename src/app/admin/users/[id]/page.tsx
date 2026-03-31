@@ -16,7 +16,6 @@ import {
   IconUserOff,
   IconUserCheck,
   IconEye,
-  IconCoins,
   IconFileText,
   IconCreditCard,
   IconStar,
@@ -39,11 +38,6 @@ interface UserDetail {
   verificationStatus: "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
   createdAt: string;
   lastLoginAt: string | null;
-  wallet: {
-    address: string;
-    balanceTokens: number;
-    balanceEurCents: number;
-  } | null;
   profileFamily: {
     elderName: string | null;
     elderAge: number | null;
@@ -274,21 +268,6 @@ export default function AdminUserDetailPage() {
                       <div>
                         <p className="text-2xl font-bold">{user.contractsCount}</p>
                         <p className="text-sm text-slate-500">Contratos</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-green-100 p-2">
-                        <IconCoins className="h-5 w-5 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-bold">
-                          {user.wallet?.balanceTokens?.toLocaleString() || 0}
-                        </p>
-                        <p className="text-sm text-slate-500">SENT</p>
                       </div>
                     </div>
                   </CardContent>

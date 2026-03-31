@@ -28,8 +28,6 @@ import { useI18n } from "@/lib/i18n";
 import { apiFetch } from "@/lib/api-client";
 
 interface Stats {
-  tokenBalance: number;
-  tokenValueEur: number;
   activeContracts: number;
   totalHours: number;
   rating: number;
@@ -46,7 +44,6 @@ interface Activity {
 interface UserStatus {
   status: string;
   verificationStatus: string;
-  hasWallet: boolean;
   profileComplete: boolean;
 }
 
@@ -72,7 +69,7 @@ export default function DashboardPage() {
         setUserStatus(data.userStatus || null);
       }
     } catch {
-      setStats({ tokenBalance: 0, tokenValueEur: 0, activeContracts: 0, totalHours: 0, rating: 0, totalReviews: 0 });
+      setStats({ activeContracts: 0, totalHours: 0, rating: 0, totalReviews: 0 });
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +103,6 @@ export default function DashboardPage() {
     );
   }
 
-  const balanceEur = ((stats?.tokenValueEur ?? 0) / 100).toFixed(2);
   const firstName = session?.user?.name?.split(" ")[0] || "";
 
   return (
@@ -128,20 +124,6 @@ export default function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Balance - compact inline */}
-        <Link href="/app/wallet" className="block">
-          <div className={`rounded-xl px-4 py-3 text-white flex items-center justify-between ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
-            <div>
-              <p className="text-xs opacity-80">{t.wallet.balance}</p>
-              <p className="text-xl font-bold">{"\u20AC"}{balanceEur}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs opacity-70">{stats?.tokenBalance?.toLocaleString() || 0} tokens</p>
-              <IconChevronRight className="h-4 w-4 ml-auto opacity-60" />
-            </div>
-          </div>
-        </Link>
-
         {/* Stats - 4 columns, ultra compact */}
         <div className="grid grid-cols-4 gap-2">
           <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
@@ -161,8 +143,8 @@ export default function DashboardPage() {
           </div>
           <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
             <IconEuro className="h-4 w-4 text-success mx-auto" />
-            <p className="text-lg font-bold mt-0.5">{stats?.tokenBalance?.toLocaleString() || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Tokens</p>
+            <p className="text-lg font-bold mt-0.5">{stats?.totalReviews || 0}</p>
+            <p className="text-[10px] text-muted-foreground">Reviews</p>
           </div>
         </div>
 
@@ -265,7 +247,7 @@ export default function DashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold">{t.dashboard.recentActivity}</span>
-            <Link href="/app/wallet" className="text-xs text-primary font-medium">
+            <Link href="/app/payments" className="text-xs text-primary font-medium">
               {t.dashboard.viewAll}
             </Link>
           </div>

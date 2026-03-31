@@ -24,10 +24,9 @@ export async function POST(
 
     // Get payment
     const payment = await db.execute({
-      sql: `SELECT p.*, u.name as userName, w.balanceTokens as userTokenBalance, w.id as walletId
-            FROM Payment p 
+      sql: `SELECT p.*, u.name as userName
+            FROM Payment p
             JOIN User u ON p.userId = u.id
-            LEFT JOIN Wallet w ON u.id = w.userId
             WHERE p.id = ? AND p.status = 'COMPLETED' AND p.refundedAt IS NULL`,
       args: [id]
     });
@@ -38,7 +37,6 @@ export async function POST(
 
     const p = payment.rows[0] as any;
     const refundAmountCents = amount || p.amountEurCents;
-    const refundTokens = Math.round((refundAmountCents / p.amountEurCents) * p.tokensAmount);
 
     // Call Stripe API for refund if provider is STRIPE and payment intent exists
     if (p.provider === 'STRIPE' && p.stripePaymentIntentId) {
@@ -66,21 +64,6 @@ export async function POST(
       args: [id]
     });
 
-    // Deduct tokens from user wallet
-    if (refundTokens > 0 && p.walletId) {
-      await db.execute({
-        sql: `UPDATE Wallet SET balanceTokens = balanceTokens - ? WHERE id = ?`,
-        args: [refundTokens, p.walletId]
-      });
-
-      // Add ledger entry
-      await db.execute({
-        sql: `INSERT INTO TokenLedger (id, userId, type, reason, amountTokens, amountEurCents, description, referenceType, referenceId, createdAt)
-              VALUES (?, ?, 'DEBIT', 'ADJUSTMENT', ?, ?, 'Tokens deducted due to refund', 'PAYMENT', ?, CURRENT_TIMESTAMP)`,
-        args: [generateId("tl"), p.userId, -refundTokens, -refundAmountCents, id]
-      });
-    }
-
     // Log action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
@@ -89,8 +72,8 @@ export async function POST(
         generateId("action"),
         adminUserId,
         id,
-        JSON.stringify({ status: 'COMPLETED', tokens: p.tokensAmount }),
-        JSON.stringify({ status: 'REFUNDED', refundTokens }),
+        JSON.stringify({ status: 'COMPLETED' }),
+        JSON.stringify({ status: 'REFUNDED' }),
         reason,
         request.headers.get('x-forwarded-for') || 'unknown'
       ]
@@ -110,8 +93,7 @@ export async function POST(
       message: 'Refund processed',
       refund: {
         paymentId: id,
-        amountCents: refundAmountCents,
-        tokensDeducted: refundTokens
+        amountCents: refundAmountCents
       }
     });
   } catch (error) {

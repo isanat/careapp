@@ -43,7 +43,6 @@ interface User {
   verificationStatus: "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
   createdAt: string;
   lastLoginAt: string | null;
-  walletBalance: number;
   contractsCount: number;
 }
 
@@ -210,15 +209,6 @@ function AdminFamiliesContent() {
               : "unverified"
           }
         />
-      ),
-    },
-    {
-      key: "walletBalance",
-      header: "Carteira",
-      render: (user) => (
-        <span className="text-sm">
-          €{(user.walletBalance / 100)?.toFixed(2) || "0.00"}
-        </span>
       ),
     },
     {

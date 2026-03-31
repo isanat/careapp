@@ -43,18 +43,6 @@ export async function GET(request: NextRequest) {
       console.error("Error counting families:", e);
     }
 
-    // Get total tokens issued
-    let tokensIssued = 0;
-    try {
-      const tokensResult = await db.execute({
-        sql: "SELECT COALESCE(SUM(balanceTokens), 0) as total FROM Wallet",
-        args: [],
-      });
-      tokensIssued = Number(tokensResult.rows[0]?.total || 0);
-    } catch (e) {
-      console.error("Error summing tokens:", e);
-    }
-
     // Get active contracts count
     let activeContracts = 0;
     try {
@@ -284,7 +272,7 @@ export async function GET(request: NextRequest) {
         pendingDisputes,
         totalRevenueEur,
         revenueToday,
-        tokensInCirculation: tokensIssued,
+        tokensInCirculation: 0,
         reserveEur,
       },
       alerts: {
@@ -305,7 +293,7 @@ export async function GET(request: NextRequest) {
         caregivers,
         families,
         revenue: totalRevenueEur / 100, // Convert to euros
-        tokensIssued,
+        tokensIssued: 0,
         pendingKyc,
         activeContracts,
         pendingDisputes,

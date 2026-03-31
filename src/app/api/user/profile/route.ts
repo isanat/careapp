@@ -167,18 +167,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Get wallet info
-    const walletResult = await db.execute({
-      sql: `SELECT address, balanceTokens, balanceEurCents FROM Wallet WHERE userId = ?`,
-      args: [userId]
-    });
-
-    const wallet = walletResult.rows.length > 0 ? {
-      address: walletResult.rows[0].address,
-      balanceTokens: walletResult.rows[0].balanceTokens,
-      balanceEurCents: walletResult.rows[0].balanceEurCents,
-    } : null;
-
     return NextResponse.json({
       user: {
         id: user.id,
@@ -196,7 +184,6 @@ export async function GET(request: NextRequest) {
         createdAt: user.createdAt,
       },
       profile,
-      wallet,
     });
   } catch (error) {
     console.error('Error fetching profile:', error);

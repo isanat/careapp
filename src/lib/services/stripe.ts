@@ -12,13 +12,9 @@ export class StripeService {
    * Create checkout session for account activation
    */
   async createActivationCheckout(userId: string) {
-    // Get user with wallet
+    // Get user
     const userResult = await db.execute({
-      sql: `SELECT u.id, u.email, u.name, u.status,
-                   w.id as walletId, w.balanceTokens, w.balanceEurCents
-            FROM User u
-            LEFT JOIN Wallet w ON u.id = w.userId
-            WHERE u.id = ?`,
+      sql: `SELECT u.id, u.email, u.name, u.status FROM User u WHERE u.id = ?`,
       args: [userId],
     });
 
@@ -31,9 +27,9 @@ export class StripeService {
     // Create payment record
     const paymentId = generateId("pay");
     await db.execute({
-      sql: `INSERT INTO Payment (id, userId, type, provider, amountEurCents, tokensAmount, status, description, createdAt)
-            VALUES (?, ?, 'ACTIVATION', 'STRIPE', ?, ?, 'PENDING', 'Ativação de conta ${APP_NAME}', datetime('now'))`,
-      args: [paymentId, userId, ACTIVATION_COST_EUR_CENTS, ACTIVATION_COST_EUR_CENTS],
+      sql: `INSERT INTO Payment (id, userId, type, provider, amountEurCents, status, description, createdAt)
+            VALUES (?, ?, 'ACTIVATION', 'STRIPE', ?, 'PENDING', 'Ativação de conta ${APP_NAME}', datetime('now'))`,
+      args: [paymentId, userId, ACTIVATION_COST_EUR_CENTS],
     });
 
     // Create Stripe checkout session
@@ -75,68 +71,6 @@ export class StripeService {
   }
 
   /**
-   * Create checkout session for token purchase
-   */
-  async createTokenPurchaseCheckout(userId: string, eurAmount: number) {
-    // Get user
-    const userResult = await db.execute({
-      sql: `SELECT id, email, name FROM User WHERE id = ?`,
-      args: [userId],
-    });
-
-    if (userResult.rows.length === 0) {
-      throw new Error("User not found");
-    }
-
-    const user = userResult.rows[0];
-
-    // Create payment record
-    const paymentId = generateId("pay");
-    await db.execute({
-      sql: `INSERT INTO Payment (id, userId, type, provider, amountEurCents, tokensAmount, status, description, createdAt)
-            VALUES (?, ?, 'TOKEN_PURCHASE', 'STRIPE', ?, ?, 'PENDING', ?, datetime('now'))`,
-      args: [paymentId, userId, eurAmount, eurAmount, `Compra de créditos ${APP_NAME}`],
-    });
-
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/wallet?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/wallet?cancelled=true`,
-      customer_email: String(user.email),
-      line_items: [
-        {
-          price_data: {
-            currency: "eur",
-            unit_amount: eurAmount,
-            product_data: {
-              name: `Créditos ${APP_NAME}`,
-              description: `${eurAmount / 100} créditos`,
-            },
-          },
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        paymentId,
-        userId,
-        type: "TOKEN_PURCHASE",
-      },
-    });
-
-    // Update payment with session ID
-    await db.execute({
-      sql: `UPDATE Payment SET stripeCheckoutSessionId = ? WHERE id = ?`,
-      args: [session.id, paymentId],
-    });
-
-    return {
-      sessionId: session.id,
-      url: session.url,
-    };
-  }
-
-  /**
    * Create checkout session for contract fee
    */
   async createContractFeeCheckout(userId: string, contractId: string) {
@@ -161,9 +95,9 @@ export class StripeService {
     // Create payment record
     const paymentId = generateId("pay");
     await db.execute({
-      sql: `INSERT INTO Payment (id, userId, contractId, type, provider, amountEurCents, tokensAmount, status, description, createdAt)
-            VALUES (?, ?, ?, 'CONTRACT_FEE', 'STRIPE', ?, ?, 'PENDING', 'Taxa de criação de contrato', datetime('now'))`,
-      args: [paymentId, userId, contractId, CONTRACT_FEE_EUR_CENTS, CONTRACT_FEE_EUR_CENTS],
+      sql: `INSERT INTO Payment (id, userId, contractId, type, provider, amountEurCents, status, description, createdAt)
+            VALUES (?, ?, ?, 'CONTRACT_FEE', 'STRIPE', ?, 'PENDING', 'Taxa de criação de contrato', datetime('now'))`,
+      args: [paymentId, userId, contractId, CONTRACT_FEE_EUR_CENTS],
     });
 
     // Create Stripe checkout session
@@ -219,8 +153,8 @@ export class StripeService {
 
       // Get payment
       const paymentResult = await db.execute({
-        sql: `SELECT id, userId, type, status, amountEurCents, tokensAmount 
-              FROM Payment 
+        sql: `SELECT id, userId, type, status, amountEurCents
+              FROM Payment
               WHERE id = ?`,
         args: [paymentId],
       });
@@ -245,50 +179,12 @@ export class StripeService {
           args: [session.payment_intent as string, paymentId],
         });
 
-        // Add tokens to user wallet
-        if (type === "ACTIVATION" || type === "TOKEN_PURCHASE") {
-          const walletResult = await tx.execute({
-            sql: `SELECT id, balanceTokens, balanceEurCents FROM Wallet WHERE userId = ?`,
+        // Activate user account on activation payment
+        if (type === "ACTIVATION") {
+          await tx.execute({
+            sql: `UPDATE User SET status = 'ACTIVE', updatedAt = datetime('now') WHERE id = ?`,
             args: [userId],
           });
-
-          if (walletResult.rows.length > 0) {
-            const wallet = walletResult.rows[0];
-            const newBalanceTokens = Number(wallet.balanceTokens) + Number(payment.tokensAmount);
-            const newBalanceEurCents = Number(wallet.balanceEurCents) + Number(payment.amountEurCents);
-
-            await tx.execute({
-              sql: `UPDATE Wallet
-                    SET balanceTokens = ?,
-                        balanceEurCents = ?,
-                        updatedAt = datetime('now')
-                    WHERE id = ?`,
-              args: [newBalanceTokens, newBalanceEurCents, wallet.id],
-            });
-
-            const ledgerId = generateId("tl");
-            await tx.execute({
-              sql: `INSERT INTO TokenLedger
-                    (id, userId, type, reason, amountTokens, amountEurCents, referenceType, referenceId, description, createdAt)
-                    VALUES (?, ?, 'CREDIT', ?, ?, ?, 'Payment', ?, ?, datetime('now'))`,
-              args: [
-                ledgerId,
-                userId,
-                type === "ACTIVATION" ? "ACTIVATION_BONUS" : "TOKEN_PURCHASE",
-                payment.tokensAmount,
-                payment.amountEurCents,
-                paymentId,
-                type === "ACTIVATION" ? "Tokens de ativação de conta" : "Compra de tokens",
-              ],
-            });
-
-            if (type === "ACTIVATION") {
-              await tx.execute({
-                sql: `UPDATE User SET status = 'ACTIVE', updatedAt = datetime('now') WHERE id = ?`,
-                args: [userId],
-              });
-            }
-          }
         }
 
         // Handle contract fee payment
@@ -317,32 +213,19 @@ export class StripeService {
           }
         }
 
-        // Update platform settings (reserve) - use fixed ID to prevent duplicates
+        // Update platform revenue stats
         const SETTINGS_ID = "platform-settings-v1";
         const settingsResult = await tx.execute({
-          sql: `SELECT id, totalReserveEurCents, totalTokensMinted FROM PlatformSettings WHERE id = ?`,
+          sql: `SELECT id, totalReserveEurCents FROM PlatformSettings WHERE id = ?`,
           args: [SETTINGS_ID],
         });
 
         if (settingsResult.rows.length > 0) {
           const settings = settingsResult.rows[0];
           const newReserve = Number(settings.totalReserveEurCents) + Number(payment.amountEurCents);
-          const newMinted = Number(settings.totalTokensMinted) + Number(payment.tokensAmount);
-
           await tx.execute({
-            sql: `UPDATE PlatformSettings
-                  SET totalReserveEurCents = ?,
-                      totalTokensMinted = ?,
-                      updatedAt = datetime('now')
-                  WHERE id = ?`,
-            args: [newReserve, newMinted, SETTINGS_ID],
-          });
-        } else {
-          await tx.execute({
-            sql: `INSERT INTO PlatformSettings
-                  (id, totalReserveEurCents, totalTokensMinted, updatedAt)
-                  VALUES (?, ?, ?, datetime('now'))`,
-            args: [SETTINGS_ID, payment.amountEurCents, payment.tokensAmount],
+            sql: `UPDATE PlatformSettings SET totalReserveEurCents = ?, updatedAt = datetime('now') WHERE id = ?`,
+            args: [newReserve, SETTINGS_ID],
           });
         }
 

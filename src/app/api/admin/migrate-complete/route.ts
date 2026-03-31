@@ -29,8 +29,6 @@ export async function GET(request: NextRequest) {
       'User',
       'ProfileFamily',
       'ProfileCaregiver',
-      'Wallet',
-      'TokenLedger',
       'Payment',
       'Contract',
       'ContractAcceptance',

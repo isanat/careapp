@@ -66,10 +66,8 @@ export async function GET(request: NextRequest) {
         u.role,
         u.status,
         u.createdAt,
-        COALESCE(w.balanceTokens, 0) as walletBalance,
         COALESCE(pc.verificationStatus, 'UNVERIFIED') as kycStatus
       FROM User u
-      LEFT JOIN Wallet w ON u.id = w.userId
       LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
       ${whereClause}
       ORDER BY u.createdAt DESC
@@ -84,7 +82,7 @@ export async function GET(request: NextRequest) {
       role: row.role as "FAMILY" | "CAREGIVER" | "ADMIN",
       status: row.status as "ACTIVE" | "PENDING" | "SUSPENDED" | "INACTIVE",
       verificationStatus: (row.kycStatus || "UNVERIFIED") as "VERIFIED" | "UNVERIFIED" | "PENDING" | "REJECTED",
-      walletBalance: Number(row.walletBalance || 0),
+      walletBalance: 0,
       createdAt: row.createdAt as string,
       lastLoginAt: null,
       contractsCount: 0,
@@ -229,17 +227,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create wallet for user
-    const walletId = randomUUID();
-    const walletAddress = `0x${Array.from({ length: 40 }, () => 
-      Math.floor(Math.random() * 16).toString(16)).join('')}`;
-    
-    await db.execute({
-      sql: `INSERT INTO Wallet (id, userId, address, balanceTokens, balanceEurCents, walletType, createdAt, updatedAt)
-            VALUES (?, ?, ?, 0, 0, 'custodial', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-      args: [walletId, userId, walletAddress],
-    });
-
     // Log action to AdminAction table
     if (adminProfileId) {
       await db.execute({
@@ -275,12 +262,8 @@ export async function POST(request: NextRequest) {
 
     // Get created user
     const newUserResult = await db.execute({
-      sql: `SELECT 
-        u.id, u.name, u.email, u.phone, u.role, u.status, u.createdAt,
-        w.address as walletAddress
-      FROM User u
-      LEFT JOIN Wallet w ON u.id = w.userId
-      WHERE u.id = ?`,
+      sql: `SELECT id, name, email, phone, role, status, createdAt
+      FROM User WHERE id = ?`,
       args: [userId],
     });
 
@@ -296,7 +279,6 @@ export async function POST(request: NextRequest) {
         phone: newUser?.phone,
         role: newUser?.role,
         status: newUser?.status,
-        walletAddress: newUser?.walletAddress,
         createdAt: newUser?.createdAt,
       },
       temporaryPassword: password, // Return for admin to share with user
