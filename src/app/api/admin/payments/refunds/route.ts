@@ -23,10 +23,9 @@ export async function GET(request: NextRequest) {
     // Get payments that can be refunded (completed, not refunded)
     const refundable = await db.execute({
       sql: `
-        SELECT p.*, u.name as userName, u.email as userEmail, w.balanceTokens as userTokenBalance
+        SELECT p.*, u.name as userName, u.email as userEmail
         FROM Payment p
         JOIN User u ON p.userId = u.id
-        LEFT JOIN Wallet w ON u.id = w.userId
         WHERE p.status = 'COMPLETED' AND p.refundedAt IS NULL
         ORDER BY p.paidAt DESC
         LIMIT 50

@@ -39,14 +39,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 });
     }
 
-    // Store subscription in database
-    // Note: You need to add PushSubscription table to schema
+    // Store subscription in database via Notification table
     const subscriptionId = generateId("sub");
     const now = new Date().toISOString();
     const subscriptionJson = JSON.stringify(subscription);
 
-    // Store in TokenLedger as a workaround (or create proper table)
-    // For production, create a proper PushSubscription table
     try {
       await db.execute({
         sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)

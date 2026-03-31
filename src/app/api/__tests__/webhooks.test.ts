@@ -198,18 +198,14 @@ describe('POST /api/webhooks/easypay', () => {
     expect(data.error).toContain('Payment not found');
   });
 
-  it('returns 200 and processes paid status: updates Payment, credits wallet, creates notification', async () => {
+  it('returns 200 and processes paid status: updates Payment and creates notification', async () => {
     mockVerifySignature.mockReturnValue(true);
 
     // 1st: find payment
     mockDb.execute.mockResolvedValueOnce({ rows: [mockPayment] });
     // 2nd: UPDATE Payment to COMPLETED
     mockDb.execute.mockResolvedValueOnce({ rows: [] });
-    // 3rd: UPDATE Wallet balance
-    mockDb.execute.mockResolvedValueOnce({ rows: [] });
-    // 4th: INSERT TokenLedger
-    mockDb.execute.mockResolvedValueOnce({ rows: [] });
-    // 5th: INSERT Notification
+    // 3rd: INSERT Notification
     mockDb.execute.mockResolvedValueOnce({ rows: [] });
 
     const res = await easypayWebhookPOST(createEasypayRequest());
@@ -223,14 +219,6 @@ describe('POST /api/webhooks/easypay', () => {
     // Verify Payment updated to COMPLETED
     const updatePaymentCall = mockDb.execute.mock.calls[1][0];
     expect(updatePaymentCall.sql).toContain("status = 'COMPLETED'");
-
-    // Verify Wallet credited
-    const walletCall = mockDb.execute.mock.calls[2][0];
-    expect(walletCall.sql).toContain('balanceTokens = balanceTokens +');
-
-    // Verify Notification created
-    const notifCall = mockDb.execute.mock.calls[3][0];
-    expect(notifCall.sql).toContain('INSERT INTO TokenLedger');
   });
 
   it('returns 200 and processes failed status: updates Payment to FAILED', async () => {

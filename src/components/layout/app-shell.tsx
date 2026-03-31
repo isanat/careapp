@@ -41,27 +41,6 @@ interface AppShellProps {
   hideBottomNav?: boolean;
 }
 
-// Hook to fetch user wallet data
-function useUserWallet() {
-  const { data: session } = useSession();
-  const [wallet, setWallet] = useState<{ balance: number } | null>(null);
-
-  useEffect(() => {
-    if (session?.user?.id) {
-      fetch("/api/user/wallet")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.balance !== undefined) {
-            setWallet({ balance: data.balance });
-          }
-        })
-        .catch(() => {});
-    }
-  }, [session?.user?.id]);
-
-  return wallet;
-}
-
 // Hook to fetch unread notification count
 function useUnreadCount() {
   const { data: session } = useSession();
@@ -87,7 +66,6 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const router = useRouter();
   const { t } = useI18n();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const wallet = useUserWallet();
   const unreadCount = useUnreadCount();
 
   const isFamily = session?.user?.role === "FAMILY";
@@ -97,7 +75,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
         { href: "/app/search", label: t.nav.searchCaregivers, icon: IconSearch },
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
-        { href: "/app/wallet", label: t.nav.wallet, icon: IconWallet },
+        { href: "/app/payments", label: t.nav.wallet, icon: IconWallet },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
         { href: "/app/profile", label: t.nav.profile, icon: IconUser },
       ]
@@ -105,7 +83,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
         { href: "/app/proposals", label: "Propostas", icon: IconInbox },
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
-        { href: "/app/wallet", label: t.nav.wallet, icon: IconWallet },
+        { href: "/app/payments", label: t.nav.wallet, icon: IconWallet },
         { href: "/app/chat", label: t.nav.chat, icon: IconChat },
         { href: "/app/profile", label: t.nav.profile, icon: IconUser },
       ];
@@ -212,7 +190,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/app/wallet" className="flex items-center">
+                    <Link href="/app/payments" className="flex items-center">
                       <IconWallet className="mr-2 h-4 w-4" />
                       {t.nav.wallet}
                     </Link>
@@ -284,17 +262,6 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
             })}
           </nav>
 
-          {/* Wallet Balance in sidebar */}
-          <div className="absolute bottom-4 left-3 right-3 hidden lg:block">
-            <Link href="/app/wallet">
-              <div className="p-3 gradient-primary rounded-xl text-white shadow-soft">
-                <p className="text-xs font-medium opacity-80">{t.wallet.balance}</p>
-                <p className="text-xl font-bold">
-                  {"\u20AC"}{((wallet?.balance ?? 0) / 100).toFixed(2)}
-                </p>
-              </div>
-            </Link>
-          </div>
         </aside>
 
         {/* Overlay for mobile sidebar */}

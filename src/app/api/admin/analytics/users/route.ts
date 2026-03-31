@@ -149,11 +149,9 @@ export async function GET(request: NextRequest) {
         pf.city,
         (SELECT COUNT(*) FROM Contract WHERE familyUserId = u.id) as totalContracts,
         (SELECT COUNT(*) FROM Contract WHERE familyUserId = u.id AND status = 'ACTIVE') as activeContracts,
-        (SELECT COALESCE(SUM(totalEurCents), 0) FROM Contract WHERE familyUserId = u.id) as totalSpent,
-        w.balanceTokens as tokenBalance
+        (SELECT COALESCE(SUM(totalEurCents), 0) FROM Contract WHERE familyUserId = u.id) as totalSpent
       FROM User u
       JOIN ProfileFamily pf ON u.id = pf.userId
-      LEFT JOIN Wallet w ON u.id = w.userId
       ORDER BY totalContracts DESC
       LIMIT 10`,
       args: []
@@ -191,8 +189,7 @@ export async function GET(request: NextRequest) {
         (SELECT COUNT(*) FROM User WHERE createdAt >= datetime('now', '-1 day')) as newToday,
         (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-30 days')) as activeLast30Days,
         (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-7 days')) as activeLast7Days,
-        (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-1 day')) as activeToday,
-        (SELECT COUNT(DISTINCT userId) FROM Wallet WHERE balanceTokens > 0) as tokenHolders`,
+        (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-1 day')) as activeToday`,
       args: []
     });
 
@@ -229,7 +226,6 @@ export async function GET(request: NextRequest) {
         activeLast30Days: Number(summaryResult.rows[0]?.activeLast30Days) || 0,
         activeLast7Days: Number(summaryResult.rows[0]?.activeLast7Days) || 0,
         activeToday: Number(summaryResult.rows[0]?.activeToday) || 0,
-        tokenHolders: Number(summaryResult.rows[0]?.tokenHolders) || 0,
       },
     });
   } catch (error) {

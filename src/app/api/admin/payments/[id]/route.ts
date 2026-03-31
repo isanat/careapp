@@ -30,15 +30,8 @@ export async function GET(
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
 
-    // Get related ledger entries
-    const ledger = await db.execute({
-      sql: `SELECT * FROM TokenLedger WHERE referenceId = ? OR metadata LIKE ?`,
-      args: [id, `%"paymentId":"${id}"%`]
-    });
-
     return NextResponse.json({
       payment: payment.rows[0],
-      ledger: ledger.rows
     });
   } catch (error) {
     console.error('Error fetching payment:', error);

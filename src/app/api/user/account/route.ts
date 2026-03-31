@@ -42,12 +42,6 @@ export async function DELETE(request: NextRequest) {
       args: [userId]
     });
 
-    // 3. Token ledger
-    await db.execute({
-      sql: `DELETE FROM TokenLedger WHERE userId = ?`,
-      args: [userId]
-    });
-
     // 4. Reviews (from this user)
     await db.execute({
       sql: `DELETE FROM Review WHERE fromUserId = ?`,
@@ -83,12 +77,6 @@ export async function DELETE(request: NextRequest) {
     });
     await db.execute({
       sql: `DELETE FROM ProfileFamily WHERE userId = ?`,
-      args: [userId]
-    });
-
-    // 9. Wallet
-    await db.execute({
-      sql: `DELETE FROM Wallet WHERE userId = ?`,
       args: [userId]
     });
 

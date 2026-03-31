@@ -26,11 +26,9 @@ export async function GET(
           pc.documentType, pc.documentNumber, pc.documentVerified,
           pc.backgroundCheckStatus, pc.totalContracts, pc.totalHoursWorked,
           pc.averageRating, pc.totalReviews,
-          pc.kycSessionId, pc.kycSessionCreatedAt, pc.kycCompletedAt, pc.kycConfidence,
-          w.address as walletAddress, w.balanceTokens, w.balanceEurCents
+          pc.kycSessionId, pc.kycSessionCreatedAt, pc.kycCompletedAt, pc.kycConfidence
         FROM User u
         JOIN ProfileCaregiver pc ON u.id = pc.userId
-        LEFT JOIN Wallet w ON u.id = w.userId
         WHERE u.id = ? AND u.role = 'CAREGIVER'
       `,
       args: [id]

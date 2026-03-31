@@ -38,12 +38,6 @@ export async function POST(request: NextRequest) {
       args: [now, paymentId]
     });
 
-    // Deduct tokens from user wallet
-    await db.execute({
-      sql: `UPDATE Wallet SET balanceTokens = MAX(0, balanceTokens - ?), updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
-      args: [payment.tokensAmount, payment.userId]
-    });
-
     // Log admin action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, createdAt)

@@ -12,7 +12,6 @@ declare module "next-auth" {
       name: string;
       role: string;
       status: string;
-      hasWallet: boolean;
     };
   }
 }
@@ -22,7 +21,6 @@ declare module "next-auth/jwt" {
     id: string;
     role: string;
     status: string;
-    hasWallet: boolean;
   }
 }
 
@@ -60,11 +58,9 @@ export const authOptions: NextAuthOptions = {
         try {
           // Query user from Turso
           const result = await tursoDb.execute({
-            sql: `SELECT u.id, u.email, u.name, u.passwordHash, u.role, u.status, 
-                         w.id as walletId
-                  FROM User u 
-                  LEFT JOIN Wallet w ON u.id = w.userId 
-                  WHERE u.email = ?`,
+            sql: `SELECT id, email, name, passwordHash, role, status
+                  FROM User
+                  WHERE email = ?`,
             args: [credentials.email]
           });
 
@@ -102,7 +98,6 @@ export const authOptions: NextAuthOptions = {
             name: user.name as string,
             role: user.role as string,
             status: user.status as string,
-            hasWallet: !!user.walletId,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -117,7 +112,6 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = (user as any).role;
         token.status = (user as any).status;
-        token.hasWallet = (user as any).hasWallet;
       }
       return token;
     },
@@ -126,7 +120,6 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.status = token.status;
-        session.user.hasWallet = token.hasWallet;
       }
       return session;
     },
