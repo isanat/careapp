@@ -3,7 +3,7 @@
  * Helper functions for QR code generation, validation, and formatting
  */
 
-import crypto from "crypto";
+import { randomBytes } from "crypto";
 
 /**
  * Generate a random QR code token
@@ -11,10 +11,10 @@ import crypto from "crypto";
  */
 export function generateQRCode(): string {
   // Generate 16 random bytes
-  const randomBytes = crypto.randomBytes(8).toString("hex");
+  const randomHex = randomBytes(8).toString("hex");
   // Format: EVY-{timestamp-based-segment}{random}
   const timestamp = Date.now().toString(36).slice(-4).toUpperCase();
-  const random = randomBytes.slice(0, 12).toUpperCase();
+  const random = randomHex.slice(0, 12).toUpperCase();
   return `EVY-${timestamp}${random}`;
 }
 
