@@ -1,8 +1,8 @@
-// Senior Care App - Platform Constants
+// Evyra Platform - European Eldercare Infrastructure
 
-export const APP_NAME = "Senior Care";
-export const APP_TAGLINE = "Cuidado de Qualidade para quem ama";
-export const APP_DESCRIPTION = "A plataforma portuguesa de cuidados para idosos que une família e cuidador com segurança e confiança.";
+export const APP_NAME = "Evyra";
+export const APP_TAGLINE = "Infrastructure for digital human care";
+export const APP_DESCRIPTION = "Evyra é a infraestrutura europeia de cuidados digitais para idosos. Conecta famílias a cuidadores verificados com segurança, transparência e valorização profissional.";
 
 // Activation Costs (in cents)
 export const ACTIVATION_COST_EUR_CENTS = 3500; // €35

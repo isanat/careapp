@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
-  title: "Carreiras | Senior Care",
-  description: "Junte-se à equipe do Senior Care - vagas disponíveis",
+  title: "Carreiras | Evyra",
+  description: "Junte-se à equipe do Evyra - vagas disponíveis",
 };
 
 const jobs = [
@@ -47,7 +47,7 @@ export default function CarreirasPage() {
 
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Por que Senior Care?</CardTitle>
+            <CardTitle>Por que Evyra?</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">

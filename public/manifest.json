@@ -1,7 +1,7 @@
 {
-  "name": "Senior Care App",
-  "short_name": "Senior Care",
-  "description": "Plataforma de cuidados para idosos - Conectando familias e cuidadores",
+  "name": "Evyra - Cuidados para Idosos",
+  "short_name": "Evyra",
+  "description": "Infraestrutura europeia de cuidados digitais para idosos - Conectando famílias a cuidadores verificados",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F5F8FB",
@@ -45,7 +45,7 @@
       "src": "/screenshots/home.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "label": "Tela inicial do Senior Care"
+      "label": "Tela inicial do Evyra"
     }
   ]
 }

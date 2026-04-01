@@ -120,7 +120,7 @@ function AdminFamiliesContent() {
       if (!response.ok) throw new Error("Failed to suspend user");
       fetchUsers();
     } catch (error) {
-      alert("Erro ao suspender usuário");
+      alert("Erro ao suspender utilizador");
     }
   };
 
@@ -132,7 +132,7 @@ function AdminFamiliesContent() {
       if (!response.ok) throw new Error("Failed to activate user");
       fetchUsers();
     } catch (error) {
-      alert("Erro ao ativar usuário");
+      alert("Erro ao ativar utilizador");
     }
   };
 
@@ -157,7 +157,7 @@ function AdminFamiliesContent() {
   const columns: Column<User>[] = [
     {
       key: "name",
-      header: "Usuário",
+      header: "Utilizador",
       render: (user) => (
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">

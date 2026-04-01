@@ -3,7 +3,7 @@ import { PublicLayout } from "@/components/layout/public-layout";
 
 export const metadata: Metadata = {
   title: "Contacto",
-  description: "Entre em contacto com a equipa Senior Care. Estamos disponíveis para ajudar famílias e cuidadores em Portugal.",
+  description: "Entre em contacto com a equipa Evyra. Estamos disponíveis para ajudar famílias e cuidadores em Portugal.",
 };
 
 export default function Layout({

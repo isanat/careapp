@@ -311,7 +311,7 @@ export default function AdminSettingsPage() {
                 <div>
                   <Label>Modo de Manutenção</Label>
                   <p className="text-sm text-slate-500">
-                    Apenas administradores podem acessar
+                    Apenas administradores podem aceder
                   </p>
                 </div>
                 <Switch

@@ -70,7 +70,7 @@ function RegisterPageContent() {
     // Validation
     if (!acceptTerms) {
       console.log("Terms not accepted");
-      const msg = t.register?.termsRequired || "Você deve aceitar os termos para continuar";
+      const msg = t.register?.termsRequired || "Deve aceitar os termos para continuar";
       setErrorMessage(msg);
       toast.error(msg);
       setIsLoading(false);

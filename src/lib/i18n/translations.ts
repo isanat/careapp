@@ -3,8 +3,8 @@ export const translations = {
   // PORTUGUÊS (Portugal)
   // ============================================
   pt: {
-    appName: "Senior Care",
-    tagline: "Cuidado de Qualidade para quem ama",
+    appName: "Evyra",
+    tagline: "Infraestrutura de cuidados digitais para idosos",
     loading: "A carregar...",
     error: "Ocorreu um erro",
     successMessage: "Sucesso!",
@@ -46,11 +46,11 @@ export const translations = {
       login: "Entrar",
       logout: "Sair",
       register: "Criar Conta",
-      forgotPassword: "Esqueci a Senha",
-      resetPassword: "Redefinir Senha",
+      forgotPassword: "Esqueci a Palavra-passe",
+      resetPassword: "Redefinir Palavra-passe",
       email: "E-mail",
-      password: "Senha",
-      confirmPassword: "Confirmar Senha",
+      password: "Palavra-passe",
+      confirmPassword: "Confirmar Palavra-passe",
       name: "Nome",
       phone: "Telefone",
       role: "Tipo de Conta",
@@ -242,15 +242,15 @@ export const translations = {
     },
     
     forgotPassword: {
-      title: "Recuperar Senha",
+      title: "Recuperar Palavra-passe",
       description: "Digite o seu email para receber instruções de recuperação",
       emailLabel: "Email",
       sendReset: "Enviar Instruções",
       sending: "A enviar...",
       backToLogin: "Voltar para Entrar",
       emailSent: "Email Enviado!",
-      checkInbox: "Se existir uma conta com este email, receberá instruções para redefinir a sua senha.",
-      rememberedPassword: "Lembrou a sua senha?",
+      checkInbox: "Se existir uma conta com este email, receberá instruções para redefinir a sua palavra-passe.",
+      rememberedPassword: "Lembrou-se da sua palavra-passe?",
       loginLink: "Entrar",
       sendError: "Erro ao enviar email. Tente novamente.",
     },
@@ -261,7 +261,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introdução",
-          content: "Bem-vindo ao Senior Care. Ao usar a nossa plataforma, concorda com estes Termos de Uso. A nossa plataforma conecta famílias a cuidadores de idosos qualificados, facilitando contratos e pagamentos de forma segura e transparente.",
+          content: "Bem-vindo ao Evyra. Ao usar a nossa plataforma, concorda com estes Termos de Uso. A nossa plataforma conecta famílias a cuidadores de idosos qualificados, facilitando contratos e pagamentos de forma segura e transparente.",
         },
         eligibility: {
           title: "2. Elegibilidade",
@@ -279,7 +279,7 @@ export const translations = {
         },
         services: {
           title: "4. Serviços da Plataforma",
-          content: "O Senior Care oferece:",
+          content: "O Evyra oferece:",
           item1: "Marketplace para conexão entre famílias e cuidadores",
           item2: "Sistema de contratos digitais",
           item3: "Pagamentos seguros e protegidos",
@@ -301,7 +301,7 @@ export const translations = {
         },
         liability: {
           title: "7. Responsabilidade",
-          content: "O Senior Care actua como intermediário, não sendo responsável pela qualidade dos serviços prestados pelos cuidadores. Recomendamos verificação de referências e documentos.",
+          content: "O Evyra actua como intermediário, não sendo responsável pela qualidade dos serviços prestados pelos cuidadores. Recomendamos verificação de referências e documentos.",
         },
         termination: {
           title: "8. Rescisão",
@@ -454,7 +454,7 @@ export const translations = {
         },
       },
       features: {
-        title: "Porquê escolher o Senior Care?",
+        title: "Porquê escolher o Evyra?",
         verified: {
           title: "Cuidadores Verificados",
           description: "Todos os cuidadores passam por verificação de identidade, antecedentes e qualificações.",
@@ -477,7 +477,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto para começar?",
-        subtitle: "Junte-se a milhares de famílias e cuidadores que confiam no Senior Care",
+        subtitle: "Junte-se a milhares de famílias e cuidadores que confiam no Evyra",
         button: "Criar Conta Gratuita",
       },
     },
@@ -532,7 +532,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto para começar?",
-        description: "Junte-se a milhares de famílias e cuidadores que já confiam no Senior Care.",
+        description: "Junte-se a milhares de famílias e cuidadores que já confiam no Evyra.",
       },
     },
     
@@ -547,7 +547,7 @@ export const translations = {
         support: "Suporte",
       },
       whyChoose: {
-        title: "Porquê escolher o Senior Care?",
+        title: "Porquê escolher o Evyra?",
         description: "Segurança, transparência e qualidade em cada etapa do cuidado.",
         verified: {
           title: "Cuidadores Verificados",
@@ -610,7 +610,7 @@ export const translations = {
       heroTitle: "Construa a sua carreira com segurança",
       heroDescription: "Mais do que apenas trabalhar, construa a sua reputação profissional e tenha uma carreira estável e reconhecida.",
       benefits: {
-        title: "Porquê ser cuidador no Senior Care?",
+        title: "Porquê ser cuidador no Evyra?",
         description: "Valorizamos o seu trabalho e construímos ferramentas para a sua carreira crescer.",
         profile: {
           title: "Perfil Profissional",
@@ -627,7 +627,7 @@ export const translations = {
       },
       earnings: {
         title: "Quanto pode ganhar?",
-        description: "Com o Senior Care, recebe 90% de cada serviço prestado.",
+        description: "Com o Evyra, recebe 90% de cada serviço prestado.",
         feesTitle: "Informações para Cuidadores",
         profile: "Perfil profissional",
         activation: "Grátis",
@@ -663,7 +663,7 @@ export const translations = {
       },
       cta: {
         title: "Comece a sua jornada hoje",
-        description: "Junte-se a milhares de cuidadores que já estão a construir as suas carreiras no Senior Care.",
+        description: "Junte-se a milhares de cuidadores que já estão a construir as suas carreiras no Evyra.",
         button: "Criar Perfil de Cuidador",
       },
     },
@@ -724,7 +724,7 @@ export const translations = {
       title: "Central de Ajuda",
       subtitle: "Encontre respostas para as dúvidas mais comuns ou entre em contacto com o nosso suporte.",
       notFound: "Não encontrou o que procurava?",
-      supportReady: "A nossa equipa de suporte está pronta para ajudar você.",
+      supportReady: "A nossa equipa de suporte está pronta para o ajudar.",
       contactSupport: "Falar com Suporte",
       categories: {
         forFamilies: "Para Famílias",
@@ -735,11 +735,11 @@ export const translations = {
         families: [
           {
             q: "Como encontro um cuidador?",
-            a: "Após criar a sua conta, aceda à busca de cuidadores. Pode filtrar por tipo de serviço, localização, disponibilidade e avaliações de outras famílias."
+            a: "Após criar a sua conta, aceda à pesquisa de cuidadores. Pode filtrar por tipo de serviço, localização, disponibilidade e avaliações de outras famílias."
           },
           {
             q: "Como funciona o pagamento?",
-            a: "Você paga mensalmente pelo serviço contratado. O valor é calculado com base nas horas acordadas. A plataforma retém uma pequena taxa para garantir a segurança da transação."
+            a: "Paga mensalmente pelo serviço contratado. O valor é calculado com base nas horas acordadas. A plataforma retém uma pequena taxa para garantir a segurança da transacção."
           },
           {
             q: "Posso trocar de cuidador?",
@@ -767,7 +767,7 @@ export const translations = {
           },
           {
             q: "Os meus dados estão seguros?",
-            a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD/LGPD e não vendemos os seus dados. Os seus contratos são registados de forma segura para garantir transparência."
+            a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD e não vendemos os seus dados. Os seus contratos são registados de forma segura para garantir transparência."
           }
         ]
       }
@@ -778,13 +778,13 @@ export const translations = {
     // ============================================
     contatoPage: {
       title: "Entre em Contacto",
-      subtitle: "A nossa equipa está pronta para ajudar você. Envie a sua mensagem ou utilize os nossos canais de atendimento.",
+      subtitle: "A nossa equipa está pronta para o ajudar. Envie a sua mensagem ou utilize os nossos canais de atendimento.",
       form: {
         title: "Envie uma Mensagem",
         name: "Nome",
         namePlaceholder: "O seu nome",
         email: "Email",
-        emailPlaceholder: "seu@email.com",
+        emailPlaceholder: "o-seu@email.com",
         subject: "Assunto",
         subjectPlaceholder: "Como podemos ajudar?",
         message: "Mensagem",
@@ -811,7 +811,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Blog Senior Care",
+      title: "Blog Evyra",
       subtitle: "Dicas, artigos e novidades sobre cuidados com idosos e a nossa plataforma.",
       categories: {
         all: "Todos",
@@ -825,7 +825,7 @@ export const translations = {
       newsletter: {
         title: "Receba as Nossas Novidades",
         subtitle: "Registe-se para receber dicas e actualizações da plataforma.",
-        placeholder: "seu@email.com",
+        placeholder: "o-seu@email.com",
         subscribe: "Subscrever",
       },
       posts: [
@@ -833,7 +833,7 @@ export const translations = {
           title: "Como Escolher o Cuidador Ideal para o seu Idoso",
           excerpt: "A escolha de um cuidador é uma decisão importante. Confira os principais factores a considerar.",
           category: "Dicas",
-          author: "Equipa Senior Care",
+          author: "Equipa Evyra",
           readTime: "5 min",
         },
         {
@@ -847,7 +847,7 @@ export const translations = {
           title: "Benefícios da Tecnologia para Idosos",
           excerpt: "Como dispositivos e aplicações podem melhorar a qualidade de vida dos mais velhos.",
           category: "Tecnologia",
-          author: "Equipa Senior Care",
+          author: "Equipa Evyra",
           readTime: "4 min",
         }
       ]
@@ -857,13 +857,13 @@ export const translations = {
     // SOBRE PAGE
     // ============================================
     sobrePage: {
-      badge: "Nossa História",
+      badge: "A Nossa História",
       title: "Sobre o",
       subtitle: "Somos uma empresa de tecnologia com propósito: transformar o cuidado de idosos através de confiança, transparência e valorização profissional.",
       mission: {
-        title: "Nossa Missão",
-        paragraph1: "O Senior Care nasceu da observação de um problema real: famílias lutando para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
-        paragraph2: "Usamos tecnologia de ponta para resolver problemas humanos: garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores sejam valorizados a longo prazo.",
+        title: "A Nossa Missão",
+        paragraph1: "O Evyra nasceu da observação de um problema real: famílias a lutar para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
+        paragraph2: "Utilizamos tecnologia de ponta para resolver problemas humanos: garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores sejam valorizados a longo prazo.",
         values: {
           care: "Cuidado",
           trust: "Confiança",
@@ -871,14 +871,14 @@ export const translations = {
         },
       },
       stats: {
-        title: "Nossos Números",
+        title: "Os Nossos Números",
         caregivers: "Cuidadores activos",
         families: "Famílias atendidas",
         hours: "Horas de cuidado",
         countries: "Países",
       },
       values: {
-        title: "Nossos Valores",
+        title: "Os Nossos Valores",
         humanity: {
           title: "Humanidade",
           description: "Tecnologia ao serviço das pessoas. Cada decisão considera o impacto em famílias e cuidadores.",
@@ -889,11 +889,11 @@ export const translations = {
         },
         appreciation: {
           title: "Valorização",
-          description: "Cuidadores merecem reconhecimento. Nossa plataforma permite que ganhem e valorizem o seu trabalho com justiça.",
+          description: "Cuidadores merecem reconhecimento. A nossa plataforma permite que ganhem e valorizem o seu trabalho com justiça.",
         },
       },
       team: {
-        title: "Nossa Equipa",
+        title: "A Nossa Equipa",
         subtitle: "Profissionais apaixonados por tecnologia e cuidados de saúde.",
         members: [
           { name: "Ana Silva", role: "CEO & Co-founder" },
@@ -929,13 +929,13 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introdução",
-          content: "O Senior Care está comprometido em proteger a privacidade dos seus utilizadores. Esta Política de Privacidade explica como recolhemos, usamos, armazenamos e protegemos as suas informações pessoais.",
+          content: "O Evyra está comprometido em proteger a privacidade dos seus utilizadores. Esta Política de Privacidade explica como recolhemos, usamos, armazenamos e protegemos as suas informações pessoais.",
         },
         dataCollected: {
           title: "2. Informações que Recolhemos",
           content: "Podemos recolher os seguintes tipos de informações:",
           items: [
-            "Dados de identificação: nome, email, telefone, CPF/NIF",
+            "Dados de identificação: nome, email, telefone, NIF",
             "Dados de localização: endereço, cidade, código postal",
             "Dados de perfil: foto, descrição, qualificações profissionais",
             "Dados de transacção: histórico de contratos, pagamentos",
@@ -943,7 +943,7 @@ export const translations = {
           ],
         },
         dataUsage: {
-          title: "3. Como Usamos as Suas Informações",
+          title: "3. Como Utilizamos as Suas Informações",
           content: "Utilizamos as suas informações para:",
           items: [
             "Fornecer e melhorar os nossos serviços",
@@ -975,12 +975,12 @@ export const translations = {
           ],
         },
         rights: {
-          title: "6. Os Seus Direitos (RGPD/LGPD)",
-          content: "Você tem direito a:",
+          title: "6. Os Seus Direitos (RGPD)",
+          content: "O utilizador tem direito a:",
           items: [
             "Aceder aos seus dados pessoais",
             "Corrigir dados incorrectos",
-            "Solicitar exclusão dos seus dados",
+            "Solicitar eliminação dos seus dados",
             "Portabilidade de dados",
             "Retirar consentimento a qualquer momento",
             "Opor-se a determinados tratamentos"
@@ -988,7 +988,7 @@ export const translations = {
         },
         cookies: {
           title: "7. Cookies e Tecnologias Similares",
-          content: "Utilizamos cookies essenciais para funcionamento da plataforma e cookies analíticos para melhorar os nossos serviços. Pode gerir as suas preferências de cookies nas configurações do navegador.",
+          content: "Utilizamos cookies essenciais para funcionamento da plataforma e cookies analíticos para melhorar os nossos serviços. Pode gerir as suas preferências de cookies nas definições do navegador.",
         },
         contact: {
           title: "8. Contacto",
@@ -1007,7 +1007,7 @@ export const translations = {
   // ENGLISH
   // ============================================
   en: {
-    appName: "Senior Care",
+    appName: "Evyra",
     tagline: "Quality Care for Those You Love",
     loading: "Loading...",
     error: "An error occurred",
@@ -1265,7 +1265,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduction",
-          content: "Welcome to Senior Care. By using our platform, you agree to these Terms of Use. Our platform connects families with qualified senior caregivers, facilitating contracts and payments securely and transparently.",
+          content: "Welcome to Evyra. By using our platform, you agree to these Terms of Use. Our platform connects families with qualified senior caregivers, facilitating contracts and payments securely and transparently.",
         },
         eligibility: {
           title: "2. Eligibility",
@@ -1283,7 +1283,7 @@ export const translations = {
         },
         services: {
           title: "4. Platform Services",
-          content: "Senior Care offers:",
+          content: "Evyra offers:",
           item1: "Marketplace for connecting families and caregivers",
           item2: "Digital contract system",
           item3: "Secure and protected payments",
@@ -1305,7 +1305,7 @@ export const translations = {
         },
         liability: {
           title: "7. Liability",
-          content: "Senior Care acts as an intermediary and is not responsible for the quality of services provided by caregivers. We recommend verifying references and documents.",
+          content: "Evyra acts as an intermediary and is not responsible for the quality of services provided by caregivers. We recommend verifying references and documents.",
         },
         termination: {
           title: "8. Termination",
@@ -1423,7 +1423,7 @@ export const translations = {
     // LANDING PAGE
     // ============================================
     landing: {
-      badge: "Portuguese Senior Care Platform",
+      badge: "Portuguese Evyra Platform",
       hero: {
         title: "Quality Care for Those You Love",
         subtitle: "We connect families with verified senior caregivers, with total security, trust and transparency.",
@@ -1458,7 +1458,7 @@ export const translations = {
         },
       },
       features: {
-        title: "Why choose Senior Care?",
+        title: "Why choose Evyra?",
         verified: {
           title: "Verified Caregivers",
           description: "All caregivers go through identity, background and qualification verification.",
@@ -1481,7 +1481,7 @@ export const translations = {
       },
       cta: {
         title: "Ready to get started?",
-        subtitle: "Join thousands of families and caregivers who trust Senior Care",
+        subtitle: "Join thousands of families and caregivers who trust Evyra",
         button: "Create Free Account",
       },
     },
@@ -1536,7 +1536,7 @@ export const translations = {
       },
       cta: {
         title: "Ready to get started?",
-        description: "Join thousands of families and caregivers who already trust Senior Care.",
+        description: "Join thousands of families and caregivers who already trust Evyra.",
       },
     },
     
@@ -1551,7 +1551,7 @@ export const translations = {
         support: "Support",
       },
       whyChoose: {
-        title: "Why choose Senior Care?",
+        title: "Why choose Evyra?",
         description: "Security, transparency and quality at every step of care.",
         verified: {
           title: "Verified Caregivers",
@@ -1614,7 +1614,7 @@ export const translations = {
       heroTitle: "Build your career with security",
       heroDescription: "More than just working, build your professional reputation and have a stable and recognized career.",
       benefits: {
-        title: "Why be a caregiver on Senior Care?",
+        title: "Why be a caregiver on Evyra?",
         description: "We value your work and build tools for your career to grow.",
         profile: {
           title: "Professional Profile",
@@ -1631,7 +1631,7 @@ export const translations = {
       },
       earnings: {
         title: "How much can you earn?",
-        description: "With Senior Care, you receive 90% of each service provided.",
+        description: "With Evyra, you receive 90% of each service provided.",
         feesTitle: "Information for Caregivers",
         profile: "Professional profile",
         activation: "Free",
@@ -1667,7 +1667,7 @@ export const translations = {
       },
       cta: {
         title: "Start your journey today",
-        description: "Join thousands of caregivers who are already building their careers at Senior Care.",
+        description: "Join thousands of caregivers who are already building their careers at Evyra.",
         button: "Create Caregiver Profile",
       },
     },
@@ -1815,7 +1815,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Senior Care Blog",
+      title: "Evyra Blog",
       subtitle: "Tips, articles and news about senior care and our platform.",
       categories: {
         all: "All",
@@ -1837,7 +1837,7 @@ export const translations = {
           title: "How to Choose the Ideal Caregiver for Your Senior",
           excerpt: "Choosing a caregiver is an important decision. Check out the main factors to consider.",
           category: "Tips",
-          author: "Senior Care Team",
+          author: "Evyra Team",
           readTime: "5 min",
         },
         {
@@ -1851,7 +1851,7 @@ export const translations = {
           title: "Technology Benefits for Seniors",
           excerpt: "How devices and apps can improve the quality of life for older adults.",
           category: "Technology",
-          author: "Senior Care Team",
+          author: "Evyra Team",
           readTime: "4 min",
         }
       ]
@@ -1866,7 +1866,7 @@ export const translations = {
       subtitle: "We are a technology company with a purpose: transforming senior care through trust, transparency and professional appreciation.",
       mission: {
         title: "Our Mission",
-        paragraph1: "Senior Care was born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
+        paragraph1: "Evyra was born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
         paragraph2: "We use cutting-edge technology to solve human problems: ensuring contracts are secure, payments are protected, and caregivers are valued long-term.",
         values: {
           care: "Care",
@@ -1933,7 +1933,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduction",
-          content: "Senior Care is committed to protecting the privacy of its users. This Privacy Policy explains how we collect, use, store and protect your personal information.",
+          content: "Evyra is committed to protecting the privacy of its users. This Privacy Policy explains how we collect, use, store and protect your personal information.",
         },
         dataCollected: {
           title: "2. Information We Collect",
@@ -2011,7 +2011,7 @@ export const translations = {
   // ITALIANO
   // ============================================
   it: {
-    appName: "Senior Care",
+    appName: "Evyra",
     tagline: "Cura di Qualità per chi ami",
     loading: "Caricamento...",
     error: "Si è verificato un errore",
@@ -2269,7 +2269,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduzione",
-          content: "Benvenuto in Senior Care. Utilizzando la nostra piattaforma, accetti questi Termini di Utilizzo. La nostra piattaforma connette famiglie a caregiver qualificati per anziani, facilitando contratti e pagamenti in modo sicuro e trasparente.",
+          content: "Benvenuto in Evyra. Utilizzando la nostra piattaforma, accetti questi Termini di Utilizzo. La nostra piattaforma connette famiglie a caregiver qualificati per anziani, facilitando contratti e pagamenti in modo sicuro e trasparente.",
         },
         eligibility: {
           title: "2. Idoneità",
@@ -2287,7 +2287,7 @@ export const translations = {
         },
         services: {
           title: "4. Servizi della Piattaforma",
-          content: "Senior Care offre:",
+          content: "Evyra offre:",
           item1: "Marketplace per connettere famiglie e caregiver",
           item2: "Sistema di contratti digitali",
           item3: "Pagamenti sicuri e protetti",
@@ -2309,7 +2309,7 @@ export const translations = {
         },
         liability: {
           title: "7. Responsabilità",
-          content: "Senior Care agisce come intermediario e non è responsabile della qualità dei servizi forniti dai caregiver. Raccomandiamo la verifica di referenze e documenti.",
+          content: "Evyra agisce come intermediario e non è responsabile della qualità dei servizi forniti dai caregiver. Raccomandiamo la verifica di referenze e documenti.",
         },
         termination: {
           title: "8. Risoluzione",
@@ -2462,7 +2462,7 @@ export const translations = {
         },
       },
       features: {
-        title: "Perché scegliere Senior Care?",
+        title: "Perché scegliere Evyra?",
         verified: {
           title: "Caregiver Verificati",
           description: "Tutti i caregiver passano attraverso la verifica di identità, precedenti e qualifiche.",
@@ -2485,7 +2485,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto per iniziare?",
-        subtitle: "Unisciti a migliaia di famiglie e caregiver che si fidano di Senior Care",
+        subtitle: "Unisciti a migliaia di famiglie e caregiver che si fidano di Evyra",
         button: "Crea Account Gratuito",
       },
     },
@@ -2540,7 +2540,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto per iniziare?",
-        description: "Unisciti a migliaia di famiglie e caregiver che già si fidano di Senior Care.",
+        description: "Unisciti a migliaia di famiglie e caregiver che già si fidano di Evyra.",
       },
     },
     
@@ -2555,7 +2555,7 @@ export const translations = {
         support: "Supporto",
       },
       whyChoose: {
-        title: "Perché scegliere Senior Care?",
+        title: "Perché scegliere Evyra?",
         description: "Sicurezza, trasparenza e qualità in ogni fase dell'assistenza.",
         verified: {
           title: "Caregiver Verificati",
@@ -2618,7 +2618,7 @@ export const translations = {
       heroTitle: "Costruisci la tua carriera con sicurezza",
       heroDescription: "Più che solo lavorare, costruisci la tua reputazione professionale e hai una carriera stabile e riconosciuta.",
       benefits: {
-        title: "Perché essere caregiver su Senior Care?",
+        title: "Perché essere caregiver su Evyra?",
         description: "Valorizziamo il tuo lavoro e costruiamo strumenti per far crescere la tua carriera.",
         profile: {
           title: "Profilo Professionale",
@@ -2635,7 +2635,7 @@ export const translations = {
       },
       earnings: {
         title: "Quanto puoi guadagnare?",
-        description: "Con Senior Care, ricevi il 90% di ogni servizio prestato.",
+        description: "Con Evyra, ricevi il 90% di ogni servizio prestato.",
         feesTitle: "Informazioni per Caregiver",
         profile: "Profilo professionale",
         activation: "Gratuito",
@@ -2671,7 +2671,7 @@ export const translations = {
       },
       cta: {
         title: "Inizia il tuo viaggio oggi",
-        description: "Unisciti a migliaia di caregiver che stanno già costruendo le loro carriere su Senior Care.",
+        description: "Unisciti a migliaia di caregiver che stanno già costruendo le loro carriere su Evyra.",
         button: "Crea Profilo Caregiver",
       },
     },
@@ -2819,7 +2819,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Blog Senior Care",
+      title: "Blog Evyra",
       subtitle: "Consigli, articoli e novità sobre el cuidado de ancianos y nuestra plataforma.",
       categories: {
         all: "Tutti",
@@ -2841,7 +2841,7 @@ export const translations = {
           title: "Come Scegliere il Caregiver Ideale per il Tuo Anziano",
           excerpt: "La scelta del caregiver è una decision importante. Scopri i principali fattori da consider.",
           category: "Consigli",
-          author: "Team Senior Care",
+          author: "Team Evyra",
           readTime: "5 min",
         },
         {
@@ -2855,7 +2855,7 @@ export const translations = {
           title: "Benefici della Tecnologia for Seniors",
           excerpt: "How devices and apps can improve the quality of life for older adults.",
           category: "Tecnology",
-          author: "Team Senior Care",
+          author: "Team Evyra",
           readTime: "4 min",
         }
       ]
@@ -2870,7 +2870,7 @@ export const translations = {
       subtitle: "Siamo un'azienda tecnologica con purpose: transforming senior care through trust, transparency and and professional appreciation.",
       mission: {
         title: "La Nostra Missione",
-        paragraph1: "Senior Care è born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
+        paragraph1: "Evyra è born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
         paragraph2: "Weiamo cutting-edge technology to solve human problems: ensuring contracts are secure, payments are protected, and caregivers are valued long-term.",
         values: {
           care: "Cura",
@@ -2937,7 +2937,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduzione",
-          content: "Senior Care è impegnato a protezione della privacy dei suoi utenti. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, archiviamo e proteggiamo le sue informazioni personali.",
+          content: "Evyra è impegnato a protezione della privacy dei suoi utenti. Questa Informativa sulla Privacy spiega come raccogliamo, utilizziamo, archiviamo e proteggiamo le sue informazioni personali.",
         },
         dataCollected: {
           title: "2. Informazioni che raccogliamo",
@@ -3015,7 +3015,7 @@ export const translations = {
   // ESPAÑOL
   // ============================================
   es: {
-    appName: "Senior Care",
+    appName: "Evyra",
     tagline: "Cuidado de Calidad para quienes amas",
     loading: "Cargando...",
     error: "Se produjo un error",
@@ -3273,7 +3273,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introducción",
-          content: "Bienvenido a Senior Care. Al usar nuestra plataforma, aceptas estos Términos de Uso. Nuestra plataforma conecta familias con cuidadores de ancianos calificados, facilitando contratos y pagos de manera segura y transparente.",
+          content: "Bienvenido a Evyra. Al usar nuestra plataforma, aceptas estos Términos de Uso. Nuestra plataforma conecta familias con cuidadores de ancianos calificados, facilitando contratos y pagos de manera segura y transparente.",
         },
         eligibility: {
           title: "2. Elegibilidad",
@@ -3291,7 +3291,7 @@ export const translations = {
         },
         services: {
           title: "4. Servicios de la Plataforma",
-          content: "Senior Care ofrece:",
+          content: "Evyra ofrece:",
           item1: "Marketplace para conectar familias y cuidadores",
           item2: "Sistema de contratos digitales",
           item3: "Pagos seguros y protegidos",
@@ -3313,7 +3313,7 @@ export const translations = {
         },
         liability: {
           title: "7. Responsabilidad",
-          content: "Senior Care actúa como intermediario y no es responsable de la calidad de los servicios prestados por los cuidadores. Recomendamos verificar referencias y documentos.",
+          content: "Evyra actúa como intermediario y no es responsable de la calidad de los servicios prestados por los cuidadores. Recomendamos verificar referencias y documentos.",
         },
         termination: {
           title: "8. Resolución",
@@ -3466,7 +3466,7 @@ export const translations = {
         },
       },
       features: {
-        title: "¿Por qué elegir Senior Care?",
+        title: "¿Por qué elegir Evyra?",
         verified: {
           title: "Cuidadores Verificados",
           description: "Todos los cuidadores pasan por verificación de identidad, antecedentes y calificaciones.",
@@ -3489,7 +3489,7 @@ export const translations = {
       },
       cta: {
         title: "¿Listo para comenzar?",
-        subtitle: "Únete a miles de familias y cuidadores que confían en Senior Care",
+        subtitle: "Únete a miles de familias y cuidadores que confían en Evyra",
         button: "Crear Cuenta Gratis",
       },
     },
@@ -3544,7 +3544,7 @@ export const translations = {
       },
       cta: {
         title: "¿Listo para comenzar?",
-        description: "Únete a miles de familias y cuidadores que ya confían en Senior Care.",
+        description: "Únete a miles de familias y cuidadores que ya confían en Evyra.",
       },
     },
     
@@ -3559,7 +3559,7 @@ export const translations = {
         support: "Soporte",
       },
       whyChoose: {
-        title: "¿Por qué elegir Senior Care?",
+        title: "¿Por qué elegir Evyra?",
         description: "Seguridad, transparencia y calidad en cada etapa del cuidado.",
         verified: {
           title: "Cuidadores Verificados",
@@ -3622,7 +3622,7 @@ export const translations = {
       heroTitle: "Construye tu carrera con seguridad",
       heroDescription: "Más que solo trabajar, construye tu reputación profesional y ten una carrera estable y reconocida.",
       benefits: {
-        title: "¿Por qué ser cuidador en Senior Care?",
+        title: "¿Por qué ser cuidador en Evyra?",
         description: "Valoramos tu trabajo y construimos herramientas para que tu carrera crezca.",
         profile: {
           title: "Perfil Profesional",
@@ -3639,7 +3639,7 @@ export const translations = {
       },
       earnings: {
         title: "¿Cuánto puedes ganar?",
-        description: "Con Senior Care, recibes el 90% de cada servicio prestado.",
+        description: "Con Evyra, recibes el 90% de cada servicio prestado.",
         feesTitle: "Información para Cuidadores",
         profile: "Perfil profesional",
         activation: "Gratis",
@@ -3675,7 +3675,7 @@ export const translations = {
       },
       cta: {
         title: "Comienza tu viaje hoy",
-        description: "Únete a miles de cuidadores que ya están construyendo sus carreras en Senior Care.",
+        description: "Únete a miles de cuidadores que ya están construyendo sus carreras en Evyra.",
         button: "Crear Perfil de Cuidador",
       },
     },
@@ -3823,7 +3823,7 @@ export const translations = {
     // BLOG PAGE
     // ============================================
     blogPage: {
-      title: "Blog Senior Care",
+      title: "Blog Evyra",
       subtitle: "Consejos. artículos y novedades sobre el cuidado de ancianos y nuestra plataforma.",
       categories: {
         all: "Todos",
@@ -3845,7 +3845,7 @@ export const translations = {
           title: "Cómo Elegir el Cuidador Ideal para tu Anciano",
           excerpt: "La elección de un cuidador es una decisión importante. Consulta los principales factores a considerar.",
           category: "Consejos",
-          author: "Equipo Senior Care",
+          author: "Equipo Evyra",
           readTime: "5 min",
         },
         {
@@ -3859,7 +3859,7 @@ export const translations = {
           title: "Beneficios de la Tecnología para Ancianos",
           excerpt: "Cómo los dispositivos y aplicaciones pueden mejorar la calidad de vida de los adultos mayores.",
           category: "Tecnología",
-          author: "Equipo Senior Care",
+          author: "Equipo Evyra",
           readTime: "4 min",
         }
       ]
@@ -3874,7 +3874,7 @@ export const translations = {
       subtitle: "Somos una empresa tecnológica con propósito: transformar el cuidado de ancianos a través de confianza. transparencia y y valorización profesional.",
       mission: {
         title: "Nuestra Misión",
-        paragraph1: "Senior Care nació de observar un problema real: familias luchando por encontrar cuidadores de confianza. y cuidadores profesionales sin reconocimiento ni valorización adecuada.",
+        paragraph1: "Evyra nació de observar un problema real: familias luchando por encontrar cuidadores de confianza. y cuidadores profesionales sin reconocimiento ni valorización adecuada.",
         paragraph2: "Usamos tecnología de vanguardia para resolver problemas humanos: garantizar que los contratos sean seguros. los pagos estén protegidos y los cuidadores sean valorizados a largo plazo.",
         values: {
           care: "Cuidado",
@@ -3941,7 +3941,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introducción",
-          content: "Senior Care se compromete a proteger la privacidad de sus usuarios. Esta Política de Privacidad explica cómo recopilamos. usamos. almacenamos y protegemos su información personal.",
+          content: "Evyra se compromete a proteger la privacidad de sus usuarios. Esta Política de Privacidad explica cómo recopilamos. usamos. almacenamos y protegemos su información personal.",
         },
         dataCollected: {
           title: "2. Información que Recopilamos",

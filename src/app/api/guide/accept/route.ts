@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         session.user.id,
         "guide",
         "Guia Confirmado",
-        "Você confirmou a leitura do Guia de Boas Práticas.",
+        "Confirmou a leitura do Guia de Boas Práticas.",
         new Date().toISOString()
       ]
     });

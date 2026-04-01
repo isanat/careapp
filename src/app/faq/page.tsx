@@ -4,22 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const metadata: Metadata = {
-  title: "Perguntas Frequentes | Senior Care",
-  description: "FAQ - Respostas para as perguntas mais frequentes sobre o Senior Care.",
+  title: "Perguntas Frequentes | Evyra",
+  description: "FAQ - Respostas para as perguntas mais frequentes sobre o Evyra.",
 };
 
 const faqs = [
   {
-    question: "Como funciona o Senior Care?",
-    answer: "O Senior Care conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Você pode buscar cuidadores, ver perfis detalhados, e criar contratos digitais seguros.",
+    question: "Como funciona o Evyra?",
+    answer: "O Evyra conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Pode pesquisar cuidadores, ver perfis detalhados e criar contratos digitais seguros.",
   },
   {
     question: "Quanto custa usar a plataforma?",
-    answer: "A ativação da conta custa €35 (única vez). Cada contrato criado tem uma taxa de €5. A plataforma retém 10% sobre os pagamentos de serviços.",
+    answer: "A activação da conta custa €35 (única vez). Cada contrato criado tem uma taxa de €5. A plataforma retém 10% sobre os pagamentos de serviços.",
   },
   {
     question: "Como os cuidadores são verificados?",
-    answer: "Oferecemos verificação de identidade (KYC) opcional para cuidadores. Aqueles verificados recebem um selo de confiança e aparecem primeiro nas buscas.",
+    answer: "Oferecemos verificação de identidade (KYC) opcional para cuidadores. Os verificados recebem um selo de confiança e aparecem primeiro nas pesquisas.",
   },
   {
     question: "Como funcionam os pagamentos?",
@@ -31,11 +31,11 @@ const faqs = [
   },
   {
     question: "A plataforma está disponível em quais países?",
-    answer: "Atualmente atendemos Portugal, Itália e outros países da União Europeia, com expansão planejada para outros mercados.",
+    answer: "Actualmente atendemos Portugal, Itália e outros países da União Europeia, com expansão planeada para outros mercados.",
   },
   {
     question: "Como entro em contato com o suporte?",
-    answer: "Você pode nos contatar através da página de Contato ou enviar email para suporte@seniorcare.com.",
+    answer: "Pode contactar-nos através da página de Contacto ou enviar email para suporte@seniorcare.com.",
   },
 ];
 
@@ -45,7 +45,7 @@ export default function FAQPage() {
       <div className="container px-4 py-12 mx-auto max-w-3xl">
         <h1 className="text-3xl font-bold mb-2">Perguntas Frequentes</h1>
         <p className="text-muted-foreground mb-8">
-          Encontre respostas para as dúvidas mais comuns sobre o Senior Care.
+          Encontre respostas para as dúvidas mais comuns sobre o Evyra.
         </p>
 
         <Card>

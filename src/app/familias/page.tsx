@@ -24,29 +24,29 @@ export default function FamiliasPage() {
   return (
     <main className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
+      <section className="bg-gradient-to-b from-blue-500/5 via-teal-500/5 to-background py-16 md:py-32">
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Badge variant="secondary" className="mb-4">
-                {t.forFamiliesPage.badge}
+            <div className="space-y-6">
+              <Badge variant="secondary" className="mb-4 w-fit">
+                👨‍👩‍👧 For Families
               </Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {t.forFamiliesPage.heroTitle}
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Trust & Transparency in Eldercare
               </h1>
-              <p className="text-lg text-muted-foreground mb-8">
-                {t.forFamiliesPage.heroDescription}
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                Finding quality care for your loved ones shouldn't be a struggle. Evyra connects you with verified, professional caregivers across Europe—with complete transparency, secure contracts, and 24/7 support.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
-                  <Link href="/auth/register">
-                    {t.landing.hero.ctaFamily}
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
+                  <Link href="/auth/register?role=family">
+                    Find a Caregiver Today
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                   <Link href="/como-funciona">
-                    {t.nav.howItWorks}
+                    How It Works
                   </Link>
                 </Button>
               </div>
@@ -83,7 +83,7 @@ export default function FamiliasPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forFamiliesPage.whyChoose.title.replace('Senior Care', APP_NAME)}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forFamiliesPage.whyChoose.title.replace('Evyra', APP_NAME)}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t.forFamiliesPage.whyChoose.description}
             </p>

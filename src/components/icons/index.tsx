@@ -93,7 +93,7 @@ import {
   Inbox,
 } from "lucide-react";
 
-// Senior Care App - Custom Icons
+// Evyra - Custom Icons
 export function IconLogo({ className }: { className?: string }) {
   return (
     <svg

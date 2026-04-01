@@ -170,7 +170,7 @@ export default function GuidePage() {
             <CardContent className="pt-4 flex items-center gap-3">
               <IconCheck className="h-5 w-5 text-green-500" />
               <span className="text-green-700">
-                Você já confirmou que leu e compreendeu este guia.
+                Já confirmou que leu e compreendeu este guia.
               </span>
             </CardContent>
           </Card>
@@ -249,7 +249,7 @@ export default function GuidePage() {
 
             <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
               <IconAlertCircle className="h-4 w-4 inline mr-2" />
-              Este guia é fornecido como referência. A plataforma Senior Care atua 
+              Este guia é fornecido como referência. A plataforma Evyra actua 
               como intermediário tecnológico e não se responsabiliza pela execução 
               dos serviços contratados.
             </div>

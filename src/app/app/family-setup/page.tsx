@@ -533,11 +533,11 @@ function FamilySetupContent() {
                   {isLoading ? (
                     <>
                       <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Salvando...
+                      A guardar...
                     </>
                   ) : (
                     <>
-                      Completar Cadastro
+                      Completar Registo
                       <IconArrowRight className="h-4 w-4 ml-2" />
                     </>
                   )}
@@ -551,7 +551,7 @@ function FamilySetupContent() {
         <p className="text-center text-xs text-muted-foreground mt-6">
           Precisa de ajuda?{" "}
           <Link href="/ajuda" className="text-primary hover:underline">
-            Fale conosco
+            Fale connosco
           </Link>
         </p>
       </div>

@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Badge Component
+ * Evyra UI Kit - Badge Component
  * Status badges with soft colors
  */
 

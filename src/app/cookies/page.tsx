@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Política de Cookies | Senior Care",
-  description: "Política de cookies do Senior Care - como usamos cookies para melhorar sua experiência.",
+  title: "Política de Cookies | Evyra",
+  description: "Política de cookies do Evyra - como utilizamos cookies para melhorar a sua experiência.",
 };
 
 export default function CookiesPage() {
@@ -19,9 +19,9 @@ export default function CookiesPage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Cookies são pequenos arquivos de texto armazenados no seu dispositivo que nos ajudam a 
-              melhorar sua experiência no Senior Care. Eles permitem que lembremos suas preferências e 
-              entendamos como você usa nossa plataforma.
+              Cookies são pequenos ficheiros de texto armazenados no seu dispositivo que nos ajudam a
+              melhorar a sua experiência no Evyra. Permitem que recordemos as suas preferências e
+              compreendamos como utiliza a nossa plataforma.
             </p>
           </CardContent>
         </Card>
@@ -40,13 +40,13 @@ export default function CookiesPage() {
             <div>
               <h3 className="font-semibold">Cookies de Preferências</h3>
               <p className="text-sm text-muted-foreground">
-                Lembram suas preferências como idioma e tema (claro/escuro).
+                Recordam as suas preferências como idioma e tema (claro/escuro).
               </p>
             </div>
             <div>
               <h3 className="font-semibold">Cookies Analíticos</h3>
               <p className="text-sm text-muted-foreground">
-                Nos ajudam a entender como você usa a plataforma para podermos melhorá-la.
+                Ajudam-nos a compreender como utiliza a plataforma para podermos melhorá-la.
               </p>
             </div>
           </CardContent>
@@ -54,12 +54,12 @@ export default function CookiesPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Gerenciar Cookies</CardTitle>
+            <CardTitle>Gerir Cookies</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Você pode gerenciar suas preferências de cookies nas configurações do seu navegador. 
-              Observe que desativar certos cookies pode afetar a funcionalidade da plataforma.
+              Pode gerir as suas preferências de cookies nas definições do seu navegador.
+              Note que desativar certos cookies pode afetar a funcionalidade da plataforma.
             </p>
           </CardContent>
         </Card>

@@ -54,6 +54,11 @@ interface UserDetail {
   } | null;
   contractsCount: number;
   totalSpent: number;
+  wallet?: {
+    balanceTokens: number;
+    balanceEurCents: number;
+    address: string;
+  } | null;
 }
 
 export default function AdminUserDetailPage() {
@@ -92,7 +97,7 @@ export default function AdminUserDetailPage() {
       if (!response.ok) throw new Error("Failed to suspend");
       router.refresh();
     } catch (error) {
-      alert("Erro ao suspender usuário");
+      alert("Erro ao suspender utilizador");
     }
   };
 
@@ -104,7 +109,7 @@ export default function AdminUserDetailPage() {
       if (!response.ok) throw new Error("Failed to activate");
       router.refresh();
     } catch (error) {
-      alert("Erro ao ativar usuário");
+      alert("Erro ao ativar utilizador");
     }
   };
 
@@ -123,7 +128,7 @@ export default function AdminUserDetailPage() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-slate-500">Usuário não encontrado</p>
+        <p className="text-slate-500">Utilizador não encontrado</p>
         <Button variant="link" onClick={() => router.push("/admin/users")}>
           Voltar para lista
         </Button>
@@ -134,9 +139,9 @@ export default function AdminUserDetailPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Detalhes do Usuário"
+        title="Detalhes do Utilizador"
         breadcrumbs={[
-          { label: "Usuários", href: "/admin/users" },
+          { label: "Utilizadores", href: "/admin/users" },
           { label: user.name },
         ]}
         actions={

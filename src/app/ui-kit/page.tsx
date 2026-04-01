@@ -35,7 +35,7 @@ export default function UIKitPage() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold text-primary">UI Kit - {APP_NAME}</h1>
-          <p className="text-muted-foreground">Design System para Senior Care</p>
+          <p className="text-muted-foreground">Design System para Evyra</p>
         </div>
       </header>
 

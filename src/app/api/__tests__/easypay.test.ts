@@ -29,7 +29,7 @@ vi.mock('@/lib/services/easypay', () => ({
 }));
 
 vi.mock('@/lib/constants', () => ({
-  APP_NAME: 'Senior Care',
+  APP_NAME: 'Evyra',
 }));
 
 import { POST, GET } from '../payments/easypay/route';

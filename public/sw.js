@@ -1,7 +1,7 @@
-// Senior Care App - Service Worker for Push Notifications
+// Evyra - Service Worker for Push Notifications
 // This service worker handles push notifications for the PWA
 
-const APP_NAME = 'Senior Care App';
+const APP_NAME = 'Evyra';
 
 // Install event
 self.addEventListener('install', (event) => {

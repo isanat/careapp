@@ -293,7 +293,7 @@ export default function AdminSupportPage() {
             <div className="text-center py-12 text-slate-500">
               <IconHeadphones className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhum ticket encontrado</p>
-              <p className="text-sm mt-2">Os tickets de suporte aparecerão aqui quando os usuários os criarem.</p>
+              <p className="text-sm mt-2">Os tickets de suporte aparecerão aqui quando os utilizadores os criarem.</p>
             </div>
           ) : (
             <div className="divide-y">

@@ -44,13 +44,13 @@ import { useI18n } from "@/lib/i18n";
 // Service types available for caregivers
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais", description: "Higiene, banho, alimentação" },
-  { id: "MEDICATION", label: "Administração de Medicação", description: "Controle e aplicação de medicamentos" },
+  { id: "MEDICATION", label: "Administração de Medicação", description: "Controlo e aplicação de medicamentos" },
   { id: "MOBILITY", label: "Mobilidade", description: "Ajuda com locomoção e exercícios" },
-  { id: "COMPANIONSHIP", label: "Companhia", description: "Conversa, passeios, atividades" },
-  { id: "MEAL_PREPARATION", label: "Preparo de Refeições", description: "Cozinha e nutrição" },
+  { id: "COMPANIONSHIP", label: "Companhia", description: "Conversa, passeios, actividades" },
+  { id: "MEAL_PREPARATION", label: "Preparação de Refeições", description: "Cozinha e nutrição" },
   { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas", description: "Limpeza leve, organização" },
   { id: "TRANSPORTATION", label: "Transporte", description: "Consultas, compras, passeios" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva", description: "Atividades mentais, memória" },
+  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva", description: "Actividades mentais, memória" },
   { id: "NIGHT_CARE", label: "Cuidados Noturnos", description: "Acompanhamento durante a noite" },
   { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos", description: "Suporte e conforto" },
   { id: "PHYSIOTHERAPY", label: "Fisioterapia", description: "Exercícios e reabilitação" },
@@ -133,7 +133,7 @@ function ProfileSetupContent() {
   const handleNext = () => {
     if (step === 1) {
       if (!profileData.title || !profileData.experienceYears) {
-        setError("Por favor, preencha o título e experiência");
+        setError("Por favor, preencha o título e a experiência");
         return;
       }
     }
@@ -143,7 +143,7 @@ function ProfileSetupContent() {
         return;
       }
       if (!profileData.hourlyRate) {
-        setError("Por favor, informe seu valor por hora");
+        setError("Por favor, indique o seu valor por hora");
         return;
       }
     }
@@ -180,13 +180,13 @@ function ProfileSetupContent() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Falha ao salvar perfil");
+        throw new Error(data.error || "Falha ao guardar perfil");
       }
 
       // Redirect to KYC verification
       router.push(`/auth/kyc?userId=${userId || session?.user?.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao salvar perfil");
+      setError(err instanceof Error ? err.message : "Erro ao guardar perfil");
     } finally {
       setIsLoading(false);
     }
@@ -213,7 +213,7 @@ function ProfileSetupContent() {
           <Link href="/" className="inline-flex items-center justify-center gap-2 mb-4">
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
-          <h1 className="text-2xl font-bold">Complete seu Perfil Profissional</h1>
+          <h1 className="text-2xl font-bold">Complete o seu Perfil Profissional</h1>
           <p className="text-muted-foreground">
             Cuidador(a) - {APP_NAME}
           </p>
@@ -269,9 +269,9 @@ function ProfileSetupContent() {
             {step === 1 && (
               <>
                 <div className="text-center mb-6">
-                  <h2 className="text-lg font-semibold">Suas Informações</h2>
+                  <h2 className="text-lg font-semibold">As suas Informações</h2>
                   <p className="text-sm text-muted-foreground">
-                    Conte-nos sobre sua experiência como cuidador(a)
+                    Fale-nos sobre a sua experiência como cuidador(a)
                   </p>
                 </div>
 
@@ -296,12 +296,12 @@ function ProfileSetupContent() {
                   <Input
                     id="title"
                     name="title"
-                    placeholder="Ex: Enfermeira, Cuidadora, Técnica de Enfermagem..."
+                    placeholder="Ex.: Enfermeira, Cuidadora, Técnica de Enfermagem..."
                     value={profileData.title}
                     onChange={handleInputChange}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Como você se identifica profissionalmente?
+                    Como se identifica profissionalmente?
                   </p>
                 </div>
 
@@ -312,7 +312,7 @@ function ProfileSetupContent() {
                     onValueChange={(v) => setProfileData((p) => ({ ...p, experienceYears: v }))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione sua experiência" />
+                      <SelectValue placeholder="Selecione a sua experiência" />
                     </SelectTrigger>
                     <SelectContent>
                       {EXPERIENCE_LEVELS.map((level) => (
@@ -325,11 +325,11 @@ function ProfileSetupContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Sobre você</Label>
+                  <Label htmlFor="bio">Sobre si</Label>
                   <Textarea
                     id="bio"
                     name="bio"
-                    placeholder="Conte um pouco sobre sua experiência, especializações e o que te motiva como cuidador(a)..."
+                    placeholder="Fale um pouco sobre a sua experiência, especializações e o que o/a motiva como cuidador(a)..."
                     value={profileData.bio}
                     onChange={handleInputChange}
                     rows={4}
@@ -364,7 +364,7 @@ function ProfileSetupContent() {
                   <Input
                     id="certifications"
                     name="certifications"
-                    placeholder="Ex: Curso de Cuidador, Técnico de Enfermagem..."
+                    placeholder="Ex.: Curso de Cuidador, Técnico de Enfermagem..."
                     value={profileData.certifications}
                     onChange={handleInputChange}
                   />
@@ -378,7 +378,7 @@ function ProfileSetupContent() {
                 <div className="text-center mb-6">
                   <h2 className="text-lg font-semibold">Serviços e Valores</h2>
                   <p className="text-sm text-muted-foreground">
-                    Selecione os serviços que você oferece e seu valor
+                    Selecione os serviços que oferece e o seu valor
                   </p>
                 </div>
 
@@ -438,7 +438,7 @@ function ProfileSetupContent() {
                 <div className="text-center mb-6">
                   <h2 className="text-lg font-semibold">Disponibilidade</h2>
                   <p className="text-sm text-muted-foreground">
-                    Quando você está disponível para trabalhar?
+                    Quando está disponível para trabalhar?
                   </p>
                 </div>
 
@@ -468,7 +468,7 @@ function ProfileSetupContent() {
 
                 {/* Summary */}
                 <div className="bg-muted/50 p-4 rounded-lg space-y-3">
-                  <h3 className="font-medium">Resumo do seu perfil</h3>
+                  <h3 className="font-medium">Resumo do perfil</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Título:</span>
@@ -499,10 +499,10 @@ function ProfileSetupContent() {
                   <div className="flex items-start gap-3">
                     <IconCheck className="h-5 w-5 text-green-500 mt-0.5" />
                     <div className="text-sm">
-                      <p className="font-medium text-green-700">Cadastro Gratuito</p>
+                      <p className="font-medium text-green-700">Registo Gratuito</p>
                       <p className="text-muted-foreground">
-                        Como cuidador(a), você não precisa pagar para se cadastrar.
-                        Após completar seu perfil, passará por verificação.
+                        Como cuidador(a), não precisa de pagar para se registar.
+                        Após completar o seu perfil, passará por verificação.
                       </p>
                     </div>
                   </div>
@@ -528,7 +528,7 @@ function ProfileSetupContent() {
                   {isLoading ? (
                     <>
                       <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Salvando...
+                      A guardar...
                     </>
                   ) : (
                     <>
@@ -546,7 +546,7 @@ function ProfileSetupContent() {
         <p className="text-center text-xs text-muted-foreground mt-6">
           Precisa de ajuda?{" "}
           <Link href="/ajuda" className="text-primary hover:underline">
-            Fale conosco
+            Fale connosco
           </Link>
         </p>
       </div>

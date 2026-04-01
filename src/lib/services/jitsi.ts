@@ -1,13 +1,13 @@
 /**
- * Jitsi Meet Service for Senior Care
- * 
+ * Jitsi Meet Service for Evyra
+ *
  * Integration with Jitsi Meet (meet.jit.si) - Free and unlimited
- * 
+ *
  * OPTIONS:
  * 1. Public Jitsi (meet.jit.si) - Free, but requires host login (Google/GitHub)
  * 2. Self-hosted Jitsi - Requires own server
  * 3. JaaS (Jitsi as a Service) - Paid, with JWT auth
- * 
+ *
  * CURRENT IMPLEMENTATION:
  * - Uses Jitsi IFrame API with meet.jit.si (free)
  * - Generates unique room names to prevent unauthorized access
@@ -27,10 +27,10 @@ export const JITSI_CONFIG = {
   appSecret: process.env.JITSI_APP_SECRET || '',
   
   // System account for host authentication (optional)
-  systemEmail: process.env.JITSI_SYSTEM_EMAIL || 'reunioes@seniorcare.pt',
-  
+  systemEmail: process.env.JITSI_SYSTEM_EMAIL || 'reunioes@evyra.eu',
+
   // Room settings
-  roomPrefix: 'seniorcare',
+  roomPrefix: 'evyra',
   roomExpirationHours: 2,
 };
 
@@ -308,18 +308,18 @@ export function createInterviewRoom(
   
   // Generate JWT for the "system" (host)
   const jwtToken = generateJitsiJwt(roomName, {
-    id: 'seniorcare-system',
-    name: 'Senior Care',
+    id: 'evyra-system',
+    name: 'Evyra',
     email: JITSI_CONFIG.systemEmail,
     role: 'host'
   });
-  
+
   return {
     roomName,
     roomUrl,
     jwtToken: jwtToken || undefined,
     expiresAt,
-    hostName: 'Senior Care',
+    hostName: 'Evyra',
     subject: `Entrevista: ${familyName} ↔ ${caregiverName}`
   };
 }

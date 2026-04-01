@@ -60,7 +60,7 @@ export async function POST(
       args: [
         notificationId,
         otherUserId,
-        'O contrato foi marcado como concluído. Você pode agora deixar uma avaliação.',
+        'O contrato foi marcado como concluído. Pode agora deixar uma avaliação.',
         contractId,
         now
       ]

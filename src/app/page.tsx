@@ -21,34 +21,39 @@ export default function LandingPage() {
 
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background">
-        <div className="container px-4 py-16 md:py-24 mx-auto">
+      {/* Hero Section - Éphyra Narrative */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-blue-500/5 via-teal-500/5 to-background">
+        <div className="container px-4 py-16 md:py-32 mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-6">
-              <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                🇵🇹 {t.landing.badge}
-              </Badge>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                {t.landing.hero.title}
+              <div className="space-y-2">
+                <Badge variant="secondary" className="px-4 py-1.5 text-sm">
+                  ✨ Éphyra - From Greek Mythology to European Care
+                </Badge>
+                <p className="text-sm text-muted-foreground italic">
+                  Named after Éphyra, the mother of compassion in ancient Greece, who built bridges between families and care.
+                </p>
+              </div>
+
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                Infrastructure for Digital Human Care
               </h1>
-              
-              <p className="text-lg text-muted-foreground max-w-xl">
-                {t.landing.hero.subtitle}
+
+              <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
+                Evyra connects European families with verified caregivers through a secure, transparent platform that values human connection and professional dignity.
               </p>
               
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
                   <Link href="/auth/register">
-                    {t.landing.hero.ctaFamily}
+                    I'm a Family
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" className="bg-teal-600 hover:bg-teal-700" asChild>
                   <Link href="/auth/register?role=caregiver">
-                    {t.landing.hero.ctaCaregiver}
+                    I'm a Caregiver
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -71,37 +76,37 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Content - Trust Card */}
-            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+            {/* Right Content - 3 Pillars Card */}
+            <Card className="bg-gradient-to-br from-blue-500/10 via-teal-500/10 to-background border-blue-200/50">
               <CardContent className="p-8">
-                <div className="text-center mb-6">
-                  <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <IconTrust className="h-10 w-10 text-primary" />
+                <div className="text-center mb-8">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <IconCare className="h-10 w-10 text-blue-600" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">{t.landing.features.title}</h3>
-                  <p className="text-muted-foreground">{t.landing.features.verified.title}</p>
+                  <h3 className="text-2xl font-bold mb-2">3 Pillars of Evyra</h3>
+                  <p className="text-muted-foreground">What makes us different</p>
                 </div>
-                
+
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
-                    <IconShield className="h-5 w-5 text-green-500 shrink-0" />
+                  <div className="flex items-start gap-3 p-4 bg-blue-500/5 rounded-lg border border-blue-200/30">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-medium text-sm">{t.landing.features.verified.title}</p>
-                      <p className="text-xs text-muted-foreground">{t.landing.features.verified.description}</p>
+                      <p className="font-bold text-sm">Digital Infrastructure</p>
+                      <p className="text-xs text-muted-foreground">Secure contracts, transparent payments, EU-compliant data protection</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
-                    <IconContract className="h-5 w-5 text-primary shrink-0" />
+                  <div className="flex items-start gap-3 p-4 bg-teal-500/5 rounded-lg border border-teal-200/30">
+                    <div className="w-2 h-2 bg-teal-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-medium text-sm">{t.landing.features.contracts.title}</p>
-                      <p className="text-xs text-muted-foreground">{t.landing.features.contracts.description}</p>
+                      <p className="font-bold text-sm">European Standard</p>
+                      <p className="text-xs text-muted-foreground">Built for Portugal, Spain, Italy. RGPD-first. Multi-language support</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
-                    <IconCare className="h-5 w-5 text-yellow-600 shrink-0" />
+                  <div className="flex items-start gap-3 p-4 bg-slate-500/5 rounded-lg border border-slate-200/30">
+                    <div className="w-2 h-2 bg-slate-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-medium text-sm">{t.landing.features.support.title}</p>
-                      <p className="text-xs text-muted-foreground">{t.landing.features.support.description}</p>
+                      <p className="font-bold text-sm">Caregiver Valorization</p>
+                      <p className="text-xs text-muted-foreground">Fair payments (90% commission), professional recognition, career building tools</p>
                     </div>
                   </div>
                 </div>
