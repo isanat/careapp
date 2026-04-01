@@ -6,9 +6,9 @@
  * Rate limit: 10 scans per minute
  */
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 import { scanQRCode } from "@/lib/qr/qr-service";
 import { checkRateLimit, getRemainingRequests } from "@/lib/qr/rate-limiter";
 import { isValidQRCodeFormat } from "@/lib/qr/qr-utils";
@@ -27,10 +27,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user is CAREGIVER role
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
+    const userResult = await db.execute({
+      sql: `SELECT role FROM User WHERE id = ?`,
+      args: [session.user.id],
     });
+
+    const user = userResult.rows[0] as any;
 
     if (user?.role !== "CAREGIVER") {
       return NextResponse.json(
@@ -108,15 +110,26 @@ export async function POST(request: NextRequest) {
     );
 
     // Create notification for family
-    await prisma.notification.create({
-      data: {
-        userId: result.contract.familyUserId,
-        type: "QR_CONFIRMED",
-        title: `${result.scannedByUser?.name} confirmou presença`,
-        message: `${result.scannedByUser?.name} confirmou presença em ${new Date(result.scannedAt).toLocaleTimeString("pt-PT")}`,
-        referenceType: "PresenceConfirmation",
-        referenceId: result.id,
-      },
+    const notificationId = Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+    const notificationTime = new Date().toISOString();
+    const scanTimeDate = typeof result.scannedAt === "string"
+      ? new Date(result.scannedAt)
+      : result.scannedAt;
+    const scanTime = scanTimeDate.toLocaleTimeString("pt-PT");
+
+    await db.execute({
+      sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        notificationId,
+        result.contract.familyUserId,
+        "QR_CONFIRMED",
+        `${result.scannedByUser?.name} confirmou presença`,
+        `${result.scannedByUser?.name} confirmou presença em ${scanTime}`,
+        "PresenceConfirmation",
+        result.id,
+        notificationTime,
+      ],
     });
 
     return NextResponse.json(
@@ -126,7 +139,7 @@ export async function POST(request: NextRequest) {
         confirmation: {
           qrCodeId: result.id,
           contractId: result.contract.id,
-          confirmedAt: result.scannedAt.toISOString(),
+          confirmedAt: result.scannedAt,
           confirmedBy: {
             id: result.scannedByUser?.id,
             name: result.scannedByUser?.name,

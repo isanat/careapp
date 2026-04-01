@@ -5,13 +5,12 @@
  * Authorization: FAMILY role, must be contract owner
  */
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 import { generateOrGetQRCode } from "@/lib/qr/qr-service";
 import { checkRateLimit } from "@/lib/qr/rate-limiter";
 import { NextRequest, NextResponse } from "next/server";
-import { formatQRCodeResponse } from "@/lib/qr/qr-utils";
 
 export async function POST(
   request: NextRequest,
@@ -29,10 +28,12 @@ export async function POST(
     }
 
     // Check if user is FAMILY role
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
+    const userResult = await db.execute({
+      sql: `SELECT role FROM User WHERE id = ?`,
+      args: [session.user.id],
     });
+
+    const user = userResult.rows[0] as any;
 
     if (user?.role !== "FAMILY") {
       return NextResponse.json(
@@ -55,14 +56,12 @@ export async function POST(
     }
 
     // Verify user is contract owner
-    const contract = await prisma.contract.findUnique({
-      where: { id: params.id },
-      select: {
-        id: true,
-        familyUserId: true,
-        status: true,
-      },
+    const contractResult = await db.execute({
+      sql: `SELECT id, familyUserId, status FROM Contract WHERE id = ?`,
+      args: [params.id],
     });
+
+    const contract = contractResult.rows[0] as any;
 
     if (!contract) {
       return NextResponse.json(
@@ -81,16 +80,19 @@ export async function POST(
     // Generate or get existing QR code
     const qrData = await generateOrGetQRCode(contract.id);
 
+    const expiresAtDate = new Date(qrData.qrExpiresAt);
+    const expiresIn = Math.floor(
+      (expiresAtDate.getTime() - Date.now()) / 1000
+    );
+
     return NextResponse.json(
       {
         success: true,
         qrCodeId: qrData.id,
         qrCode: qrData.qrCode,
-        expiresAt: qrData.qrExpiresAt.toISOString(),
-        expiresIn: Math.floor(
-          (qrData.qrExpiresAt.getTime() - Date.now()) / 1000
-        ),
-        generatedAt: qrData.qrGeneratedAt.toISOString(),
+        expiresAt: qrData.qrExpiresAt,
+        expiresIn,
+        generatedAt: qrData.qrGeneratedAt,
         contractId: contract.id,
       },
       { status: 200 }

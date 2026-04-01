@@ -12,9 +12,9 @@
  * Authorization: FAMILY (owner) or CAREGIVER (assigned)
  */
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 import { getPresenceHistory } from "@/lib/qr/qr-service";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -34,14 +34,12 @@ export async function GET(
     }
 
     // Verify contract exists and user has access
-    const contract = await prisma.contract.findUnique({
-      where: { id: params.id },
-      select: {
-        id: true,
-        familyUserId: true,
-        caregiverUserId: true,
-      },
+    const contractResult = await db.execute({
+      sql: `SELECT id, familyUserId, caregiverUserId FROM Contract WHERE id = ?`,
+      args: [params.id],
     });
+
+    const contract = contractResult.rows[0] as any;
 
     if (!contract) {
       return NextResponse.json(
