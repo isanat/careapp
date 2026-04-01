@@ -41,9 +41,6 @@ export default function SobrePage() {
                   Não somos um marketplace. Somos a infraestrutura que organiza o processo inteiro: verificação de profissionais, contratos, pagamentos e comunicação — num único lugar, com rigor europeu.
                 </p>
               </div>
-              <p className="text-sm italic text-muted-foreground pt-4">
-                &ldquo;O cuidado é infraestrutura. A tecnologia serve a humanidade.&rdquo;
-              </p>
             </div>
           </div>
         </section>
