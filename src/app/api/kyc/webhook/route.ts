@@ -212,9 +212,9 @@ export async function POST(request: NextRequest) {
     };
     
     const messages = {
-      VERIFIED: 'Sua verificação de identidade foi aprovada! Você agora pode acessar todos os recursos da plataforma.',
-      REJECTED: 'Sua verificação de identidade foi rejeitada. Entre em contato com o suporte para mais informações.',
-      PENDING: 'Sua verificação de identidade está sendo analisada. Você será notificado quando for concluída.',
+      VERIFIED: 'A sua verificação de identidade foi aprovada! Pode agora aceder a todos os recursos da plataforma.',
+      REJECTED: 'A sua verificação de identidade foi rejeitada. Entre em contacto com o suporte para mais informações.',
+      PENDING: 'A sua verificação de identidade está a ser analisada. Será notificado quando for concluída.',
     };
 
     const notificationId = generateId("notif");

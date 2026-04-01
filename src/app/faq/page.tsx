@@ -11,15 +11,15 @@ export const metadata: Metadata = {
 const faqs = [
   {
     question: "Como funciona o Senior Care?",
-    answer: "O Senior Care conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Você pode buscar cuidadores, ver perfis detalhados, e criar contratos digitais seguros.",
+    answer: "O Senior Care conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Pode pesquisar cuidadores, ver perfis detalhados e criar contratos digitais seguros.",
   },
   {
     question: "Quanto custa usar a plataforma?",
-    answer: "A ativação da conta custa €35 (única vez). Cada contrato criado tem uma taxa de €5. A plataforma retém 10% sobre os pagamentos de serviços.",
+    answer: "A activação da conta custa €35 (única vez). Cada contrato criado tem uma taxa de €5. A plataforma retém 10% sobre os pagamentos de serviços.",
   },
   {
     question: "Como os cuidadores são verificados?",
-    answer: "Oferecemos verificação de identidade (KYC) opcional para cuidadores. Aqueles verificados recebem um selo de confiança e aparecem primeiro nas buscas.",
+    answer: "Oferecemos verificação de identidade (KYC) opcional para cuidadores. Os verificados recebem um selo de confiança e aparecem primeiro nas pesquisas.",
   },
   {
     question: "Como funcionam os pagamentos?",
@@ -31,11 +31,11 @@ const faqs = [
   },
   {
     question: "A plataforma está disponível em quais países?",
-    answer: "Atualmente atendemos Portugal, Itália e outros países da União Europeia, com expansão planejada para outros mercados.",
+    answer: "Actualmente atendemos Portugal, Itália e outros países da União Europeia, com expansão planeada para outros mercados.",
   },
   {
     question: "Como entro em contato com o suporte?",
-    answer: "Você pode nos contatar através da página de Contato ou enviar email para suporte@seniorcare.com.",
+    answer: "Pode contactar-nos através da página de Contacto ou enviar email para suporte@seniorcare.com.",
   },
 ];
 

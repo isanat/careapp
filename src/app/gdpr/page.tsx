@@ -15,33 +15,33 @@ export default function GDPRPage() {
         
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Seus Direitos</CardTitle>
+            <CardTitle>Os Seus Direitos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              O Regulamento Geral sobre a Proteção de Dados (GDPR) garante direitos fundamentais 
-              sobre seus dados pessoais. No Senior Care, respeitamos todos esses direitos:
+              O Regulamento Geral sobre a Proteção de Dados (RGPD) garante direitos fundamentais
+              sobre os seus dados pessoais. No Senior Care, respeitamos todos esses direitos:
             </p>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
-              <li><strong>Direito de Acesso:</strong> Você pode solicitar uma cópia de todos os seus dados</li>
-              <li><strong>Direito de Retificação:</strong> Você pode corrigir dados incorretos ou incompletos</li>
-              <li><strong>Direito de Eliminação:</strong> Você pode solicitar a exclusão de seus dados</li>
-              <li><strong>Direito de Portabilidade:</strong> Você pode receber seus dados em formato estruturado</li>
-              <li><strong>Direito de Oposição:</strong> Você pode se opor a certos tratamentos de dados</li>
-              <li><strong>Direito de Limitação:</strong> Você pode limitar como usamos seus dados</li>
+              <li><strong>Direito de Acesso:</strong> Pode solicitar uma cópia de todos os seus dados</li>
+              <li><strong>Direito de Retificação:</strong> Pode corrigir dados incorrectos ou incompletos</li>
+              <li><strong>Direito de Eliminação:</strong> Pode solicitar a eliminação dos seus dados</li>
+              <li><strong>Direito de Portabilidade:</strong> Pode receber os seus dados em formato estruturado</li>
+              <li><strong>Direito de Oposição:</strong> Pode opor-se a certos tratamentos de dados</li>
+              <li><strong>Direito de Limitação:</strong> Pode limitar como utilizamos os seus dados</li>
             </ul>
           </CardContent>
         </Card>
 
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Dados que Coletamos</CardTitle>
+            <CardTitle>Dados que Recolhemos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
               <li>Dados de identificação (nome, email, telefone)</li>
               <li>Dados de perfil (para cuidadores: experiência, serviços)</li>
-              <li>Dados de transação (pagamentos, contratos)</li>
+              <li>Dados de transacção (pagamentos, contratos)</li>
               <li>Dados técnicos (IP, navegador, dispositivo)</li>
               <li>Dados de comunicação (mensagens no chat)</li>
             </ul>

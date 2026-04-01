@@ -209,7 +209,7 @@ export default function AdminAnalyticsPage() {
                       key={i}
                       className="flex-1 bg-green-500 rounded-t"
                       style={{ height: `${Math.max(height, 5)}%` }}
-                      title={`${item.users} usuários`}
+                      title={`${item.users} utilizadores`}
                   />
                   );
                 })}

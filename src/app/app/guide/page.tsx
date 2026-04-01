@@ -170,7 +170,7 @@ export default function GuidePage() {
             <CardContent className="pt-4 flex items-center gap-3">
               <IconCheck className="h-5 w-5 text-green-500" />
               <span className="text-green-700">
-                Você já confirmou que leu e compreendeu este guia.
+                Já confirmou que leu e compreendeu este guia.
               </span>
             </CardContent>
           </Card>

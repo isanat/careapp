@@ -28,18 +28,18 @@ const TERMS_CONTENT = {
 # Termos de Uso
 
 ## 1. Aceitação dos Termos
-Ao acessar e usar a plataforma Senior Care, você concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não deve usar nossa plataforma.
+Ao aceder e utilizar a plataforma Senior Care, o utilizador concorda com estes Termos de Uso. Se não concordar com qualquer parte destes termos, não deve utilizar a nossa plataforma.
 
 ## 2. Descrição do Serviço
 O Senior Care é uma plataforma digital que conecta familiares que necessitam de cuidados para idosos com profissionais cuidadores verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão entre as partes.
 
-## 3. Cadastro e Conta
-- Você deve fornecer informações verdadeiras e precisas durante o cadastro
-- É responsável por manter a confidencialidade de sua conta
-- Deve ter pelo menos 18 anos para usar a plataforma
-- Aceita que suas informações serão processadas conforme nossa Política de Privacidade
+## 3. Registo e Conta
+- O utilizador deve fornecer informações verdadeiras e precisas durante o registo
+- É responsável por manter a confidencialidade da sua conta
+- Deve ter pelo menos 18 anos para utilizar a plataforma
+- Aceita que as suas informações serão processadas conforme a nossa Política de Privacidade
 
-## 4. Responsabilidades do Usuário
+## 4. Responsabilidades do Utilizador
 Como Familiar:
 - Fornecer informações precisas sobre as necessidades do idoso
 - Pagar pontualmente os serviços contratados
@@ -62,7 +62,7 @@ A plataforma utiliza um sistema de pagamentos seguro:
 - Taxa de plataforma: 15% sobre transações
 
 ## 7. Verificação (KYC)
-Cuidadores devem passar por verificação de identidade (Know Your Customer) através de nosso parceiro Didit. Esta verificação inclui:
+Cuidadores devem passar por verificação de identidade (Know Your Customer) através do nosso parceiro Didit. Esta verificação inclui:
 - Confirmação de identidade
 - Verificação de antecedentes
 - Validação de documentos
@@ -76,7 +76,7 @@ Cuidadores devem passar por verificação de identidade (Know Your Customer) atr
 É proibido:
 - Usar a plataforma para atividades ilegais
 - Fornecer informações falsas
-- Assediar ou discriminar outros usuários
+- Assediar ou discriminar outros utilizadores
 - Tentar fraudar o sistema de pagamentos
 
 ## 10. Limitação de Responsabilidade
@@ -102,10 +102,10 @@ Versão: 1.0
 # Política de Privacidade
 
 ## 1. Introdução
-O Senior Care está comprometido com a proteção de seus dados pessoais. Esta política descreve como coletamos, usamos e protegemos suas informações.
+O Senior Care está comprometido com a proteção dos seus dados pessoais. Esta política descreve como recolhemos, utilizamos e protegemos as suas informações.
 
-## 2. Dados Coletados
-Coletamos os seguintes dados:
+## 2. Dados Recolhidos
+Recolhemos os seguintes dados:
 - **Dados de identificação:** nome, email, telefone, foto
 - **Dados de localização:** endereço, cidade, código postal
 - **Dados profissionais:** qualificações, experiência (para cuidadores)
@@ -113,10 +113,10 @@ Coletamos os seguintes dados:
 - **Dados técnicos:** endereço IP, dispositivo, navegador
 
 ## 3. Finalidade do Tratamento
-Seus dados são utilizados para:
+Os seus dados são utilizados para:
 - Prestação dos serviços da plataforma
 - Verificação de identidade (KYC)
-- Comunicação entre usuários
+- Comunicação entre utilizadores
 - Cumprimento de obrigações legais
 - Melhoria dos serviços
 
@@ -127,37 +127,37 @@ O tratamento de dados pessoais é realizado com base em:
 - Obrigação legal
 - Interesse legítimo
 
-## 5. Compartilhamento de Dados
-Podemos compartilhar dados com:
-- Outros usuários (para prestação de serviços)
+## 5. Partilha de Dados
+Podemos partilhar dados com:
+- Outros utilizadores (para prestação de serviços)
 - Parceiros de verificação (Didit)
 - Processadores de pagamento (Stripe)
 - Autoridades públicas (quando exigido por lei)
 
 ## 6. Direitos do Titular
-Você tem direito a:
-- Acessar seus dados pessoais
+O utilizador tem direito a:
+- Aceder aos seus dados pessoais
 - Corrigir dados incorretos
-- Solicitar exclusão de dados
+- Solicitar eliminação de dados
 - Portabilidade de dados
 - Opor-se ao tratamento
 - Retirar consentimento
 
 ## 7. Segurança
-Implementamos medidas técnicas e organizacionais para proteger seus dados:
+Implementámos medidas técnicas e organizacionais para proteger os seus dados:
 - Criptografia de dados sensíveis
 - Controle de acesso restrito
 - Monitoramento contínuo
 - Backup regular
 
 ## 8. Retenção de Dados
-Mantemos seus dados enquanto:
-- Sua conta estiver ativa
+Mantemos os seus dados enquanto:
+- A sua conta estiver activa
 - Exigido por lei
 - Necessário para finalidades legítimas
 
 ## 9. Transferência Internacional
-Alguns dados podem ser processados fora do Espaço Econômico Europeu, sempre com garantias adequadas.
+Alguns dados podem ser processados fora do Espaço Económico Europeu, sempre com garantias adequadas.
 
 ## 10. Cookies
 Utilizamos cookies para:
@@ -190,13 +190,13 @@ O Senior Care oferece um serviço de mediação para resolver disputas entre fam
 Esta política se aplica a:
 - Disputas sobre qualidade de serviços
 - Divergências sobre valores pagos
-- Questões relacionadas a cancelamentos
-- Outros conflitos entre usuários
+- Questões relacionadas com cancelamentos
+- Outros conflitos entre utilizadores
 
 ## 3. Processo de Mediação
 
 ### 3.1. Abertura de Disputa
-1. O usuário deve abrir uma disputa através da plataforma
+1. O utilizador deve abrir uma disputa através da plataforma
 2. Descrever detalhadamente o problema
 3. Anexar evidências (fotos, mensagens, etc.)
 4. Indicar a solução desejada
@@ -317,7 +317,7 @@ export function TermsAcceptance({ acceptTerms, onAcceptChange, showDetailed = fa
             </button>
           </label>
           <p className="text-xs text-muted-foreground">
-            {t.register?.termsInfo || "Ao aceitar, você concorda com nossos termos e políticas. Seu aceite será registrado com data, hora e IP para sua segurança."}
+            {t.register?.termsInfo || "Ao aceitar, concorda com os nossos termos e políticas. O seu aceite será registado com data, hora e IP para sua segurança."}
           </p>
         </div>
       </div>
@@ -348,7 +348,7 @@ export function TermsAcceptance({ acceptTerms, onAcceptChange, showDetailed = fa
         <IconShield className="h-4 w-4 shrink-0 text-primary mt-0.5" />
         <p>
           <strong className="text-foreground">{t.register?.legalNotice || "Aviso Legal"}:</strong>{" "}
-          {t.register?.legalNoticeText || "Seu aceite será registrado eletronicamente com data, hora e endereço IP para fins de prova legal, conforme regulamento LGPD/GDPR."}
+          {t.register?.legalNoticeText || "O seu aceite será registado electronicamente com data, hora e endereço IP para fins de prova legal, conforme regulamento RGPD."}
         </p>
       </div>
 

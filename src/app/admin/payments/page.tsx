@@ -234,7 +234,7 @@ function TransactionsTab() {
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
-              <Input placeholder="Buscar por usuario..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && fetchData()} />
+              <Input placeholder="Pesquisar por utilizador..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && fetchData()} />
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-full md:w-48"><SelectValue placeholder="Tipo" /></SelectTrigger>

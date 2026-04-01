@@ -53,7 +53,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold text-red-600">Acesso Negado</h1>
         <p className="text-slate-500">
-          Você não tem permissão para acessar esta área.
+          Não tem permissão para aceder a esta área.
         </p>
         <a
           href="/app/dashboard"

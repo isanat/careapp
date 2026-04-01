@@ -46,11 +46,11 @@ export const translations = {
       login: "Entrar",
       logout: "Sair",
       register: "Criar Conta",
-      forgotPassword: "Esqueci a Senha",
-      resetPassword: "Redefinir Senha",
+      forgotPassword: "Esqueci a Palavra-passe",
+      resetPassword: "Redefinir Palavra-passe",
       email: "E-mail",
-      password: "Senha",
-      confirmPassword: "Confirmar Senha",
+      password: "Palavra-passe",
+      confirmPassword: "Confirmar Palavra-passe",
       name: "Nome",
       phone: "Telefone",
       role: "Tipo de Conta",
@@ -242,15 +242,15 @@ export const translations = {
     },
     
     forgotPassword: {
-      title: "Recuperar Senha",
+      title: "Recuperar Palavra-passe",
       description: "Digite o seu email para receber instruções de recuperação",
       emailLabel: "Email",
       sendReset: "Enviar Instruções",
       sending: "A enviar...",
       backToLogin: "Voltar para Entrar",
       emailSent: "Email Enviado!",
-      checkInbox: "Se existir uma conta com este email, receberá instruções para redefinir a sua senha.",
-      rememberedPassword: "Lembrou a sua senha?",
+      checkInbox: "Se existir uma conta com este email, receberá instruções para redefinir a sua palavra-passe.",
+      rememberedPassword: "Lembrou-se da sua palavra-passe?",
       loginLink: "Entrar",
       sendError: "Erro ao enviar email. Tente novamente.",
     },
@@ -724,7 +724,7 @@ export const translations = {
       title: "Central de Ajuda",
       subtitle: "Encontre respostas para as dúvidas mais comuns ou entre em contacto com o nosso suporte.",
       notFound: "Não encontrou o que procurava?",
-      supportReady: "A nossa equipa de suporte está pronta para ajudar você.",
+      supportReady: "A nossa equipa de suporte está pronta para o ajudar.",
       contactSupport: "Falar com Suporte",
       categories: {
         forFamilies: "Para Famílias",
@@ -735,11 +735,11 @@ export const translations = {
         families: [
           {
             q: "Como encontro um cuidador?",
-            a: "Após criar a sua conta, aceda à busca de cuidadores. Pode filtrar por tipo de serviço, localização, disponibilidade e avaliações de outras famílias."
+            a: "Após criar a sua conta, aceda à pesquisa de cuidadores. Pode filtrar por tipo de serviço, localização, disponibilidade e avaliações de outras famílias."
           },
           {
             q: "Como funciona o pagamento?",
-            a: "Você paga mensalmente pelo serviço contratado. O valor é calculado com base nas horas acordadas. A plataforma retém uma pequena taxa para garantir a segurança da transação."
+            a: "Paga mensalmente pelo serviço contratado. O valor é calculado com base nas horas acordadas. A plataforma retém uma pequena taxa para garantir a segurança da transacção."
           },
           {
             q: "Posso trocar de cuidador?",
@@ -767,7 +767,7 @@ export const translations = {
           },
           {
             q: "Os meus dados estão seguros?",
-            a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD/LGPD e não vendemos os seus dados. Os seus contratos são registados de forma segura para garantir transparência."
+            a: "Sim. Utilizamos criptografia de ponta a ponta, seguimos as normas RGPD e não vendemos os seus dados. Os seus contratos são registados de forma segura para garantir transparência."
           }
         ]
       }
@@ -778,13 +778,13 @@ export const translations = {
     // ============================================
     contatoPage: {
       title: "Entre em Contacto",
-      subtitle: "A nossa equipa está pronta para ajudar você. Envie a sua mensagem ou utilize os nossos canais de atendimento.",
+      subtitle: "A nossa equipa está pronta para o ajudar. Envie a sua mensagem ou utilize os nossos canais de atendimento.",
       form: {
         title: "Envie uma Mensagem",
         name: "Nome",
         namePlaceholder: "O seu nome",
         email: "Email",
-        emailPlaceholder: "seu@email.com",
+        emailPlaceholder: "o-seu@email.com",
         subject: "Assunto",
         subjectPlaceholder: "Como podemos ajudar?",
         message: "Mensagem",
@@ -825,7 +825,7 @@ export const translations = {
       newsletter: {
         title: "Receba as Nossas Novidades",
         subtitle: "Registe-se para receber dicas e actualizações da plataforma.",
-        placeholder: "seu@email.com",
+        placeholder: "o-seu@email.com",
         subscribe: "Subscrever",
       },
       posts: [
@@ -857,13 +857,13 @@ export const translations = {
     // SOBRE PAGE
     // ============================================
     sobrePage: {
-      badge: "Nossa História",
+      badge: "A Nossa História",
       title: "Sobre o",
       subtitle: "Somos uma empresa de tecnologia com propósito: transformar o cuidado de idosos através de confiança, transparência e valorização profissional.",
       mission: {
-        title: "Nossa Missão",
-        paragraph1: "O Senior Care nasceu da observação de um problema real: famílias lutando para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
-        paragraph2: "Usamos tecnologia de ponta para resolver problemas humanos: garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores sejam valorizados a longo prazo.",
+        title: "A Nossa Missão",
+        paragraph1: "O Senior Care nasceu da observação de um problema real: famílias a lutar para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
+        paragraph2: "Utilizamos tecnologia de ponta para resolver problemas humanos: garantir que contratos sejam seguros, pagamentos sejam protegidos e cuidadores sejam valorizados a longo prazo.",
         values: {
           care: "Cuidado",
           trust: "Confiança",
@@ -871,14 +871,14 @@ export const translations = {
         },
       },
       stats: {
-        title: "Nossos Números",
+        title: "Os Nossos Números",
         caregivers: "Cuidadores activos",
         families: "Famílias atendidas",
         hours: "Horas de cuidado",
         countries: "Países",
       },
       values: {
-        title: "Nossos Valores",
+        title: "Os Nossos Valores",
         humanity: {
           title: "Humanidade",
           description: "Tecnologia ao serviço das pessoas. Cada decisão considera o impacto em famílias e cuidadores.",
@@ -889,11 +889,11 @@ export const translations = {
         },
         appreciation: {
           title: "Valorização",
-          description: "Cuidadores merecem reconhecimento. Nossa plataforma permite que ganhem e valorizem o seu trabalho com justiça.",
+          description: "Cuidadores merecem reconhecimento. A nossa plataforma permite que ganhem e valorizem o seu trabalho com justiça.",
         },
       },
       team: {
-        title: "Nossa Equipa",
+        title: "A Nossa Equipa",
         subtitle: "Profissionais apaixonados por tecnologia e cuidados de saúde.",
         members: [
           { name: "Ana Silva", role: "CEO & Co-founder" },
@@ -935,7 +935,7 @@ export const translations = {
           title: "2. Informações que Recolhemos",
           content: "Podemos recolher os seguintes tipos de informações:",
           items: [
-            "Dados de identificação: nome, email, telefone, CPF/NIF",
+            "Dados de identificação: nome, email, telefone, NIF",
             "Dados de localização: endereço, cidade, código postal",
             "Dados de perfil: foto, descrição, qualificações profissionais",
             "Dados de transacção: histórico de contratos, pagamentos",
@@ -943,7 +943,7 @@ export const translations = {
           ],
         },
         dataUsage: {
-          title: "3. Como Usamos as Suas Informações",
+          title: "3. Como Utilizamos as Suas Informações",
           content: "Utilizamos as suas informações para:",
           items: [
             "Fornecer e melhorar os nossos serviços",
@@ -975,12 +975,12 @@ export const translations = {
           ],
         },
         rights: {
-          title: "6. Os Seus Direitos (RGPD/LGPD)",
-          content: "Você tem direito a:",
+          title: "6. Os Seus Direitos (RGPD)",
+          content: "O utilizador tem direito a:",
           items: [
             "Aceder aos seus dados pessoais",
             "Corrigir dados incorrectos",
-            "Solicitar exclusão dos seus dados",
+            "Solicitar eliminação dos seus dados",
             "Portabilidade de dados",
             "Retirar consentimento a qualquer momento",
             "Opor-se a determinados tratamentos"
@@ -988,7 +988,7 @@ export const translations = {
         },
         cookies: {
           title: "7. Cookies e Tecnologias Similares",
-          content: "Utilizamos cookies essenciais para funcionamento da plataforma e cookies analíticos para melhorar os nossos serviços. Pode gerir as suas preferências de cookies nas configurações do navegador.",
+          content: "Utilizamos cookies essenciais para funcionamento da plataforma e cookies analíticos para melhorar os nossos serviços. Pode gerir as suas preferências de cookies nas definições do navegador.",
         },
         contact: {
           title: "8. Contacto",

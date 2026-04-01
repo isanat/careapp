@@ -60,8 +60,8 @@ export default function NewUserPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Novo Usuário"
-        description="Criar um novo usuário na plataforma"
+        title="Novo Utilizador"
+        description="Criar um novo utilizador na plataforma"
         actions={
           <Link href="/admin/users">
             <Button variant="outline" size="sm">
