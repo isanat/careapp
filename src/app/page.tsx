@@ -28,15 +28,15 @@ export default function LandingPage() {
             {/* Left Content */}
             <div className="space-y-6">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                Para quem tem pais longe · Portugal, Espanha, Itália
+                Para quem precisa de apoio em casa · Portugal, Espanha, Itália
               </Badge>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Seu pai em Lisboa.{" "}
+                Confiança é{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                  Você em Londres.
+                  infraestrutura.
                 </span>{" "}
-                Só quer saber que o cuidador chegou.
+                Nós somos essa infraestrutura.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
