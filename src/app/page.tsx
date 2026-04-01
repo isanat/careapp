@@ -36,11 +36,11 @@ export default function LandingPage() {
                 <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
                   Está em Londres.
                 </span>{" "}
-                A Evyra garante que não fica a adivinhar.
+                Sabe quando o profissional chegou.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-                Sabe quando o profissional chegou. Como correu o dia. O que mudou. Sem ter de ligar a ninguém. A Evyra organiza o cuidado para que a distância deixe de ser culpa activa.
+                Confirmação de presença, histórico de visitas, contratos e pagamentos num único lugar. Sem telefonemas. Sem incerteza. A distância deixa de ser culpa activa.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4">

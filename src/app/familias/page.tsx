@@ -32,10 +32,10 @@ export default function FamiliasPage() {
                 Para famílias em Portugal · França · Reino Unido · Alemanha · Suíça
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                A distância não pode ser uma razão para não saber como o seu pai está.
+                Sabe quando o profissional chegou. Sem ter de ligar a ninguém.
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                A Evyra dá-lhe visibilidade real sobre o cuidado — sem telefonemas, sem incerteza. Sabe quando o profissional chegou, como correu o dia e o que mudou. Para que a distância deixe de ser culpa activa e passe a ser apenas geografia.
+                A distância deixa de ser culpa activa quando há visibilidade. A Evyra organiza contratos, pagamentos e confirmação de presença — para que a família tenha acesso ao que precisa saber, quando precisa.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
@@ -54,22 +54,22 @@ export default function FamiliasPage() {
             <div className="hidden lg:block">
               <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
                 <CardContent className="p-8 space-y-4">
-                  <h3 className="font-semibold text-lg mb-2">O que a Evyra organiza por si</h3>
+                  <h3 className="font-semibold text-lg mb-2">Organização centralizada do cuidado</h3>
                   <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
                     <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <p className="text-sm text-muted-foreground">Confirmação de chegada e saída do profissional</p>
+                    <p className="text-sm text-muted-foreground">O profissional confirma a sua presença (QR code diário)</p>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
                     <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <p className="text-sm text-muted-foreground">Registo diário do que aconteceu — acessível a toda a família</p>
+                    <p className="text-sm text-muted-foreground">Todos os membros da família têm acesso ao mesmo histórico</p>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
                     <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <p className="text-sm text-muted-foreground">Contratos e pagamentos num único lugar, sem papelada</p>
+                    <p className="text-sm text-muted-foreground">Contratos digitais e pagamentos — sem papelada, sem delays</p>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
                     <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <p className="text-sm text-muted-foreground">Profissionais verificados — não tem de confiar às cegas</p>
+                    <p className="text-sm text-muted-foreground">Profissionais verificados pela Evyra antes da contratação</p>
                   </div>
                 </CardContent>
               </Card>
