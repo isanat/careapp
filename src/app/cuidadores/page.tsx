@@ -69,24 +69,24 @@ export default function CuidadoresPage() {
 
             <div className="order-1 lg:order-2 space-y-6">
               <Badge variant="secondary" className="mb-4 w-fit">
-                💼 For Caregivers
+                Para Profissionais
               </Badge>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                Your Care, Your Career, Your Recognition
+                O seu trabalho merece reconhecimento.
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                At Evyra, caregiving is a respected profession. Build a sustainable career with fair compensation, professional growth, and the dignity you deserve. 90% of every payment goes directly to you.
+                Na Evyra, o apoio domiciliário é uma profissão respeitada. Construa uma carreira sustentável com compensação justa, crescimento profissional e a dignidade que merece. 90% de cada pagamento vai directamente para si.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button size="lg" className="bg-teal-600 hover:bg-teal-700" asChild>
                   <Link href="/auth/register?role=caregiver">
-                    Start Your Career
+                    Iniciar Carreira
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                   <Link href="/como-funciona">
-                    How It Works
+                    Como Funciona
                   </Link>
                 </Button>
               </div>

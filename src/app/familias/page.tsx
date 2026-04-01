@@ -29,48 +29,47 @@ export default function FamiliasPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <Badge variant="secondary" className="mb-4 w-fit">
-                👨‍👩‍👧 For Families
+                Para famílias em Portugal · França · Reino Unido · Alemanha · Suíça
               </Badge>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                Trust & Transparency in Eldercare
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Sabe quando o profissional chegou. Sem ter de ligar a ninguém.
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Finding quality care for your loved ones shouldn't be a struggle. Evyra connects you with verified, professional caregivers across Europe—with complete transparency, secure contracts, and 24/7 support.
+                A distância deixa de ser culpa activa quando há visibilidade. A Evyra organiza contratos, pagamentos e confirmação de presença — para que a família tenha acesso ao que precisa saber, quando precisa.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
                   <Link href="/auth/register?role=family">
-                    Find a Caregiver Today
+                    Solicitar Apoio
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                   <Link href="/como-funciona">
-                    How It Works
+                    Como Funciona
                   </Link>
                 </Button>
               </div>
             </div>
             <div className="hidden lg:block">
               <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-                <CardContent className="p-8">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="text-center p-4 bg-background/50 rounded-xl">
-                      <p className="text-4xl font-bold text-primary">50+</p>
-                      <p className="text-sm text-muted-foreground">{t.forFamiliesPage.stats.caregivers}</p>
-                    </div>
-                    <div className="text-center p-4 bg-background/50 rounded-xl">
-                      <p className="text-4xl font-bold text-primary">100+</p>
-                      <p className="text-sm text-muted-foreground">{t.forFamiliesPage.stats.families}</p>
-                    </div>
-                    <div className="text-center p-4 bg-background/50 rounded-xl">
-                      <p className="text-4xl font-bold text-primary">4.9★</p>
-                      <p className="text-sm text-muted-foreground">{t.forFamiliesPage.stats.rating}</p>
-                    </div>
-                    <div className="text-center p-4 bg-background/50 rounded-xl">
-                      <p className="text-4xl font-bold text-primary">24/7</p>
-                      <p className="text-sm text-muted-foreground">{t.forFamiliesPage.stats.support}</p>
-                    </div>
+                <CardContent className="p-8 space-y-4">
+                  <h3 className="font-semibold text-lg mb-2">Organização centralizada do cuidado</h3>
+                  <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
+                    <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-muted-foreground">O profissional confirma a sua presença (QR code diário)</p>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
+                    <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-muted-foreground">Todos os membros da família têm acesso ao mesmo histórico</p>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
+                    <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-muted-foreground">Contratos digitais e pagamentos — sem papelada, sem delays</p>
+                  </div>
+                  <div className="flex items-start gap-3 p-4 bg-background/50 rounded-xl">
+                    <IconCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-muted-foreground">Profissionais verificados pela Evyra antes da contratação</p>
                   </div>
                 </CardContent>
               </Card>

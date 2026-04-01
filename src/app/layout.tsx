@@ -26,21 +26,20 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: `${APP_NAME} - European Eldercare Platform`,
+    default: `${APP_NAME} — Apoio Domiciliário de Confiança`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
   keywords: [
-    "cuidador de idosos",
     "evyra",
+    "apoio domiciliário",
+    "profissionais verificados",
     "cuidados paliativos",
     "enfermagem",
-    "cuidadores",
     "Europa",
     "Portugal",
-    "elderly care",
-    "caregiver",
-    "digital care infrastructure",
+    "infraestrutura de cuidado",
+    "serviços domiciliários",
   ],
   authors: [{ name: APP_NAME }],
   icons: {
@@ -55,7 +54,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: APP_NAME,
     description: APP_DESCRIPTION,
-    url: "https://seniorcare.app",
+    url: "https://evyra.eu",
     siteName: APP_NAME,
     type: "website",
     locale: "pt_PT",

@@ -21,40 +21,38 @@ export default function LandingPage() {
 
   return (
     <PublicLayout>
-      {/* Hero Section - Éphyra Narrative */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-blue-500/5 via-teal-500/5 to-background">
         <div className="container px-4 py-16 md:py-32 mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-6">
-              <div className="space-y-2">
-                <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                  ✨ Éphyra - From Greek Mythology to European Care
-                </Badge>
-                <p className="text-sm text-muted-foreground italic">
-                  Named after Éphyra, the mother of compassion in ancient Greece, who built bridges between families and care.
-                </p>
-              </div>
+              <Badge variant="secondary" className="px-4 py-1.5 text-sm">
+                Para famílias a mais de 100 km · Em toda a Europa
+              </Badge>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                Infrastructure for Digital Human Care
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                O seu pai está em Lisboa.{" "}
+                <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                  Está em Londres.
+                </span>{" "}
+                Sabe quando o profissional chegou.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-                Evyra connects European families with verified caregivers through a secure, transparent platform that values human connection and professional dignity.
+                Confirmação de presença, histórico de visitas, contratos e pagamentos num único lugar. Sem telefonemas. Sem incerteza. A distância deixa de ser culpa activa.
               </p>
-              
+
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
                   <Link href="/auth/register">
-                    I'm a Family
+                    Sou Família
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button size="lg" className="bg-teal-600 hover:bg-teal-700" asChild>
+                <Button size="lg" variant="outline" asChild>
                   <Link href="/auth/register?role=caregiver">
-                    I'm a Caregiver
-                    <IconChevronRight className="ml-2 h-4 w-4" />
+                    Sou Profissional
                   </Link>
                 </Button>
               </div>
@@ -76,37 +74,37 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Content - 3 Pillars Card */}
+            {/* Right Content - 3 Pilares */}
             <Card className="bg-gradient-to-br from-blue-500/10 via-teal-500/10 to-background border-blue-200/50">
               <CardContent className="p-8">
                 <div className="text-center mb-8">
                   <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <IconCare className="h-10 w-10 text-blue-600" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">3 Pillars of Evyra</h3>
-                  <p className="text-muted-foreground">What makes us different</p>
+                  <h3 className="text-2xl font-bold mb-2">3 Pilares da Evyra</h3>
+                  <p className="text-muted-foreground">O que nos distingue</p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-4 bg-blue-500/5 rounded-lg border border-blue-200/30">
                     <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Digital Infrastructure</p>
-                      <p className="text-xs text-muted-foreground">Secure contracts, transparent payments, EU-compliant data protection</p>
+                      <p className="font-bold text-sm">Infraestrutura Digital</p>
+                      <p className="text-xs text-muted-foreground">Contratos seguros, pagamentos transparentes, protecção de dados RGPD</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-teal-500/5 rounded-lg border border-teal-200/30">
                     <div className="w-2 h-2 bg-teal-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">European Standard</p>
-                      <p className="text-xs text-muted-foreground">Built for Portugal, Spain, Italy. RGPD-first. Multi-language support</p>
+                      <p className="font-bold text-sm">Padrão Europeu</p>
+                      <p className="text-xs text-muted-foreground">Desenvolvido para Portugal, Espanha e Itália. RGPD em primeiro lugar. Suporte multilingue</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-slate-500/5 rounded-lg border border-slate-200/30">
                     <div className="w-2 h-2 bg-slate-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Caregiver Valorization</p>
-                      <p className="text-xs text-muted-foreground">Fair payments (90% commission), professional recognition, career building tools</p>
+                      <p className="font-bold text-sm">Valorização do Profissional</p>
+                      <p className="text-xs text-muted-foreground">Pagamentos justos (90% de comissão), reconhecimento profissional, ferramentas de carreira</p>
                     </div>
                   </div>
                 </div>
