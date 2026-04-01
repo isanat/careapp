@@ -1,7 +1,7 @@
 {
-  "name": "Evyra - Cuidados para Idosos",
+  "name": "Evyra - Apoio Domiciliário",
   "short_name": "Evyra",
-  "description": "Infraestrutura europeia de cuidados digitais para idosos - Conectando famílias a cuidadores verificados",
+  "description": "Infraestrutura europeia de apoio domiciliário - Conectando famílias a profissionais verificados com confiança",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F5F8FB",
@@ -28,7 +28,7 @@
     {
       "name": "Buscar Cuidadores",
       "short_name": "Buscar",
-      "description": "Encontrar cuidadores disponiveis",
+      "description": "Encontrar profissionais disponiveis",
       "url": "/app/search",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },

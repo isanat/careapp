@@ -1,6 +1,6 @@
 /**
  * Evyra Design Tokens
- * European Eldercare Infrastructure - Digital Human Care Design System
+ * European Home Care Infrastructure - Digital Human Care Design System
  * Brand Colors: Evyra Blue (#4A9EFF), Trust Teal (#2DD4BF), Midnight (#080C14), Soft White (#E8EEF8)
  */
 
