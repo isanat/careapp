@@ -22,11 +22,11 @@ export default function CuidadoresPage() {
   return (
     <main className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
+      <section className="bg-gradient-to-b from-teal-500/5 via-blue-500/5 to-background py-16 md:py-32">
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <Card className="bg-gradient-to-br from-teal-500/10 via-teal-500/5 to-background border-teal-200/50">
                 <CardContent className="p-8">
                   <div className="text-center mb-6">
                     <Badge className="bg-primary text-primary-foreground mb-4">
@@ -67,26 +67,26 @@ export default function CuidadoresPage() {
               </Card>
             </div>
 
-            <div className="order-1 lg:order-2">
-              <Badge variant="secondary" className="mb-4">
-                {t.forCaregiversPage.badge}
+            <div className="order-1 lg:order-2 space-y-6">
+              <Badge variant="secondary" className="mb-4 w-fit">
+                💼 For Caregivers
               </Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {t.forCaregiversPage.heroTitle}
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Your Care, Your Career, Your Recognition
               </h1>
-              <p className="text-lg text-muted-foreground mb-8">
-                {t.forCaregiversPage.heroDescription}
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                At Evyra, caregiving is a respected profession. Build a sustainable career with fair compensation, professional growth, and the dignity you deserve. 90% of every payment goes directly to you.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Button size="lg" className="bg-teal-600 hover:bg-teal-700" asChild>
                   <Link href="/auth/register?role=caregiver">
-                    {t.forCaregiversPage.cta.button}
+                    Start Your Career
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                   <Link href="/como-funciona">
-                    {t.nav.howItWorks}
+                    How It Works
                   </Link>
                 </Button>
               </div>

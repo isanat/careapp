@@ -23,18 +23,26 @@ export default function SobrePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-b from-primary/5 to-background py-16 md:py-24">
+        {/* Hero Section - Éphyra Origin Story */}
+        <section className="bg-gradient-to-b from-blue-500/5 via-teal-500/5 to-background py-16 md:py-32">
           <div className="container px-4 mx-auto">
-            <div className="text-center max-w-3xl mx-auto">
-              <Badge variant="secondary" className="mb-4">
-                {t.sobrePage.badge}
+            <div className="text-center max-w-4xl mx-auto space-y-6">
+              <Badge variant="secondary" className="mb-4 justify-center">
+                ✨ The Éphyra Story
               </Badge>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {t.sobrePage.title} {APP_NAME}
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                From Ancient Compassion to Digital Care
               </h1>
-              <p className="text-lg text-muted-foreground">
-                {t.sobrePage.subtitle}
+              <div className="space-y-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                <p>
+                  In ancient Greece, Éphyra was revered as the mother figure who built bridges between families in need and those with the heart to care. She embodied compassion, trust, and the sacred duty of human connection.
+                </p>
+                <p>
+                  Today, <strong className="text-foreground">{APP_NAME}</strong> carries her legacy forward—transforming that ancient wisdom into modern infrastructure. We build the digital bridges that connect European families with verified caregivers, creating space where dignity, security, and human care flourish.
+                </p>
+              </div>
+              <p className="text-sm italic text-muted-foreground pt-4">
+                "Care is infrastructure. Technology serves humanity."
               </p>
             </div>
           </div>
