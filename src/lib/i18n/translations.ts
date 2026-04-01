@@ -4,7 +4,7 @@ export const translations = {
   // ============================================
   pt: {
     appName: "Evyra",
-    tagline: "Infraestrutura de cuidados digitais para idosos",
+    tagline: "Infraestrutura europeia de apoio domiciliário",
     loading: "A carregar...",
     error: "Ocorreu um erro",
     successMessage: "Sucesso!",
@@ -261,7 +261,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introdução",
-          content: "Bem-vindo ao Evyra. Ao usar a nossa plataforma, concorda com estes Termos de Uso. A nossa plataforma conecta famílias a cuidadores de idosos qualificados, facilitando contratos e pagamentos de forma segura e transparente.",
+          content: "Bem-vindo ao Evyra. Ao usar a nossa plataforma, concorda com estes Termos de Uso. A nossa plataforma conecta famílias a cuidadores verificados qualificados, facilitando contratos e pagamentos de forma segura e transparente.",
         },
         eligibility: {
           title: "2. Elegibilidade",
@@ -422,7 +422,7 @@ export const translations = {
       badge: "Plataforma Portuguesa de Cuidados Sénior",
       hero: {
         title: "Cuidado de Qualidade para quem ama",
-        subtitle: "Conectamos famílias a cuidadores de idosos verificados, com total segurança, confiança e transparência.",
+        subtitle: "Conectamos famílias a cuidadores verificados verificados, com total segurança, confiança e transparência.",
         cta: "Começar Agora",
         ctaFamily: "Sou Família",
         ctaCaregiver: "Sou Cuidador",
@@ -487,7 +487,7 @@ export const translations = {
     // ============================================
     howItWorksPage: {
       badge: "Guia Completo",
-      heroDescription: "Uma plataforma simples e segura que conecta famílias a cuidadores de idosos, garantindo transparência e confiança em cada passo.",
+      heroDescription: "Uma plataforma simples e segura que conecta famílias a cuidadores verificados, garantindo transparência e confiança em cada passo.",
       steps: {
         signup: {
           title: "Registo & Escolha de Perfil",
@@ -539,7 +539,7 @@ export const translations = {
     forFamiliesPage: {
       badge: "Para Famílias",
       heroTitle: "Encontre cuidadores de confiança para os seus entes queridos",
-      heroDescription: "A plataforma que oferece transparência, segurança e qualidade no cuidado de idosos.",
+      heroDescription: "A plataforma que oferece transparência, segurança e qualidade no apoio domiciliário.",
       stats: {
         caregivers: "Cuidadores",
         families: "Famílias",
@@ -812,7 +812,7 @@ export const translations = {
     // ============================================
     blogPage: {
       title: "Blog Evyra",
-      subtitle: "Dicas, artigos e novidades sobre cuidados com idosos e a nossa plataforma.",
+      subtitle: "Dicas, artigos e novidades sobre apoio domiciliário e a nossa plataforma.",
       categories: {
         all: "Todos",
         tips: "Dicas",
@@ -859,7 +859,7 @@ export const translations = {
     sobrePage: {
       badge: "A Nossa História",
       title: "Sobre o",
-      subtitle: "Somos uma empresa de tecnologia com propósito: transformar o cuidado de idosos através de confiança, transparência e valorização profissional.",
+      subtitle: "Somos uma empresa de tecnologia com propósito: transformar o apoio domiciliário através de confiança, transparência e valorização profissional.",
       mission: {
         title: "A Nossa Missão",
         paragraph1: "O Evyra nasceu da observação de um problema real: famílias a lutar para encontrar cuidadores de confiança, e cuidadores profissionais sem reconhecimento ou valorização adequada.",
@@ -914,7 +914,7 @@ export const translations = {
       },
       cta: {
         title: "Junte-se a nós",
-        subtitle: "Faça parte da transformação do cuidado de idosos.",
+        subtitle: "Faça parte da transformação do apoio domiciliário.",
         familyButton: "Sou Família",
         caregiverButton: "Sou Cuidador",
       },

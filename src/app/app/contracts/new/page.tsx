@@ -91,7 +91,7 @@ function NewContractContent() {
   // Step 1: Care needs
   const [selectedNeeds, setSelectedNeeds] = useState<string[]>([]);
 
-  // Step 2: About the elderly
+  // Step 2: About the person receiving care
   const [elderName, setElderName] = useState("");
   const [elderAge, setElderAge] = useState("");
   const [elderConditions, setElderConditions] = useState("");

@@ -3,7 +3,7 @@ import { PublicLayout } from "@/components/layout/public-layout";
 
 export const metadata: Metadata = {
   title: "Como Funciona",
-  description: "Saiba como encontrar cuidadores de idosos verificados em Portugal. Processo simples: registe-se, pesquise, contrate e acompanhe.",
+  description: "Saiba como encontrar cuidadores verificados em Portugal. Processo simples: registe-se, pesquise, contrate e acompanhe com segurança.",
 };
 
 export default function Layout({

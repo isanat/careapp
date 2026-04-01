@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     question: "Como funciona o Evyra?",
-    answer: "O Evyra conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Pode pesquisar cuidadores, ver perfis detalhados e criar contratos digitais seguros.",
+    answer: "O Evyra conecta famílias a profissionais de apoio domiciliário verificados. Pode pesquisar profissionais, ver perfis detalhados e criar contratos digitais seguros.",
   },
   {
     question: "Quanto custa usar a plataforma?",
