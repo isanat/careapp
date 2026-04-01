@@ -54,6 +54,11 @@ interface UserDetail {
   } | null;
   contractsCount: number;
   totalSpent: number;
+  wallet?: {
+    balanceTokens: number;
+    balanceEurCents: number;
+    address: string;
+  } | null;
 }
 
 export default function AdminUserDetailPage() {
