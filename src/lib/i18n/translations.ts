@@ -1265,7 +1265,7 @@ export const translations = {
       sections: {
         introduction: {
           title: "1. Introduction",
-          content: "Welcome to Evyra. By using our platform, you agree to these Terms of Use. Our platform connects families with qualified senior caregivers, facilitating contracts and payments securely and transparently.",
+          content: "Welcome to Evyra. By using our platform, you agree to these Terms of Use. Our platform connects families with qualified home care professionals, facilitating contracts and payments securely and transparently.",
         },
         eligibility: {
           title: "2. Eligibility",
@@ -1426,7 +1426,7 @@ export const translations = {
       badge: "Portuguese Evyra Platform",
       hero: {
         title: "Quality Care for Those You Love",
-        subtitle: "We connect families with verified senior caregivers, with total security, trust and transparency.",
+        subtitle: "We connect families with verified home care professionals, with total security, trust and transparency.",
         cta: "Get Started",
         ctaFamily: "I'm a Family",
         ctaCaregiver: "I'm a Caregiver",
@@ -1491,7 +1491,7 @@ export const translations = {
     // ============================================
     howItWorksPage: {
       badge: "Complete Guide",
-      heroDescription: "A simple and secure platform that connects families to senior caregivers, ensuring transparency and trust every step of the way.",
+      heroDescription: "A simple and secure platform that connects families to home care professionals, ensuring transparency and trust every step of the way.",
       steps: {
         signup: {
           title: "Registration & Profile Selection",
@@ -1543,7 +1543,7 @@ export const translations = {
     forFamiliesPage: {
       badge: "For Families",
       heroTitle: "Find trusted caregivers for your loved ones",
-      heroDescription: "The platform that offers transparency, security and quality in senior care.",
+      heroDescription: "The platform that offers transparency, security and quality in home care support.",
       stats: {
         caregivers: "Caregivers",
         families: "Families",
@@ -1816,7 +1816,7 @@ export const translations = {
     // ============================================
     blogPage: {
       title: "Evyra Blog",
-      subtitle: "Tips, articles and news about senior care and our platform.",
+      subtitle: "Tips, articles and news about home care support and our platform.",
       categories: {
         all: "All",
         tips: "Tips",
@@ -1863,7 +1863,7 @@ export const translations = {
     sobrePage: {
       badge: "Our Story",
       title: "About",
-      subtitle: "We are a technology company with a purpose: transforming senior care through trust, transparency and professional appreciation.",
+      subtitle: "We are a technology company with a purpose: transforming home care support through trust, transparency and professional appreciation.",
       mission: {
         title: "Our Mission",
         paragraph1: "Evyra was born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
@@ -1918,7 +1918,7 @@ export const translations = {
       },
       cta: {
         title: "Join us",
-        subtitle: "Be part of the transformation of senior care.",
+        subtitle: "Be part of the transformation of home care support.",
         familyButton: "I'm a Family",
         caregiverButton: "I'm a Caregiver",
       },
@@ -2867,7 +2867,7 @@ export const translations = {
     sobrePage: {
       badge: "La Nostra Storia",
       title: "Informazioni su",
-      subtitle: "Siamo un'azienda tecnologica con purpose: transforming senior care through trust, transparency and and professional appreciation.",
+      subtitle: "Siamo un'azienda tecnologica con purpose: transforming home care support through trust, transparency and and professional appreciation.",
       mission: {
         title: "La Nostra Missione",
         paragraph1: "Evyra è born from observing a real problem: families struggling to find trusted caregivers, and professional caregivers without recognition or adequate appreciation.",
@@ -2922,7 +2922,7 @@ export const translations = {
       },
       cta: {
         title: "Unisciti a noi",
-        subtitle: "Fai parte della trasformation of senior care.",
+        subtitle: "Fai parte della trasformation of home care support.",
         familyButton: "Sono Famiglia",
         caregiverButton: "Sono Caregiver",
       },

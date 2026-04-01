@@ -1,7 +1,7 @@
 /**
  * Evyra UI Kit - Input Component
- * Accessible form inputs for seniors
- * Large touch targets, clear labels
+ * Accessible form inputs for all users
+ * Large touch targets, clear labels, inclusive design
  */
 
 import * as React from "react";
