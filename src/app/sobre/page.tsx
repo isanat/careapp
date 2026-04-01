@@ -23,26 +23,26 @@ export default function SobrePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
-        {/* Hero Section - Éphyra Origin Story */}
+        {/* Hero Section */}
         <section className="bg-gradient-to-b from-blue-500/5 via-teal-500/5 to-background py-16 md:py-32">
           <div className="container px-4 mx-auto">
             <div className="text-center max-w-4xl mx-auto space-y-6">
               <Badge variant="secondary" className="mb-4 justify-center">
-                ✨ The Éphyra Story
+                Infraestrutura europeia de apoio domiciliário
               </Badge>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                From Ancient Compassion to Digital Care
+                O cuidado que não pode falhar.
               </h1>
               <div className="space-y-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                 <p>
-                  In ancient Greece, Éphyra was revered as the mother figure who built bridges between families in need and those with the heart to care. She embodied compassion, trust, and the sacred duty of human connection.
+                  Há momentos em que a vida coloca uma família diante de uma decisão que não pode ser errada. A {APP_NAME} existe para esses momentos — para ser a presença segura entre a necessidade e a tranquilidade de saber que alguém de confiança está presente.
                 </p>
                 <p>
-                  Today, <strong className="text-foreground">{APP_NAME}</strong> carries her legacy forward—transforming that ancient wisdom into modern infrastructure. We build the digital bridges that connect European families with verified caregivers, creating space where dignity, security, and human care flourish.
+                  Não somos um marketplace. Somos a infraestrutura que organiza o processo inteiro: verificação de profissionais, contratos, pagamentos e comunicação — num único lugar, com rigor europeu.
                 </p>
               </div>
               <p className="text-sm italic text-muted-foreground pt-4">
-                "Care is infrastructure. Technology serves humanity."
+                &ldquo;O cuidado é infraestrutura. A tecnologia serve a humanidade.&rdquo;
               </p>
             </div>
           </div>

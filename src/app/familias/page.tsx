@@ -29,24 +29,24 @@ export default function FamiliasPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <Badge variant="secondary" className="mb-4 w-fit">
-                👨‍👩‍👧 For Families
+                Para Famílias
               </Badge>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                Trust & Transparency in Eldercare
+                Confiança e transparência no apoio domiciliário.
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Finding quality care for your loved ones shouldn't be a struggle. Evyra connects you with verified, professional caregivers across Europe—with complete transparency, secure contracts, and 24/7 support.
+                Encontrar um profissional de confiança não deve ser um processo difícil. A Evyra liga a sua família a profissionais verificados em toda a Europa — com transparência total, contratos seguros e apoio permanente.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                 <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
                   <Link href="/auth/register?role=family">
-                    Find a Caregiver Today
+                    Solicitar Apoio
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                   <Link href="/como-funciona">
-                    How It Works
+                    Como Funciona
                   </Link>
                 </Button>
               </div>
