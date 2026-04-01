@@ -28,19 +28,19 @@ export default function LandingPage() {
             {/* Left Content */}
             <div className="space-y-6">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                Para famílias a mais de 100 km · Em toda a Europa
+                Para quem tem pais longe · Portugal, Espanha, Itália
               </Badge>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                O seu pai está em Lisboa.{" "}
+                Seu pai em Lisboa.{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                  Está em Londres.
+                  Você em Londres.
                 </span>{" "}
-                Sabe quando o profissional chegou.
+                Só quer saber que o cuidador chegou.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-                Confirmação de presença, histórico de visitas, contratos e pagamentos num único lugar. Sem telefonemas. Sem incerteza. A distância deixa de ser culpa activa.
+                QR code diário. Histórico de visitas. Contratos assinados. Tudo online. Sem ligar para perguntar todo o dia. Sem surpresas.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4">
