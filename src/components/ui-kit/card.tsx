@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Card Component
+ * Evyra UI Kit - Card Component
  * Health & Care focused design
  * Soft shadows, rounded corners
  */

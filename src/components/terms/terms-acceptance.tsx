@@ -28,10 +28,10 @@ const TERMS_CONTENT = {
 # Termos de Uso
 
 ## 1. Aceitação dos Termos
-Ao aceder e utilizar a plataforma Senior Care, o utilizador concorda com estes Termos de Uso. Se não concordar com qualquer parte destes termos, não deve utilizar a nossa plataforma.
+Ao aceder e utilizar a plataforma Evyra, o utilizador concorda com estes Termos de Uso. Se não concordar com qualquer parte destes termos, não deve utilizar a nossa plataforma.
 
 ## 2. Descrição do Serviço
-O Senior Care é uma plataforma digital que conecta familiares que necessitam de cuidados para idosos com profissionais cuidadores verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão entre as partes.
+O Evyra é uma plataforma digital que conecta familiares que necessitam de cuidados para idosos com profissionais cuidadores verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão entre as partes.
 
 ## 3. Registo e Conta
 - O utilizador deve fornecer informações verdadeiras e precisas durante o registo
@@ -80,7 +80,7 @@ Cuidadores devem passar por verificação de identidade (Know Your Customer) atr
 - Tentar fraudar o sistema de pagamentos
 
 ## 10. Limitação de Responsabilidade
-O Senior Care não se responsabiliza por:
+O Evyra não se responsabiliza por:
 - Danos decorrentes de serviços prestados por cuidadores
 - Interrupções no serviço por força maior
 - Perda de dados por falhas técnicas
@@ -102,7 +102,7 @@ Versão: 1.0
 # Política de Privacidade
 
 ## 1. Introdução
-O Senior Care está comprometido com a proteção dos seus dados pessoais. Esta política descreve como recolhemos, utilizamos e protegemos as suas informações.
+O Evyra está comprometido com a proteção dos seus dados pessoais. Esta política descreve como recolhemos, utilizamos e protegemos as suas informações.
 
 ## 2. Dados Recolhidos
 Recolhemos os seguintes dados:
@@ -184,7 +184,7 @@ Versão: 1.0
 # Política de Mediação
 
 ## 1. Introdução
-O Senior Care oferece um serviço de mediação para resolver disputas entre familiares e cuidadores de forma justa e eficiente.
+O Evyra oferece um serviço de mediação para resolver disputas entre familiares e cuidadores de forma justa e eficiente.
 
 ## 2. Escopo
 Esta política se aplica a:

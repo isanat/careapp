@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export const metadata: Metadata = {
-  title: "Perguntas Frequentes | Senior Care",
-  description: "FAQ - Respostas para as perguntas mais frequentes sobre o Senior Care.",
+  title: "Perguntas Frequentes | Evyra",
+  description: "FAQ - Respostas para as perguntas mais frequentes sobre o Evyra.",
 };
 
 const faqs = [
   {
-    question: "Como funciona o Senior Care?",
-    answer: "O Senior Care conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Pode pesquisar cuidadores, ver perfis detalhados e criar contratos digitais seguros.",
+    question: "Como funciona o Evyra?",
+    answer: "O Evyra conecta famílias que precisam de cuidados para idosos com cuidadores verificados. Pode pesquisar cuidadores, ver perfis detalhados e criar contratos digitais seguros.",
   },
   {
     question: "Quanto custa usar a plataforma?",
@@ -45,7 +45,7 @@ export default function FAQPage() {
       <div className="container px-4 py-12 mx-auto max-w-3xl">
         <h1 className="text-3xl font-bold mb-2">Perguntas Frequentes</h1>
         <p className="text-muted-foreground mb-8">
-          Encontre respostas para as dúvidas mais comuns sobre o Senior Care.
+          Encontre respostas para as dúvidas mais comuns sobre o Evyra.
         </p>
 
         <Card>

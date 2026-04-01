@@ -83,7 +83,7 @@ export default function FamiliasPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forFamiliesPage.whyChoose.title.replace('Senior Care', APP_NAME)}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forFamiliesPage.whyChoose.title.replace('Evyra', APP_NAME)}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t.forFamiliesPage.whyChoose.description}
             </p>

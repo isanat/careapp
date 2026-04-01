@@ -3,7 +3,7 @@ import { PublicLayout } from "@/components/layout/public-layout";
 
 export const metadata: Metadata = {
   title: "Sobre Nós",
-  description: "Conheça a Senior Care, a plataforma portuguesa de cuidados para idosos que une famílias e cuidadores com segurança e confiança.",
+  description: "Conheça a Evyra, a plataforma portuguesa de cuidados para idosos que une famílias e cuidadores com segurança e confiança.",
 };
 
 export default function Layout({

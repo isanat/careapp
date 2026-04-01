@@ -1,5 +1,5 @@
 /**
- * Senior Care Health Icons
+ * Evyra Health Icons
  * Custom SVG icons with rounded, line style
  * Human, warm aesthetic - NOT fintech/crypto
  */

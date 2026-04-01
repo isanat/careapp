@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Tabs Component
+ * Evyra UI Kit - Tabs Component
  * Mobile-first tab navigation
  */
 

@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Button Component
+ * Evyra UI Kit - Button Component
  * Health & Care focused design
  * Accessibility: 44px minimum touch target
  */

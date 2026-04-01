@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Imprensa | Senior Care",
-  description: "Contato para imprensa e mídia - Senior Care",
+  title: "Imprensa | Evyra",
+  description: "Contato para imprensa e mídia - Evyra",
 };
 
 export default function ImprensaPage() {
@@ -16,11 +16,11 @@ export default function ImprensaPage() {
         
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Sobre o Senior Care</CardTitle>
+            <CardTitle>Sobre o Evyra</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              O Senior Care é uma plataforma de cuidado de idosos líder em Portugal. 
+              O Evyra é uma plataforma de cuidado de idosos líder em Portugal. 
               Conectamos famílias a cuidadores verificados, com pagamentos transparentes 
               e contratos digitais seguros.
             </p>

@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Política de Cookies | Senior Care",
-  description: "Política de cookies do Senior Care - como utilizamos cookies para melhorar a sua experiência.",
+  title: "Política de Cookies | Evyra",
+  description: "Política de cookies do Evyra - como utilizamos cookies para melhorar a sua experiência.",
 };
 
 export default function CookiesPage() {
@@ -20,7 +20,7 @@ export default function CookiesPage() {
           <CardContent>
             <p className="text-muted-foreground">
               Cookies são pequenos ficheiros de texto armazenados no seu dispositivo que nos ajudam a
-              melhorar a sua experiência no Senior Care. Permitem que recordemos as suas preferências e
+              melhorar a sua experiência no Evyra. Permitem que recordemos as suas preferências e
               compreendamos como utiliza a nossa plataforma.
             </p>
           </CardContent>

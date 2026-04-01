@@ -1,8 +1,8 @@
 /**
- * Senior Care UI Kit
- * Design System for Senior Care Platform
- * 
- * Health & Care focused - NOT fintech/crypto aesthetic
+ * Evyra UI Kit
+ * Design System for Evyra European Eldercare Infrastructure
+ *
+ * Digital Human Care focused - NOT fintech/crypto aesthetic
  */
 
 // Components

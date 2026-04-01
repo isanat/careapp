@@ -1,7 +1,7 @@
 /**
- * Senior Care Design Tokens
- * Health & Care focused design system
- * NOT fintech/crypto aesthetic
+ * Evyra Design Tokens
+ * European Eldercare Infrastructure - Digital Human Care Design System
+ * Brand Colors: Evyra Blue (#4A9EFF), Trust Teal (#2DD4BF), Midnight (#080C14), Soft White (#E8EEF8)
  */
 
 // =============================================================================
@@ -9,43 +9,43 @@
 // =============================================================================
 
 export const colors = {
-  // Primary - Teal (#2F6F6D) - Trust, Health, Calm
+  // Primary - Evyra Blue (#4A9EFF) - Innovation, Trust, Digital
   primary: {
-    DEFAULT: '#2F6F6D',
-    light: '#4A8A87',
-    dark: '#245856',
+    DEFAULT: '#4A9EFF',
+    light: '#7FB8FF',
+    dark: '#1E78FF',
     foreground: '#FFFFFF',
   },
-  
-  // Secondary - Lighter Teal (#6FA8A3)
+
+  // Secondary - Trust Teal (#2DD4BF) - Care, Health, Calm
   secondary: {
-    DEFAULT: '#6FA8A3',
-    light: '#8FBDB9',
+    DEFAULT: '#2DD4BF',
+    light: '#5FE3D0',
     foreground: '#FFFFFF',
   },
-  
-  // Accent - Soft Cyan (#A8DADC)
+
+  // Accent - Midnight (#080C14) - Depth, Trust, Sophistication
   accent: {
-    DEFAULT: '#A8DADC',
-    foreground: '#1F2933',
+    DEFAULT: '#080C14',
+    foreground: '#E8EEF8',
   },
-  
-  // Warm - Gold (#F1C27D) - Care, Warmth, Human touch
+
+  // Warm - Soft White (#E8EEF8) - Care, Warmth, Accessibility
   warm: {
-    DEFAULT: '#F1C27D',
-    light: '#F7DDAF',
-    foreground: '#1F2933',
+    DEFAULT: '#E8EEF8',
+    light: '#F2F5FA',
+    foreground: '#080C14',
   },
-  
+
   // Background & Surface
-  background: '#F7FAF9',
+  background: '#F8FAFB',
   surface: '#FFFFFF',
-  
+
   // Text
   text: {
-    primary: '#1F2933',
-    secondary: '#6B7280',
-    muted: '#9CA3AF',
+    primary: '#080C14',
+    secondary: '#4B5563',
+    muted: '#8FA0B0',
   },
   
   // Semantic Colors (Soft, not harsh)

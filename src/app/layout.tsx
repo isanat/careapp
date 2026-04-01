@@ -26,21 +26,21 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: `${APP_NAME} - Senior Care Platform`,
+    default: `${APP_NAME} - European Eldercare Platform`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
   keywords: [
     "cuidador de idosos",
-    "senior care",
+    "evyra",
     "cuidados paliativos",
     "enfermagem",
     "cuidadores",
-    "Senior Care",
-    "Portugal",
     "Europa",
-    "caregiver",
+    "Portugal",
     "elderly care",
+    "caregiver",
+    "digital care infrastructure",
   ],
   authors: [{ name: APP_NAME }],
   icons: {

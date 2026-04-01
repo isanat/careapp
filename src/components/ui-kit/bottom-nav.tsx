@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Bottom Navigation
+ * Evyra UI Kit - Bottom Navigation
  * App-style bottom nav for mobile
  * Large touch targets (44px+)
  */

@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Alert Component
+ * Evyra UI Kit - Alert Component
  * Soft, non-aggressive alerts
  * Health & Care focused
  */

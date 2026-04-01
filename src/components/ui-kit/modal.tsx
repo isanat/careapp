@@ -1,5 +1,5 @@
 /**
- * Senior Care UI Kit - Modal Component
+ * Evyra UI Kit - Modal Component
  * Accessible modal dialogs
  * Soft animations, clear focus
  */
