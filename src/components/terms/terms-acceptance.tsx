@@ -31,7 +31,7 @@ const TERMS_CONTENT = {
 Ao aceder e utilizar a plataforma Evyra, o utilizador concorda com estes Termos de Uso. Se não concordar com qualquer parte destes termos, não deve utilizar a nossa plataforma.
 
 ## 2. Descrição do Serviço
-O Evyra é uma plataforma digital que conecta familiares que necessitam de cuidados para idosos com profissionais cuidadores verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão entre as partes.
+O Evyra é uma plataforma digital que conecta famílias a profissionais de apoio domiciliário verificados. A plataforma não presta serviços de cuidado diretamente, mas facilita a conexão segura entre as partes.
 
 ## 3. Registo e Conta
 - O utilizador deve fornecer informações verdadeiras e precisas durante o registo
@@ -41,7 +41,7 @@ O Evyra é uma plataforma digital que conecta familiares que necessitam de cuida
 
 ## 4. Responsabilidades do Utilizador
 Como Familiar:
-- Fornecer informações precisas sobre as necessidades do idoso
+- Fornecer informações precisas sobre as necessidades de apoio domiciliário
 - Pagar pontualmente os serviços contratados
 - Tratar cuidadores com respeito e dignidade
 

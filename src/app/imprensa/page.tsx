@@ -20,8 +20,8 @@ export default function ImprensaPage() {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              O Evyra é uma plataforma de cuidado de idosos líder em Portugal. 
-              Conectamos famílias a cuidadores verificados, com pagamentos transparentes 
+              O Evyra é uma plataforma europeia de apoio domiciliário.
+              Conectamos famílias a profissionais verificados, com pagamentos transparentes
               e contratos digitais seguros.
             </p>
           </CardContent>

@@ -1,4 +1,4 @@
-// Evyra Platform - European Eldercare Infrastructure
+// Evyra Platform - European Home Care Infrastructure
 
 export const APP_NAME = "Evyra";
 export const APP_TAGLINE = "O cuidado, organizado.";

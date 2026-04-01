@@ -3,7 +3,7 @@ import { PublicLayout } from "@/components/layout/public-layout";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Artigos e dicas sobre cuidados de idosos, saúde sénior e bem-estar. Recursos para famílias e cuidadores.",
+  description: "Artigos e dicas sobre apoio domiciliário, bem-estar e saúde. Recursos práticos para famílias e cuidadores.",
 };
 
 export default function Layout({

@@ -42,7 +42,7 @@ export default function CarreirasPage() {
       <div className="container px-4 py-12 mx-auto max-w-3xl">
         <h1 className="text-3xl font-bold mb-2">Carreiras</h1>
         <p className="text-muted-foreground mb-8">
-          Junte-se a nós e ajude a transformar o cuidado de idosos na Europa.
+          Junte-se a nós e ajude a transformar o apoio domiciliário na Europa.
         </p>
 
         <Card className="mb-8">
