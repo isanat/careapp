@@ -159,6 +159,7 @@ model User {
   notifications     Notification[]
   sessions          Session[]
   accounts          Account[]
+  presenceConfirmationScans PresenceConfirmation[] @relation("PresenceConfirmationScans")
 }
 
 // Perfil do Familiar (contratante)
@@ -340,18 +341,22 @@ model Contract {
   
   // Pagamentos
   totalPaidEurCents Int             @default(0)
-  
+
+  // Presença
+  presenceConfirmationEnabled Boolean @default(false)
+
   // Timestamps
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   completedAt       DateTime?
   cancelledAt       DateTime?
-  
+
   // Relations
   acceptance        ContractAcceptance?
   payments          Payment[]
   tips              Tip[]
   reviews           Review[]
+  presenceConfirmations PresenceConfirmation[] @relation("presenceConfirmations")
   
   @@index([familyUserId, status])
   @@index([caregiverUserId, status])
@@ -1083,4 +1088,38 @@ model ScheduledReport {
 
   @@index([isActive, nextRunAt])
   @@index([createdBy])
+}
+
+// ==================== PRESENCE CONFIRMATION ====================
+
+model PresenceConfirmation {
+  id                String      @id @default(cuid())
+  contractId        String
+  contract          Contract    @relation("presenceConfirmations", fields: [contractId], references: [id], onDelete: Cascade)
+
+  // QR Code Generation
+  qrCode            String      @unique           // Random token (24h validity)
+  qrGeneratedAt     DateTime    @default(now())
+  qrExpiresAt       DateTime    // today + 24h
+
+  // Scan Record
+  scannedAt         DateTime?
+  scannedByUserId   String?
+  scannedByUser     User?       @relation("PresenceConfirmationScans", fields: [scannedByUserId], references: [id], onDelete: SetNull)
+
+  // Audit Trail
+  ipAddress         String?
+  userAgent         String?
+  location          String?     // GPS coords if available (future)
+
+  // Status
+  status            String      @default("pending")  // pending | confirmed | expired
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([contractId])
+  @@index([qrCode])
+  @@index([scannedByUserId])
+  @@index([qrExpiresAt])
 }
