@@ -20,9 +20,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await params (Next.js 16+)
+    const { id } = await params;
+
     // Get session
     const session = await getServerSession(authOptions);
 
@@ -36,7 +39,7 @@ export async function GET(
     // Verify contract exists and user has access
     const contractResult = await db.execute({
       sql: `SELECT id, familyUserId, caregiverUserId FROM Contract WHERE id = ?`,
-      args: [params.id],
+      args: [id],
     });
 
     const contract = contractResult.rows[0] as any;
