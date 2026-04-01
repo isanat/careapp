@@ -28,18 +28,19 @@ export default function LandingPage() {
             {/* Left Content */}
             <div className="space-y-6">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-                Disponível em Portugal · Espanha · Itália
+                Para famílias a mais de 100 km · Em toda a Europa
               </Badge>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                Cuidado de confiança,{" "}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                O seu pai está em Lisboa.{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                  quando é realmente necessário.
-                </span>
+                  Está em Londres.
+                </span>{" "}
+                A Evyra garante que não fica a adivinhar.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-                A Evyra liga famílias a profissionais de apoio domiciliário verificados e organiza todo o processo num único lugar — com segurança, transparência e respeito pela dignidade de todos.
+                Sabe quando o profissional chegou. Como correu o dia. O que mudou. Sem ter de ligar a ninguém. A Evyra organiza o cuidado para que a distância deixe de ser culpa activa.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4">
