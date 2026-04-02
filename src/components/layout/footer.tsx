@@ -47,11 +47,7 @@ export function Footer() {
               <IconLogo className="h-8 w-8 text-primary" />
               <span className="font-bold text-lg">{APP_NAME}</span>
             </Link>
-            <p className="text-sm text-muted-foreground mb-4">{APP_TAGLINE}</p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>❤️</span>
-              <span>{t.footer.poweredBy}</span>
-            </div>
+            <p className="text-sm text-muted-foreground mb-4">{t.footer.poweredBy}</p>
           </div>
 
           {/* Platform Links */}

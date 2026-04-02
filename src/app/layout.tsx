@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: `${APP_NAME} — Apoio Domiciliário de Confiança`,
+    default: `${APP_NAME} — Apoio Domiciliário de Confiança na Europa`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
@@ -52,8 +52,8 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: APP_NAME,
-    description: APP_DESCRIPTION,
+    title: `${APP_NAME} — Apoio Domiciliário de Confiança na Europa`,
+    description: "Profissionais verificados, contratos digitais e acompanhamento centralizado. Para as famílias que não podem estar sempre presentes.",
     url: "https://evyra.eu",
     siteName: APP_NAME,
     type: "website",
@@ -61,8 +61,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: APP_NAME,
-    description: APP_DESCRIPTION,
+    title: `${APP_NAME} — Apoio Domiciliário de Confiança na Europa`,
+    description: "Profissionais verificados, contratos digitais e acompanhamento centralizado. Para as famílias que não podem estar sempre presentes.",
   },
   manifest: "/manifest.json",
   appleWebApp: {

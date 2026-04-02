@@ -1,6 +1,6 @@
 /**
  * Evyra UI Kit
- * Design System for Evyra European Eldercare Infrastructure
+ * Design System for Evyra European Home Care Infrastructure
  *
  * Digital Human Care focused - NOT fintech/crypto aesthetic
  */

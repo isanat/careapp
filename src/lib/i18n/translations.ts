@@ -4,7 +4,7 @@ export const translations = {
   // ============================================
   pt: {
     appName: "Evyra",
-    tagline: "Infraestrutura europeia de apoio domiciliário",
+    tagline: "Apoio domiciliário de confiança na Europa",
     loading: "A carregar...",
     error: "Ocorreu um erro",
     successMessage: "Sucesso!",
@@ -193,7 +193,7 @@ export const translations = {
       faq: "Perguntas Frequentes",
       security: "Segurança",
       rights: "Todos os direitos reservados.",
-      poweredBy: "Feito com ❤️ em Portugal",
+      poweredBy: "Portugal · Espanha · Itália",
     },
     
     payment: {
@@ -425,7 +425,7 @@ export const translations = {
         subtitle: "Conectamos famílias a cuidadores verificados verificados, com total segurança, confiança e transparência.",
         cta: "Começar Agora",
         ctaFamily: "Sou Família",
-        ctaCaregiver: "Sou Cuidador",
+        ctaCaregiver: "Sou Profissional",
       },
       stats: {
         caregivers: "Cuidadores Verificados",
@@ -477,7 +477,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto para começar?",
-        subtitle: "Junte-se a milhares de famílias e cuidadores que confiam no Evyra",
+        subtitle: "Pronto para organizar o cuidado com quem merece confiança?",
         button: "Criar Conta Gratuita",
       },
     },
@@ -532,7 +532,7 @@ export const translations = {
       },
       cta: {
         title: "Pronto para começar?",
-        description: "Junte-se a milhares de famílias e cuidadores que já confiam no Evyra.",
+        description: "Organize o cuidado com profissionais verificados e confiança real.",
       },
     },
     
@@ -663,7 +663,7 @@ export const translations = {
       },
       cta: {
         title: "Comece a sua jornada hoje",
-        description: "Junte-se a milhares de cuidadores que já estão a construir as suas carreiras no Evyra.",
+        description: "Construa uma carreira sólida com contratos transparentes e pagamentos garantidos.",
         button: "Criar Perfil de Cuidador",
       },
     },
@@ -1197,7 +1197,7 @@ export const translations = {
       faq: "FAQ",
       security: "Security",
       rights: "All rights reserved.",
-      poweredBy: "Made with ❤️ in Portugal",
+      poweredBy: "Portugal · Spain · Italy",
     },
     
     payment: {
@@ -2201,7 +2201,7 @@ export const translations = {
       faq: "FAQ",
       security: "Sicurezza",
       rights: "Tutti i diritti riservati.",
-      poweredBy: "Fatto con ❤️ in Portogallo",
+      poweredBy: "Portogallo · Spagna · Italia",
     },
     
     payment: {
@@ -3205,7 +3205,7 @@ export const translations = {
       faq: "Preguntas Frecuentes",
       security: "Seguridad",
       rights: "Todos los derechos reservados.",
-      poweredBy: "Hecho con ❤️ en Portugal",
+      poweredBy: "Portugal · España · Italia",
     },
     
     payment: {
