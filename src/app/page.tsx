@@ -36,11 +36,11 @@ export default function LandingPage() {
                 <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
                   Está longe.
                 </span>{" "}
-                A Evyra garante que não fica a adivinhar.
+                A Evyra dá-lhe visibilidade total.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-                QR code diário. Histórico de visitas. Contratos assinados. Tudo online. Sem ligar para perguntar todo o dia. Sem surpresas.
+                QR code diário. Contratos assinados. Pagamentos seguros. Tudo online. Sem ligar para perguntar todo o dia. Sem surpresas.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4">
