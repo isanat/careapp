@@ -32,11 +32,11 @@ export default function LandingPage() {
               </Badge>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Confiança é{" "}
+                O seu familiar está em Portugal.{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                  infraestrutura.
+                  Está longe.
                 </span>{" "}
-                Nós somos essa infraestrutura.
+                A Evyra garante que não fica a adivinhar.
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
@@ -81,30 +81,29 @@ export default function LandingPage() {
                   <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <IconCare className="h-10 w-10 text-blue-600" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">3 Pilares da Evyra</h3>
-                  <p className="text-muted-foreground">O que nos distingue</p>
+                  <h3 className="text-2xl font-bold mb-2">Porque a Evyra é diferente</h3>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-4 bg-blue-500/5 rounded-lg border border-blue-200/30">
                     <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Infraestrutura Digital</p>
-                      <p className="text-xs text-muted-foreground">Contratos seguros, pagamentos transparentes, protecção de dados RGPD</p>
+                      <p className="font-bold text-sm">Profissionais verificados</p>
+                      <p className="text-xs text-muted-foreground">Verificação de identidade, antecedentes e qualificações antes de qualquer contrato.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-teal-500/5 rounded-lg border border-teal-200/30">
                     <div className="w-2 h-2 bg-teal-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Padrão Europeu</p>
-                      <p className="text-xs text-muted-foreground">Desenvolvido para Portugal, Espanha e Itália. RGPD em primeiro lugar. Suporte multilingue</p>
+                      <p className="font-bold text-sm">Acompanhamento centralizado</p>
+                      <p className="text-xs text-muted-foreground">Toda a informação do cuidado acessível à família — mesmo a quilómetros de distância.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-slate-500/5 rounded-lg border border-slate-200/30">
                     <div className="w-2 h-2 bg-slate-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Valorização do Profissional</p>
-                      <p className="text-xs text-muted-foreground">Pagamentos justos (90% de comissão), reconhecimento profissional, ferramentas de carreira</p>
+                      <p className="font-bold text-sm">Contratos e pagamentos seguros</p>
+                      <p className="text-xs text-muted-foreground">Documentação legal clara, pagamentos protegidos, conformidade com RGPD europeu.</p>
                     </div>
                   </div>
                 </div>

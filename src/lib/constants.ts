@@ -2,7 +2,7 @@
 
 export const APP_NAME = "Evyra";
 export const APP_TAGLINE = "O cuidado, organizado.";
-export const APP_DESCRIPTION = "Evyra — infraestrutura digital de apoio domiciliário na Europa. Ligamos famílias a profissionais verificados com segurança, transparência e respeito pela dignidade de todos.";
+export const APP_DESCRIPTION = "A Evyra liga famílias a profissionais de apoio domiciliário verificados. Organização, contratos e pagamentos num só lugar — para quem cuida à distância ou no dia-a-dia.";
 
 // Activation Costs (in cents)
 export const ACTIVATION_COST_EUR_CENTS = 3500; // €35
