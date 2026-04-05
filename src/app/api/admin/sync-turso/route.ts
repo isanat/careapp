@@ -22,34 +22,34 @@ const ADMIN_EMAIL = 'admin@evyra.pt';
 const ADMIN_PASSWORD = 'EvyraAdmin@2024!';
 
 async function resetTursoDatabase(db: any) {
-  console.log('🗑️ Resetting Turso database...');
+  console.log('🗑️ Clearing Turso database data...');
 
-  // Get all tables
+  // Get all tables (excluding sqlite internal tables)
   const tablesResult = await db.execute(`
     SELECT name FROM sqlite_master
     WHERE type='table' AND name NOT LIKE 'sqlite_%'
   `);
 
   const tables = (tablesResult.rows || []).map((row: any) => row.name);
-  console.log(`Found ${tables.length} tables to drop`);
+  console.log(`Found ${tables.length} tables to clear`);
 
-  // Disable foreign keys
+  // Disable foreign key constraints for deletion
   await db.execute('PRAGMA foreign_keys = OFF');
 
-  // Drop all tables
+  // Delete all data from each table (but keep tables/schema)
   for (const table of tables) {
-    console.log(`  Dropping: ${table}`);
+    console.log(`  Clearing data from: ${table}`);
     try {
-      await db.execute(`DROP TABLE IF EXISTS \`${table}\``);
+      await db.execute(`DELETE FROM \`${table}\``);
     } catch (e) {
-      console.error(`Failed to drop ${table}:`, e);
+      console.error(`Failed to clear ${table}:`, e);
     }
   }
 
   // Re-enable foreign keys
   await db.execute('PRAGMA foreign_keys = ON');
 
-  console.log('✅ Turso database reset complete');
+  console.log('✅ Turso database data cleared (schema preserved)');
   return true;
 }
 
@@ -114,39 +114,11 @@ async function handleSync(request: NextRequest) {
       authToken: TURSO_TOKEN,
     });
 
-    // Step 1: Reset database (drop all existing tables)
+    // Step 1: Clear all data from database (keeps schema/tables intact)
     await resetTursoDatabase(db);
 
-    // Step 2: Recreate schema using Prisma
-    console.log('🏗️ Rebuilding schema from Prisma migrations...');
-    // Read and execute Prisma schema creation SQL
-    // For simplicity, create User table manually and Prisma will sync
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS User (
-        id TEXT NOT NULL PRIMARY KEY,
-        email TEXT NOT NULL UNIQUE,
-        name TEXT,
-        passwordHash TEXT,
-        role TEXT NOT NULL DEFAULT 'USER',
-        status TEXT NOT NULL DEFAULT 'ACTIVE',
-        createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL
-      )
-    `);
-
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS AdminUser (
-        id TEXT NOT NULL PRIMARY KEY,
-        userId TEXT NOT NULL UNIQUE,
-        role TEXT NOT NULL,
-        isActive INTEGER NOT NULL DEFAULT 1,
-        createdAt TEXT NOT NULL,
-        updatedAt TEXT NOT NULL,
-        FOREIGN KEY (userId) REFERENCES User(id)
-      )
-    `);
-
-    // Step 3: Create admin user (tables now exist)
+    // Step 2: Create admin user (tables already exist)
+    console.log('👤 Creating admin user...');
     const adminCreds = await createAdminUser(db);
 
     return NextResponse.json({
