@@ -22,21 +22,6 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- ==================== WALLETS ====================
-CREATE TABLE IF NOT EXISTS wallets (
-  id TEXT PRIMARY KEY,
-  user_id TEXT UNIQUE NOT NULL,
-  address TEXT UNIQUE NOT NULL,
-  encrypted_private_key TEXT,
-  salt TEXT,
-  balance_tokens INTEGER DEFAULT 0,
-  balance_eur_cents INTEGER DEFAULT 0,
-  wallet_type TEXT DEFAULT 'custodial',
-  is_exported INTEGER DEFAULT 0,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 -- ==================== PROFILES ====================
 CREATE TABLE IF NOT EXISTS profiles_family (
   id TEXT PRIMARY KEY,
@@ -100,23 +85,6 @@ CREATE TABLE IF NOT EXISTS profiles_caregiver (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- ==================== TOKEN LEDGER ====================
-CREATE TABLE IF NOT EXISTS token_ledger (
-  id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  type TEXT NOT NULL,
-  reason TEXT NOT NULL,
-  amount_tokens INTEGER NOT NULL,
-  amount_eur_cents INTEGER NOT NULL,
-  reference_type TEXT,
-  reference_id TEXT,
-  tx_hash TEXT,
-  description TEXT NOT NULL,
-  metadata TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 -- ==================== CONTRACTS ====================
 CREATE TABLE IF NOT EXISTS contracts (
   id TEXT PRIMARY KEY,
@@ -135,15 +103,10 @@ CREATE TABLE IF NOT EXISTS contracts (
   platform_fee_pct INTEGER DEFAULT 10,
   start_date TEXT,
   end_date TEXT,
-  family_fee_tokens INTEGER DEFAULT 0,
-  caregiver_fee_tokens INTEGER DEFAULT 0,
   family_fee_paid INTEGER DEFAULT 0,
   caregiver_fee_paid INTEGER DEFAULT 0,
   accepted_by_family_at TEXT,
   accepted_by_caregiver_at TEXT,
-  onchain_hash TEXT,
-  onchain_tx_hash TEXT,
-  onchain_created_at TEXT,
   total_paid_eur_cents INTEGER DEFAULT 0,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -175,7 +138,6 @@ CREATE TABLE IF NOT EXISTS payments (
   status TEXT DEFAULT 'PENDING',
   provider TEXT DEFAULT 'STRIPE',
   amount_eur_cents INTEGER NOT NULL,
-  tokens_amount INTEGER DEFAULT 0,
   platform_fee INTEGER DEFAULT 0,
   stripe_checkout_session_id TEXT,
   stripe_payment_intent_id TEXT,
@@ -212,21 +174,6 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- ==================== TIPS ====================
-CREATE TABLE IF NOT EXISTS tips (
-  id TEXT PRIMARY KEY,
-  contract_id TEXT NOT NULL,
-  from_user_id TEXT NOT NULL,
-  to_user_id TEXT NOT NULL,
-  amount_tokens INTEGER NOT NULL,
-  amount_eur_cents INTEGER NOT NULL,
-  message TEXT,
-  tx_hash TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (contract_id) REFERENCES contracts(id),
-  FOREIGN KEY (from_user_id) REFERENCES users(id),
-  FOREIGN KEY (to_user_id) REFERENCES users(id)
-);
-
 -- ==================== CHAT ====================
 CREATE TABLE IF NOT EXISTS chat_rooms (
   id TEXT PRIMARY KEY,
@@ -288,12 +235,6 @@ CREATE TABLE IF NOT EXISTS platform_settings (
   activation_cost_eur_cents INTEGER DEFAULT 3500,
   contract_fee_eur_cents INTEGER DEFAULT 500,
   platform_fee_percent INTEGER DEFAULT 10,
-  token_price_eur_cents INTEGER DEFAULT 1,
-  total_reserve_eur_cents INTEGER DEFAULT 0,
-  total_tokens_minted INTEGER DEFAULT 0,
-  total_tokens_burned INTEGER DEFAULT 0,
-  senior_token_address TEXT,
-  contract_registry_address TEXT,
   stripe_webhook_secret TEXT,
   maintenance_mode INTEGER DEFAULT 0,
   updated_at TEXT DEFAULT CURRENT_TIMESTAMP

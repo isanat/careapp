@@ -196,7 +196,6 @@ describe('GET /api/payments/easypay', () => {
         id: 'pay-1',
         status: 'PENDING',
         amountEurCents: 3500,
-        tokensAmount: 35,
         stripeCheckoutSessionId: 'ep-uid-1',
         createdAt: '2025-03-01',
         paidAt: null,

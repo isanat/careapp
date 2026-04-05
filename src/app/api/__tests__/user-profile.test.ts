@@ -93,7 +93,6 @@ const mockCaregiverProfile = {
 
 const mockWallet = {
   address: 'wallet-addr-1',
-  balanceTokens: 500,
   balanceEurCents: 50000,
 };
 
@@ -145,7 +144,6 @@ describe('GET /api/user/profile', () => {
     expect(data.profile.emergencyContact).toBe('Carlos');
     expect(data.profile.emergencyPhone).toBe('914567890');
 
-    expect(data.wallet.balanceTokens).toBe(500);
     expect(data.wallet.address).toBe('wallet-addr-1');
   });
 
@@ -178,7 +176,5 @@ describe('GET /api/user/profile', () => {
 
     // Services should be parsed from JSON string to array
     expect(data.profile.services).toEqual(['higiene', 'companhia', 'alimentação']);
-
-    expect(data.wallet.balanceTokens).toBe(500);
   });
 });

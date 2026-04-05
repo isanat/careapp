@@ -150,8 +150,6 @@ model User {
   payments          Payment[]
   contractsAsFamily   Contract[]  @relation("FamilyContracts")
   contractsAsCaregiver Contract[] @relation("CaregiverContracts")
-  tipsSent          Tip[]        @relation("TipsSent")
-  tipsReceived      Tip[]        @relation("TipsReceived")
   reviewsGiven      Review[]     @relation("ReviewsGiven")
   reviewsReceived   Review[]     @relation("ReviewsReceived")
   chatMessages      ChatMessage[]
@@ -354,7 +352,6 @@ model Contract {
   // Relations
   acceptance        ContractAcceptance?
   payments          Payment[]
-  tips              Tip[]
   reviews           Review[]
   presenceConfirmations PresenceConfirmation[] @relation("presenceConfirmations")
   
@@ -380,33 +377,6 @@ model ContractAcceptance {
 }
 
 // ==================== TIPS (GORJETAS) ====================
-
-model Tip {
-  id              String   @id @default(cuid())
-  
-  // Contrato e Usuários
-  contractId      String
-  contract        Contract @relation(fields: [contractId], references: [id])
-  fromUserId      String
-  fromUser        User     @relation("TipsSent", fields: [fromUserId], references: [id])
-  toUserId        String
-  toUser          User     @relation("TipsReceived", fields: [toUserId], references: [id])
-  
-  // Valores
-  amountTokens    Int
-  amountEurCents  Int       // Equivalente em euro no momento
-  
-  // Mensagem
-  message         String?
-  
-  // Blockchain
-  txHash          String?
-  
-  createdAt       DateTime @default(now())
-  
-  @@index([toUserId, createdAt])
-  @@index([contractId])
-}
 
 // ==================== REVIEWS ====================
 
@@ -543,20 +513,11 @@ model Notification {
 
 model PlatformSettings {
   id              String   @id @default(cuid())
-  
-  // Token Economics
+
   activationCostEurCents    Int     @default(3500)  // €35
   contractFeeEurCents       Int     @default(500)   // €5
   platformFeePercent        Int     @default(15)    // 15%
-  
-  // Token Price
-  tokenPriceEurCents        Int     @default(100)   // 1 token = €0.01 initially
-  
-  // Reserva
-  totalReserveEurCents      Int     @default(0)
-  totalTokensMinted         Int     @default(0)
-  totalTokensBurned         Int     @default(0)
-  
+
   updatedAt       DateTime @updatedAt
 }
 
@@ -659,18 +620,6 @@ model TermsAcceptance {
 }
 
 // ==================== GUIDE ACCEPTANCE ====================
-
-model GuideAcceptance {
-  id            String   @id @default(cuid())
-  userId        String
-  guideType     String   @default("best_practices")
-  guideVersion  String   @default("1.0")
-  acknowledgedAt DateTime @default(now())
-  ipAddress     String?
-  userAgent     String?
-  
-  @@index([userId])
-}
 
 // ==================== ESCROW PAYMENTS ====================
 
@@ -889,22 +838,6 @@ model RecurringPayment {
 }
 
 // ==================== FEATURE FLAGS ====================
-
-model FeatureFlag {
-  id              String   @id @default(cuid())
-  key             String   @unique
-  name            String
-  description     String?
-  enabled         Boolean  @default(false)
-  rolloutPercent  Int      @default(100) // Percentage of users to show feature
-  targetRoles     String?  // JSON array of roles (e.g., ["FAMILY", "CAREGIVER"])
-  metadata        String?  // JSON for additional config
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([enabled])
-}
 
 // ==================== ADMIN NOTIFICATIONS ====================
 

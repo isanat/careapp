@@ -52,8 +52,8 @@ async function main() {
   // Payment
   console.log("📋 Payment...");
   r = await exec(`
-    INSERT OR IGNORE INTO Payment (id, userId, type, status, provider, amountEurCents, tokensAmount, platformFee, stripeCheckoutSessionId, stripePaymentIntentId, stripeCustomerId, contractId, description, metadata, createdAt, paidAt, refundedAt)
-    SELECT id, user_id, type, status, provider, amount_eur_cents, tokens_amount, platform_fee, stripe_checkout_session_id, stripe_payment_intent_id, stripe_customer_id, contract_id, description, metadata, created_at, paid_at, refunded_at
+    INSERT OR IGNORE INTO Payment (id, userId, type, status, provider, amountEurCents, platformFee, stripeCheckoutSessionId, stripePaymentIntentId, stripeCustomerId, contractId, description, metadata, createdAt, paidAt, refundedAt)
+    SELECT id, user_id, type, status, provider, amount_eur_cents, platform_fee, stripe_checkout_session_id, stripe_payment_intent_id, stripe_customer_id, contract_id, description, metadata, created_at, paid_at, refunded_at
     FROM payments WHERE id NOT IN (SELECT id FROM Payment);
   `);
   console.log(`   ✅ ${r.results?.[0]?.response?.result?.affected_row_count || 0} registros`);
@@ -142,8 +142,8 @@ async function main() {
   // PlatformSettings
   console.log("📋 PlatformSettings...");
   r = await exec(`
-    INSERT OR IGNORE INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents, totalReserveEurCents, totalTokensMinted, totalTokensBurned, updatedAt)
-    SELECT id, activation_cost_eur_cents, contract_fee_eur_cents, platform_fee_percent, token_price_eur_cents, total_reserve_eur_cents, total_tokens_minted, total_tokens_burned, updated_at
+    INSERT OR IGNORE INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, updatedAt)
+    SELECT id, activation_cost_eur_cents, contract_fee_eur_cents, platform_fee_percent, updated_at
     FROM platform_settings WHERE NOT EXISTS (SELECT 1 FROM PlatformSettings);
   `);
   console.log(`   ✅ ${r.results?.[0]?.response?.result?.affected_row_count || 0} registros`);

@@ -55,7 +55,6 @@ interface UserDetail {
   contractsCount: number;
   totalSpent: number;
   wallet?: {
-    balanceTokens: number;
     balanceEurCents: number;
     address: string;
   } | null;
@@ -382,10 +381,7 @@ export default function AdminUserDetailPage() {
                         <div>
                           <p className="text-sm text-slate-500">Saldo</p>
                           <p className="text-2xl font-bold">
-                            {user.wallet.balanceTokens.toLocaleString()} SENT
-                          </p>
-                          <p className="text-sm text-slate-500">
-                            ≈ €{(user.wallet.balanceEurCents / 100).toFixed(2)}
+                            €{(user.wallet.balanceEurCents / 100).toFixed(2)}
                           </p>
                         </div>
                         <div>

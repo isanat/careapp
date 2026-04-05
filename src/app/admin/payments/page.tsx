@@ -52,7 +52,6 @@ interface Payment {
   status: string;
   provider: string;
   amountEurCents: number;
-  tokensAmount: number;
   contractId: string | null;
   contractTitle: string | null;
   createdAt: string;
@@ -70,7 +69,7 @@ interface PaymentStats {
 
 interface AuditData {
   user: { id: string; email: string; name: string; role: string; status: string; phone: string | null; nif: string | null; createdAt: string };
-  wallet: { balanceTokens: number; balanceEurCents: number };
+  wallet: { balanceEurCents: number };
   summary: {
     totalDeposits: number; depositFees: number; depositTokens: number;
     totalWithdrawals: number; withdrawalFees: number;
@@ -91,9 +90,9 @@ interface AuditData {
     contractProfits: Array<{ id: string; title: string; status: string; totalValue: number; platformFeePct: number; platformCut: number; otherParty: { name: string; email: string; role: string } }>;
     totalEscrowFees: number; totalReceiptFees: number;
   };
-  paymentsGrouped: Array<{ type: string; status: string; qty: number; totalAmount: number; totalFees: number; totalTokens: number }>;
-  ledgerGrouped: Array<{ type: string; reason: string; qty: number; totalTokens: number; totalEurCents: number }>;
-  payments: Array<{ id: string; type: string; status: string; provider: string; amountEurCents: number; tokensAmount: number; platformFee: number; createdAt: string; paidAt: string | null; refundedAt: string | null; description: string | null; contractId: string | null; contractTitle: string | null }>;
+  paymentsGrouped: Array<{ type: string; status: string; qty: number; totalAmount: number; totalFees: number }>;
+  ledgerGrouped: Array<{ type: string; reason: string; qty: number; totalEurCents: number }>;
+  payments: Array<{ id: string; type: string; status: string; provider: string; amountEurCents: number; platformFee: number; createdAt: string; paidAt: string | null; refundedAt: string | null; description: string | null; contractId: string | null; contractTitle: string | null }>;
   contracts: Array<{ id: string; title: string; status: string; totalValue: number; platformFeePct: number; platformCut: number; otherParty: { name: string; email: string; role: string } }>;
   escrows: any[];
   receipts: any[];
@@ -105,7 +104,7 @@ interface AuditData {
 const EUR = (cents: number) => `\u20AC${(cents / 100).toFixed(2)}`;
 
 const typeLabels: Record<string, string> = {
-  ACTIVATION: "Ativacao", TOKEN_PURCHASE: "Compra Tokens", CONTRACT_FEE: "Taxa Contrato",
+  ACTIVATION: "Ativacao", CONTRACT_FEE: "Taxa Contrato",
   SERVICE_PAYMENT: "Pag. Servico", REDEMPTION: "Resgate/Saque",
 };
 
@@ -122,8 +121,7 @@ const auditStatusColors: Record<string, string> = {
 
 const reasonLabels: Record<string, string> = {
   ACTIVATION_BONUS: "Bonus Ativacao", CONTRACT_FEE: "Taxa Contrato", SERVICE_PAYMENT: "Pag. Servico",
-  TIP_RECEIVED: "Gorjeta Recebida", TIP_SENT: "Gorjeta Enviada", TOKEN_PURCHASE: "Compra Tokens",
-  TOKEN_REDEMPTION: "Resgate Tokens", PLATFORM_FEE: "Taxa Plataforma", REFERRAL_BONUS: "Bonus Indicacao",
+  PLATFORM_FEE: "Taxa Plataforma", REFERRAL_BONUS: "Bonus Indicacao",
   ADJUSTMENT: "Ajuste",
 };
 
@@ -199,7 +197,7 @@ function TransactionsTab() {
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      ACTIVATION: "Ativacao", TOKEN_PURCHASE: "Compra Tokens",
+      ACTIVATION: "Ativacao",
       CONTRACT_FEE: "Taxa Contrato", SERVICE_PAYMENT: "Pagamento Servico", REDEMPTION: "Resgate",
     };
     return labels[type] || type;
@@ -241,7 +239,6 @@ function TransactionsTab() {
               <SelectContent>
                 <SelectItem value="all">Todos os Tipos</SelectItem>
                 <SelectItem value="ACTIVATION">Ativacao</SelectItem>
-                <SelectItem value="TOKEN_PURCHASE">Compra Tokens</SelectItem>
                 <SelectItem value="CONTRACT_FEE">Taxa Contrato</SelectItem>
               </SelectContent>
             </Select>
@@ -272,7 +269,6 @@ function TransactionsTab() {
                   <th className="px-3 py-2 text-left text-xs font-medium">Tipo</th>
                   <th className="px-3 py-2 text-left text-xs font-medium">Status</th>
                   <th className="px-3 py-2 text-right text-xs font-medium">Valor</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium">Tokens</th>
                   <th className="px-3 py-2 text-left text-xs font-medium">Data</th>
                   <th className="px-3 py-2 text-left text-xs font-medium">Acoes</th>
                 </tr>
@@ -280,7 +276,7 @@ function TransactionsTab() {
               <tbody className="divide-y divide-border/30">
                 {loading ? (
                   Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i}>{Array.from({ length: 8 }).map((_, j) => (<td key={j} className="px-3 py-2"><Skeleton className="h-4 w-16" /></td>))}</tr>
+                    <tr key={i}>{Array.from({ length: 7 }).map((_, j) => (<td key={j} className="px-3 py-2"><Skeleton className="h-4 w-16" /></td>))}</tr>
                   ))
                 ) : payments.length === 0 ? (
                   <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground text-sm">Nenhum pagamento encontrado</td></tr>
@@ -297,7 +293,6 @@ function TransactionsTab() {
                         <StatusBadge status={p.status === "COMPLETED" ? "completed" : p.status === "PENDING" ? "pending" : p.status === "FAILED" ? "failed" : p.status === "REFUNDED" ? "refunded" : "processing"} />
                       </td>
                       <td className="px-3 py-2 text-right font-medium text-sm">{formatCurrency(p.amountEurCents)}</td>
-                      <td className="px-3 py-2 text-right text-sm">{p.tokensAmount?.toLocaleString() || 0}</td>
                       <td className="px-3 py-2 text-xs text-muted-foreground">{format(new Date(p.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}</td>
                       <td className="px-3 py-2">
                         <div className="flex gap-1">
@@ -373,7 +368,7 @@ function CustomerAuditTab() {
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <AuditInfoCard icon={<IconUser className="h-4 w-4" />} label="Cliente" value={data.user.name} sub={`${data.user.email} | ${data.user.role}`} />
-            <AuditInfoCard icon={<IconWallet className="h-4 w-4" />} label="Saldo Carteira" value={EUR(data.wallet.balanceEurCents)} sub={`${data.wallet.balanceTokens.toLocaleString()} tokens`} />
+            <AuditInfoCard icon={<IconWallet className="h-4 w-4" />} label="Saldo Carteira" value={EUR(data.wallet.balanceEurCents)} />
             <AuditInfoCard icon={<IconArrowUp className="h-4 w-4 text-green-600" />} label="Total Depositos" value={EUR(data.summary.totalDeposits)} sub={`${data.summary.completedTransactions} tx aprovadas`} />
             <AuditInfoCard icon={<IconArrowDown className="h-4 w-4 text-red-600" />} label="Total Saques" value={EUR(data.summary.totalWithdrawals)} sub={`Reemb: ${EUR(data.summary.refundedAmount)}`} />
           </div>
@@ -469,7 +464,6 @@ function CustomerAuditTab() {
                           <th className="px-2 py-2 text-right font-medium">Valor Bruto</th>
                           <th className="px-2 py-2 text-right font-medium">Taxa Plataforma</th>
                           <th className="px-2 py-2 text-right font-medium">Valor Liquido</th>
-                          <th className="px-2 py-2 text-right font-medium">Tokens</th>
                           <th className="px-2 py-2 text-left font-medium">Descricao</th>
                         </tr>
                       </thead>
@@ -482,11 +476,10 @@ function CustomerAuditTab() {
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(p.amountEurCents)}</td>
                             <td className="px-2 py-1.5 text-right text-orange-600 dark:text-orange-400 font-medium">{p.platformFee > 0 ? EUR(p.platformFee) : '-'}</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(p.amountEurCents - (p.platformFee || 0))}</td>
-                            <td className="px-2 py-1.5 text-right">{p.tokensAmount || '-'}</td>
                             <td className="px-2 py-1.5 truncate max-w-[120px]">{p.description || p.contractTitle || '-'}</td>
                           </tr>
                         ))}
-                        {data.payments.length === 0 && <tr><td colSpan={8} className="px-2 py-6 text-center text-muted-foreground">Nenhuma transacao</td></tr>}
+                        {data.payments.length === 0 && <tr><td colSpan={7} className="px-2 py-6 text-center text-muted-foreground">Nenhuma transacao</td></tr>}
                       </tbody>
                     </table>
                   </div>
@@ -507,7 +500,6 @@ function CustomerAuditTab() {
                           <th className="px-2 py-2 text-right font-medium">Qtd</th>
                           <th className="px-2 py-2 text-right font-medium">Valor Total</th>
                           <th className="px-2 py-2 text-right font-medium">Taxas Cobradas</th>
-                          <th className="px-2 py-2 text-right font-medium">Tokens</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border/30">
@@ -518,7 +510,6 @@ function CustomerAuditTab() {
                             <td className="px-2 py-1.5 text-right">{g.qty}</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(g.totalAmount)}</td>
                             <td className="px-2 py-1.5 text-right text-orange-600 dark:text-orange-400 font-bold">{g.totalFees > 0 ? EUR(g.totalFees) : '-'}</td>
-                            <td className="px-2 py-1.5 text-right">{g.totalTokens || '-'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -574,7 +565,6 @@ function CustomerAuditTab() {
                           <th className="px-2 py-2 text-left font-medium">Tipo</th>
                           <th className="px-2 py-2 text-left font-medium">Razao</th>
                           <th className="px-2 py-2 text-right font-medium">Qtd</th>
-                          <th className="px-2 py-2 text-right font-medium">Tokens</th>
                           <th className="px-2 py-2 text-right font-medium">EUR</th>
                         </tr>
                       </thead>
@@ -588,11 +578,10 @@ function CustomerAuditTab() {
                             </td>
                             <td className="px-2 py-1.5">{reasonLabels[l.reason] || l.reason}</td>
                             <td className="px-2 py-1.5 text-right">{l.qty}</td>
-                            <td className="px-2 py-1.5 text-right font-medium">{l.totalTokens?.toLocaleString()}</td>
                             <td className="px-2 py-1.5 text-right">{EUR(l.totalEurCents)}</td>
                           </tr>
                         ))}
-                        {data.ledgerGrouped.length === 0 && <tr><td colSpan={5} className="px-2 py-6 text-center text-muted-foreground">Nenhum movimento</td></tr>}
+                        {data.ledgerGrouped.length === 0 && <tr><td colSpan={4} className="px-2 py-6 text-center text-muted-foreground">Nenhum movimento</td></tr>}
                       </tbody>
                     </table>
                   </div>

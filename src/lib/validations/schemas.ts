@@ -66,7 +66,6 @@ export const adminSettingsSchema = z.object({
   activationCostEurCents: z.number().int().min(0).optional(),
   contractFeeEurCents: z.number().int().min(0).optional(),
   platformFeePercent: z.number().int().min(0).max(100).optional(),
-  tokenPriceEurCents: z.number().int().min(1).optional(),
 });
 
 // POST /api/chat/messages

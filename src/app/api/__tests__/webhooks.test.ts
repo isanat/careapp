@@ -160,7 +160,6 @@ describe('POST /api/webhooks/easypay', () => {
   const mockPayment = {
     id: 'pay_1',
     userId: 'user-1',
-    tokensAmount: 100,
     type: 'TOKEN_PURCHASE',
     metadata: JSON.stringify({ transactionKey: 'txn-key-456' }),
     status: 'PENDING',

@@ -31,8 +31,7 @@ export async function GET(request: NextRequest) {
     const paymentsGrouped = await db.execute({
       sql: `SELECT type, status, COUNT(*) as qty,
               SUM(amountEurCents) as totalAmount,
-              SUM(platformFee) as totalFees,
-              SUM(tokensAmount) as totalTokens
+              SUM(platformFee) as totalFees
             FROM Payment WHERE userId = ?
             GROUP BY type, status
             ORDER BY type, status`,
@@ -98,17 +97,7 @@ export async function GET(request: NextRequest) {
       args: [userId, userId]
     });
 
-    // 9. Tips sent/received
-    const tipsSent = await db.execute({
-      sql: `SELECT SUM(amountEurCents) as total, COUNT(*) as qty FROM Tip WHERE fromUserId = ?`,
-      args: [userId]
-    });
-    const tipsReceived = await db.execute({
-      sql: `SELECT SUM(amountEurCents) as total, COUNT(*) as qty FROM Tip WHERE toUserId = ?`,
-      args: [userId]
-    });
-
-    // 10. Receipts
+    // 9. Receipts
     const receipts = await db.execute({
       sql: `SELECT id, receiptNumber, totalAmountCents, platformFeeCents, caregiverAmountCents,
               periodStart, periodEnd, hoursWorked, status, createdAt
@@ -130,8 +119,6 @@ export async function GET(request: NextRequest) {
     const totalIn = Number(summary.totalDeposits || 0);
     const totalFeesPaid = Number(summary.totalPlatformFees || 0);
     const totalRefunded = Number(summary.refundedAmount || 0);
-    const tipsSentTotal = Number((tipsSent.rows[0] as any)?.total || 0);
-    const tipsReceivedTotal = Number((tipsReceived.rows[0] as any)?.total || 0);
 
     // 13. Platform profit from this customer
     const platformProfit = totalFeesPaid;
@@ -177,8 +164,6 @@ export async function GET(request: NextRequest) {
         totalTransactions: Number(summary.totalTransactions || 0),
         completedTransactions: Number(summary.completedTransactions || 0),
       },
-      tipsSent: { total: tipsSentTotal, qty: Number((tipsSent.rows[0] as any)?.qty || 0) },
-      tipsReceived: { total: tipsReceivedTotal, qty: Number((tipsReceived.rows[0] as any)?.qty || 0) },
       platformProfit: {
         totalFeesCollected: platformProfit,
         contractProfits,

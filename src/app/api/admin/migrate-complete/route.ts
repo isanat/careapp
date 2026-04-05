@@ -32,7 +32,6 @@ export async function GET(request: NextRequest) {
       'Payment',
       'Contract',
       'ContractAcceptance',
-      'Tip',
       'Review',
       'ChatRoom',
       'ChatParticipant',
@@ -44,7 +43,6 @@ export async function GET(request: NextRequest) {
       'VerificationToken',
       'Interview',
       'TermsAcceptance',
-      'GuideAcceptance',
       'EscrowPayment',
       'AdminUser',
       'AdminAction',
@@ -52,7 +50,6 @@ export async function GET(request: NextRequest) {
       'SupportTicketMessage',
       'Receipt',
       'RecurringPayment',
-      'FeatureFlag',
       // Orphan tables now in Prisma
       'AdminNotification',
       'ApiKey',
