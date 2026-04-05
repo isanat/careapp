@@ -256,7 +256,7 @@ export async function PUT(request: NextRequest) {
     }
     if (body.hourlyRateEur !== undefined) {
       caregiverUpdates.push('hourlyRateEur = ?');
-      caregiverValues.push(body.hourlyRateEur);
+      caregiverValues.push(Math.round(body.hourlyRateEur * 100));
     }
 
     if (caregiverUpdates.length > 0) {
