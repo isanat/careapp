@@ -63,13 +63,18 @@ export function VideoRoom({
       stream.getTracks().forEach(track => track.stop());
       setMeetingState('loading');
     } catch (err: any) {
+      console.warn('Media device check failed:', err.name, err.message);
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
         setPermissionDenied(true);
         setMeetingState('permission-check');
       } else if (err.name === 'NotFoundError') {
-        // No devices found, proceed anyway (Jitsi handles this)
+        // No devices found (common in test/VM environments)
+        // Allow proceeding - Jitsi will handle missing devices gracefully
+        console.log('No audio/video devices found, proceeding with Jitsi');
         setMeetingState('loading');
       } else {
+        // Unknown error but allow proceeding to try with Jitsi
+        console.log('Unknown media device error, proceeding with Jitsi');
         setMeetingState('loading');
       }
     }
@@ -89,22 +94,38 @@ export function VideoRoom({
   // Handle Jitsi API events
   const handleApiReady = useCallback((api: any) => {
     api.addListener('videoConferenceJoined', () => {
+      console.log('Jitsi: Video conference joined');
       setMeetingState('in-meeting');
     });
 
     api.addListener('videoConferenceLeft', () => {
+      console.log('Jitsi: Video conference left');
       setMeetingState('left');
       onLeave?.();
     });
 
     api.addListener('readyToClose', () => {
+      console.log('Jitsi: Ready to close');
       setMeetingState('left');
       onLeave?.();
     });
 
     api.addListener('errorOccurred', (errorData: any) => {
       console.error('Jitsi error:', errorData);
-      setError(errorData?.message || 'Erro desconhecido');
+
+      // Format error message with helpful suggestions
+      let errorMessage = errorData?.message || 'Erro desconhecido';
+
+      // Handle common device-related errors
+      if (errorData?.message?.includes('device') || errorData?.message?.includes('camera') || errorData?.message?.includes('microphone')) {
+        errorMessage = 'Nao foi possivel acessar sua camera ou microfone. Verifique as permissoes do navegador e se os dispositivos estao conectados.';
+      } else if (errorData?.message?.includes('connection') || errorData?.message?.includes('network')) {
+        errorMessage = 'Erro de conexao. Verifique sua conexao com a Internet e tente novamente.';
+      } else if (errorData?.message?.includes('conference') || errorData?.message?.includes('join')) {
+        errorMessage = 'Erro ao entrar na sala. A sala pode nao existir ou pode estar lotada. Tente novamente.';
+      }
+
+      setError(errorMessage);
       setMeetingState('error');
       onError?.(new Error(errorData?.message || 'Erro desconhecido'));
     });
@@ -310,7 +331,17 @@ export function VideoRoom({
             },
             moderation: {
               enabled: true,
-            }
+            },
+            // Disable speaker-selection feature to avoid "Unrecognized feature" warning
+            'features.speaker-selection': {
+              enabled: false
+            },
+            // Disable features that might not be available
+            analytics: {
+              disabled: true
+            },
+            // Allow continuing even if devices aren't available
+            disallowMixedAudio: false,
           } as any}
           interfaceConfigOverwrite={{
             SHOW_JITSI_WATERMARK: false,

@@ -21,15 +21,15 @@ import {
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
-const CHAT_PORT = 3003;
-
 interface Message {
   id: string;
   chatRoomId: string;
   senderId: string;
   senderName: string;
+  senderRole?: string;
   content: string;
-  type: "text" | "image" | "file" | "system";
+  messageType?: "text" | "image" | "file" | "system";
+  isEdited?: boolean;
   createdAt: string;
 }
 
@@ -104,43 +104,62 @@ export default function ChatPage() {
     let newSocket: Socket | null = null;
     let cancelled = false;
     let connectionAttempts = 0;
-    const MAX_ATTEMPTS = 2;
+    const MAX_ATTEMPTS = 3;
 
     async function connectWithAuth() {
       try {
         const tokenRes = await fetch('/api/chat/token');
         if (!tokenRes.ok) {
+          console.error('Failed to get chat token');
           if (!cancelled) setUsePolling(true);
           return;
         }
         const { token } = await tokenRes.json();
         if (cancelled) return;
 
-        const socketUrl = `/?XTransformPort=${CHAT_PORT}`;
-        newSocket = io(socketUrl, {
-          transports: ["websocket"],
+        // Connect to Socket.IO on the same origin
+        newSocket = io(undefined, {
+          transports: ["websocket", "polling"],
           auth: { token },
           reconnectionAttempts: MAX_ATTEMPTS,
-          timeout: 5000,
+          reconnectionDelay: 1000,
+          reconnectionDelayMax: 5000,
+          timeout: 10000,
         });
 
-        newSocket.on("connect", () => { connectionAttempts = 0; });
-        newSocket.on("connect_error", () => {
+        newSocket.on("connect", () => {
+          console.log("Socket.IO connected");
+          connectionAttempts = 0;
+        });
+
+        newSocket.on("connect_error", (error) => {
+          console.error("Socket.IO connection error:", error);
           connectionAttempts++;
           if (connectionAttempts >= MAX_ATTEMPTS) {
             newSocket?.disconnect();
-            if (!cancelled) setUsePolling(true);
+            if (!cancelled) {
+              console.log("Socket.IO connection failed after retries, falling back to polling");
+              setUsePolling(true);
+            }
           }
         });
+
+        newSocket.on("disconnect", (reason) => {
+          console.log("Socket.IO disconnected:", reason);
+        });
+
         newSocket.on("message:receive", (message: Message) => {
+          console.log("Message received:", message);
           setMessages((prev) => [...prev, message]);
         });
+
         newSocket.on("typing:indicator", (data: { userId: string; userName: string; isTyping: boolean }) => {
           setTypingUser(data.isTyping ? data.userName : null);
         });
 
         queueMicrotask(() => setSocket(newSocket));
-      } catch {
+      } catch (error) {
+        console.error("Error setting up Socket.IO:", error);
         if (!cancelled) setUsePolling(true);
       }
     }

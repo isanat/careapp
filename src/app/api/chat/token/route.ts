@@ -1,28 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
-import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
-const CHAT_TOKEN_SECRET = process.env.CHAT_TOKEN_SECRET || process.env.NEXTAUTH_SECRET || 'default-chat-secret';
-const TOKEN_EXPIRY_SECONDS = 3600; // 1 hour
-
-function generateChatToken(userId: string, userName: string): string {
-  const payload = {
-    userId,
-    userName,
-    exp: Math.floor(Date.now() / 1000) + TOKEN_EXPIRY_SECONDS,
-    iat: Math.floor(Date.now() / 1000),
-  };
-
-  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
-
-  const signature = crypto
-    .createHmac('sha256', CHAT_TOKEN_SECRET)
-    .update(payloadBase64)
-    .digest('base64url');
-
-  return `${payloadBase64}.${signature}`;
-}
+const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+const TOKEN_EXPIRY = '24h';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,11 +14,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = generateChatToken(session.user.id, session.user.name || '');
+    // Generate JWT token for Socket.IO authentication
+    const token = jwt.sign(
+      {
+        sub: session.user.id,
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        role: session.user.role,
+      },
+      JWT_SECRET,
+      { expiresIn: TOKEN_EXPIRY }
+    );
 
     return NextResponse.json({
       token,
-      expiresIn: TOKEN_EXPIRY_SECONDS,
+      expiresIn: TOKEN_EXPIRY,
     });
   } catch (error) {
     console.error('Error generating chat token:', error);
