@@ -659,6 +659,22 @@ async function rebuildSchema(db: any) {
 
   await db.execute('PRAGMA foreign_keys = OFF');
 
+  // First: drop ALL existing tables to ensure clean schema
+  const existingTables = await db.execute(
+    `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`
+  );
+  const tableNames = (existingTables.rows || []).map((r: any) => r.name);
+  console.log(`Dropping ${tableNames.length} existing tables...`);
+
+  for (const table of tableNames) {
+    try {
+      await db.execute(`DROP TABLE IF EXISTS "${table}"`);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  // Now create all tables fresh with correct Prisma schema
   let created = 0;
   let errors = 0;
 
