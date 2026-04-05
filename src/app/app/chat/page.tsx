@@ -312,7 +312,7 @@ export default function ChatPage() {
                     <Input
                       ref={inputRef}
                       value={newMessage}
-                      onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
+                      onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={handleKeyPress}
                       placeholder={t.chat.placeholder}
                       className="flex-1 h-11 rounded-xl bg-muted border-0"
