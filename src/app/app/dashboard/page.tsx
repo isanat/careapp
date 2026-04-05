@@ -77,7 +77,8 @@ export default function DashboardPage() {
 
   const isFamily = session?.user?.role === "FAMILY";
   const isCaregiver = session?.user?.role === "CAREGIVER";
-  const needsPayment = session?.user?.status === "PENDING";
+  // Only FAMILY users need to pay for activation - CAREGIVER registration is FREE
+  const needsPayment = session?.user?.status === "PENDING" && isFamily;
   const needsKYC = userStatus?.verificationStatus !== "VERIFIED";
   const needsProfile = !userStatus?.profileComplete;
 

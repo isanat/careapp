@@ -43,9 +43,9 @@ export async function POST(request: NextRequest) {
 
     // Get user data
     const userResult = await db.execute({
-      sql: `SELECT u.id, u.name, u.email, u.phone, pf.country 
-            FROM User u 
-            LEFT JOIN ProfileFamily pf ON u.id = pf.userId 
+      sql: `SELECT u.id, u.name, u.email, u.phone, u.role, pf.country
+            FROM User u
+            LEFT JOIN ProfileFamily pf ON u.id = pf.userId
             LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
             WHERE u.id = ?`,
       args: [session.user.id]
@@ -56,6 +56,14 @@ export async function POST(request: NextRequest) {
     }
 
     const user = userResult.rows[0];
+
+    // CAREGIVER users don't pay for activation - registration is FREE
+    if (type === 'activation' && user.role === 'CAREGIVER') {
+      return NextResponse.json({
+        error: 'Cuidadores não precisam pagar pela ativação da conta',
+        details: 'O registo de cuidadores é gratuito. A sua conta será ativada automaticamente após verificação.'
+      }, { status: 403 });
+    }
     const transactionKey = generateId();
     const paymentId = generateId();
     const now = new Date().toISOString();
