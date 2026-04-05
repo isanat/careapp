@@ -4,7 +4,7 @@
  * Usage: npx ts-node scripts/create-admin-user.ts
  */
 
-import { createClient } from '@libsql/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 const ADMIN_EMAIL = 'admin@evyra.pt';
@@ -13,25 +13,22 @@ const ADMIN_PASSWORD = 'EvyraAdmin@2024!';
 
 async function createAdminUser() {
   try {
-    const db = createClient({
-      url: process.env.TURSO_DATABASE_URL || 'file:local.db',
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    });
+    const prisma = new PrismaClient();
 
     console.log('👤 Creating admin user...\n');
 
     // Check if admin already exists
-    const existingResult = await db.execute({
-      sql: `SELECT id, email FROM User WHERE email = ? LIMIT 1`,
-      args: [ADMIN_EMAIL],
+    const existingUser = await prisma.user.findUnique({
+      where: { email: ADMIN_EMAIL },
     });
 
-    if (existingResult.rows.length > 0) {
+    if (existingUser) {
       console.log(`⚠️  Admin user already exists: ${ADMIN_EMAIL}`);
       console.log(`\n📋 Admin Credentials:`);
       console.log(`   Email: ${ADMIN_EMAIL}`);
       console.log(`   Password: ${ADMIN_PASSWORD}`);
       console.log(`\n✅ Use these credentials to log in to the admin panel`);
+      await prisma.$disconnect();
       return;
     }
 
@@ -39,23 +36,25 @@ async function createAdminUser() {
     const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
 
     // Create user
-    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    await db.execute({
-      sql: `INSERT INTO User (id, email, name, passwordHash, role, status, createdAt, updatedAt, lastLoginAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
-      args: [userId, ADMIN_EMAIL, ADMIN_NAME, passwordHash, 'ADMIN', 'ACTIVE', new Date().toISOString(), new Date().toISOString()],
+    const user = await prisma.user.create({
+      data: {
+        email: ADMIN_EMAIL,
+        name: ADMIN_NAME,
+        passwordHash,
+        role: 'ADMIN',
+        status: 'ACTIVE',
+      },
     });
 
     console.log(`✅ User created: ${ADMIN_EMAIL}`);
 
     // Create AdminUser profile
-    const adminUserId = `admin_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    await db.execute({
-      sql: `INSERT INTO AdminUser (id, userId, role, isActive, createdAt, updatedAt)
-            VALUES (?, ?, ?, ?, ?, ?)`,
-      args: [adminUserId, userId, 'ADMIN', 1, new Date().toISOString(), new Date().toISOString()],
+    await prisma.adminUser.create({
+      data: {
+        userId: user.id,
+        role: 'ADMIN',
+        isActive: true,
+      },
     });
 
     console.log(`✅ AdminUser profile created\n`);
@@ -70,6 +69,7 @@ async function createAdminUser() {
     console.log(`\n✅ Use these credentials to log in at /auth/login`);
     console.log('═'.repeat(50));
 
+    await prisma.$disconnect();
     return { email: ADMIN_EMAIL, password: ADMIN_PASSWORD };
   } catch (error) {
     console.error('❌ Error creating admin user:', error);

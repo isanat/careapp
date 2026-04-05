@@ -1,0 +1,246 @@
+{
+  "timestamp": "2026-04-05T15:28:57.240Z",
+  "duration": 32,
+  "results": [
+    {
+      "name": "User table accessible",
+      "category": "Database Schema",
+      "status": "PASS",
+      "duration": 1,
+      "details": {
+        "count": 1
+      }
+    },
+    {
+      "name": "Payment table accessible",
+      "category": "Database Schema",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "count": 0
+      }
+    },
+    {
+      "name": "Contract table accessible",
+      "category": "Database Schema",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "count": 0
+      }
+    },
+    {
+      "name": "AdminUser table accessible",
+      "category": "Database Schema",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "count": 1
+      }
+    },
+    {
+      "name": "ChatRoom table accessible",
+      "category": "Database Schema",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "count": 0
+      }
+    },
+    {
+      "name": "No orphaned Payment records",
+      "category": "Data Integrity",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "totalPayments": 0
+      }
+    },
+    {
+      "name": "Data integrity checks passed",
+      "category": "Data Integrity",
+      "status": "PASS",
+      "duration": 0
+    },
+    {
+      "name": "Admin user exists",
+      "category": "Authentication",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "email": "admin@evyra.pt",
+        "role": "ADMIN"
+      }
+    },
+    {
+      "name": "Admin user has AdminUser profile",
+      "category": "Authentication",
+      "status": "PASS",
+      "duration": 0
+    },
+    {
+      "name": "User roles configured",
+      "category": "Authentication",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "roles": [
+          "ADMIN"
+        ]
+      }
+    },
+    {
+      "name": "Payment system operational",
+      "category": "Payment System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "totalPayments": 0
+      }
+    },
+    {
+      "name": "Payment types available",
+      "category": "Payment System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "types": []
+      }
+    },
+    {
+      "name": "Payment records accessible",
+      "category": "Payment System",
+      "status": "PASS",
+      "duration": 1
+    },
+    {
+      "name": "Contract records accessible",
+      "category": "Contract System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "count": 0
+      }
+    },
+    {
+      "name": "Contract statuses available",
+      "category": "Contract System",
+      "status": "PASS",
+      "duration": 1,
+      "details": {
+        "statuses": []
+      }
+    },
+    {
+      "name": "Chat system operational",
+      "category": "Chat System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "chatRooms": 0
+      }
+    },
+    {
+      "name": "Chat messages stored",
+      "category": "Chat System",
+      "status": "PASS",
+      "duration": 1,
+      "details": {
+        "totalMessages": 0
+      }
+    },
+    {
+      "name": "KYC system operational",
+      "category": "KYC System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "kycVerified": 0
+      }
+    },
+    {
+      "name": "KYC statuses configured",
+      "category": "KYC System",
+      "status": "PASS",
+      "duration": 1,
+      "details": {
+        "statuses": [
+          "UNVERIFIED"
+        ]
+      }
+    },
+    {
+      "name": "QR code system operational",
+      "category": "QR Code System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "confirmations": 0
+      }
+    },
+    {
+      "name": "Presence confirmations stored",
+      "category": "QR Code System",
+      "status": "PASS",
+      "duration": 1
+    },
+    {
+      "name": "Interview system operational",
+      "category": "Interview System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "interviews": 0
+      }
+    },
+    {
+      "name": "Interview statuses available",
+      "category": "Interview System",
+      "status": "PASS",
+      "duration": 1,
+      "details": {
+        "statuses": []
+      }
+    },
+    {
+      "name": "Admin system operational",
+      "category": "Admin System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "adminUsers": 1
+      }
+    },
+    {
+      "name": "Admin audit log operational",
+      "category": "Admin System",
+      "status": "PASS",
+      "duration": 0,
+      "details": {
+        "auditLogs": 0
+      }
+    },
+    {
+      "name": "Admin notifications available",
+      "category": "Admin System",
+      "status": "PASS",
+      "duration": 1,
+      "details": {
+        "notifications": 0
+      }
+    }
+  ],
+  "summary": {
+    "total": 26,
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "successRate": "100.00%"
+  },
+  "difficulties": [],
+  "recommendations": [
+    "✅ All systems healthy - continue monitoring",
+    "📊 Check logs periodically for any warnings",
+    "📊 Continue automated testing in next cycle"
+  ]
+}

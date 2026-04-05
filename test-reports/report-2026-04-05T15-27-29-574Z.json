@@ -1,0 +1,250 @@
+{
+  "timestamp": "2026-04-05T15:27:29.574Z",
+  "duration": 9,
+  "results": [
+    {
+      "name": "Table User exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: User"
+    },
+    {
+      "name": "Table Payment exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Payment"
+    },
+    {
+      "name": "Table Contract exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Contract"
+    },
+    {
+      "name": "Table Interview exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Interview"
+    },
+    {
+      "name": "Table PresenceConfirmation exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: PresenceConfirmation"
+    },
+    {
+      "name": "Table AdminUser exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: AdminUser"
+    },
+    {
+      "name": "Table ChatRoom exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: ChatRoom"
+    },
+    {
+      "name": "Table Review exists",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Review"
+    },
+    {
+      "name": "Column User.id",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table User"
+    },
+    {
+      "name": "Column User.email",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table User"
+    },
+    {
+      "name": "Column User.role",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table User"
+    },
+    {
+      "name": "Column User.status",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table User"
+    },
+    {
+      "name": "Column Payment.id",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Payment"
+    },
+    {
+      "name": "Column Payment.userId",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Payment"
+    },
+    {
+      "name": "Column Payment.amountEurCents",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Payment"
+    },
+    {
+      "name": "Column Payment.status",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Payment"
+    },
+    {
+      "name": "Column Contract.id",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Contract"
+    },
+    {
+      "name": "Column Contract.familyUserId",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Contract"
+    },
+    {
+      "name": "Column Contract.caregiverUserId",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Contract"
+    },
+    {
+      "name": "Column Contract.status",
+      "category": "Database Schema",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "Column missing in table Contract"
+    },
+    {
+      "name": "Foreign key constraints enabled",
+      "category": "Data Integrity",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "No foreign keys found"
+    },
+    {
+      "name": "Data Integrity Validation",
+      "category": "Data Integrity",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Payment"
+    },
+    {
+      "name": "Authentication Setup",
+      "category": "Authentication",
+      "status": "FAIL",
+      "duration": 1,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: User"
+    },
+    {
+      "name": "Payment System",
+      "category": "Payment System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Payment"
+    },
+    {
+      "name": "Contract System",
+      "category": "Contract System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Contract"
+    },
+    {
+      "name": "Chat System",
+      "category": "Chat System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: ChatRoom"
+    },
+    {
+      "name": "KYC System",
+      "category": "KYC System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: ProfileCaregiver"
+    },
+    {
+      "name": "QR Code System",
+      "category": "QR Code System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: PresenceConfirmation"
+    },
+    {
+      "name": "Interview System",
+      "category": "Interview System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: Interview"
+    },
+    {
+      "name": "Admin System",
+      "category": "Admin System",
+      "status": "FAIL",
+      "duration": 0,
+      "error": "LibsqlError: SQLITE_ERROR: no such table: AdminUser"
+    }
+  ],
+  "summary": {
+    "total": 30,
+    "passed": 0,
+    "failed": 30,
+    "skipped": 0,
+    "successRate": "0.00%"
+  },
+  "difficulties": [
+    "Missing or broken table: User",
+    "Missing or broken table: Payment",
+    "Missing or broken table: Contract",
+    "Missing or broken table: Interview",
+    "Missing or broken table: PresenceConfirmation",
+    "Missing or broken table: AdminUser",
+    "Missing or broken table: ChatRoom",
+    "Missing or broken table: Review",
+    "Missing column: User.id",
+    "Missing column: User.email",
+    "Missing column: User.role",
+    "Missing column: User.status",
+    "Missing column: Payment.id",
+    "Missing column: Payment.userId",
+    "Missing column: Payment.amountEurCents",
+    "Missing column: Payment.status",
+    "Missing column: Contract.id",
+    "Missing column: Contract.familyUserId",
+    "Missing column: Contract.caregiverUserId",
+    "Missing column: Contract.status"
+  ],
+  "recommendations": [
+    "❌ Fix failing tests before next cycle",
+    "📝 Review difficulty report for specific issues",
+    "🔧 Review and fix reported difficulties"
+  ]
+}
