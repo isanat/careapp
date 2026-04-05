@@ -196,7 +196,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
   // Parse financial values
   const hourlyRate = contract ? Math.round(contract.hourlyRateEur / 100) : 0;
   const totalEur = contract ? Math.round(contract.totalEurCents / 100) : 0;
-  const platformFee = Math.round(totalEur * PLATFORM_FEE_PERCENT / 100);
+  const platformFee = Math.round(totalEur * platformFeePercent / 100);
   const caregiverReceives = totalEur - platformFee;
 
   // Parse description
