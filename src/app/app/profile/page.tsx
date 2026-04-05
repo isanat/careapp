@@ -124,8 +124,8 @@ interface ProfileData {
   elderName?: string;
   elderAge?: number;
   elderNeeds?: string;
-  emergencyContact?: string;
-  emergencyPhone?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
   backgroundCheckStatus?: string;
   backgroundCheckUrl?: string;
 }
@@ -151,6 +151,8 @@ export default function ProfilePage() {
     name: "",
     email: "",
     phone: "",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
   });
 
   const isFamily = session?.user?.role === "FAMILY";
@@ -205,8 +207,8 @@ export default function ProfilePage() {
         elderName: data.profile?.elderName || "",
         elderAge: data.profile?.elderAge || undefined,
         elderNeeds: data.profile?.elderNeeds || "",
-        emergencyContact: data.profile?.emergencyContact || "",
-        emergencyPhone: data.profile?.emergencyPhone || "",
+        emergencyContactName: data.profile?.emergencyContactName || "",
+        emergencyContactPhone: data.profile?.emergencyContactPhone || "",
         backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
         backgroundCheckUrl: data.user?.backgroundCheckUrl || "",
       });
@@ -686,24 +688,29 @@ export default function ProfilePage() {
                   inputMode="tel"
                 />
               </div>
-              <Separator />
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Contato de Emergencia</Label>
-                  <Input value={formData.emergencyContact || ""} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Nome" />
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Telefone</Label>
-                  <Input
-                    value={formData.emergencyPhone || ""}
-                    onChange={(e) => setFormData({...formData, emergencyPhone: formatPhonePT(e.target.value)})}
-                    disabled={!isEditing}
-                    className="h-8 mt-0.5 text-xs"
-                    placeholder="+351 912 345 678"
-                    inputMode="tel"
-                  />
-                </div>
-              </div>
+
+              {isFamily && (
+                <>
+                  <Separator />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Contato de Emergencia</Label>
+                      <Input value={formData.emergencyContactName || ""} onChange={(e) => setFormData({...formData, emergencyContactName: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Nome" />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Telefone</Label>
+                      <Input
+                        value={formData.emergencyContactPhone || ""}
+                        onChange={(e) => setFormData({...formData, emergencyContactPhone: formatPhonePT(e.target.value)})}
+                        disabled={!isEditing}
+                        className="h-8 mt-0.5 text-xs"
+                        placeholder="+351 912 345 678"
+                        inputMode="tel"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </TabsContent>
 
