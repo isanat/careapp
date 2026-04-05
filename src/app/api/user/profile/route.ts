@@ -43,7 +43,18 @@ export async function GET(request: NextRequest) {
       documentNumber: row.documentNumber,
       backgroundCheckStatus: row.backgroundCheckStatus,
       backgroundCheckUrl: row.backgroundCheckUrl,
-      
+
+      // KYC Data (from Didit)
+      kycSessionId: row.kycSessionId,
+      kycCompletedAt: row.kycCompletedAt,
+      kycConfidence: row.kycConfidence,
+      kycBirthDate: row.kycBirthDate,
+      kycNationality: row.kycNationality,
+      kycDocumentIssueDate: row.kycDocumentIssueDate,
+      kycDocumentExpiryDate: row.kycDocumentExpiryDate,
+      kycDocumentIssuer: row.kycDocumentIssuer,
+      kycData: row.kycData,
+
       // Family profile fields
       address: row.address,
       city: row.city,
@@ -56,7 +67,7 @@ export async function GET(request: NextRequest) {
       emergencyContactName: row.emergencyContactName,
       emergencyContactPhone: row.emergencyContactPhone,
       emergencyContactRelation: row.emergencyContactRelation,
-      
+
       // Caregiver profile fields
       title: row.title,
       bio: row.bio,
