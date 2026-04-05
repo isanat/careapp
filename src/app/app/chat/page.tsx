@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { io, Socket } from "socket.io-client";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,7 +52,6 @@ export default function ChatPage() {
   const { data: session, status } = useSession();
   const { t } = useI18n();
 
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -67,7 +65,6 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [usePolling, setUsePolling] = useState(false);
 
   const fetchConversations = useCallback(async () => {
     try {
@@ -98,129 +95,58 @@ export default function ChatPage() {
     }
   }, []);
 
+
+  // Set up polling for messages (HTTP polling - works on Vercel)
   useEffect(() => {
-    if (status !== "authenticated" || !session?.user) return;
+    if (!selectedConversation) return;
 
-    let newSocket: Socket | null = null;
-    let cancelled = false;
-    let connectionAttempts = 0;
-    const MAX_ATTEMPTS = 3;
+    // Fetch immediately
+    fetchMessages(selectedConversation.id);
 
-    async function connectWithAuth() {
-      try {
-        const tokenRes = await fetch('/api/chat/token');
-        if (!tokenRes.ok) {
-          console.error('Failed to get chat token');
-          if (!cancelled) setUsePolling(true);
-          return;
-        }
-        const { token } = await tokenRes.json();
-        if (cancelled) return;
-
-        // Connect to Socket.IO on the same origin
-        newSocket = io(undefined, {
-          transports: ["websocket", "polling"],
-          auth: { token },
-          reconnectionAttempts: MAX_ATTEMPTS,
-          reconnectionDelay: 1000,
-          reconnectionDelayMax: 5000,
-          timeout: 10000,
-        });
-
-        newSocket.on("connect", () => {
-          console.log("Socket.IO connected");
-          connectionAttempts = 0;
-        });
-
-        newSocket.on("connect_error", (error) => {
-          console.error("Socket.IO connection error:", error);
-          connectionAttempts++;
-          if (connectionAttempts >= MAX_ATTEMPTS) {
-            newSocket?.disconnect();
-            if (!cancelled) {
-              console.log("Socket.IO connection failed after retries, falling back to polling");
-              setUsePolling(true);
-            }
-          }
-        });
-
-        newSocket.on("disconnect", (reason) => {
-          console.log("Socket.IO disconnected:", reason);
-        });
-
-        newSocket.on("message:receive", (message: Message) => {
-          console.log("Message received:", message);
-          setMessages((prev) => [...prev, message]);
-        });
-
-        newSocket.on("typing:indicator", (data: { userId: string; userName: string; isTyping: boolean }) => {
-          setTypingUser(data.isTyping ? data.userName : null);
-        });
-
-        queueMicrotask(() => setSocket(newSocket));
-      } catch (error) {
-        console.error("Error setting up Socket.IO:", error);
-        if (!cancelled) setUsePolling(true);
-      }
-    }
-
-    connectWithAuth();
-    return () => { cancelled = true; newSocket?.disconnect(); };
-  }, [status, session]);
-
-  useEffect(() => {
-    if (!usePolling || !selectedConversation) return;
+    // Poll every 3 seconds
     pollingIntervalRef.current = setInterval(() => {
       fetchMessages(selectedConversation.id);
     }, 3000);
-    return () => {
-      if (pollingIntervalRef.current) { clearInterval(pollingIntervalRef.current); pollingIntervalRef.current = null; }
-    };
-  }, [usePolling, selectedConversation, fetchMessages]);
 
-  useEffect(() => { if (status === "authenticated") fetchConversations(); }, [status, fetchConversations]);
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, [selectedConversation, fetchMessages]);
 
   useEffect(() => {
-    if (selectedConversation) {
-      fetchMessages(selectedConversation.id);
-      if (socket) socket.emit("room:join", { chatRoomId: selectedConversation.id });
-    }
-  }, [selectedConversation, socket, fetchMessages]);
+    if (status === "authenticated") fetchConversations();
+  }, [status, fetchConversations]);
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
-
-  const handleTyping = useCallback(() => {
-    if (socket && selectedConversation) {
-      socket.emit("typing:start", { chatRoomId: selectedConversation.id });
-      setTimeout(() => { socket.emit("typing:stop", { chatRoomId: selectedConversation.id }); }, 2000);
-    }
-  }, [socket, selectedConversation]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!newMessage.trim() || !selectedConversation || !session?.user) return;
 
-    const messageData = {
-      chatRoomId: selectedConversation.id,
-      senderId: session.user.id,
-      senderName: session.user.name,
-      content: newMessage.trim(),
-      type: "text" as const,
-      recipientId: selectedConversation.participant.id,
-    };
-
-    if (socket) socket.emit("message:send", messageData);
+    const messageContent = newMessage.trim();
+    setNewMessage("");
 
     try {
       await apiFetch('/api/chat/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chatRoomId: selectedConversation.id, content: newMessage.trim(), messageType: 'text' }),
+        body: JSON.stringify({
+          chatRoomId: selectedConversation.id,
+          content: messageContent,
+          messageType: 'text'
+        }),
       });
+
+      // Fetch messages immediately to show the new message
+      fetchMessages(selectedConversation.id);
     } catch (error) {
       console.error('Error saving message:', error);
     }
 
-    setNewMessage("");
     inputRef.current?.focus();
   };
 
@@ -386,7 +312,7 @@ export default function ChatPage() {
                     <Input
                       ref={inputRef}
                       value={newMessage}
-                      onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
+                      onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={handleKeyPress}
                       placeholder={t.chat.placeholder}
                       className="flex-1 h-11 rounded-xl bg-muted border-0"
