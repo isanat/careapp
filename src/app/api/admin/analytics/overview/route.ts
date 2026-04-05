@@ -343,7 +343,6 @@ export async function GET(request: NextRequest) {
           totalEurCents: totalRevenue,
           periodEurCents: periodRevenue,
           activationEurCents: activationRevenue,
-          tokenPurchaseEurCents: tokenPurchaseRevenue,
           totalTransactions: totalTransactions,
           totalRefunds: totalRefunds,
           refundedEurCents: refundedRevenue,
