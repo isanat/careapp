@@ -4,9 +4,9 @@
  * POST /api/admin/sync-turso
  *
  * This endpoint:
- * 1. Resets Turso remote database (removes all tables)
- * 2. Pushes local schema to Turso
- * 3. Creates admin user on Turso
+ * 1. Rebuilds complete Turso database schema from sql/schema.sql
+ * 2. Clears all existing data
+ * 3. Creates admin user
  * 4. Returns synchronization status
  *
  * Security: Only works with correct auth token passed in X-Admin-Token header
@@ -15,14 +15,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@libsql/client';
 import * as bcrypt from 'bcryptjs';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 const TURSO_URL = process.env.TURSO_DATABASE_URL || 'libsql://idosolink-isanat.aws-us-east-1.turso.io';
 const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || '';
 const ADMIN_EMAIL = 'admin@evyra.pt';
 const ADMIN_PASSWORD = 'EvyraAdmin@2024!';
 
-async function resetTursoDatabase(db: any) {
-  console.log('🗑️ Clearing Turso database data...');
+async function rebuildTursoSchema(db: any) {
+  console.log('🔨 Rebuilding Turso database schema...');
+
+  // Read schema.sql file
+  const schemaPath = join(process.cwd(), 'sql', 'schema.sql');
+  let schemaSql: string;
+
+  try {
+    schemaSql = readFileSync(schemaPath, 'utf-8');
+  } catch (error) {
+    console.error('Failed to read schema.sql:', error);
+    throw new Error('Could not read database schema file');
+  }
+
+  // Split by semicolon and execute each statement
+  const statements = schemaSql
+    .split(';')
+    .map(stmt => stmt.trim())
+    .filter(stmt => stmt && !stmt.startsWith('--'));
+
+  console.log(`Executing ${statements.length} schema statements...`);
+
+  for (const statement of statements) {
+    try {
+      await db.execute(statement);
+      console.log(`  ✓ ${statement.substring(0, 80)}...`);
+    } catch (error) {
+      console.warn(`Warning executing statement: ${error}`);
+      // Continue on errors (some statements may fail if objects exist)
+    }
+  }
+
+  console.log('✅ Turso database schema rebuilt');
+  return true;
+}
+
+async function clearDatabaseData(db: any) {
+  console.log('🗑️ Clearing all database data...');
 
   // Get all tables (excluding sqlite internal tables)
   const tablesResult = await db.execute(`
@@ -36,20 +74,20 @@ async function resetTursoDatabase(db: any) {
   // Disable foreign key constraints for deletion
   await db.execute('PRAGMA foreign_keys = OFF');
 
-  // Delete all data from each table (but keep tables/schema)
+  // Delete all data from each table
   for (const table of tables) {
-    console.log(`  Clearing data from: ${table}`);
     try {
       await db.execute(`DELETE FROM \`${table}\``);
+      console.log(`  ✓ Cleared: ${table}`);
     } catch (e) {
-      console.error(`Failed to clear ${table}:`, e);
+      console.warn(`Warning clearing ${table}:`, e);
     }
   }
 
   // Re-enable foreign keys
   await db.execute('PRAGMA foreign_keys = ON');
 
-  console.log('✅ Turso database data cleared (schema preserved)');
+  console.log('✅ All database data cleared');
   return true;
 }
 
@@ -114,10 +152,13 @@ async function handleSync(request: NextRequest) {
       authToken: TURSO_TOKEN,
     });
 
-    // Step 1: Clear all data from database (keeps schema/tables intact)
-    await resetTursoDatabase(db);
+    // Step 1: Rebuild complete database schema from sql/schema.sql
+    await rebuildTursoSchema(db);
 
-    // Step 2: Create admin user (tables already exist)
+    // Step 2: Clear all data from tables
+    await clearDatabaseData(db);
+
+    // Step 3: Create admin user
     console.log('👤 Creating admin user...');
     const adminCreds = await createAdminUser(db);
 
