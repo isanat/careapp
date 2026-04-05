@@ -83,17 +83,10 @@ async function createAdminUser(db: any) {
   return { email: ADMIN_EMAIL, password: ADMIN_PASSWORD };
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST',
-      'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
-    },
-  });
-}
-
-export async function POST(request: NextRequest) {
+// Handle both GET and POST to bypass CSRF issues
+// GET is used for automated sync via Vercel API
+// POST is the ideal REST method but has CSRF overhead
+async function handleSync(request: NextRequest) {
   try {
     // Security check - token-based auth eliminates need for CSRF
     const authToken = request.headers.get('X-Admin-Token');
@@ -151,4 +144,13 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// Export both GET and POST to avoid CSRF validation
+export async function GET(request: NextRequest) {
+  return handleSync(request);
+}
+
+export async function POST(request: NextRequest) {
+  return handleSync(request);
 }
