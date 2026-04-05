@@ -272,7 +272,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
               {/* Price & Actions */}
               <div className="flex flex-col items-end gap-3">
                 <div className="text-right">
-                  <p className="text-3xl font-bold">{caregiver.hourlyRateEur}/h</p>
+                  <p className="text-3xl font-bold">€{(caregiver.hourlyRateEur / 100).toFixed(2)}/h</p>
                   <p className="text-muted-foreground">por hora</p>
                 </div>
 

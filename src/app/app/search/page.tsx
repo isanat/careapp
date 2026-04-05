@@ -295,7 +295,7 @@ export default function SearchPage() {
                   </div>
 
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-bold text-primary">{"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(0)}</p>
+                    <p className="text-sm font-bold text-primary">{"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(2)}</p>
                     <p className="text-[9px] text-muted-foreground">/hora</p>
                   </div>
                   <IconChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
