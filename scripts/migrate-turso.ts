@@ -142,8 +142,8 @@ async function main() {
   // PlatformSettings
   console.log("📋 PlatformSettings...");
   r = await exec(`
-    INSERT OR IGNORE INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents, totalReserveEurCents, totalTokensMinted, totalTokensBurned, updatedAt)
-    SELECT id, activation_cost_eur_cents, contract_fee_eur_cents, platform_fee_percent, token_price_eur_cents, total_reserve_eur_cents, total_tokens_minted, total_tokens_burned, updated_at
+    INSERT OR IGNORE INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, updatedAt)
+    SELECT id, activation_cost_eur_cents, contract_fee_eur_cents, platform_fee_percent, updated_at
     FROM platform_settings WHERE NOT EXISTS (SELECT 1 FROM PlatformSettings);
   `);
   console.log(`   ✅ ${r.results?.[0]?.response?.result?.affected_row_count || 0} registros`);

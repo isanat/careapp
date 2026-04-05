@@ -19,10 +19,6 @@ export async function GET(request: NextRequest) {
       activationCostEurCents: 3500,
       contractFeeEurCents: 500,
       platformFeePercent: 15,
-      tokenPriceEurCents: 1,
-      totalTokensMinted: 0,
-      totalTokensBurned: 0,
-      totalReserveEurCents: 0,
     };
 
     // Get feature flags
@@ -56,7 +52,7 @@ export async function PATCH(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents } = parsed.data;
+    const { activationCostEurCents, contractFeeEurCents, platformFeePercent } = parsed.data;
 
     // Check if settings exist
     const existingResult = await db.execute({
@@ -67,9 +63,9 @@ export async function PATCH(request: NextRequest) {
     if (existingResult.rows.length === 0) {
       // Create default settings
       await db.execute({
-        sql: `INSERT INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, tokenPriceEurCents, updatedAt)
-          VALUES ('platform-settings-v1', ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-        args: [activationCostEurCents || 3500, contractFeeEurCents || 500, platformFeePercent || 15, tokenPriceEurCents || 1]
+        sql: `INSERT INTO PlatformSettings (id, activationCostEurCents, contractFeeEurCents, platformFeePercent, updatedAt)
+          VALUES ('platform-settings-v1', ?, ?, ?, CURRENT_TIMESTAMP)`,
+        args: [activationCostEurCents || 3500, contractFeeEurCents || 500, platformFeePercent || 15]
       });
     } else {
       // Update existing settings
@@ -87,10 +83,6 @@ export async function PATCH(request: NextRequest) {
       if (platformFeePercent !== undefined) {
         updates.push('platformFeePercent = ?');
         args.push(platformFeePercent);
-      }
-      if (tokenPriceEurCents !== undefined) {
-        updates.push('tokenPriceEurCents = ?');
-        args.push(tokenPriceEurCents);
       }
 
       if (updates.length > 0) {

@@ -76,7 +76,6 @@ interface CaregiverDetails {
   availableNow?: number;
   // Wallet
   walletAddress?: string;
-  balanceTokens?: number;
   balanceEurCents?: number;
   // Relations
   reviews: Array<{
@@ -363,11 +362,6 @@ export default function AdminCaregiverDetailPage() {
           value={caregiver.averageRating?.toFixed(1) || "-"}
           description={`${caregiver.totalReviews || 0} avaliações`}
           icon={<IconStar className="h-5 w-5" />}
-        />
-        <StatsCard
-          title="Saldo Tokens"
-          value={caregiver.balanceTokens || 0}
-          icon={<IconCoins className="h-5 w-5" />}
         />
       </div>
 

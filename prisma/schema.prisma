@@ -513,20 +513,11 @@ model Notification {
 
 model PlatformSettings {
   id              String   @id @default(cuid())
-  
-  // Token Economics
+
   activationCostEurCents    Int     @default(3500)  // €35
   contractFeeEurCents       Int     @default(500)   // €5
   platformFeePercent        Int     @default(15)    // 15%
-  
-  // Token Price
-  tokenPriceEurCents        Int     @default(100)   // 1 token = €0.01 initially
-  
-  // Reserva
-  totalReserveEurCents      Int     @default(0)
-  totalTokensMinted         Int     @default(0)
-  totalTokensBurned         Int     @default(0)
-  
+
   updatedAt       DateTime @updatedAt
 }
 

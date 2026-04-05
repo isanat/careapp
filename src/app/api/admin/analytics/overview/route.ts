@@ -161,25 +161,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Token stats
-    let totalMinted = 0;
-    let totalBurned = 0;
-    let reserveEurCents = 0;
-    let tokenHolders = 0;
-
-    try {
-      const settingsResult = await db.execute({
-        sql: `SELECT totalTokensMinted, totalTokensBurned, totalReserveEurCents FROM PlatformSettings LIMIT 1`,
-        args: []
-      });
-      const settingsRow = settingsResult.rows[0] || {};
-      totalMinted = Number(settingsRow.totalTokensMinted) || 0;
-      totalBurned = Number(settingsRow.totalTokensBurned) || 0;
-      reserveEurCents = Number(settingsRow.totalReserveEurCents) || 0;
-    } catch (e) {
-      console.error('Error getting platform settings:', e);
-    }
-
-    tokenHolders = 0;
 
     // Period-based stats
     const dateFilter = `-${daysAgo} days`;
@@ -208,23 +189,19 @@ export async function GET(request: NextRequest) {
     // Revenue breakdown
     let periodRevenue = 0;
     let activationRevenue = 0;
-    let tokenPurchaseRevenue = 0;
     let refundedRevenue = 0;
-    let tokenTransactionsPeriod = 0;
 
     try {
       const revenueBreakdown = await db.execute({
         sql: `SELECT
           COALESCE(SUM(CASE WHEN paidAt >= datetime('now', ?) THEN amountEurCents ELSE 0 END), 0) as periodTotal,
-          COALESCE(SUM(CASE WHEN type = 'ACTIVATION' THEN amountEurCents ELSE 0 END), 0) as activation,
-          COALESCE(SUM(CASE WHEN type = 'TOKEN_PURCHASE' THEN amountEurCents ELSE 0 END), 0) as tokenPurchase
+          COALESCE(SUM(CASE WHEN type = 'ACTIVATION' THEN amountEurCents ELSE 0 END), 0) as activation
         FROM Payment WHERE status = 'COMPLETED'`,
         args: [dateFilter]
       });
       const row = revenueBreakdown.rows[0] || {};
       periodRevenue = Number(row.periodTotal) || 0;
       activationRevenue = Number(row.activation) || 0;
-      tokenPurchaseRevenue = Number(row.tokenPurchase) || 0;
     } catch (e) {
       console.error('Error getting revenue breakdown:', e);
     }
@@ -238,8 +215,6 @@ export async function GET(request: NextRequest) {
     } catch (e) {
       console.error('Error getting refund stats:', e);
     }
-
-    tokenTransactionsPeriod = 0;
 
     // Average rating
     let avgRating = 0;
@@ -372,14 +347,6 @@ export async function GET(request: NextRequest) {
           totalTransactions: totalTransactions,
           totalRefunds: totalRefunds,
           refundedEurCents: refundedRevenue,
-        },
-        tokens: {
-          minted: totalMinted,
-          burned: totalBurned,
-          inCirculation: totalMinted - totalBurned,
-          reserveEurCents: reserveEurCents,
-          holders: tokenHolders,
-          transactionsPeriod: tokenTransactionsPeriod,
         },
         quality: {
           avgRating: avgRating,

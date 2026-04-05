@@ -272,12 +272,6 @@ CREATE TABLE IF NOT EXISTS platform_settings (
   activation_cost_eur_cents INTEGER DEFAULT 3500,
   contract_fee_eur_cents INTEGER DEFAULT 500,
   platform_fee_percent INTEGER DEFAULT 10,
-  token_price_eur_cents INTEGER DEFAULT 1,
-  total_reserve_eur_cents INTEGER DEFAULT 0,
-  total_tokens_minted INTEGER DEFAULT 0,
-  total_tokens_burned INTEGER DEFAULT 0,
-  senior_token_address TEXT,
-  contract_registry_address TEXT,
   stripe_webhook_secret TEXT,
   maintenance_mode INTEGER DEFAULT 0,
   updated_at TEXT DEFAULT CURRENT_TIMESTAMP

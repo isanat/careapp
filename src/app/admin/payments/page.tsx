@@ -69,7 +69,7 @@ interface PaymentStats {
 
 interface AuditData {
   user: { id: string; email: string; name: string; role: string; status: string; phone: string | null; nif: string | null; createdAt: string };
-  wallet: { balanceTokens: number; balanceEurCents: number };
+  wallet: { balanceEurCents: number };
   summary: {
     totalDeposits: number; depositFees: number; depositTokens: number;
     totalWithdrawals: number; withdrawalFees: number;
