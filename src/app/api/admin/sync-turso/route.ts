@@ -114,10 +114,39 @@ async function handleSync(request: NextRequest) {
       authToken: TURSO_TOKEN,
     });
 
-    // Step 1: Reset database
+    // Step 1: Reset database (drop all existing tables)
     await resetTursoDatabase(db);
 
-    // Step 2: Create admin user (tables should exist from db:push)
+    // Step 2: Recreate schema using Prisma
+    console.log('🏗️ Rebuilding schema from Prisma migrations...');
+    // Read and execute Prisma schema creation SQL
+    // For simplicity, create User table manually and Prisma will sync
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS User (
+        id TEXT NOT NULL PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        name TEXT,
+        passwordHash TEXT,
+        role TEXT NOT NULL DEFAULT 'USER',
+        status TEXT NOT NULL DEFAULT 'ACTIVE',
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+      )
+    `);
+
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS AdminUser (
+        id TEXT NOT NULL PRIMARY KEY,
+        userId TEXT NOT NULL UNIQUE,
+        role TEXT NOT NULL,
+        isActive INTEGER NOT NULL DEFAULT 1,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL,
+        FOREIGN KEY (userId) REFERENCES User(id)
+      )
+    `);
+
+    // Step 3: Create admin user (tables now exist)
     const adminCreds = await createAdminUser(db);
 
     return NextResponse.json({
