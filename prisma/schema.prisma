@@ -128,7 +128,15 @@ model User {
   kycSessionCreatedAt DateTime?
   kycCompletedAt      DateTime?
   kycConfidence       Int      @default(0)
-  
+  kycData             String?   // Full KYC data JSON from Didit (birthDate, nationality, etc)
+
+  // KYC Document Details (from Didit)
+  kycBirthDate        DateTime? // Data de nascimento
+  kycNationality      String?   // Nacionalidade (BRA, PT, etc)
+  kycDocumentIssueDate DateTime? // Data de emissão
+  kycDocumentExpiryDate DateTime? // Data de validade
+  kycDocumentIssuer   String?   // Órgão emissor
+
   // Antecedentes criminais
   backgroundCheckStatus String? @default("PENDING") // PENDING, SUBMITTED, VERIFIED, REJECTED
   backgroundCheckUrl    String? // URL do comprovante
