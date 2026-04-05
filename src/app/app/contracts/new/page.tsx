@@ -27,7 +27,7 @@ import {
   IconCalendar,
   IconLoader2,
 } from "@/components/icons";
-import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS, PLATFORM_FEE_PERCENT } from "@/lib/constants";
+import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS } from "@/lib/constants";
 
 interface CaregiverInfo {
   id: string;
@@ -109,8 +109,9 @@ function NewContractContent() {
   const [hourlyRate, setHourlyRate] = useState(25);
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [agreedTerms, setAgreedTerms] = useState(false);
+  const [platformFeePercent, setPlatformFeePercent] = useState(10); // Default 10%
 
-  // Fetch caregiver data
+  // Fetch caregiver data and platform settings
   useEffect(() => {
     async function fetchCaregiver() {
       if (!caregiverId) {
@@ -136,6 +137,12 @@ function NewContractContent() {
       }
     }
     fetchCaregiver();
+
+    // Fetch dynamic platform fee percentage
+    apiFetch('/api/admin/settings')
+      .then(res => res.ok ? res.json() : { platformFeePercent: 10 })
+      .then(data => setPlatformFeePercent(data.platformFeePercent || 10))
+      .catch(() => setPlatformFeePercent(10));
   }, [caregiverId]);
 
   // Calculated values
@@ -144,7 +151,7 @@ function NewContractContent() {
     : FREQUENCY_OPTIONS.find(f => f.key === frequency)?.hours || 10;
   const totalHoursMonthly = hoursPerWeek * 4;
   const totalEur = totalHoursMonthly * hourlyRate;
-  const platformFee = totalEur * (PLATFORM_FEE_PERCENT / 100);
+  const platformFee = totalEur * (platformFeePercent / 100);
   const caregiverReceives = totalEur - platformFee;
 
   // Build description from questionnaire answers
@@ -628,7 +635,7 @@ function NewContractContent() {
 
               <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Taxa plataforma ({PLATFORM_FEE_PERCENT}%)</span>
+                  <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
                   <span className="text-red-500">-{platformFee.toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-semibold">
