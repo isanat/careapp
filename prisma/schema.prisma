@@ -150,8 +150,6 @@ model User {
   payments          Payment[]
   contractsAsFamily   Contract[]  @relation("FamilyContracts")
   contractsAsCaregiver Contract[] @relation("CaregiverContracts")
-  tipsSent          Tip[]        @relation("TipsSent")
-  tipsReceived      Tip[]        @relation("TipsReceived")
   reviewsGiven      Review[]     @relation("ReviewsGiven")
   reviewsReceived   Review[]     @relation("ReviewsReceived")
   chatMessages      ChatMessage[]
@@ -354,7 +352,6 @@ model Contract {
   // Relations
   acceptance        ContractAcceptance?
   payments          Payment[]
-  tips              Tip[]
   reviews           Review[]
   presenceConfirmations PresenceConfirmation[] @relation("presenceConfirmations")
   
@@ -380,33 +377,6 @@ model ContractAcceptance {
 }
 
 // ==================== TIPS (GORJETAS) ====================
-
-model Tip {
-  id              String   @id @default(cuid())
-  
-  // Contrato e Usuários
-  contractId      String
-  contract        Contract @relation(fields: [contractId], references: [id])
-  fromUserId      String
-  fromUser        User     @relation("TipsSent", fields: [fromUserId], references: [id])
-  toUserId        String
-  toUser          User     @relation("TipsReceived", fields: [toUserId], references: [id])
-  
-  // Valores
-  amountTokens    Int
-  amountEurCents  Int       // Equivalente em euro no momento
-  
-  // Mensagem
-  message         String?
-  
-  // Blockchain
-  txHash          String?
-  
-  createdAt       DateTime @default(now())
-  
-  @@index([toUserId, createdAt])
-  @@index([contractId])
-}
 
 // ==================== REVIEWS ====================
 
@@ -659,18 +629,6 @@ model TermsAcceptance {
 }
 
 // ==================== GUIDE ACCEPTANCE ====================
-
-model GuideAcceptance {
-  id            String   @id @default(cuid())
-  userId        String
-  guideType     String   @default("best_practices")
-  guideVersion  String   @default("1.0")
-  acknowledgedAt DateTime @default(now())
-  ipAddress     String?
-  userAgent     String?
-  
-  @@index([userId])
-}
 
 // ==================== ESCROW PAYMENTS ====================
 

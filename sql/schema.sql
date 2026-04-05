@@ -211,21 +211,6 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- ==================== TIPS ====================
-CREATE TABLE IF NOT EXISTS tips (
-  id TEXT PRIMARY KEY,
-  contract_id TEXT NOT NULL,
-  from_user_id TEXT NOT NULL,
-  to_user_id TEXT NOT NULL,
-  amount_tokens INTEGER NOT NULL,
-  amount_eur_cents INTEGER NOT NULL,
-  message TEXT,
-  tx_hash TEXT,
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (contract_id) REFERENCES contracts(id),
-  FOREIGN KEY (from_user_id) REFERENCES users(id),
-  FOREIGN KEY (to_user_id) REFERENCES users(id)
-);
-
 -- ==================== CHAT ====================
 CREATE TABLE IF NOT EXISTS chat_rooms (
   id TEXT PRIMARY KEY,
