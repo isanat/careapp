@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
+import { getPlatformFeePercent } from '@/lib/services/platform-fees';
 
 export async function GET(request: NextRequest) {
   try {
@@ -123,15 +124,18 @@ export async function GET(request: NextRequest) {
     // 13. Platform profit from this customer
     const platformProfit = totalFeesPaid;
 
-    // Calculate per-contract platform earnings
+    // Calculate per-contract platform earnings using dynamic platform fee
+    const platformFeePercent = await getPlatformFeePercent();
     const contractProfits = (contracts.rows as any[]).map(c => {
-      const platformCut = Math.round(Number(c.totalEurCents || 0) * Number(c.platformFeePct || 15) / 100);
+      // Use contract's stored platformFeePct if available, otherwise use current platform fee
+      const feePercent = Number(c.platformFeePct || platformFeePercent);
+      const platformCut = Math.round(Number(c.totalEurCents || 0) * feePercent / 100);
       return {
         id: c.id,
         title: c.title,
         status: c.status,
         totalValue: Number(c.totalEurCents || 0),
-        platformFeePct: Number(c.platformFeePct || 15),
+        platformFeePct: feePercent,
         platformCut,
         otherParty: userId === c.familyUserId
           ? { name: c.caregiverName, email: c.caregiverEmail, role: 'CAREGIVER' }

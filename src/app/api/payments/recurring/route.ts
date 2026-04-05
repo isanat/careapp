@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
-import { PLATFORM_FEE_PERCENT } from '@/lib/constants';
+import { calculatePlatformFee } from '@/lib/services/platform-fees';
 
 // GET: Get recurring payment info for a contract
 export async function GET(request: NextRequest) {
@@ -115,9 +115,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Recurring payment already exists for this contract' }, { status: 400 });
     }
 
-    // Calculate amounts based on contract
+    // Calculate amounts based on contract using dynamic platform fee
     const totalEurCents = Number(contract.totalEurCents) || 0;
-    const platformFeeCents = Math.round(totalEurCents * PLATFORM_FEE_PERCENT / 100);
+    const platformFeeCents = await calculatePlatformFee(totalEurCents);
     const caregiverAmountCents = totalEurCents - platformFeeCents;
 
     const rpId = generateId("rp");

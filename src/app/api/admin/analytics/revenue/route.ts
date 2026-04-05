@@ -122,15 +122,17 @@ export async function GET(request: NextRequest) {
     });
 
     // === Platform Fees Collected ===
+    // Use Receipt table which has actual platformFeeCents calculated with dynamic fees
     const platformFeesResult = await db.execute({
-      sql: `SELECT 
-        DATE(paidAt) as date,
-        SUM(ROUND(amountEurCents * 0.10)) as estimatedFees
-      FROM Payment
-      WHERE status = 'COMPLETED'
-        AND type IN ('ACTIVATION', 'CONTRACT_FEE')
-        AND paidAt >= datetime('now', '-' || ? || ' days')
-      GROUP BY DATE(paidAt)
+      sql: `SELECT
+        DATE(createdAt) as date,
+        SUM(platformFeeCents) as collectedFees,
+        COUNT(*) as receiptCount,
+        SUM(totalAmountCents) as grossAmount
+      FROM Receipt
+      WHERE status = 'GENERATED'
+        AND createdAt >= datetime('now', '-' || ? || ' days')
+      GROUP BY DATE(createdAt)
       ORDER BY date`,
       args: [daysAgo]
     });

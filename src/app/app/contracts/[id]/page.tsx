@@ -31,7 +31,7 @@ import {
   IconChat,
   IconPhone,
 } from "@/components/icons";
-import { CONTRACT_STATUS, SERVICE_TYPES, PLATFORM_FEE_PERCENT } from "@/lib/constants";
+import { CONTRACT_STATUS, SERVICE_TYPES } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { PaymentSection } from "@/components/contracts/payment-section";
 import { ReviewSection } from "@/components/contracts/review-section";
@@ -119,9 +119,17 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
   const [acceptLiability, setAcceptLiability] = useState(false);
   const [acceptNonCircumvention, setAcceptNonCircumvention] = useState(false);
   const [digitalSignature, setDigitalSignature] = useState<{ hash: string; timestamp: string } | null>(null);
+  const [platformFeePercent, setPlatformFeePercent] = useState(10); // Default 10%
 
   useEffect(() => {
-    if (status === "authenticated") fetchContract();
+    if (status === "authenticated") {
+      fetchContract();
+      // Fetch dynamic platform fee percentage
+      apiFetch('/api/admin/settings')
+        .then(res => res.ok ? res.json() : { platformFeePercent: 10 })
+        .then(data => setPlatformFeePercent(data.platformFeePercent || 10))
+        .catch(() => setPlatformFeePercent(10));
+    }
   }, [status, resolvedParams.id]);
 
   const fetchContract = async () => {
@@ -188,7 +196,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
   // Parse financial values
   const hourlyRate = contract ? Math.round(contract.hourlyRateEur / 100) : 0;
   const totalEur = contract ? Math.round(contract.totalEurCents / 100) : 0;
-  const platformFee = Math.round(totalEur * PLATFORM_FEE_PERCENT / 100);
+  const platformFee = Math.round(totalEur * platformFeePercent / 100);
   const caregiverReceives = totalEur - platformFee;
 
   // Parse description
@@ -394,7 +402,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                     <>
                       <div className="border-t border-border/50 pt-2 mt-2">
                         <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Taxa plataforma ({PLATFORM_FEE_PERCENT}%)</span>
+                          <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
                           <span className="text-red-500">-{platformFee}</span>
                         </div>
                         <div className="flex justify-between text-sm font-semibold mt-1">

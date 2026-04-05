@@ -48,11 +48,17 @@ function PaymentPageContent() {
   } | null>(null);
 
   useEffect(() => {
+    // CAREGIVER users don't need to pay for activation - registration is FREE
+    if (session?.user?.role === "CAREGIVER") {
+      router.push("/app/dashboard");
+      return;
+    }
+
     // If not logged in and no userId, redirect to register
     if (status === "unauthenticated" && !userId) {
       router.push("/auth/register");
     }
-  }, [status, userId, router]);
+  }, [status, userId, session?.user?.role, router]);
 
   const handlePayment = async () => {
     if (!userId && !session?.user?.id) {
