@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
+import { calculateCaregiverAmount } from '@/lib/services/platform-fees';
 
 // POST - Resolve dispute
 export async function POST(
@@ -49,7 +50,8 @@ export async function POST(
       caregiverAmount = 0;
     } else if (decision === 'favor_caregiver') {
       familyAmount = 0;
-      caregiverAmount = Math.round(totalAmount * 0.85);
+      // Calculate caregiver amount using dynamic platform fee percentage
+      caregiverAmount = await calculateCaregiverAmount(totalAmount);
     } else if (decision === 'split' && familyPercentage !== undefined) {
       familyAmount = Math.round(totalAmount * (familyPercentage / 100));
       caregiverAmount = Math.round(totalAmount * ((100 - familyPercentage) / 100));

@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import { generateId } from '@/lib/utils/id';
-import { PLATFORM_FEE_PERCENT } from '@/lib/constants';
+import { calculatePlatformFee } from '@/lib/services/platform-fees';
 
 // GET: Get receipts for a contract
 export async function GET(
@@ -107,7 +107,8 @@ export async function POST(
 
     const hourlyRateEurCents = Number(contract.hourlyRateEur) || 0;
     const totalAmountCents = hourlyRateEurCents * hoursWorked;
-    const platformFeeCents = Math.round(totalAmountCents * PLATFORM_FEE_PERCENT / 100);
+    // Fetch platform fee percentage dynamically from database
+    const platformFeeCents = await calculatePlatformFee(totalAmountCents);
     const caregiverAmountCents = totalAmountCents - platformFeeCents;
 
     // Generate receipt number: RC-YYYY-NNNNNN

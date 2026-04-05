@@ -7,7 +7,8 @@ export const APP_DESCRIPTION = "A Evyra liga famílias a profissionais de apoio 
 // Activation Costs (in cents)
 export const ACTIVATION_COST_EUR_CENTS = 3500; // €35
 export const CONTRACT_FEE_EUR_CENTS = 500; // €5 per contract
-export const PLATFORM_FEE_PERCENT = 15; // 15%
+// NOTE: Platform fee percentage is now DYNAMIC - fetched from PlatformSettings in database
+// Default fallback: 10% (if database value not available)
 
 // Supported Languages
 export const SUPPORTED_LANGUAGES = ["pt", "en", "it", "es"] as const;
