@@ -31,8 +31,7 @@ export async function GET(request: NextRequest) {
     const paymentsGrouped = await db.execute({
       sql: `SELECT type, status, COUNT(*) as qty,
               SUM(amountEurCents) as totalAmount,
-              SUM(platformFee) as totalFees,
-              SUM(tokensAmount) as totalTokens
+              SUM(platformFee) as totalFees
             FROM Payment WHERE userId = ?
             GROUP BY type, status
             ORDER BY type, status`,

@@ -77,7 +77,6 @@ interface ContractDetails {
     type: string;
     status: string;
     amountEurCents: number;
-    tokensAmount?: number;
     provider?: string;
     providerId?: string;
     createdAt: string;
@@ -677,9 +676,6 @@ function AdminContractDetailContent() {
                       </div>
                       <div className="text-right">
                         <p className="font-medium">{formatCurrency(payment.amountEurCents)}</p>
-                        {payment.tokensAmount && (
-                          <p className="text-sm text-muted-foreground">{payment.tokensAmount} tokens</p>
-                        )}
                         <div className="mt-1">
                           {getPaymentStatusBadge(payment.status)}
                         </div>

@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = (page - 1) * limit;
 
-    let sql = `SELECT 
+    let sql = `SELECT
       p.id, p.type, p.status, p.provider,
-      p.amountEurCents, p.tokensAmount, p.platformFee,
+      p.amountEurCents, p.platformFee,
       p.createdAt, p.paidAt, p.refundedAt,
       u.name as userName, u.email as userEmail,
       c.title as contractTitle

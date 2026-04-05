@@ -62,17 +62,14 @@ export async function POST(request: NextRequest) {
 
     // Determine payment type and amount
     let description = '';
-    let tokensAmount = 0;
     let contractId = null;
 
     switch (type) {
       case 'activation':
         description = `Ativação de conta ${APP_NAME}`;
-        tokensAmount = Math.floor(amount); // 1 token per euro
         break;
       case 'tokens':
         description = `Carregamento de saldo - €${Math.floor(amount)}`;
-        tokensAmount = Math.floor(amount);
         break;
       case 'contract':
         description = `Pagamento de contrato ${APP_NAME}`;
@@ -84,9 +81,9 @@ export async function POST(request: NextRequest) {
 
     // Create payment record in database
     await db.execute({
-      sql: `INSERT INTO Payment (id, userId, type, status, provider, amountEurCents, tokensAmount, description, createdAt)
-            VALUES (?, ?, ?, 'PENDING', 'EASYPAY', ?, ?, ?, ?)`,
-      args: [paymentId, session.user.id, type.toUpperCase(), Math.floor(amount * 100), tokensAmount, description, now]
+      sql: `INSERT INTO Payment (id, userId, type, status, provider, amountEurCents, description, createdAt)
+            VALUES (?, ?, ?, 'PENDING', 'EASYPAY', ?, ?, ?)`,
+      args: [paymentId, session.user.id, type.toUpperCase(), Math.floor(amount * 100), description, now]
     });
 
     // Create Easypay payment
@@ -241,7 +238,6 @@ export async function GET(request: NextRequest) {
           paymentId: payment.id,
           status: payment.status,
           amount: payment.amountEurCents,
-          tokens: payment.tokensAmount,
           easypayStatus: easypayStatus.status_payment,
           method: easypayStatus.method,
           createdAt: payment.createdAt,
@@ -261,7 +257,6 @@ export async function GET(request: NextRequest) {
       paymentId: payment.id,
       status: payment.status,
       amount: payment.amountEurCents,
-      tokens: payment.tokensAmount,
       createdAt: payment.createdAt,
       paidAt: payment.paidAt,
     });

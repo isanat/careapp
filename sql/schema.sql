@@ -175,7 +175,6 @@ CREATE TABLE IF NOT EXISTS payments (
   status TEXT DEFAULT 'PENDING',
   provider TEXT DEFAULT 'STRIPE',
   amount_eur_cents INTEGER NOT NULL,
-  tokens_amount INTEGER DEFAULT 0,
   platform_fee INTEGER DEFAULT 0,
   stripe_checkout_session_id TEXT,
   stripe_payment_intent_id TEXT,
