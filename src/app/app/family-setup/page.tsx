@@ -54,6 +54,29 @@ const LANGUAGE_OPTIONS = [
   { id: "uk", label: "Ucraniano" },
 ];
 
+const SCHEDULE_DAYS = [
+  { id: "segunda", label: "Segunda-feira" },
+  { id: "terca", label: "Terça-feira" },
+  { id: "quarta", label: "Quarta-feira" },
+  { id: "quinta", label: "Quinta-feira" },
+  { id: "sexta", label: "Sexta-feira" },
+  { id: "sabado", label: "Sábado" },
+  { id: "domingo", label: "Domingo" },
+];
+
+const SCHEDULE_TIMES = [
+  { id: "manha", label: "Manhã (6h-12h)" },
+  { id: "tarde", label: "Tarde (12h-18h)" },
+  { id: "noite", label: "Noite (18h-00h)" },
+  { id: "madrugada", label: "Madrugada (00h-6h)" },
+];
+
+const SCHEDULE_DURATION = [
+  { id: "part_time", label: "Part-time (até 4h/dia)" },
+  { id: "full_time", label: "Full-time (4-8h/dia)" },
+  { id: "24h", label: "24/7 (incluindo fins de semana)" },
+];
+
 function FamilySetupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,7 +96,9 @@ function FamilySetupContent() {
     dietaryRestrictions: "",
     // Step 2: Necessidades de Cuidado
     servicesNeeded: [] as string[],
-    preferredSchedule: "",
+    preferredScheduleDays: [] as string[],
+    preferredScheduleTimes: [] as string[],
+    preferredScheduleDuration: [] as string[],
     preferredLanguages: [] as string[],
     // Step 3: Contato de Emergencia
     emergencyContactName: "",
@@ -112,6 +137,33 @@ function FamilySetupContent() {
     }));
   };
 
+  const handleScheduleDayToggle = (dayId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      preferredScheduleDays: prev.preferredScheduleDays.includes(dayId)
+        ? prev.preferredScheduleDays.filter((d) => d !== dayId)
+        : [...prev.preferredScheduleDays, dayId],
+    }));
+  };
+
+  const handleScheduleTimeToggle = (timeId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      preferredScheduleTimes: prev.preferredScheduleTimes.includes(timeId)
+        ? prev.preferredScheduleTimes.filter((t) => t !== timeId)
+        : [...prev.preferredScheduleTimes, timeId],
+    }));
+  };
+
+  const handleScheduleDurationToggle = (durationId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      preferredScheduleDuration: prev.preferredScheduleDuration.includes(durationId)
+        ? prev.preferredScheduleDuration.filter((d) => d !== durationId)
+        : [...prev.preferredScheduleDuration, durationId],
+    }));
+  };
+
   const handleNext = () => {
     if (step === 1) {
       if (!formData.elderName) {
@@ -122,6 +174,18 @@ function FamilySetupContent() {
     if (step === 2) {
       if (formData.servicesNeeded.length === 0) {
         setError("Selecione pelo menos um tipo de servico");
+        return;
+      }
+      if (formData.preferredScheduleDays.length === 0) {
+        setError("Selecione pelo menos um dia da semana");
+        return;
+      }
+      if (formData.preferredScheduleTimes.length === 0) {
+        setError("Selecione pelo menos um horário");
+        return;
+      }
+      if (formData.preferredScheduleDuration.length === 0) {
+        setError("Selecione pelo menos um tipo de cuidado");
         return;
       }
     }
@@ -150,12 +214,14 @@ function FamilySetupContent() {
             medicalConditions: formData.medicalConditions,
             dietaryRestrictions: formData.dietaryRestrictions,
             servicesNeeded: formData.servicesNeeded,
-            preferredSchedule: formData.preferredSchedule,
+            preferredScheduleDays: formData.preferredScheduleDays,
+            preferredScheduleTimes: formData.preferredScheduleTimes,
+            preferredScheduleDuration: formData.preferredScheduleDuration,
             preferredLanguages: formData.preferredLanguages,
             additionalNotes: formData.additionalNotes,
           }),
-          emergencyContact: formData.emergencyContactName,
-          emergencyPhone: formData.emergencyContactPhone,
+          emergencyContactName: formData.emergencyContactName,
+          emergencyContactPhone: formData.emergencyContactPhone,
           city: formData.city,
         }),
       });
@@ -371,16 +437,74 @@ function FamilySetupContent() {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <Label htmlFor="preferredSchedule">Horario Preferido</Label>
-                  <Textarea
-                    id="preferredSchedule"
-                    name="preferredSchedule"
-                    placeholder="Ex: Segunda a sexta, das 8h as 18h; fins de semana pela manha..."
-                    value={formData.preferredSchedule}
-                    onChange={handleInputChange}
-                    rows={3}
-                  />
+                <div className="space-y-4">
+                  <Label>Horário Preferido</Label>
+
+                  <div>
+                    <Label className="text-sm text-muted-foreground mb-3 block">Dias da Semana</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {SCHEDULE_DAYS.map((day) => (
+                        <label
+                          key={day.id}
+                          className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                            formData.preferredScheduleDays.includes(day.id)
+                              ? "border-primary bg-primary/5"
+                              : "hover:border-primary/30"
+                          }`}
+                        >
+                          <Checkbox
+                            checked={formData.preferredScheduleDays.includes(day.id)}
+                            onCheckedChange={() => handleScheduleDayToggle(day.id)}
+                          />
+                          <span>{day.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm text-muted-foreground mb-3 block">Horários</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {SCHEDULE_TIMES.map((time) => (
+                        <label
+                          key={time.id}
+                          className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                            formData.preferredScheduleTimes.includes(time.id)
+                              ? "border-primary bg-primary/5"
+                              : "hover:border-primary/30"
+                          }`}
+                        >
+                          <Checkbox
+                            checked={formData.preferredScheduleTimes.includes(time.id)}
+                            onCheckedChange={() => handleScheduleTimeToggle(time.id)}
+                          />
+                          <span>{time.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm text-muted-foreground mb-3 block">Tipo de Cuidado</Label>
+                    <div className="space-y-2">
+                      {SCHEDULE_DURATION.map((duration) => (
+                        <label
+                          key={duration.id}
+                          className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                            formData.preferredScheduleDuration.includes(duration.id)
+                              ? "border-primary bg-primary/5"
+                              : "hover:border-primary/30"
+                          }`}
+                        >
+                          <Checkbox
+                            checked={formData.preferredScheduleDuration.includes(duration.id)}
+                            onCheckedChange={() => handleScheduleDurationToggle(duration.id)}
+                          />
+                          <span>{duration.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <Separator />
