@@ -196,9 +196,16 @@ export async function POST(request: NextRequest) {
       }, { status: 201 });
     }
   } catch (error) {
-    console.error('[Admin] Error syncing Didit user:', error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error('[Admin] Error syncing Didit user:', errorMsg);
+
+    // Return detailed error for debugging
     return NextResponse.json(
-      { error: 'Failed to sync user from Didit data' },
+      {
+        error: 'Failed to sync user from Didit data',
+        details: errorMsg,
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     );
   }
