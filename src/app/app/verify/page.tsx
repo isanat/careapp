@@ -1,22 +1,25 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/layout/app-shell";
-import { 
-  IconShield, 
-  IconCheck, 
-  IconX, 
-  IconLoader2, 
+import {
+  IconShield,
+  IconCheck,
+  IconX,
+  IconLoader2,
   IconClock,
   IconCamera,
   IconId,
-  IconSun
+  IconSun,
+  IconCreditCard,
+  IconStar,
+  IconTrendingUp
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
@@ -32,6 +35,7 @@ interface KycStatus {
 
 export default function VerifyPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const { t } = useI18n();
 
   const [kycStatus, setKycStatus] = useState<KycStatus | null>(null);
@@ -39,11 +43,22 @@ export default function VerifyPage() {
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState("");
 
+  const isFamily = session?.user?.role === "FAMILY";
+  const isCaregiver = session?.user?.role === "CAREGIVER";
+
   useEffect(() => {
     if (status === "authenticated") {
-      fetchKycStatus();
+      if (isFamily) {
+        // Familiares não precisam de verificação KYC, redirect para dashboard
+        setTimeout(() => {
+          router.push("/app/panel");
+        }, 1000);
+        setIsLoading(false);
+      } else if (isCaregiver) {
+        fetchKycStatus();
+      }
     }
-  }, [status]);
+  }, [status, isFamily, isCaregiver, router]);
 
   const fetchKycStatus = async () => {
     try {
@@ -52,7 +67,6 @@ export default function VerifyPage() {
         const data = await response.json();
         setKycStatus(data);
       } else {
-        // If error, user might not be a caregiver
         const errorData = await response.json();
         setError(errorData.error || t.kyc.error);
       }
@@ -79,10 +93,8 @@ export default function VerifyPage() {
         throw new Error(data.error || t.kyc.error);
       }
 
-      // Redirect to Didit verification URL
       if (data.url) {
         window.open(data.url, "_blank");
-        // Refresh status after a delay
         setTimeout(() => fetchKycStatus(), 2000);
       }
     } catch (err) {
@@ -103,8 +115,91 @@ export default function VerifyPage() {
     );
   }
 
-  // All users (caregivers and families) need KYC verification
+  // Familiares veem página de confiança em vez de KYC
+  if (isFamily) {
+    return (
+      <AppShell>
+        <div className="space-y-6 max-w-2xl">
+          {/* Header */}
+          <div>
+            <h1 className="text-2xl font-bold">Score de Confiança</h1>
+            <p className="text-muted-foreground">Aumente sua confiabilidade entre cuidadores</p>
+          </div>
 
+          {/* Trust Score Card */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center">
+                <div className="text-5xl font-bold text-primary mb-2">0</div>
+                <p className="text-muted-foreground mb-4">Contratos completados</p>
+                <Badge variant="outline" className="mb-4">Novo Membro</Badge>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                  Complete contratos com cuidadores para construir seu score de confiança
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Payment Badge */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <IconCreditCard className="h-5 w-5" />
+                Pagamento Verificado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">Status: <span className="text-green-600">Verificado</span></p>
+                  <p className="text-xs text-muted-foreground mt-1">Seu método de pagamento foi verificado com sucesso</p>
+                </div>
+                <IconCheck className="h-6 w-6 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Trust Building Tips */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Como aumentar sua confiabilidade</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <IconCheck className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">Complete contratos com sucesso</p>
+                    <p className="text-xs text-muted-foreground">Cada contato completado aumenta seu score</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <IconStar className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">Receba avaliações positivas</p>
+                    <p className="text-xs text-muted-foreground">Cuidadores avaliam sua comunicação e profissionalismo</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <IconTrendingUp className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">Mantenha um histórico limpo</p>
+                    <p className="text-xs text-muted-foreground">Sem atrasos em pagamentos ou cancelamentos</p>
+                  </div>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Button onClick={() => router.push("/app/panel")} className="w-full">
+            Ir para Dashboard
+          </Button>
+        </div>
+      </AppShell>
+    );
+  }
+
+  // Cuidadores veem verificação KYC
   const getStatusBadge = () => {
     switch (kycStatus?.verification_status) {
       case "VERIFIED":
@@ -146,7 +241,7 @@ export default function VerifyPage() {
             <div className="flex flex-col items-center text-center">
               {getStatusIcon()}
               <div className="mt-4 mb-2">{getStatusBadge()}</div>
-              
+
               {kycStatus?.verification_status === "VERIFIED" && (
                 <>
                   <h2 className="text-xl font-semibold text-green-600 mt-2">
@@ -181,8 +276,8 @@ export default function VerifyPage() {
                     {t.kyc.rejectedTitle}
                   </h2>
                   <p className="text-muted-foreground mt-1">{t.kyc.rejectedDesc}</p>
-                  <Button 
-                    className="mt-4" 
+                  <Button
+                    className="mt-4"
                     onClick={startVerification}
                     disabled={isStarting}
                   >
@@ -192,8 +287,8 @@ export default function VerifyPage() {
               )}
 
               {kycStatus?.verification_status === "UNVERIFIED" && (
-                <Button 
-                  className="mt-4" 
+                <Button
+                  className="mt-4"
                   onClick={startVerification}
                   disabled={isStarting}
                 >
