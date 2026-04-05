@@ -260,6 +260,12 @@ export async function PUT(request: NextRequest) {
     }
 
     if (caregiverUpdates.length > 0) {
+      // Ensure caregiver profile row exists
+      await db.execute({
+        sql: `INSERT OR IGNORE INTO ProfileCaregiver (id, userId, hourlyRateEur, createdAt, updatedAt) VALUES (?, ?, 0, ?, ?)`,
+        args: [`pc_${session.user.id}`, session.user.id, now, now]
+      });
+
       caregiverUpdates.push('updatedAt = ?');
       caregiverValues.push(now);
       caregiverValues.push(session.user.id);
@@ -267,6 +273,14 @@ export async function PUT(request: NextRequest) {
       await db.execute({
         sql: `UPDATE ProfileCaregiver SET ${caregiverUpdates.join(', ')} WHERE userId = ?`,
         args: caregiverValues
+      });
+    }
+
+    // Also ensure family profile row exists for FAMILY users
+    if (familyUpdates.length > 0) {
+      await db.execute({
+        sql: `INSERT OR IGNORE INTO ProfileFamily (id, userId, createdAt, updatedAt) VALUES (?, ?, ?, ?)`,
+        args: [`pf_${session.user.id}`, session.user.id, now, now]
       });
     }
 
