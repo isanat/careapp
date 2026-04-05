@@ -170,6 +170,19 @@ export default function ProfilePage() {
       }
       const data = await response.json();
       setProfile(data.profile);
+
+      // Parse services from JSON string if it's stored as string
+      let services: string[] = [];
+      if (typeof data.profile?.services === 'string') {
+        try {
+          services = JSON.parse(data.profile.services);
+        } catch {
+          services = [];
+        }
+      } else if (Array.isArray(data.profile?.services)) {
+        services = data.profile.services;
+      }
+
       setFormData({
         name: data.user?.name || "",
         email: data.user?.email || "",
@@ -182,8 +195,8 @@ export default function ProfilePage() {
         bio: data.profile?.bio || "",
         experienceYears: data.profile?.experienceYears || 0,
         city: data.profile?.city || "",
-        services: Array.isArray(data.profile?.services) ? data.profile.services : [],
-        hourlyRateEur: data.profile?.hourlyRateEur ? data.profile.hourlyRateEur / 100 : 15,
+        services: services,
+        hourlyRateEur: data.profile?.hourlyRateEur ? (data.profile.hourlyRateEur / 100) : 15,
         certifications: data.profile?.certifications || "",
         languages: data.profile?.languages || "",
         averageRating: data.profile?.averageRating || 0,
@@ -429,7 +442,7 @@ export default function ProfilePage() {
               { value: profile?.totalContracts || 0, label: "Contratos", color: "text-primary" },
               { value: profile?.totalReviews || 0, label: "Avaliacoes", color: "text-secondary" },
               { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", color: "text-amber-500", icon: true },
-              { value: `\u20AC${formData.hourlyRateEur || 0}`, label: "/hora", color: "text-success" },
+              { value: `\u20AC${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", color: "text-success" },
             ].map((stat, i) => (
               <div key={i} className="bg-surface rounded-lg p-2 text-center border border-border/30">
                 <p className={`text-sm font-bold ${stat.color} flex items-center justify-center gap-0.5`}>
@@ -603,7 +616,20 @@ export default function ProfilePage() {
                     <Label className="text-xs text-muted-foreground">{"\u20AC"}/hora</Label>
                     <div className="relative mt-1">
                       <IconEuro className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                      <Input type="number" step="0.50" value={formData.hourlyRateEur || ""} onChange={(e) => setFormData({...formData, hourlyRateEur: parseFloat(e.target.value) || 0})} className="h-10 pl-8 rounded-xl" disabled={!isEditing} />
+                      <Input
+                        type="text"
+                        inputMode="decimal"
+                        value={formData.hourlyRateEur?.toString() || ""}
+                        onChange={(e) => {
+                          // Replace comma with period for parsing
+                          const normalized = e.target.value.replace(',', '.');
+                          const value = parseFloat(normalized) || 0;
+                          setFormData({...formData, hourlyRateEur: value});
+                        }}
+                        className="h-10 pl-8 rounded-xl"
+                        disabled={!isEditing}
+                        placeholder="15,50"
+                      />
                     </div>
                   </div>
                   <div>
