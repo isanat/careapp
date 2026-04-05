@@ -304,16 +304,81 @@ export default function ProfilePage() {
 
   const handlePhotoClick = () => { fileInputRef.current?.click(); };
 
+  // Compress image before upload
+  const compressImage = async (file: File, maxWidth = 800, maxHeight = 800, quality = 0.7): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Scale down if larger than max dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+              } else {
+                reject(new Error('Could not compress image'));
+              }
+            },
+            'image/jpeg',
+            quality
+          );
+        };
+        img.onerror = () => reject(new Error('Could not load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setUploadingPhoto(true);
     try {
+      // Validate file size
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Ficheiro muito grande. Máximo 5MB. O ficheiro será comprimido automaticamente.');
+      }
+
+      // Compress image
+      const compressedFile = await compressImage(file);
+
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", compressedFile);
       fd.append("type", "profile");
       const response = await apiFetch("/api/upload", { method: "POST", body: fd });
-      if (!response.ok) throw new Error("Erro ao enviar foto");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || "Erro ao enviar foto");
+      }
       const data = await response.json();
       setFormData(prev => ({ ...prev, profileImage: data.url }));
       await apiFetch("/api/user/profile", {
@@ -335,11 +400,25 @@ export default function ProfilePage() {
     if (!file) return;
     setUploadingPhoto(true);
     try {
+      // Validate file size (10MB for documents/images)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error('Ficheiro muito grande. Máximo 10MB');
+      }
+
+      // For images, compress them
+      let uploadFile = file;
+      if (file.type.startsWith('image/')) {
+        uploadFile = await compressImage(file, 1200, 1200, 0.75);
+      }
+
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", uploadFile);
       fd.append("type", "background_check");
       const response = await apiFetch("/api/upload", { method: "POST", body: fd });
-      if (!response.ok) throw new Error("Erro ao enviar documento");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || "Erro ao enviar documento");
+      }
       const data = await response.json();
       await apiFetch("/api/user/profile", {
         method: "PUT",
