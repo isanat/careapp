@@ -83,9 +83,19 @@ async function createAdminUser(db: any) {
   return { email: ADMIN_EMAIL, password: ADMIN_PASSWORD };
 }
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Methods': 'POST',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
+    },
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Security check
+    // Security check - token-based auth eliminates need for CSRF
     const authToken = request.headers.get('X-Admin-Token');
     const expectedToken = process.env.SYNC_ADMIN_TOKEN || 'sync-turso-token-2024';
 
