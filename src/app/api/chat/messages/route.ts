@@ -116,8 +116,8 @@ export async function POST(request: NextRequest) {
     const now = new Date().toISOString();
 
     await db.execute({
-      sql: `INSERT INTO ChatMessage (id, chatRoomId, senderId, content, messageType, metadata, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      args: [messageId, chatRoomId, session.user.id, content, messageType || 'text', metadata ? JSON.stringify(metadata) : null, now]
+      sql: `INSERT INTO ChatMessage (id, chatRoomId, senderId, content, messageType, metadata, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [messageId, chatRoomId, session.user.id, content, messageType || 'text', metadata ? JSON.stringify(metadata) : null, now, now]
     });
 
     // Update chat room updatedAt
