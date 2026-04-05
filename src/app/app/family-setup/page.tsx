@@ -77,6 +77,35 @@ const SCHEDULE_DURATION = [
   { id: "24h", label: "24/7 (incluindo fins de semana)" },
 ];
 
+const MEDICAL_CONDITIONS = [
+  { id: "diabetes", label: "Diabetes" },
+  { id: "hipertensao", label: "Hipertensão" },
+  { id: "alzheimer", label: "Alzheimer/Demência" },
+  { id: "parkinson", label: "Parkinson" },
+  { id: "avc", label: "AVC/Sequelas" },
+  { id: "insuficiencia_cardiaca", label: "Insuficiência Cardíaca" },
+  { id: "doenca_pulmonar", label: "Doença Pulmonar" },
+  { id: "artrite", label: "Artrite/Osteoporose" },
+  { id: "cancer", label: "Câncer em Tratamento" },
+  { id: "incontinencia", label: "Incontinência" },
+  { id: "depressao", label: "Depressão/Ansiedade" },
+  { id: "outro", label: "Outra (descrever abaixo)" },
+];
+
+const DIETARY_RESTRICTIONS = [
+  { id: "diabetes_diet", label: "Dieta para Diabéticos" },
+  { id: "sem_sodio", label: "Sem Sódio" },
+  { id: "hipoprotei", label: "Hipoproteica" },
+  { id: "sem_gluten", label: "Sem Glúten" },
+  { id: "sem_lactose", label: "Sem Lactose" },
+  { id: "vegetariana", label: "Vegetariana" },
+  { id: "vegana", label: "Vegana" },
+  { id: "alergias", label: "Alergias (descrever abaixo)" },
+  { id: "disfagia", label: "Disfagia (dificuldade de engolir)" },
+  { id: "purê", label: "Necessita Comida em Purê" },
+  { id: "nenhuma", label: "Nenhuma" },
+];
+
 function FamilySetupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -92,8 +121,10 @@ function FamilySetupContent() {
     elderName: "",
     elderAge: "",
     mobilityLevel: "",
-    medicalConditions: "",
-    dietaryRestrictions: "",
+    medicalConditions: [] as string[],
+    medicalConditionsNotes: "",
+    dietaryRestrictions: [] as string[],
+    dietaryRestrictionsNotes: "",
     // Step 2: Necessidades de Cuidado
     servicesNeeded: [] as string[],
     preferredScheduleDays: [] as string[],
@@ -164,6 +195,24 @@ function FamilySetupContent() {
     }));
   };
 
+  const handleMedicalConditionToggle = (conditionId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      medicalConditions: prev.medicalConditions.includes(conditionId)
+        ? prev.medicalConditions.filter((c) => c !== conditionId)
+        : [...prev.medicalConditions, conditionId],
+    }));
+  };
+
+  const handleDietaryRestrictionToggle = (restrictionId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      dietaryRestrictions: prev.dietaryRestrictions.includes(restrictionId)
+        ? prev.dietaryRestrictions.filter((d) => d !== restrictionId)
+        : [...prev.dietaryRestrictions, restrictionId],
+    }));
+  };
+
   const handleNext = () => {
     if (step === 1) {
       if (!formData.elderName) {
@@ -212,7 +261,9 @@ function FamilySetupContent() {
           elderNeeds: JSON.stringify({
             mobilityLevel: formData.mobilityLevel,
             medicalConditions: formData.medicalConditions,
+            medicalConditionsNotes: formData.medicalConditionsNotes,
             dietaryRestrictions: formData.dietaryRestrictions,
+            dietaryRestrictionsNotes: formData.dietaryRestrictionsNotes,
             servicesNeeded: formData.servicesNeeded,
             preferredScheduleDays: formData.preferredScheduleDays,
             preferredScheduleTimes: formData.preferredScheduleTimes,
@@ -371,31 +422,70 @@ function FamilySetupContent() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="medicalConditions">Condicoes Medicas</Label>
-                  <Textarea
-                    id="medicalConditions"
-                    name="medicalConditions"
-                    placeholder="Ex: Diabetes, hipertensao, Alzheimer..."
-                    value={formData.medicalConditions}
-                    onChange={handleInputChange}
-                    rows={3}
-                  />
+                <div className="space-y-4">
+                  <Label>Condições Médicas</Label>
                   <p className="text-xs text-muted-foreground">
-                    Liste as condicoes medicas relevantes para o cuidado
+                    Selecione todas as condições que se aplicam
                   </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {MEDICAL_CONDITIONS.map((condition) => (
+                      <label
+                        key={condition.id}
+                        className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                          formData.medicalConditions.includes(condition.id)
+                            ? "border-primary bg-primary/5"
+                            : "hover:border-primary/30"
+                        }`}
+                      >
+                        <Checkbox
+                          checked={formData.medicalConditions.includes(condition.id)}
+                          onCheckedChange={() => handleMedicalConditionToggle(condition.id)}
+                        />
+                        <span>{condition.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {formData.medicalConditions.includes("outro") && (
+                    <Textarea
+                      placeholder="Descreva outras condições médicas..."
+                      value={formData.medicalConditionsNotes}
+                      onChange={(e) => setFormData({...formData, medicalConditionsNotes: e.target.value})}
+                      rows={2}
+                    />
+                  )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="dietaryRestrictions">Restricoes Alimentares</Label>
-                  <Textarea
-                    id="dietaryRestrictions"
-                    name="dietaryRestrictions"
-                    placeholder="Ex: Sem gluten, sem lactose, dieta para diabeticos..."
-                    value={formData.dietaryRestrictions}
-                    onChange={handleInputChange}
-                    rows={2}
-                  />
+                <div className="space-y-4">
+                  <Label>Restrições Alimentares</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Selecione todas as restrições alimentares
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {DIETARY_RESTRICTIONS.map((restriction) => (
+                      <label
+                        key={restriction.id}
+                        className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                          formData.dietaryRestrictions.includes(restriction.id)
+                            ? "border-primary bg-primary/5"
+                            : "hover:border-primary/30"
+                        }`}
+                      >
+                        <Checkbox
+                          checked={formData.dietaryRestrictions.includes(restriction.id)}
+                          onCheckedChange={() => handleDietaryRestrictionToggle(restriction.id)}
+                        />
+                        <span>{restriction.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {formData.dietaryRestrictions.includes("alergias") && (
+                    <Textarea
+                      placeholder="Descreva as alergias e restrições específicas..."
+                      value={formData.dietaryRestrictionsNotes}
+                      onChange={(e) => setFormData({...formData, dietaryRestrictionsNotes: e.target.value})}
+                      rows={2}
+                    />
+                  )}
                 </div>
               </>
             )}
