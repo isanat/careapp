@@ -6,7 +6,7 @@ export default function SyncDiditUserPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
-  const [adminKey, setAdminKey] = useState('dev-admin-key');
+  const [adminKey, setAdminKey] = useState('');
 
   const [formData, setFormData] = useState({
     email: 'netlinkassist@gmail.com',
@@ -65,9 +65,18 @@ export default function SyncDiditUserPage() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Sincronizar Usuário Didit</h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 mb-6">
             Use este formulário para criar ou atualizar um usuário com dados já aprovados no Didit
           </p>
+
+          {/* Admin Key Warning */}
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-blue-900 text-sm">
+              <strong>⚠️ Chave de Admin Necessária:</strong> Você precisa da chave de admin para sincronizar usuários.
+              <br />
+              A chave está configurada em Vercel → Environment Variables → ADMIN_API_KEY
+            </p>
+          </div>
 
           {/* Admin Key */}
           <div className="mb-6">
