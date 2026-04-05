@@ -29,6 +29,7 @@ import {
   IconChevronDown,
   IconInbox,
   IconBell,
+  IconVideo,
 } from "@/components/icons";
 import { useState, useEffect } from "react";
 import { APP_NAME } from "@/lib/constants";
@@ -81,6 +82,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
       ]
     : [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
+        { href: "/app/interviews", label: "Entrevistas", icon: IconVideo },
         { href: "/app/proposals", label: "Propostas", icon: IconInbox },
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
         { href: "/app/payments", label: t.nav.wallet, icon: IconWallet },
@@ -99,7 +101,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
       ]
     : [
         { href: "/app/dashboard", label: "Inicio", icon: IconHome },
-        { href: "/app/proposals", label: "Propostas", icon: IconInbox },
+        { href: "/app/interviews", label: "Entrevistas", icon: IconVideo },
         { href: "/app/contracts", label: "Contratos", icon: IconContract },
         { href: "/app/chat", label: "Chat", icon: IconChat },
         { href: "/app/profile", label: "Perfil", icon: IconUser },
