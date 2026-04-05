@@ -1,17 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
-
-const roboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -82,9 +75,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt" suppressHydrationWarning>
-      <body
-        className={`${roboto.variable} font-sans antialiased bg-background text-foreground`}
-      >
+      <body className="font-sans antialiased bg-background text-foreground">
         <Providers>
           <div className="relative flex min-h-screen flex-col">
             {children}
