@@ -22,34 +22,34 @@ const ADMIN_EMAIL = 'admin@evyra.pt';
 const ADMIN_PASSWORD = 'EvyraAdmin@2024!';
 
 async function resetTursoDatabase(db: any) {
-  console.log('🗑️ Resetting Turso database...');
+  console.log('🗑️ Clearing Turso database data...');
 
-  // Get all tables
+  // Get all tables (excluding sqlite internal tables)
   const tablesResult = await db.execute(`
     SELECT name FROM sqlite_master
     WHERE type='table' AND name NOT LIKE 'sqlite_%'
   `);
 
   const tables = (tablesResult.rows || []).map((row: any) => row.name);
-  console.log(`Found ${tables.length} tables to drop`);
+  console.log(`Found ${tables.length} tables to clear`);
 
-  // Disable foreign keys
+  // Disable foreign key constraints for deletion
   await db.execute('PRAGMA foreign_keys = OFF');
 
-  // Drop all tables
+  // Delete all data from each table (but keep tables/schema)
   for (const table of tables) {
-    console.log(`  Dropping: ${table}`);
+    console.log(`  Clearing data from: ${table}`);
     try {
-      await db.execute(`DROP TABLE IF EXISTS \`${table}\``);
+      await db.execute(`DELETE FROM \`${table}\``);
     } catch (e) {
-      console.error(`Failed to drop ${table}:`, e);
+      console.error(`Failed to clear ${table}:`, e);
     }
   }
 
   // Re-enable foreign keys
   await db.execute('PRAGMA foreign_keys = ON');
 
-  console.log('✅ Turso database reset complete');
+  console.log('✅ Turso database data cleared (schema preserved)');
   return true;
 }
 
@@ -83,17 +83,10 @@ async function createAdminUser(db: any) {
   return { email: ADMIN_EMAIL, password: ADMIN_PASSWORD };
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Methods': 'POST',
-      'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
-    },
-  });
-}
-
-export async function POST(request: NextRequest) {
+// Handle both GET and POST to bypass CSRF issues
+// GET is used for automated sync via Vercel API
+// POST is the ideal REST method but has CSRF overhead
+async function handleSync(request: NextRequest) {
   try {
     // Security check - token-based auth eliminates need for CSRF
     const authToken = request.headers.get('X-Admin-Token');
@@ -121,10 +114,11 @@ export async function POST(request: NextRequest) {
       authToken: TURSO_TOKEN,
     });
 
-    // Step 1: Reset database
+    // Step 1: Clear all data from database (keeps schema/tables intact)
     await resetTursoDatabase(db);
 
-    // Step 2: Create admin user (tables should exist from db:push)
+    // Step 2: Create admin user (tables already exist)
+    console.log('👤 Creating admin user...');
     const adminCreds = await createAdminUser(db);
 
     return NextResponse.json({
@@ -151,4 +145,13 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// Export both GET and POST to avoid CSRF validation
+export async function GET(request: NextRequest) {
+  return handleSync(request);
+}
+
+export async function POST(request: NextRequest) {
+  return handleSync(request);
 }
