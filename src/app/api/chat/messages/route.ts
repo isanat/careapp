@@ -9,7 +9,7 @@ import { chatMessageSchema } from '@/lib/validations/schemas';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     // Get messages
     let sql = `
-      SELECT 
+      SELECT
         cm.id,
         cm.chatRoomId,
         cm.senderId,
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -115,9 +115,33 @@ export async function POST(request: NextRequest) {
     const messageId = generateId("msg");
     const now = new Date().toISOString();
 
+    // Insert message with all required fields from schema
+    // ChatMessage table requires: id, chatRoomId, senderId, content, messageType, metadata, isEdited, isDeleted, createdAt, updatedAt
     await db.execute({
-      sql: `INSERT INTO ChatMessage (id, chatRoomId, senderId, content, messageType, metadata, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [messageId, chatRoomId, session.user.id, content, messageType || 'text', metadata ? JSON.stringify(metadata) : null, now, now]
+      sql: `INSERT INTO ChatMessage (
+        id,
+        chatRoomId,
+        senderId,
+        content,
+        messageType,
+        metadata,
+        isEdited,
+        isDeleted,
+        createdAt,
+        updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        messageId,
+        chatRoomId,
+        session.user.id,
+        content,
+        messageType || 'text',
+        metadata ? JSON.stringify(metadata) : null,
+        0, // isEdited
+        0, // isDeleted
+        now,
+        now
+      ]
     });
 
     // Update chat room updatedAt
@@ -132,7 +156,7 @@ export async function POST(request: NextRequest) {
       args: [chatRoomId, session.user.id]
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: {
         id: messageId,
         chatRoomId,
