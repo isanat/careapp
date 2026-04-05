@@ -21,15 +21,8 @@ export async function GET(request: NextRequest) {
       platformFeePercent: 15,
     };
 
-    // Get feature flags
-    const flagsResult = await db.execute({
-      sql: `SELECT * FROM FeatureFlag`,
-      args: []
-    });
-
     return NextResponse.json({
       settings,
-      featureFlags: flagsResult.rows,
     });
   } catch (error) {
     console.error('Error fetching settings:', error);

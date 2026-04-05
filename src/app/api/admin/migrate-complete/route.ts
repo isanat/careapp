@@ -50,7 +50,6 @@ export async function GET(request: NextRequest) {
       'SupportTicketMessage',
       'Receipt',
       'RecurringPayment',
-      'FeatureFlag',
       // Orphan tables now in Prisma
       'AdminNotification',
       'ApiKey',

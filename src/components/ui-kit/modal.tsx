@@ -133,7 +133,7 @@ function ActivationModal({ open, onOpenChange, onConfirm, loading }: ActivationM
         <ModalHeader>
           <ModalTitle>Ativar Conta</ModalTitle>
           <ModalDescription>
-            Pague a taxa de ativação de €25 e receba 25 SENT tokens na sua carteira.
+            Pague a taxa de ativação de €25 para ativar sua conta.
           </ModalDescription>
         </ModalHeader>
         
@@ -256,7 +256,7 @@ function TipModal({ open, onOpenChange, caregiverName, onConfirm, loading }: {
             Cancelar
           </Button>
           <Button onClick={() => onConfirm(amount)} loading={loading}>
-            Enviar €{amount} em SENT
+            Enviar €{amount}
           </Button>
         </ModalFooter>
       </ModalContent>

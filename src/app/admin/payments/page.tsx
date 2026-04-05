@@ -104,7 +104,7 @@ interface AuditData {
 const EUR = (cents: number) => `\u20AC${(cents / 100).toFixed(2)}`;
 
 const typeLabels: Record<string, string> = {
-  ACTIVATION: "Ativacao", TOKEN_PURCHASE: "Compra Tokens", CONTRACT_FEE: "Taxa Contrato",
+  ACTIVATION: "Ativacao", CONTRACT_FEE: "Taxa Contrato",
   SERVICE_PAYMENT: "Pag. Servico", REDEMPTION: "Resgate/Saque",
 };
 
@@ -121,8 +121,7 @@ const auditStatusColors: Record<string, string> = {
 
 const reasonLabels: Record<string, string> = {
   ACTIVATION_BONUS: "Bonus Ativacao", CONTRACT_FEE: "Taxa Contrato", SERVICE_PAYMENT: "Pag. Servico",
-  TIP_RECEIVED: "Gorjeta Recebida", TIP_SENT: "Gorjeta Enviada", TOKEN_PURCHASE: "Compra Tokens",
-  TOKEN_REDEMPTION: "Resgate Tokens", PLATFORM_FEE: "Taxa Plataforma", REFERRAL_BONUS: "Bonus Indicacao",
+  PLATFORM_FEE: "Taxa Plataforma", REFERRAL_BONUS: "Bonus Indicacao",
   ADJUSTMENT: "Ajuste",
 };
 
@@ -198,7 +197,7 @@ function TransactionsTab() {
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      ACTIVATION: "Ativacao", TOKEN_PURCHASE: "Compra Tokens",
+      ACTIVATION: "Ativacao",
       CONTRACT_FEE: "Taxa Contrato", SERVICE_PAYMENT: "Pagamento Servico", REDEMPTION: "Resgate",
     };
     return labels[type] || type;
@@ -240,7 +239,6 @@ function TransactionsTab() {
               <SelectContent>
                 <SelectItem value="all">Todos os Tipos</SelectItem>
                 <SelectItem value="ACTIVATION">Ativacao</SelectItem>
-                <SelectItem value="TOKEN_PURCHASE">Compra Tokens</SelectItem>
                 <SelectItem value="CONTRACT_FEE">Taxa Contrato</SelectItem>
               </SelectContent>
             </Select>
