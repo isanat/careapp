@@ -56,6 +56,118 @@ export async function runAutoMigrations(db: Client) {
       // RecurringPayment indexes
       `CREATE INDEX IF NOT EXISTS idx_rp_contract ON RecurringPayment(contractId)`,
       `CREATE INDEX IF NOT EXISTS idx_rp_status ON RecurringPayment(status, nextPaymentAt)`,
+
+      // Demand table (Marketplace)
+      `CREATE TABLE IF NOT EXISTS Demand (
+        id TEXT PRIMARY KEY,
+        familyUserId TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        serviceTypes TEXT NOT NULL,
+        address TEXT,
+        city TEXT NOT NULL,
+        postalCode TEXT,
+        country TEXT DEFAULT 'PT',
+        latitude REAL,
+        longitude REAL,
+        requiredExperienceLevel TEXT DEFAULT 'INTERMEDIATE',
+        requiredCertifications TEXT,
+        careType TEXT DEFAULT 'RECURRING',
+        desiredStartDate TEXT,
+        desiredEndDate TEXT,
+        hoursPerWeek INTEGER,
+        scheduleJson TEXT,
+        visibilityPackage TEXT DEFAULT 'NONE',
+        visibilityExpiresAt TEXT,
+        status TEXT DEFAULT 'ACTIVE',
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        closedAt TEXT,
+        FOREIGN KEY (familyUserId) REFERENCES User(id) ON DELETE CASCADE
+      )`,
+
+      `CREATE INDEX IF NOT EXISTS idx_demand_family ON Demand(familyUserId, status, createdAt)`,
+      `CREATE INDEX IF NOT EXISTS idx_demand_status ON Demand(status, visibilityPackage, visibilityExpiresAt)`,
+      `CREATE INDEX IF NOT EXISTS idx_demand_city ON Demand(city, status)`,
+      `CREATE INDEX IF NOT EXISTS idx_demand_created ON Demand(createdAt)`,
+
+      // DemandView table (track views)
+      `CREATE TABLE IF NOT EXISTS DemandView (
+        id TEXT PRIMARY KEY,
+        demandId TEXT NOT NULL,
+        caregiverId TEXT NOT NULL,
+        viewedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (demandId) REFERENCES Demand(id) ON DELETE CASCADE,
+        FOREIGN KEY (caregiverId) REFERENCES User(id) ON DELETE CASCADE,
+        UNIQUE(demandId, caregiverId, viewedAt)
+      )`,
+
+      `CREATE INDEX IF NOT EXISTS idx_demandview_demand ON DemandView(demandId, viewedAt)`,
+      `CREATE INDEX IF NOT EXISTS idx_demandview_caregiver ON DemandView(caregiverId, viewedAt)`,
+
+      // VisibilityPurchase table
+      `CREATE TABLE IF NOT EXISTS VisibilityPurchase (
+        id TEXT PRIMARY KEY,
+        demandId TEXT NOT NULL,
+        familyUserId TEXT NOT NULL,
+        package TEXT NOT NULL,
+        amountEurCents INTEGER NOT NULL,
+        stripePaymentIntentId TEXT,
+        stripeCheckoutSessionId TEXT,
+        status TEXT DEFAULT 'PENDING',
+        purchasedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        expiresAt TEXT NOT NULL,
+        completedAt TEXT,
+        metadata TEXT,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (demandId) REFERENCES Demand(id) ON DELETE CASCADE
+      )`,
+
+      `CREATE INDEX IF NOT EXISTS idx_visibility_demand ON VisibilityPurchase(demandId, status)`,
+      `CREATE INDEX IF NOT EXISTS idx_visibility_family ON VisibilityPurchase(familyUserId, createdAt)`,
+      `CREATE INDEX IF NOT EXISTS idx_visibility_expires ON VisibilityPurchase(expiresAt)`,
+      `CREATE INDEX IF NOT EXISTS idx_visibility_status ON VisibilityPurchase(status, completedAt)`,
+
+      // DemandNotification table
+      `CREATE TABLE IF NOT EXISTS DemandNotification (
+        id TEXT PRIMARY KEY,
+        demandId TEXT NOT NULL,
+        caregiverId TEXT NOT NULL,
+        type TEXT NOT NULL,
+        sentAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        readAt TEXT,
+        emailSent INTEGER DEFAULT 0,
+        pushSent INTEGER DEFAULT 0,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (demandId) REFERENCES Demand(id) ON DELETE CASCADE,
+        FOREIGN KEY (caregiverId) REFERENCES User(id) ON DELETE CASCADE,
+        UNIQUE(demandId, caregiverId, type, sentAt)
+      )`,
+
+      `CREATE INDEX IF NOT EXISTS idx_notification_caregiver ON DemandNotification(caregiverId, readAt)`,
+      `CREATE INDEX IF NOT EXISTS idx_notification_demand ON DemandNotification(demandId)`,
+
+      // Proposal table (proposals for demands)
+      `CREATE TABLE IF NOT EXISTS Proposal (
+        id TEXT PRIMARY KEY,
+        demandId TEXT NOT NULL,
+        caregiverId TEXT NOT NULL,
+        message TEXT NOT NULL,
+        proposedHourlyRate INTEGER,
+        estimatedStartDate TEXT,
+        status TEXT DEFAULT 'PENDING',
+        acceptedAt TEXT,
+        rejectedAt TEXT,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (demandId) REFERENCES Demand(id) ON DELETE CASCADE,
+        FOREIGN KEY (caregiverId) REFERENCES User(id) ON DELETE CASCADE
+      )`,
+
+      `CREATE INDEX IF NOT EXISTS idx_proposal_demand ON Proposal(demandId, status)`,
+      `CREATE INDEX IF NOT EXISTS idx_proposal_caregiver ON Proposal(caregiverId, status)`,
+      `CREATE INDEX IF NOT EXISTS idx_proposal_created ON Proposal(createdAt)`,
     ];
 
     // ALTER TABLE migrations - these may fail if column already exists, that's OK
