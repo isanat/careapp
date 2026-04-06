@@ -128,7 +128,7 @@ export function AgoraRoom({
         console.log('Joined channel, user ID:', userID);
 
         // Publish local tracks (audio only if video unavailable)
-        const tracksToPublish = [audioTrack];
+        const tracksToPublish: Array<ILocalAudioTrack | ILocalVideoTrack> = [audioTrack];
         if (videoTrack) {
           tracksToPublish.push(videoTrack);
         }
