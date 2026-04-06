@@ -151,7 +151,17 @@ export function AgoraRoom({
       }
     };
 
-    initializeAgora();
+    // Add 30-second timeout to prevent hanging on permission requests
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Inicialização expirou. Verifique permissões de câmera/microfone.')), 30000)
+    );
+
+    Promise.race([initializeAgora(), timeoutPromise]).catch((err) => {
+      console.error('Agora initialization error:', err);
+      setError(err.message || 'Falha ao inicializar video');
+      setState('error');
+      onError?.(new Error(err.message || 'Falha ao inicializar video'));
+    });
   }, [state, channelName, onReady, onError]);
 
   const handleLeave = useCallback(async () => {
