@@ -581,35 +581,204 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
         {/* ====== Already Completed (Family) ====== */}
         {interview.familyCompletedAt && isFamily && (
-          <div className="space-y-5 max-w-lg mx-auto">
-            <div className="text-center py-8">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
-                <IconCheck className="h-10 w-10 text-green-500" />
+          <div className="space-y-5 max-w-3xl mx-auto">
+            {/* Interview Summary */}
+            <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-2xl border border-green-500/20 p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-green-600 mb-1">Entrevista Concluída</h2>
+                  <p className="text-sm text-muted-foreground">Feedback enviado e registrado</p>
+                </div>
+                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
+                  <IconCheck className="h-8 w-8 text-green-500" />
+                </div>
               </div>
-              <h2 className="text-xl font-bold text-green-600 mb-2">Feedback Enviado</h2>
-              <p className="text-muted-foreground text-sm">
-                {proceedWithContract
-                  ? "O contrato esta sendo preparado."
-                  : "Seu feedback foi registrado com sucesso."}
-              </p>
+
+              {/* Interview Details */}
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-green-500/20">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Data</p>
+                  <p className="font-semibold text-sm">
+                    {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })} às {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Duração</p>
+                  <p className="font-semibold text-sm">{interview.durationMinutes} minutos</p>
+                </div>
+              </div>
             </div>
 
-            {/* Quick actions to contact/contract caregiver */}
+            {/* Your Feedback */}
+            {interview.questionnaire && (
+              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <IconStar className="h-4 w-4 text-blue-500" />
+                  </div>
+                  Seu Feedback
+                </h3>
+
+                {interview.questionnaire.communicationRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Comunicação</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.questionnaire?.communicationRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.questionnaire.experienceRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Experiência Demonstrada</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.questionnaire?.experienceRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.questionnaire.wouldRecommend !== undefined && (
+                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                    <span className="text-sm text-muted-foreground">Recomendação:</span>
+                    <Badge className={interview.questionnaire.wouldRecommend ? "bg-green-500" : "bg-red-500"}>
+                      {interview.questionnaire.wouldRecommend ? "Recomenda" : "Não Recomenda"}
+                    </Badge>
+                  </div>
+                )}
+
+                {interview.questionnaire.notes && (
+                  <div className="pt-2 border-t border-border/50">
+                    <p className="text-xs text-muted-foreground mb-1">Observações</p>
+                    <p className="text-sm text-foreground">{interview.questionnaire.notes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Caregiver Feedback */}
+            {interview.caregiverQuestionnaire && (
+              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
+                    <IconStar className="h-4 w-4 text-purple-500" />
+                  </div>
+                  Feedback de {interview.caregiverName}
+                </h3>
+
+                {interview.caregiverQuestionnaire.familyRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Respeito e Cordialidade</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.caregiverQuestionnaire?.familyRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.caregiverQuestionnaire.clarityRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Clareza nas Expectativas</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.caregiverQuestionnaire?.clarityRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.caregiverQuestionnaire.notes && (
+                  <div className="pt-2 border-t border-border/50">
+                    <p className="text-xs text-muted-foreground mb-1">Observações</p>
+                    <p className="text-sm text-foreground">{interview.caregiverQuestionnaire.notes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Next Steps */}
+            <div className="bg-surface rounded-2xl border border-border/50 p-5">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <IconCheck className="h-5 w-5 text-green-500" />
+                Próximos Passos
+              </h3>
+              {interview.questionnaire?.proceedWithContract ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Você decidiu prosseguir com o contrato. O próximo passo é formalizar o acordo.
+                  </p>
+                  <Button asChild className="w-full h-12 rounded-xl mt-3">
+                    <Link href={`/app/contracts/new?caregiverId=${interview.caregiverUserId}`}>
+                      <IconContract className="h-4 w-4 mr-2" />
+                      Criar Contrato
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Você decidiu não prosseguir no momento. Pode entrar em contato com {interview.caregiverName} para discussões futuras.
+                </p>
+              )}
+            </div>
+
+            {/* Quick actions to contact caregiver */}
             <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Acoes com {interview.caregiverName}
+                Contato Direto
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <Button variant="outline" asChild className="h-12 rounded-xl">
                   <Link href={`/app/chat?userId=${interview.caregiverUserId}`}>
                     <IconChat className="h-4 w-4 mr-2" />
                     Enviar Mensagem
-                  </Link>
-                </Button>
-                <Button asChild className="h-12 rounded-xl">
-                  <Link href={`/app/contracts/new?caregiverId=${interview.caregiverUserId}`}>
-                    <IconContract className="h-4 w-4 mr-2" />
-                    Criar Contrato
                   </Link>
                 </Button>
               </div>
@@ -729,17 +898,188 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
         {/* ====== Caregiver - Already submitted questionnaire ====== */}
         {interview.status === "COMPLETED" && !isFamily && interview.caregiverCompletedAt && (
-          <div className="text-center py-12 px-6">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
-              <IconCheck className="h-10 w-10 text-green-500" />
+          <div className="space-y-5 max-w-3xl mx-auto">
+            {/* Interview Summary */}
+            <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-2xl border border-green-500/20 p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-green-600 mb-1">Entrevista Concluída</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {interview.familyCompletedAt
+                      ? "Ambas as partes enviaram feedback"
+                      : "Você enviou feedback, aguardando resposta da família"}
+                  </p>
+                </div>
+                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
+                  <IconCheck className="h-8 w-8 text-green-500" />
+                </div>
+              </div>
+
+              {/* Interview Details */}
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-green-500/20">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Data</p>
+                  <p className="font-semibold text-sm">
+                    {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })} às {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Duração</p>
+                  <p className="font-semibold text-sm">{interview.durationMinutes} minutos</p>
+                </div>
+              </div>
             </div>
-            <h2 className="text-xl font-bold text-green-600 mb-2">Feedback Enviado</h2>
-            <p className="text-muted-foreground text-sm">
-              {interview.familyCompletedAt
-                ? "Ambas as partes completaram o feedback. Voce sera notificado sobre proximos passos."
-                : "A familia ainda esta avaliando a entrevista. Voce sera notificado quando houver novidades."}
-            </p>
-            <Button className="mt-6 rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
+
+            {/* Your Feedback */}
+            {interview.caregiverQuestionnaire && (
+              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <IconStar className="h-4 w-4 text-blue-500" />
+                  </div>
+                  Seu Feedback
+                </h3>
+
+                {interview.caregiverQuestionnaire.familyRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Respeito e Cordialidade</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.caregiverQuestionnaire?.familyRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.caregiverQuestionnaire.clarityRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Clareza nas Expectativas</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.caregiverQuestionnaire?.clarityRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.caregiverQuestionnaire.notes && (
+                  <div className="pt-2 border-t border-border/50">
+                    <p className="text-xs text-muted-foreground mb-1">Observações</p>
+                    <p className="text-sm text-foreground">{interview.caregiverQuestionnaire.notes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Family Feedback */}
+            {interview.familyCompletedAt && interview.questionnaire && (
+              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
+                    <IconStar className="h-4 w-4 text-purple-500" />
+                  </div>
+                  Feedback de {interview.familyName}
+                </h3>
+
+                {interview.questionnaire.communicationRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Comunicação</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.questionnaire?.communicationRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.questionnaire.experienceRating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Experiência Demonstrada</span>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <IconStar
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i <= (interview.questionnaire?.experienceRating || 0)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {interview.questionnaire.wouldRecommend !== undefined && (
+                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                    <span className="text-sm text-muted-foreground">Recomendação:</span>
+                    <Badge className={interview.questionnaire.wouldRecommend ? "bg-green-500" : "bg-red-500"}>
+                      {interview.questionnaire.wouldRecommend ? "Recomenda" : "Não Recomenda"}
+                    </Badge>
+                  </div>
+                )}
+
+                {interview.questionnaire.notes && (
+                  <div className="pt-2 border-t border-border/50">
+                    <p className="text-xs text-muted-foreground mb-1">Observações</p>
+                    <p className="text-sm text-foreground">{interview.questionnaire.notes}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Status Summary */}
+            {!interview.familyCompletedAt && (
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5">
+                <p className="text-sm text-amber-700 flex items-center gap-2">
+                  <IconClock className="h-4 w-4" />
+                  A família ainda está avaliando a entrevista. Você será notificado quando houver novidades.
+                </p>
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              className="w-full h-12 rounded-xl"
+              onClick={() => router.push("/app/dashboard")}
+            >
               Voltar ao Dashboard
             </Button>
           </div>
