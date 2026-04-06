@@ -163,6 +163,11 @@ export class StripeService {
       url: session.url,
     };
   }
+
+  /**
+   * Create checkout session for contract fee
+   */
+  async createContractFeeCheckout(userId: string, contractId: string) {
     // Get user
     const userResult = await db.execute({
       sql: `SELECT id, email, name FROM User WHERE id = ?`,
