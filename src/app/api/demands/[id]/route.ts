@@ -10,7 +10,7 @@ import { getDemandMetrics } from '@/lib/demands/metrics';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,7 +18,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const demandId = params.id;
+    const { id: demandId } = await params;
 
     const result = await db.execute({
       sql: `
@@ -82,7 +82,7 @@ export async function GET(
       familyCity: row.familyCity,
       title: row.title,
       description: row.description,
-      serviceTypes: JSON.parse(row.serviceTypes || '[]'),
+      serviceTypes: JSON.parse(String(row.serviceTypes || '[]')),
       address: row.address,
       city: row.city,
       postalCode: row.postalCode,
@@ -90,12 +90,12 @@ export async function GET(
       latitude: row.latitude,
       longitude: row.longitude,
       requiredExperienceLevel: row.requiredExperienceLevel,
-      requiredCertifications: row.requiredCertifications ? JSON.parse(row.requiredCertifications) : [],
+      requiredCertifications: row.requiredCertifications ? JSON.parse(String(row.requiredCertifications)) : [],
       careType: row.careType,
       desiredStartDate: row.desiredStartDate,
       desiredEndDate: row.desiredEndDate,
       hoursPerWeek: row.hoursPerWeek,
-      scheduleJson: row.scheduleJson ? JSON.parse(row.scheduleJson) : null,
+      scheduleJson: row.scheduleJson ? JSON.parse(String(row.scheduleJson)) : null,
       visibilityPackage: row.visibilityPackage,
       visibilityExpiresAt: row.visibilityExpiresAt,
       status: row.status,
@@ -120,7 +120,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -128,7 +128,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const demandId = params.id;
+    const { id: demandId } = await params;
     const body = await request.json();
 
     // Verify ownership
@@ -149,7 +149,7 @@ export async function PUT(
     // Only allow updating certain fields
     const allowedFields = ['title', 'description', 'status', 'hoursPerWeek', 'desiredStartDate', 'desiredEndDate'];
     const updates: string[] = [];
-    const args: unknown[] = [];
+    const args: (string | number | null)[] = [];
 
     for (const field of allowedFields) {
       if (field in body) {

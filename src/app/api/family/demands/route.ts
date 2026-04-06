@@ -44,15 +44,17 @@ export async function GET(request: NextRequest) {
     });
 
     const demands = result.rows.map(async (row) => {
-      const conversionRate = row.viewCount > 0
-        ? Math.round((row.proposalCount / row.viewCount) * 10000) / 100
+      const viewCount = Number(row.viewCount || 0);
+      const proposalCount = Number(row.proposalCount || 0);
+      const conversionRate = viewCount > 0
+        ? Math.round((proposalCount / viewCount) * 10000) / 100
         : 0;
 
       return {
         id: row.id,
         title: row.title,
-        description: row.description.substring(0, 100) + '...',
-        serviceTypes: JSON.parse(row.serviceTypes || '[]'),
+        description: (String(row.description || '')).substring(0, 100) + '...',
+        serviceTypes: JSON.parse(String(row.serviceTypes || '[]')),
         city: row.city,
         status: row.status,
         visibilityPackage: row.visibilityPackage,
@@ -60,10 +62,10 @@ export async function GET(request: NextRequest) {
         createdAt: row.createdAt,
         closedAt: row.closedAt,
         metrics: {
-          viewCount: row.viewCount || 0,
-          proposalCount: row.proposalCount || 0,
+          viewCount,
+          proposalCount,
           conversionRate,
-          visibilitySpent: ((row.visibilitySpent || 0) / 100).toFixed(2),
+          visibilitySpent: ((Number(row.visibilitySpent || 0)) / 100).toFixed(2),
         },
       };
     });

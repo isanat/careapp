@@ -10,7 +10,7 @@ import { notifyFamilyNewProposal } from '@/lib/services/email';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -23,7 +23,7 @@ export async function POST(
       return NextResponse.json({ error: 'Only caregivers can send proposals' }, { status: 403 });
     }
 
-    const demandId = params.id;
+    const { id: demandId } = await params;
     const body = await request.json();
     const {
       message,
@@ -102,12 +102,17 @@ export async function POST(
 
       if (familyResult.rows.length > 0) {
         const family = familyResult.rows[0];
-        await notifyFamilyNewProposal(
-          family.email,
-          family.name,
-          { id: demandId, title: demand.title },
-          { caregiverName: session.user.name || 'Cuidador', message }
-        );
+        const email = String(family.email || '');
+        const name = String(family.name || 'Família');
+
+        if (email) {
+          await notifyFamilyNewProposal(
+            email,
+            name,
+            { id: demandId, title: String(demand.title || '') },
+            { caregiverName: session.user.name || 'Cuidador', message }
+          );
+        }
       }
     } catch (emailError) {
       console.warn('[Proposals] Failed to send notification email:', emailError);
@@ -136,7 +141,7 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -144,7 +149,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const demandId = params.id;
+    const { id: demandId } = await params;
 
     // Verify ownership
     const demandResult = await db.execute({
@@ -194,7 +199,7 @@ export async function GET(
       caregiverName: row.caregiverName,
       caregiverEmail: row.caregiverEmail,
       experienceYears: row.experienceYears,
-      certifications: row.certifications ? JSON.parse(row.certifications) : [],
+      certifications: row.certifications ? JSON.parse(String(row.certifications)) : [],
       standardHourlyRate: row.hourlyRateEur,
       message: row.message,
       proposedHourlyRate: row.proposedHourlyRate,

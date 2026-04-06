@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       `,
       args: [session.user.id],
     });
-    const totalVisibilitySpent = (visibilityResult.rows[0]?.totalSpent || 0) / 100;
+    const totalVisibilitySpent = (Number(visibilityResult.rows[0]?.totalSpent || 0)) / 100;
 
     // Average proposals per demand
     const avgProposalsResult = await db.execute({
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       `,
       args: [session.user.id],
     });
-    const avgProposalsPerDemand = Math.round((avgProposalsResult.rows[0]?.avgProposals || 0) * 100) / 100;
+    const avgProposalsPerDemand = Math.round((Number(avgProposalsResult.rows[0]?.avgProposals || 0)) * 100) / 100;
 
     // Average views per demand
     const avgViewsResult = await db.execute({
@@ -56,21 +56,21 @@ export async function GET(request: NextRequest) {
       `,
       args: [session.user.id],
     });
-    const avgViewsPerDemand = Math.round((avgViewsResult.rows[0]?.avgViews || 0) * 100) / 100;
+    const avgViewsPerDemand = Math.round((Number(avgViewsResult.rows[0]?.avgViews || 0)) * 100) / 100;
 
     // Total active demands
     const activeDemandResult = await db.execute({
       sql: `SELECT COUNT(*) as count FROM Demand WHERE familyUserId = ? AND status = 'ACTIVE'`,
       args: [session.user.id],
     });
-    const activeDemands = activeDemandResult.rows[0]?.count || 0;
+    const activeDemands = Number(activeDemandResult.rows[0]?.count || 0);
 
     // Closed demands (with contract)
     const closedDemandResult = await db.execute({
       sql: `SELECT COUNT(*) as count FROM Demand WHERE familyUserId = ? AND status = 'CLOSED'`,
       args: [session.user.id],
     });
-    const closedDemands = closedDemandResult.rows[0]?.count || 0;
+    const closedDemands = Number(closedDemandResult.rows[0]?.count || 0);
 
     return NextResponse.json({
       totalVisibilitySpent: Math.round(totalVisibilitySpent * 100) / 100,

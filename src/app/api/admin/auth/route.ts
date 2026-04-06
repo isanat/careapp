@@ -77,8 +77,8 @@ export async function GET(request: NextRequest) {
       adminProfile: {
         id: adminProfile.id as string,
         adminRole: adminProfile.adminRole as string,
-        customPermissions: adminProfile.customPermissions 
-          ? JSON.parse(adminProfile.customPermissions as string) 
+        customPermissions: adminProfile.customPermissions
+          ? JSON.parse(String(adminProfile.customPermissions))
           : null,
         isActive: Boolean(adminProfile.isActive),
         lastAdminActionAt: adminProfile.lastAdminActionAt as string | null,

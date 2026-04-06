@@ -22,7 +22,7 @@ const BOOST_PACKAGES: Record<string, { price: number; durationDays: number; labe
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -30,7 +30,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const demandId = params.id;
+    const { id: demandId } = await params;
     const body: BoostRequest = await request.json();
     const { package: boostPackage } = body;
 
@@ -124,7 +124,7 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -132,7 +132,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const demandId = params.id;
+    const { id: demandId } = await params;
 
     // Get current visibility status
     const demandResult = await db.execute({

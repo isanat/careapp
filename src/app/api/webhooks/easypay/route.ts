@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       });
 
       // Get payment metadata
-      const metadata = payment.metadata ? JSON.parse(payment.metadata as string) : {};
+      const metadata = payment.metadata ? JSON.parse(String(payment.metadata)) : {};
       const userId = payment.userId as string;
       const paymentType = payment.type as string;
 

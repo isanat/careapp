@@ -50,9 +50,9 @@ export async function GET(request: NextRequest) {
     const demandsByVisibility: Record<string, number> = {};
 
     for (const row of demandsResult.rows) {
-      const status = row.status;
-      const visibility = row.visibilityPackage;
-      const count = row.count || 0;
+      const status = String(row.status || 'UNKNOWN');
+      const visibility = String(row.visibilityPackage || 'NONE');
+      const count = Number(row.count || 0);
 
       demandsByStatus[status] = (demandsByStatus[status] || 0) + count;
       demandsByVisibility[visibility] = (demandsByVisibility[visibility] || 0) + count;

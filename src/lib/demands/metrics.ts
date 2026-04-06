@@ -11,21 +11,21 @@ export async function getDemandMetrics(demandId: string) {
       sql: `SELECT COUNT(*) as viewCount FROM DemandView WHERE demandId = ?`,
       args: [demandId],
     });
-    const viewCount = viewsResult.rows[0]?.viewCount || 0;
+    const viewCount = Number(viewsResult.rows[0]?.viewCount || 0);
 
     // ProposalCount
     const proposalsResult = await db.execute({
       sql: `SELECT COUNT(*) as proposalCount FROM Proposal WHERE demandId = ? AND status != 'REJECTED' AND status != 'EXPIRED'`,
       args: [demandId],
     });
-    const proposalCount = proposalsResult.rows[0]?.proposalCount || 0;
+    const proposalCount = Number(proposalsResult.rows[0]?.proposalCount || 0);
 
     // VisibilitySpent
     const visibilityResult = await db.execute({
       sql: `SELECT SUM(amountEurCents) as totalSpent FROM VisibilityPurchase WHERE demandId = ? AND status = 'COMPLETED'`,
       args: [demandId],
     });
-    const visibilitySpent = (visibilityResult.rows[0]?.totalSpent || 0) / 100; // convert to euros
+    const visibilitySpent = (Number(visibilityResult.rows[0]?.totalSpent || 0)) / 100; // convert to euros
 
     // ConversionRate
     const conversionRate = viewCount > 0 ? (proposalCount / viewCount) * 100 : 0;
@@ -71,7 +71,7 @@ export async function getAdminMetrics(periodDays: number = 7) {
             WHERE status = 'COMPLETED' AND completedAt >= ?`,
       args: [startDate],
     });
-    const totalRevenue = ((revenueResult.rows[0]?.totalRevenue || 0) / 100).toFixed(2);
+    const totalRevenue = ((Number(revenueResult.rows[0]?.totalRevenue || 0)) / 100).toFixed(2);
 
     // Demandas ativas (período)
     const demandsResult = await db.execute({
@@ -79,7 +79,7 @@ export async function getAdminMetrics(periodDays: number = 7) {
             WHERE createdAt >= ? AND status = 'ACTIVE'`,
       args: [startDate],
     });
-    const totalDemandsCreated = demandsResult.rows[0]?.totalDemands || 0;
+    const totalDemandsCreated = Number(demandsResult.rows[0]?.totalDemands || 0);
 
     // Avg Conversion Rate (todas demandas)
     const conversionRatesResult = await db.execute({
@@ -97,9 +97,9 @@ export async function getAdminMetrics(periodDays: number = 7) {
     let totalConversionRate = 0;
     let conversionRateCount = 0;
     for (const row of conversionRatesResult.rows) {
-      const views = row.views || 0;
+      const views = Number(row.views || 0);
       if (views > 0) {
-        totalConversionRate += (row.proposals || 0) / views;
+        totalConversionRate += (Number(row.proposals || 0)) / views;
         conversionRateCount++;
       }
     }
@@ -115,7 +115,7 @@ export async function getAdminMetrics(periodDays: number = 7) {
       `,
       args: [startDate],
     });
-    const avgTimeToProposal = Math.round(timeToProposalResult.rows[0]?.avgDays || 0);
+    const avgTimeToProposal = Math.round(Number(timeToProposalResult.rows[0]?.avgDays || 0));
 
     // Avg Ticket (receita / número de boosts)
     const ticketResult = await db.execute({
@@ -128,8 +128,9 @@ export async function getAdminMetrics(periodDays: number = 7) {
       `,
       args: [startDate],
     });
-    const avgTicket = ticketResult.rows[0]?.purchaseCount > 0
-      ? ((ticketResult.rows[0]?.totalAmount || 0) / ticketResult.rows[0]?.purchaseCount / 100).toFixed(2)
+    const purchaseCount = Number(ticketResult.rows[0]?.purchaseCount || 0);
+    const avgTicket = purchaseCount > 0
+      ? ((Number(ticketResult.rows[0]?.totalAmount || 0)) / purchaseCount / 100).toFixed(2)
       : '0.00';
 
     return {
@@ -176,7 +177,7 @@ export async function getRevenueChartData(days: number = 7) {
 
     return result.rows.map(row => ({
       date: row.date,
-      revenue: ((row.dailyRevenue || 0) / 100).toFixed(2),
+      revenue: ((Number(row.dailyRevenue || 0)) / 100).toFixed(2),
     }));
   } catch (error) {
     console.error('[Metrics] Error calculating revenue chart:', error);

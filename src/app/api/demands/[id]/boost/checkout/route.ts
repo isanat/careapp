@@ -13,9 +13,11 @@ interface BoostCheckoutRequest {
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: demandId } = await params;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -30,7 +32,7 @@ export async function POST(
 
     const checkoutSession = await stripeService.createVisibilityBoostCheckout(
       session.user.id,
-      params.id,
+      demandId,
       boostPackage as 'BASIC' | 'PREMIUM' | 'URGENT'
     );
 
