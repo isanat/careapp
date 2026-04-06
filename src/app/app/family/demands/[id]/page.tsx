@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { BoostVisibilityModal } from '@/components/demands/boost-visibility-modal';
 
 interface DemandMetrics {
   viewCount: number;
@@ -52,16 +53,28 @@ interface Demand {
 export default function FamilyDemandDetailPage({ params }: { params: { id: string } }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [demand, setDemand] = useState<Demand | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showBoostModal, setShowBoostModal] = useState(false);
+  const [boostSuccess, setBoostSuccess] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [status, router]);
+
+  useEffect(() => {
+    // Check if boost was successful
+    if (searchParams.get('boost') === 'success') {
+      setBoostSuccess(true);
+      // Remove query param
+      router.replace(`/app/family/demands/${params.id}`);
+    }
+  }, [searchParams, params.id, router]);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -170,6 +183,29 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
             </div>
           </div>
 
+          {/* Success Message */}
+          {boostSuccess && (
+            <div className="p-8 border-b border-green-200 bg-green-50">
+              <div className="text-green-700 font-semibold">
+                ✓ Boost de visibilidade ativado com sucesso! Sua demanda agora tem maior visibilidade no marketplace.
+              </div>
+            </div>
+          )}
+
+          {/* Boost Button */}
+          <div className="p-8 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">Aumentar Visibilidade</h3>
+              <p className="text-sm text-gray-600">Atraia mais cuidadores com boosts (€3-15)</p>
+            </div>
+            <button
+              onClick={() => setShowBoostModal(true)}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Aumentar Visibilidade
+            </button>
+          </div>
+
           {/* Description */}
           <div className="p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Descrição</h2>
@@ -273,6 +309,20 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
           )}
         </div>
       </div>
+
+      {/* Boost Modal */}
+      {demand && (
+        <BoostVisibilityModal
+          demandId={demand.id}
+          demandTitle={demand.title}
+          isOpen={showBoostModal}
+          onClose={() => setShowBoostModal(false)}
+          onSuccess={() => {
+            setShowBoostModal(false);
+            setBoostSuccess(true);
+          }}
+        />
+      )}
     </div>
   );
 }
