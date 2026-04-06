@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import db from '@/lib/db-turso';
+import { notifyFamilyNewProposal } from '@/lib/services/email';
 
 /**
  * POST /api/demands/[id]/proposals
@@ -79,6 +80,33 @@ export async function POST(
         now,
       ],
     });
+
+    // Send notification email to family
+    try {
+      // Get family info
+      const familyResult = await db.execute({
+        sql: `
+          SELECT u.email, u.name
+          FROM User u
+          JOIN Demand d ON u.id = d.familyUserId
+          WHERE d.id = ?
+        `,
+        args: [demandId],
+      });
+
+      if (familyResult.rows.length > 0) {
+        const family = familyResult.rows[0];
+        await notifyFamilyNewProposal(
+          family.email,
+          family.name,
+          { id: demandId, title: demand.title },
+          { caregiverName: session.user.name || 'Cuidador', message }
+        );
+      }
+    } catch (emailError) {
+      console.warn('[Proposals] Failed to send notification email:', emailError);
+      // Don't fail the request if email fails
+    }
 
     return NextResponse.json(
       {
