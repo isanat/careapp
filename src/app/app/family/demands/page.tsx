@@ -98,8 +98,8 @@ export default function FamilyDemandsPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="max-w-7xl mx-auto px-4">
+      <div className="min-h-screen bg-background py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center items-center py-16">
             <div className="text-center">
               <div className="inline-flex items-center gap-2 text-primary">
@@ -115,139 +115,149 @@ export default function FamilyDemandsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <Card className="border-error/30 bg-error/5">
-            <CardContent className="pt-6 flex items-center gap-3">
-              <IconAlertCircle className="h-5 w-5 text-error shrink-0" />
-              <p className="text-sm text-error font-medium">{error}</p>
-            </CardContent>
-          </Card>
+      <div className="min-h-screen bg-background py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-4 flex items-center gap-3">
+            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
+            <p className="text-sm text-destructive font-medium">{error}</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col gap-3 mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-2xl font-bold text-foreground">Suas Demandas</h1>
-              <p className="text-sm text-muted-foreground">
-                Gerencie e acompanhe todas as suas demandas de serviços
-              </p>
-            </div>
-            <Button asChild className="rounded-lg">
-              <Link href="/app/family/demands/new">
-                <IconPlus className="h-4 w-4 mr-2" />
-                Criar Demanda
-              </Link>
-            </Button>
+    <div className="min-h-screen bg-background py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold text-foreground">Suas Demandas</h1>
+            <p className="text-sm text-muted-foreground">
+              Gerencie e acompanhe todas as suas demandas de serviços de cuidados
+            </p>
           </div>
+          <Button asChild className="rounded-lg gap-2 h-9">
+            <Link href="/app/family/demands/new">
+              <IconPlus className="h-4 w-4" />
+              <span className="hidden sm:inline">Criar Demanda</span>
+              <span className="sm:hidden">Nova</span>
+            </Link>
+          </Button>
         </div>
 
         {/* Analytics Cards */}
         {analytics && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <Card className="border-border/30">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Demandas Ativas</p>
-                    <p className="text-2xl font-bold text-foreground">{analytics.activeDemands}</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {/* Active Demands */}
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">Ativas</p>
+                    <div className="h-7 w-7 rounded-lg bg-success/10 flex items-center justify-center">
+                      <IconCheck className="h-3.5 w-3.5 text-success" />
+                    </div>
                   </div>
-                  <IconCheck className="h-8 w-8 text-success opacity-20" />
+                  <p className="text-2xl font-bold text-foreground">{analytics.activeDemands}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/30">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Demandas Fechadas</p>
-                    <p className="text-2xl font-bold text-foreground">{analytics.closedDemands}</p>
+            {/* Closed Demands */}
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">Fechadas</p>
+                    <div className="h-7 w-7 rounded-lg bg-secondary/10 flex items-center justify-center">
+                      <IconCalendar className="h-3.5 w-3.5 text-secondary" />
+                    </div>
                   </div>
-                  <IconCalendar className="h-8 w-8 text-secondary opacity-20" />
+                  <p className="text-2xl font-bold text-foreground">{analytics.closedDemands}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/30">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Gasto em Visibilidade</p>
-                    <p className="text-2xl font-bold text-foreground">€{analytics.totalVisibilitySpent.toFixed(2)}</p>
+            {/* Total Spent */}
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">Gasto</p>
+                    <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <IconEuro className="h-3.5 w-3.5 text-primary" />
+                    </div>
                   </div>
-                  <IconEuro className="h-8 w-8 text-primary opacity-20" />
+                  <p className="text-2xl font-bold text-foreground">€{analytics.totalVisibilitySpent.toFixed(0)}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/30">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Propostas/Demanda</p>
-                    <p className="text-2xl font-bold text-foreground">{analytics.avgProposalsPerDemand.toFixed(1)}</p>
+            {/* Avg Proposals */}
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">Propostas</p>
+                    <div className="h-7 w-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                      <IconMessageSquare className="h-3.5 w-3.5 text-accent" />
+                    </div>
                   </div>
-                  <IconMessageSquare className="h-8 w-8 text-accent opacity-20" />
+                  <p className="text-2xl font-bold text-foreground">{analytics.avgProposalsPerDemand.toFixed(1)}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/30">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium mb-1">Views/Demanda</p>
-                    <p className="text-2xl font-bold text-foreground">{analytics.avgViewsPerDemand.toFixed(1)}</p>
+            {/* Avg Views */}
+            <Card className="border-border/40">
+              <CardContent className="p-4">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">Vistas</p>
+                    <div className="h-7 w-7 rounded-lg bg-secondary/10 flex items-center justify-center">
+                      <IconEye className="h-3.5 w-3.5 text-secondary" />
+                    </div>
                   </div>
-                  <IconEye className="h-8 w-8 text-warm opacity-20" />
+                  <p className="text-2xl font-bold text-foreground">{analytics.avgViewsPerDemand.toFixed(1)}</p>
                 </div>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {/* Status Tabs */}
-        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 h-9 rounded-lg bg-muted p-0.5 mb-6">
-            <TabsTrigger value="ACTIVE" className="rounded-md text-xs data-[state=active]:shadow-sm">
+        {/* Tabs Section */}
+        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full space-y-4">
+          <TabsList className="w-full grid grid-cols-3 h-10 rounded-lg bg-muted/50 p-1 border border-border/30">
+            <TabsTrigger value="ACTIVE" className="rounded-md text-xs font-medium data-[state=active]:shadow-sm data-[state=active]:bg-background">
               Ativas ({demands.filter(d => d.status === 'ACTIVE').length})
             </TabsTrigger>
-            <TabsTrigger value="CLOSED" className="rounded-md text-xs data-[state=active]:shadow-sm">
+            <TabsTrigger value="CLOSED" className="rounded-md text-xs font-medium data-[state=active]:shadow-sm data-[state=active]:bg-background">
               Fechadas ({demands.filter(d => d.status === 'CLOSED').length})
             </TabsTrigger>
-            <TabsTrigger value="PAUSED" className="rounded-md text-xs data-[state=active]:shadow-sm">
-              Em Pausa ({demands.filter(d => d.status === 'PAUSED').length})
+            <TabsTrigger value="PAUSED" className="rounded-md text-xs font-medium data-[state=active]:shadow-sm data-[state=active]:bg-background">
+              Pausadas ({demands.filter(d => d.status === 'PAUSED').length})
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value={statusFilter}>
-            {/* Demands Grid */}
+          <TabsContent value={statusFilter} className="space-y-3 mt-0">
+            {/* Empty State */}
             {demands.length === 0 ? (
-              <Card className="border-border/30">
-                <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-                  <div className="mb-3">
-                    {statusFilter === 'ACTIVE' && <IconStar className="h-8 w-8 text-muted-foreground mx-auto" />}
-                    {statusFilter === 'CLOSED' && <IconCheck className="h-8 w-8 text-muted-foreground mx-auto" />}
-                    {statusFilter === 'PAUSED' && <IconCalendar className="h-8 w-8 text-muted-foreground mx-auto" />}
-                  </div>
-                  <p className="text-foreground font-medium mb-1">Nenhuma demanda neste status</p>
-                  <p className="text-sm text-muted-foreground max-w-xs">
-                    {statusFilter === 'ACTIVE' && 'Crie sua primeira demanda para atrair cuidadores'}
-                    {statusFilter === 'CLOSED' && 'Aqui aparecerão suas demandas concluídas'}
-                    {statusFilter === 'PAUSED' && 'Você ainda não pausou nenhuma demanda'}
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="bg-surface rounded-2xl border border-border/40 py-12 px-4 flex flex-col items-center justify-center text-center">
+                <div className="h-12 w-12 rounded-lg bg-muted/30 flex items-center justify-center mb-3 mx-auto">
+                  {statusFilter === 'ACTIVE' && <IconStar className="h-6 w-6 text-muted-foreground" />}
+                  {statusFilter === 'CLOSED' && <IconCheck className="h-6 w-6 text-muted-foreground" />}
+                  {statusFilter === 'PAUSED' && <IconCalendar className="h-6 w-6 text-muted-foreground" />}
+                </div>
+                <p className="text-foreground font-semibold mb-1">Nenhuma demanda neste status</p>
+                <p className="text-sm text-muted-foreground max-w-sm">
+                  {statusFilter === 'ACTIVE' && 'Crie sua primeira demanda para atrair cuidadores qualificados'}
+                  {statusFilter === 'CLOSED' && 'Aqui aparecerão suas demandas concluídas e fechadas'}
+                  {statusFilter === 'PAUSED' && 'Você ainda não pausou nenhuma demanda'}
+                </p>
+              </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {demands.map(demand => {
                   const conversionRate = demand.metrics.conversionRate.toFixed(1);
                   const visibilityBadgeVariant =
@@ -265,77 +275,75 @@ export default function FamilyDemandsPage() {
                   const VisibilityIcon = visibilityBadgeIcon;
 
                   return (
-                    <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="block group">
-                      <Card className="border-border/30 transition-all hover:shadow-md hover:border-primary/30">
-                        <CardContent className="py-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-3 items-center">
-                            {/* Title & Description */}
-                            <div className="lg:col-span-2 min-w-0">
+                    <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group block">
+                      <Card className="border-border/40 hover:border-primary/30 hover:shadow-md transition-all duration-200 overflow-hidden">
+                        <CardContent className="p-0">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-0 divide-y md:divide-y-0 md:divide-x md:divide-border/30 items-center">
+                            {/* Title & Description - 2 cols */}
+                            <div className="lg:col-span-2 min-w-0 p-4 md:p-5">
                               <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                                 {demand.title}
                               </h3>
-                              <p className="text-xs text-muted-foreground truncate">
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                                <IconMapPin className="h-3 w-3 shrink-0" />
+                                <p className="truncate">{demand.city}</p>
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate mt-1">
                                 {demand.description}
                               </p>
                             </div>
 
-                            {/* Location */}
-                            <div className="hidden md:block">
-                              <p className="text-xs text-muted-foreground font-medium mb-0.5">Localidade</p>
-                              <p className="text-sm text-foreground truncate">{demand.city}</p>
-                            </div>
-
-                            {/* Visibility Package */}
-                            <div>
+                            {/* Visibility Package - 1 col */}
+                            <div className="p-4 md:p-5">
                               <p className="text-xs text-muted-foreground font-medium mb-1">Visibilidade</p>
                               <Badge
                                 variant={visibilityBadgeVariant as any}
-                                className="text-[10px] h-5 flex items-center justify-center gap-1 w-fit"
+                                className="text-[10px] h-5 flex items-center justify-center gap-1 w-fit px-2"
                               >
                                 {VisibilityIcon && <VisibilityIcon className="h-3 w-3" />}
                                 {demand.visibilityPackage || 'Nenhum'}
                               </Badge>
                             </div>
 
-                            {/* Views */}
-                            <div className="text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-0.5">Views</p>
+                            {/* Views - 1 col */}
+                            <div className="p-4 md:p-5 text-center">
+                              <p className="text-xs text-muted-foreground font-medium mb-1">Vistas</p>
                               <div className="flex items-center justify-center gap-1">
                                 <IconEye className="h-3 w-3 text-secondary" />
-                                <p className="text-sm font-bold text-foreground">{demand.metrics.viewCount}</p>
+                                <p className="text-sm font-semibold text-foreground">{demand.metrics.viewCount}</p>
                               </div>
                             </div>
 
-                            {/* Proposals */}
-                            <div className="text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-0.5">Propostas</p>
+                            {/* Proposals - 1 col */}
+                            <div className="p-4 md:p-5 text-center">
+                              <p className="text-xs text-muted-foreground font-medium mb-1">Propostas</p>
                               <div className="flex items-center justify-center gap-1">
                                 <IconMessageSquare className="h-3 w-3 text-accent" />
-                                <p className="text-sm font-bold text-foreground">{demand.metrics.proposalCount}</p>
+                                <p className="text-sm font-semibold text-foreground">{demand.metrics.proposalCount}</p>
                               </div>
                             </div>
 
-                            {/* Conversion Rate */}
-                            <div className="text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-0.5">Conversão</p>
+                            {/* Conversion Rate - 1 col */}
+                            <div className="p-4 md:p-5 text-center">
+                              <p className="text-xs text-muted-foreground font-medium mb-1">Conversão</p>
                               <div className="flex items-center justify-center gap-1">
                                 {parseFloat(conversionRate) > 5 ? (
                                   <IconTrendingUp className="h-3 w-3 text-success" />
                                 ) : (
                                   <IconTrendingDown className="h-3 w-3 text-warning" />
                                 )}
-                                <p className="text-sm font-bold text-foreground">{conversionRate}%</p>
+                                <p className="text-sm font-semibold text-foreground">{conversionRate}%</p>
                               </div>
                             </div>
 
-                            {/* Spent */}
-                            <div className="text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-0.5">Gasto</p>
-                              <p className="text-sm font-bold text-foreground">€{demand.metrics.visibilitySpent}</p>
+                            {/* Spent - 1 col */}
+                            <div className="p-4 md:p-5 text-center">
+                              <p className="text-xs text-muted-foreground font-medium mb-1">Gasto</p>
+                              <p className="text-sm font-semibold text-foreground">€{demand.metrics.visibilitySpent}</p>
                             </div>
 
-                            {/* Action */}
-                            <div className="flex justify-end">
+                            {/* Arrow - 1 col */}
+                            <div className="hidden lg:flex p-4 md:p-5 justify-center">
                               <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                             </div>
                           </div>
