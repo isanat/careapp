@@ -106,7 +106,7 @@ function NewContractContent() {
   const [endDate, setEndDate] = useState("");
 
   // Step 4: Review & edit
-  const [hourlyRate, setHourlyRate] = useState(25);
+  const [hourlyRate, setHourlyRate] = useState(28); // in euros, not cents
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [platformFeePercent, setPlatformFeePercent] = useState(10); // Default 10%
@@ -129,7 +129,8 @@ function NewContractContent() {
         const data = await res.json();
         const c = data.caregiver;
         setCaregiver({ id: c.id, name: c.name, title: c.title, averageRating: c.averageRating, hourlyRateEur: c.hourlyRateEur });
-        setHourlyRate(c.hourlyRateEur || 25);
+        // Convert from cents to euros
+        setHourlyRate((c.hourlyRateEur || 2800) / 100);
       } catch {
         setCaregiverError("Erro inesperado ao carregar cuidador.");
       } finally {
@@ -184,7 +185,7 @@ function NewContractContent() {
         body: JSON.stringify({
           caregiverUserId: caregiver.id,
           title: title.slice(0, 200),
-          hourlyRateEur: Math.round(hourlyRate),
+          hourlyRateEur: Math.round(hourlyRate * 100), // Convert from euros to cents
           totalHours: Math.round(totalHoursMonthly),
           description: buildDescription().slice(0, 2000),
           startDate: startDate || undefined,
@@ -614,7 +615,7 @@ function NewContractContent() {
                     >
                       -
                     </button>
-                    <span className="w-14 text-center font-bold text-base">{hourlyRate}</span>
+                    <span className="w-16 text-center font-bold text-base">€{hourlyRate.toFixed(2)}</span>
                     <button
                       onClick={() => setHourlyRate(Math.min(100, hourlyRate + 1))}
                       className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm hover:bg-muted"
@@ -629,18 +630,18 @@ function NewContractContent() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Estimativa mensal ({totalHoursMonthly}h)</span>
-                  <span className="font-bold text-base">{totalEur}</span>
+                  <span className="font-bold text-base">€{totalEur.toFixed(2)}</span>
                 </div>
               </div>
 
               <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
-                  <span className="text-red-500">-{platformFee.toFixed(0)}</span>
+                  <span className="text-red-500">-€{platformFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-semibold">
                   <span>Cuidador recebe</span>
-                  <span className="text-green-600">{caregiverReceives.toFixed(0)}</span>
+                  <span className="text-green-600">€{caregiverReceives.toFixed(2)}</span>
                 </div>
               </div>
             </div>
