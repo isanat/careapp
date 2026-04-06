@@ -3,9 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripeService } from "@/lib/services/stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_stub", {
-  apiVersion: "2023-10-16" as any,
-});
+// Lazy-load Stripe to avoid initialization errors during build
+let stripeInstance: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: "2023-10-16" as any,
+    });
+  }
+  return stripeInstance;
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -22,7 +33,7 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET || ""

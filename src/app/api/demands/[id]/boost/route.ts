@@ -4,7 +4,18 @@ import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+// Lazy-load Stripe to avoid initialization errors during build
+let stripeInstance: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+    }
+    stripeInstance = new Stripe(apiKey);
+  }
+  return stripeInstance;
+}
 
 interface BoostRequest {
   package: 'BASIC' | 'PREMIUM' | 'URGENT';
@@ -56,7 +67,7 @@ export async function POST(
     }
 
     // Create Stripe checkout session
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await getStripe().checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       customer_email: session.user.email,
