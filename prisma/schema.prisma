@@ -1269,3 +1269,189 @@ model Proposal {
   @@index([caregiverId, status])
   @@index([createdAt])
 }
+
+// ==================== PAYMENT ARCHITECTURE REFACTOR ====================
+
+// ============ CAREGIVER WALLET (Saldo Permanente) ============
+model CaregiverWallet {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Saldos
+  totalEarned      Int @default(0) // Total ganho (centavos)
+  totalWithdrawn   Int @default(0) // Total sacado (centavos)
+  pendingPayments  Int @default(0) // Aguardando aprovação
+  availableBalance Int @default(0) // Pode sacar agora
+
+  // Stripe Connect
+  stripeConnectAccountId String?
+
+  // Auditoria
+  lastWithdrawalAt DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  transfers   CaregiverTransfer[]
+  withdrawals CaregiverWithdrawal[]
+
+  @@index([userId])
+}
+
+// ============ CAREGIVER TRANSFER (Histórico de Recebimentos) ============
+model CaregiverTransfer {
+  id String @id @default(cuid())
+
+  caregiverId String
+  caregiver   User            @relation(fields: [caregiverId], references: [id], onDelete: Cascade)
+  contractId  String?
+  contract    Contract? @relation("CaregiverTransfers", fields: [contractId], references: [id], onDelete: SetNull)
+
+  // Valores
+  grossAmount        Int // Antes de comissão (centavos)
+  platformFeePercent Int @default(15) // Percentual comissão
+  platformFeeCents   Int // Comissão calculada (centavos)
+  netAmount          Int // O que caregiver recebe (centavos)
+
+  // Stripe
+  stripeTransferId String?
+
+  // Status
+  status String @default("PENDING") // PENDING, COMPLETED, FAILED
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([caregiverId, status])
+  @@index([contractId])
+}
+
+// ============ CAREGIVER WITHDRAWAL (Saques) ============
+model CaregiverWithdrawal {
+  id String @id @default(cuid())
+
+  caregiverId String
+  caregiver   User   @relation(fields: [caregiverId], references: [id], onDelete: Cascade)
+
+  // Valores
+  amount      Int // Solicitado (centavos)
+  stripeFee   Int @default(0) // Taxa Stripe (2.5%)
+  netAmount   Int // Vai receber de verdade (centavos)
+
+  // Banco
+  bankAccountLast4 String? // Privacidade
+
+  // Stripe
+  stripePayoutId String?
+
+  // Status
+  status String @default("PENDING") // PENDING, IN_TRANSIT, COMPLETED, FAILED
+
+  requestedAt DateTime
+  arrivedAt   DateTime?
+
+  @@index([caregiverId, status])
+}
+
+// ============ FAMILY PAYMENT (Histórico de Pagamentos) ============
+model FamilyPayment {
+  id String @id @default(cuid())
+
+  familyUserId String
+  family       User   @relation("FamilyPayments", fields: [familyUserId], references: [id], onDelete: Cascade)
+
+  // O que foi pago
+  type String // VISIBILITY_BOOST, SERVICE_PAYMENT, CONTRACT_FEE
+  amount Int
+
+  // Referência
+  demandId  String?
+  demand    Demand? @relation("FamilyPayments", fields: [demandId], references: [id], onDelete: SetNull)
+  contractId String?
+  contract  Contract? @relation("FamilyPayments", fields: [contractId], references: [id], onDelete: SetNull)
+
+  // Stripe
+  stripePaymentIntentId String?
+  stripeChargeId        String?
+
+  // Status
+  status String @default("PENDING") // PENDING, COMPLETED, FAILED
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([familyUserId, type])
+  @@index([contractId])
+}
+
+// ============ FAMILY CREDIT (Créditos Temporários) ============
+model FamilyCredit {
+  id String @id @default(cuid())
+
+  familyUserId String
+  family       User   @relation("FamilyCredits", fields: [familyUserId], references: [id], onDelete: Cascade)
+
+  // Tipo de crédito
+  type String // PROMOTIONAL, REFUND, CASHBACK
+  amount Int
+
+  // Como foi ganho
+  reason   String? // Ex: "First boost free"
+  sourceId String? // Ex: promoId
+
+  // Uso
+  usedAt           DateTime?
+  spentOnDemandId  String?
+  spentOnDemand    Demand? @relation("FamilyCreditsSpent", fields: [spentOnDemandId], references: [id], onDelete: SetNull)
+
+  // Validade
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([familyUserId, expiresAt])
+}
+
+// ============ STRIPE PAYMENT HOLD (Escrow-like) ============
+model StripePaymentHold {
+  id String @id @default(cuid())
+
+  contractId String
+  contract   Contract @relation("PaymentHolds", fields: [contractId], references: [id], onDelete: Cascade)
+
+  familyPaymentId String?
+  familyPayment   FamilyPayment? @relation(fields: [familyPaymentId], references: [id], onDelete: SetNull)
+
+  // Stripe
+  paymentIntentId String
+
+  // Valores
+  amount Int // Centavos
+
+  // Status
+  status String @default("AUTHORIZED") // AUTHORIZED, CAPTURED, VOIDED, FAILED
+
+  createdAt   DateTime
+  expiresAt   DateTime
+  capturedAt  DateTime?
+  voidedAt    DateTime?
+
+  @@index([contractId, status])
+}
+
+// ============ UPDATE RELATIONS ==============
+
+// Adicionar a User model:
+// - caregiver  Wallet
+// - familyPayments FamilyPayment[]
+// - familyCredits FamilyCredit[]
+// - caregiverTransfers CaregiverTransfer[]
+// - caregiverWithdrawals CaregiverWithdrawal[]
+
+// Adicionar a Contract model:
+// - transfers CaregiverTransfer[] (relation "CaregiverTransfers")
+// - paymentHolds StripePaymentHold[] (relation "PaymentHolds")
+
+// Adicionar a Demand model:
+// - familyPayments FamilyPayment[]
+// - familyCreditsSpent FamilyCredit[] (relation "FamilyCreditsSpent")
