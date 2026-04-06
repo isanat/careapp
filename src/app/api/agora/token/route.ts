@@ -32,14 +32,15 @@ export async function POST(request: NextRequest) {
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
-    const token = RtcTokenBuilder.buildTokenWithUid(
+    // Use user ID as string account for token generation
+    const token = RtcTokenBuilder.buildTokenWithUserAccount(
       appId,
       appCertificate,
       channelName,
-      parseInt(session.user.id), // Convert to number for UID
+      session.user.id,
       RtcRole.PUBLISHER,
       privilegeExpiredTs,
-      privilegeExpiredTs  // Both token expiration times
+      privilegeExpiredTs
     );
 
     return NextResponse.json({

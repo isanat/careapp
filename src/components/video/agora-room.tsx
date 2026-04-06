@@ -38,6 +38,7 @@ export function AgoraRoom({
   const [error, setError] = useState<string | null>(null);
   const [isMicEnabled, setIsMicEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [hasVideoDevice, setHasVideoDevice] = useState(true);
 
   const clientRef = useRef<IAgoraRTCClient | null>(null);
   const localAudioRef = useRef<ILocalAudioTrack | null>(null);
@@ -71,12 +72,21 @@ export function AgoraRoom({
         const { token, uid } = await tokenResponse.json();
         console.log('Got Agora token for UID:', uid);
 
-        // Create local tracks
+        // Create local audio track
         const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-        const videoTrack = await AgoraRTC.createCameraVideoTrack();
-
         localAudioRef.current = audioTrack;
-        localVideoRef.current = videoTrack;
+
+        // Try to create video track, fallback to audio-only if camera not available
+        let videoTrack: ILocalVideoTrack | null = null;
+        let hasCamera = true;
+        try {
+          videoTrack = await AgoraRTC.createCameraVideoTrack();
+          localVideoRef.current = videoTrack;
+        } catch (err: any) {
+          console.warn('Camera not available, proceeding with audio-only:', err.message);
+          setHasVideoDevice(false);
+          hasCamera = false;
+        }
 
         // Add event listeners
         client.on('user-published', async (user, mediaType) => {
@@ -107,22 +117,26 @@ export function AgoraRoom({
           console.log('Connection state changed:', curState);
         });
 
-        // Join channel
+        // Join channel with string UID (from user account token)
         const userID = await client.join(
           process.env.NEXT_PUBLIC_AGORA_APP_ID!,
           channelName,
           token,
-          uid
+          uid as any // Use string UID from token response
         );
 
         console.log('Joined channel, user ID:', userID);
 
-        // Publish local tracks
-        await client.publish([audioTrack, videoTrack]);
-        console.log('Published local tracks');
+        // Publish local tracks (audio only if video unavailable)
+        const tracksToPublish: Array<ILocalAudioTrack | ILocalVideoTrack> = [audioTrack];
+        if (videoTrack) {
+          tracksToPublish.push(videoTrack);
+        }
+        await client.publish(tracksToPublish);
+        console.log('Published local tracks:', hasCamera ? 'audio+video' : 'audio-only');
 
-        // Play local video
-        if (containerRef.current) {
+        // Play local video if available
+        if (videoTrack && containerRef.current) {
           videoTrack.play(containerRef.current);
         }
 
@@ -180,7 +194,7 @@ export function AgoraRoom({
   }, [isMicEnabled]);
 
   const handleToggleVideo = useCallback(async () => {
-    if (!localVideoRef.current) return;
+    if (!localVideoRef.current || !hasVideoDevice) return;
 
     try {
       if (isVideoEnabled) {
@@ -193,7 +207,7 @@ export function AgoraRoom({
     } catch (err) {
       console.error('Error toggling video:', err);
     }
-  }, [isVideoEnabled]);
+  }, [isVideoEnabled, hasVideoDevice]);
 
   // Loading state
   if (state === 'loading') {
@@ -266,9 +280,17 @@ export function AgoraRoom({
       {/* Local video container */}
       <div
         ref={containerRef}
-        className="w-full h-full bg-slate-900"
+        className="w-full h-full bg-slate-900 flex flex-col items-center justify-center"
         style={{ minHeight: '400px' }}
-      />
+      >
+        {!hasVideoDevice && (
+          <div className="text-center px-6">
+            <IconVideoOff className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+            <p className="text-slate-300 font-medium mb-1">Câmera não disponível</p>
+            <p className="text-slate-500 text-sm">Conectado apenas com áudio. Você pode continuar a conversa normalmente.</p>
+          </div>
+        )}
+      </div>
 
       {/* Control bar */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 to-transparent p-4 flex items-center justify-center gap-3">
@@ -290,8 +312,9 @@ export function AgoraRoom({
           variant={isVideoEnabled ? "default" : "destructive"}
           size="lg"
           onClick={handleToggleVideo}
+          disabled={!hasVideoDevice}
           className="rounded-full w-12 h-12 p-0 flex items-center justify-center"
-          title={isVideoEnabled ? "Desligar câmera" : "Ligar câmera"}
+          title={hasVideoDevice ? (isVideoEnabled ? "Desligar câmera" : "Ligar câmera") : "Câmera não disponível"}
         >
           {isVideoEnabled ? (
             <IconVideo className="h-5 w-5" />
