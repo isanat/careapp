@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AppShell } from "@/components/layout/app-shell";
-import { VideoRoom } from "@/components/video/video-room";
+import { AgoraRoom } from "@/components/video/agora-room";
 import {
   IconVideo,
   IconClock,
@@ -385,14 +385,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
         {/* ====== IN PROGRESS ====== */}
         {interview.status === "IN_PROGRESS" && (
           <div className="space-y-3">
-            <VideoRoom
-              roomName={roomName}
+            <AgoraRoom
+              channelName={roomName}
               displayName={session?.user?.name || "Usuario"}
-              email={session?.user?.email}
-              subject={`Entrevista: ${otherPartyName}`}
-              isModerator={isFamily}
-              enableLobby={false}
-              enablePrejoinPage={false}
               onLeave={handleLeaveMeeting}
               className="h-[calc(100vh-220px)] min-h-[400px]"
             />
