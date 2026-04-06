@@ -73,17 +73,26 @@ export function AgoraRoom({
         console.log('Got Agora token for UID:', uid);
 
         // Create local audio track
-        const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-        localAudioRef.current = audioTrack;
+        let audioTrack: ILocalAudioTrack;
+        try {
+          audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+          localAudioRef.current = audioTrack;
+          console.log('✓ Microphone audio track created');
+        } catch (err: any) {
+          console.error('✗ Microfone erro:', err.message);
+          throw new Error(`Erro ao acessar microfone: ${err.message}`);
+        }
 
         // Try to create video track, fallback to audio-only if camera not available
         let videoTrack: ILocalVideoTrack | null = null;
         let hasCamera = true;
         try {
+          console.log('Tentando acessar câmera...');
           videoTrack = await AgoraRTC.createCameraVideoTrack();
           localVideoRef.current = videoTrack;
+          console.log('✓ Camera video track created');
         } catch (err: any) {
-          console.warn('Camera not available, proceeding with audio-only:', err.message);
+          console.warn('⚠ Câmera não disponível, continuando apenas com áudio:', err.message);
           setHasVideoDevice(false);
           hasCamera = false;
         }
@@ -222,13 +231,18 @@ export function AgoraRoom({
   // Loading state
   if (state === 'loading') {
     return (
-      <div className={`flex flex-col items-center justify-center bg-slate-950 rounded-2xl ${className}`}>
-        <div className="flex flex-col items-center gap-4">
+      <div className={`flex flex-col items-center justify-center bg-slate-950 rounded-2xl ${className}`} style={{ minHeight: '400px' }}>
+        <div className="flex flex-col items-center gap-4 px-6">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-primary/20">
             <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-          <p className="text-slate-300 font-medium">Conectando à chamada...</p>
-          <p className="text-slate-500 text-sm">Inicializando Agora</p>
+          <p className="text-slate-300 font-medium text-center">Conectando à chamada...</p>
+          <p className="text-slate-500 text-sm text-center">
+            Se está travado por mais de 30s, verifique as permissões de câmera/microfone no seu telefone.
+          </p>
+          <div className="mt-4 w-full max-w-xs bg-slate-800/50 rounded-lg p-3 text-xs text-slate-400 text-center">
+            <p>Verifique: Configurações → Aplicativo → Permissões</p>
+          </div>
         </div>
       </div>
     );
