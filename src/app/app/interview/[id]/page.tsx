@@ -22,6 +22,7 @@ import {
   IconExternalLink,
   IconContract,
   IconChat,
+  IconArrowLeft,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 import { apiFetch } from "@/lib/api-client";
@@ -84,6 +85,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   const [cgInterviewConducted, setCgInterviewConducted] = useState(false);
   const [cgPlatformAck, setCgPlatformAck] = useState(false);
   const [cgNoMisrepresentation, setCgNoMisrepresentation] = useState(false);
+  const [userLeftMeeting, setUserLeftMeeting] = useState(false);
 
   const paramsRef = useRef(params);
 
@@ -213,9 +215,10 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   };
 
   const handleLeaveMeeting = async () => {
-    if (interview?.status === "IN_PROGRESS") {
-      await handleCompleteInterview();
-    }
+    // Don't automatically complete interview when user leaves Jitsi
+    // User must click "Finalizar" button to confirm interview is complete
+    setUserLeftMeeting(true);
+    console.log("User left Jitsi meeting, waiting for explicit completion");
   };
 
   const getRoomName = (url: string): string => {
@@ -385,6 +388,20 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               onLeave={handleLeaveMeeting}
               className="h-[calc(100vh-220px)] min-h-[400px]"
             />
+
+            {/* Warning when user left meeting */}
+            {userLeftMeeting && (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3">
+                <IconAlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-amber-700">Você saiu da reunião</p>
+                  <p className="text-sm text-amber-600 mt-1">
+                    Para finalizar a entrevista e ir para feedback, clique em "Finalizar" abaixo.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="flex gap-2">
               <Button
                 variant="outline"
