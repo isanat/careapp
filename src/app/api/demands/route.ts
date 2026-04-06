@@ -108,18 +108,8 @@ export async function GET(request: NextRequest) {
       proposalCount: row.proposalCount,
     }));
 
-    // Track view for analytics
-    for (const demand of demands) {
-      try {
-        await db.execute({
-          sql: `INSERT OR IGNORE INTO DemandView (id, demandId, caregiverId, viewedAt)
-                VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
-          args: [crypto.randomUUID(), demand.id, session.user.id],
-        });
-      } catch (error) {
-        console.warn(`Failed to track view for demand ${demand.id}:`, error);
-      }
-    }
+    // Note: Views are tracked in GET /api/demands/[id] detail endpoint only,
+    // not on list requests, to prevent view inflation from repeated listings
 
     return NextResponse.json({
       demands,
@@ -146,6 +136,11 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Only FAMILY users can create demands
+    if (session.user.role !== 'FAMILY') {
+      return NextResponse.json({ error: 'Only families can create demands' }, { status: 403 });
     }
 
     const body = await request.json();

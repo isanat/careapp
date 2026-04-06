@@ -138,6 +138,7 @@ export async function GET(
     const demandResult = await db.execute({
       sql: `
         SELECT
+          familyUserId,
           visibilityPackage,
           visibilityExpiresAt
         FROM Demand
@@ -151,6 +152,11 @@ export async function GET(
     }
 
     const demand = demandResult.rows[0];
+
+    // Verify ownership - only the demand creator can check boost status
+    if (demand.familyUserId !== session.user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     // Check if there's an active boost
     const boostResult = await db.execute({

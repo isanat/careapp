@@ -91,7 +91,7 @@ export async function runAutoMigrations(db: Client) {
       `CREATE INDEX IF NOT EXISTS idx_demand_city ON Demand(city, status)`,
       `CREATE INDEX IF NOT EXISTS idx_demand_created ON Demand(createdAt)`,
 
-      // DemandView table (track views)
+      // DemandView table (track views - one per caregiver per day)
       `CREATE TABLE IF NOT EXISTS DemandView (
         id TEXT PRIMARY KEY,
         demandId TEXT NOT NULL,
@@ -99,7 +99,7 @@ export async function runAutoMigrations(db: Client) {
         viewedAt TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (demandId) REFERENCES Demand(id) ON DELETE CASCADE,
         FOREIGN KEY (caregiverId) REFERENCES User(id) ON DELETE CASCADE,
-        UNIQUE(demandId, caregiverId, viewedAt)
+        UNIQUE(demandId, caregiverId)
       )`,
 
       `CREATE INDEX IF NOT EXISTS idx_demandview_demand ON DemandView(demandId, viewedAt)`,

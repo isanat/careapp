@@ -18,6 +18,11 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Only CAREGIVER users can send proposals
+    if (session.user.role !== 'CAREGIVER') {
+      return NextResponse.json({ error: 'Only caregivers can send proposals' }, { status: 403 });
+    }
+
     const demandId = params.id;
     const body = await request.json();
     const {
