@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -25,6 +26,7 @@ import {
   IconArrowLeft,
   IconArrowRight,
   IconLoader2,
+  IconX,
 } from '@/components/icons';
 
 interface Demand {
@@ -65,7 +67,7 @@ const VISIBILITY_BADGES: Record<string, { variant: string; icon: any; label: str
   NONE: { variant: 'outline', icon: undefined, label: 'NORMAL' },
 };
 
-export default function DemandsPage() {
+function DemandsContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [demands, setDemands] = useState<Demand[]>([]);
@@ -179,25 +181,17 @@ export default function DemandsPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <AppShell>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-center items-center py-16">
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 text-primary">
-                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                <span className="text-sm font-medium">Carregando demandas...</span>
-              </div>
-            </div>
-          </div>
+      <div className="max-w-lg mx-auto space-y-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-24 bg-muted rounded-2xl" />
+          <div className="h-64 bg-muted rounded-2xl" />
         </div>
-      </AppShell>
+      </div>
     );
   }
 
   return (
-    <AppShell>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
         <div className="space-y-2">
           <div className="flex items-center gap-3">
@@ -397,15 +391,14 @@ export default function DemandsPage() {
             })}
           </div>
         )}
-      </div>
 
-      {/* Proposal Wizard Modal */}
+      {/* Proposal Wizard Modal - Improved styling */}
       {wizard.demandId && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-background rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-background rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
             {/* Proposal Wizard */}
             <div className="p-6 space-y-5">
-              {/* Header */}
+              {/* Header with Close Button */}
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold">Sua Proposta</h2>
@@ -415,17 +408,24 @@ export default function DemandsPage() {
                 </div>
                 <button
                   onClick={handleCloseProposalWizard}
-                  className="h-8 w-8 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center"
+                  className="h-9 w-9 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors"
+                  aria-label="Fechar"
                 >
-                  ×
+                  <IconX className="h-5 w-5" />
                 </button>
               </div>
 
               {/* Progress Bar */}
               <div>
-                <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Passo {wizard.step} de 3
+                  </span>
+                  <span className="text-xs text-muted-foreground">{Math.round((wizard.step / 3) * 100)}%</span>
+                </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary transition-all duration-500"
+                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${(wizard.step / 3) * 100}%` }}
                   />
                 </div>
@@ -461,10 +461,10 @@ export default function DemandsPage() {
                     onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
                     disabled={wizard.aboutYou.trim().length === 0}
                     size="lg"
-                    className="w-full h-12 rounded-xl font-semibold"
+                    className="w-full h-11 rounded-xl font-semibold gap-2"
                   >
                     Continuar
-                    <IconArrowRight className="h-4 w-4 ml-2" />
+                    <IconArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
               )}
@@ -503,7 +503,7 @@ export default function DemandsPage() {
                         placeholder="Ex: 18.50"
                         step="0.50"
                         min="0"
-                        className="h-12 rounded-xl text-sm"
+                        className="h-11 rounded-xl text-sm"
                       />
                     </div>
                   </div>
@@ -513,7 +513,7 @@ export default function DemandsPage() {
                       variant="outline"
                       onClick={() => setWizard(prev => ({ ...prev, step: 1 }))}
                       size="lg"
-                      className="h-12 rounded-xl px-4"
+                      className="h-11 rounded-xl px-4"
                     >
                       <IconArrowLeft className="h-4 w-4" />
                     </Button>
@@ -521,10 +521,10 @@ export default function DemandsPage() {
                       onClick={() => setWizard(prev => ({ ...prev, step: 3 }))}
                       disabled={wizard.message.trim().length === 0 || !wizard.expectedRate}
                       size="lg"
-                      className="flex-1 h-12 rounded-xl font-semibold"
+                      className="flex-1 h-11 rounded-xl font-semibold gap-2"
                     >
                       Revisar
-                      <IconArrowRight className="h-4 w-4 ml-2" />
+                      <IconArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -575,7 +575,7 @@ export default function DemandsPage() {
                       variant="outline"
                       onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
                       size="lg"
-                      className="h-12 rounded-xl px-4"
+                      className="h-11 rounded-xl px-4"
                       disabled={wizard.isSubmitting}
                     >
                       <IconArrowLeft className="h-4 w-4" />
@@ -584,17 +584,17 @@ export default function DemandsPage() {
                       onClick={handleSubmitProposal}
                       disabled={wizard.isSubmitting}
                       size="lg"
-                      className="flex-1 h-12 rounded-xl font-semibold shadow-lg shadow-primary/25"
+                      className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
                     >
                       {wizard.isSubmitting ? (
                         <>
-                          <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                          <IconLoader2 className="h-4 w-4 animate-spin" />
                           Enviando...
                         </>
                       ) : (
                         <>
                           Enviar Proposta
-                          <IconArrowRight className="h-4 w-4 ml-2" />
+                          <IconArrowRight className="h-4 w-4" />
                         </>
                       )}
                     </Button>
@@ -605,6 +605,25 @@ export default function DemandsPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+export default function DemandsPage() {
+  return (
+    <AppShell>
+      <Suspense
+        fallback={
+          <div className="max-w-lg mx-auto space-y-4 py-8">
+            <div className="animate-pulse space-y-4">
+              <div className="h-24 bg-muted rounded-2xl" />
+              <div className="h-64 bg-muted rounded-2xl" />
+            </div>
+          </div>
+        }
+      >
+        <DemandsContent />
+      </Suspense>
     </AppShell>
   );
 }

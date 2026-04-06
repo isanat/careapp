@@ -1,9 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AppShell } from '@/components/layout/app-shell';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconLoader2,
+  IconAlertCircle,
+  IconCheck,
+  IconX,
+  IconMapPin,
+  IconCalendar,
+  IconClock,
+} from '@/components/icons';
 
 const SERVICE_TYPES = [
   'PERSONAL_CARE',
@@ -35,26 +55,51 @@ const SERVICE_LABELS: Record<string, string> = {
   NURSING_CARE: 'Enfermagem',
 };
 
-export default function NewDemandPage() {
+interface FormData {
+  title: string;
+  description: string;
+  serviceTypes: string[];
+  address: string;
+  city: string;
+  postalCode: string;
+  requiredExperienceLevel: string;
+  requiredCertifications: string[];
+  careType: string;
+  desiredStartDate: string;
+  desiredEndDate: string;
+  hoursPerWeek: string;
+  visibilityPackage: string;
+}
+
+function NewDemandContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
-    serviceTypes: [] as string[],
+    serviceTypes: [],
     address: '',
     city: '',
     postalCode: '',
     requiredExperienceLevel: 'INTERMEDIATE',
-    requiredCertifications: [] as string[],
+    requiredCertifications: [],
     careType: 'RECURRING',
     desiredStartDate: '',
     desiredEndDate: '',
     hoursPerWeek: '',
+    visibilityPackage: 'BASIC',
   });
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
 
   const handleServiceTypeChange = (serviceType: string) => {
     setFormData(prev => ({
@@ -65,28 +110,57 @@ export default function NewDemandPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateStep = (currentStep: number): boolean => {
     setError(null);
+
+    switch (currentStep) {
+      case 1:
+        if (!formData.title.trim()) {
+          setError('Título é obrigatório');
+          return false;
+        }
+        if (formData.description.length < 100) {
+          setError('Descrição deve ter pelo menos 100 caracteres');
+          return false;
+        }
+        return true;
+
+      case 2:
+        if (formData.serviceTypes.length === 0) {
+          setError('Selecione pelo menos um tipo de serviço');
+          return false;
+        }
+        if (!formData.city.trim()) {
+          setError('Localidade é obrigatória');
+          return false;
+        }
+        return true;
+
+      case 3:
+        // All optional
+        return true;
+
+      default:
+        return true;
+    }
+  };
+
+  const handleNext = () => {
+    if (validateStep(step)) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!validateStep(4)) {
+      setSubmitError('Verifique as informações preenchidas');
+      return;
+    }
+
     setLoading(true);
+    setSubmitError(null);
 
     try {
-      if (!formData.title.trim()) {
-        throw new Error('Título é obrigatório');
-      }
-
-      if (formData.description.length < 100) {
-        throw new Error('Descrição deve ter pelo menos 100 caracteres');
-      }
-
-      if (formData.serviceTypes.length === 0) {
-        throw new Error('Selecione pelo menos um tipo de serviço');
-      }
-
-      if (!formData.city.trim()) {
-        throw new Error('Localidade é obrigatória');
-      }
-
       const res = await fetch('/api/demands', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -103,147 +177,244 @@ export default function NewDemandPage() {
           desiredStartDate: formData.desiredStartDate || undefined,
           desiredEndDate: formData.desiredEndDate || undefined,
           hoursPerWeek: formData.hoursPerWeek ? parseInt(formData.hoursPerWeek) : undefined,
+          visibilityPackage: formData.visibilityPackage,
         }),
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'Falha ao criar demanda');
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Falha ao criar demanda');
       }
 
       const data = await res.json();
       router.push(`/app/family/demands/${data.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setSubmitError(err instanceof Error ? err.message : 'Erro inesperado');
     } finally {
       setLoading(false);
     }
   };
 
-  if (status === 'unauthenticated') {
-    return <div className="text-center py-8">Faça login para continuar</div>;
+  if (status === 'loading') {
+    return (
+      <div className="max-w-lg mx-auto space-y-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-24 bg-muted rounded-2xl" />
+          <div className="h-64 bg-muted rounded-2xl" />
+        </div>
+      </div>
+    );
   }
 
+  const totalSteps = 4;
+  const progress = (step / totalSteps) * 100;
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <Link href="/app/family/demands" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
-          ← Voltar
+    <div className="max-w-lg mx-auto pb-8">
+      {/* Header Section */}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Criar Nova Demanda</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Atraia cuidadores qualificados com uma demanda clara
+          </p>
+        </div>
+        <Link
+          href="/app/family/demands"
+          className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+          aria-label="Fechar"
+        >
+          <IconX className="h-5 w-5" />
         </Link>
+      </div>
 
-        <div className="bg-white rounded-lg shadow p-8">
-          <h1 className="text-3xl font-bold mb-6">Criar Nova Demanda</h1>
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-medium text-muted-foreground">
+            Passo {step} de {totalSteps}
+          </span>
+          <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
+        </div>
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-              {error}
-            </div>
-          )}
+      {/* Error Alert */}
+      {error && (
+        <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
+          <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-destructive">{error}</p>
+        </div>
+      )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+      {submitError && (
+        <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
+          <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-destructive">{submitError}</p>
+        </div>
+      )}
+
+      {/* Step 1: Informações Básicas */}
+      {step === 1 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold mb-1">Informações Básicas</h2>
+            <p className="text-sm text-muted-foreground">
+              Comece com os detalhes principais da sua demanda
+            </p>
+          </div>
+
+          <div className="space-y-4">
             {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título da Demanda *
-              </label>
-              <input
-                type="text"
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Título da Demanda</Label>
+              <Input
                 value={formData.title}
                 onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 placeholder="Ex: Cuidadora para idosa em Lisboa"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="h-11 rounded-xl text-sm"
               />
+              <p className="text-xs text-muted-foreground">
+                {formData.title.length}/100 caracteres
+              </p>
             </div>
 
             {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Descrição Detalhada * (mín. 100 caracteres)
-              </label>
-              <textarea
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                Descrição Detalhada (mín. 100 caracteres)
+              </Label>
+              <Textarea
                 value={formData.description}
                 onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Descreva detalhadamente a necessidade, condições, horários, etc."
+                placeholder="Descreva detalhadamente a necessidade, condições, horários, requisitos especiais, etc."
                 rows={5}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="rounded-xl text-sm resize-none"
               />
-              <div className="text-sm text-gray-600 mt-1">
-                {formData.description.length}/100 caracteres mínimos
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                  {formData.description.length}/100 caracteres mínimos
+                </p>
+                {formData.description.length >= 100 && (
+                  <div className="flex items-center gap-1 text-xs text-success">
+                    <IconCheck className="h-3 w-3" />
+                    OK
+                  </div>
+                )}
               </div>
             </div>
+          </div>
 
+          <Button
+            onClick={handleNext}
+            disabled={!formData.title.trim() || formData.description.length < 100}
+            size="lg"
+            className="w-full h-11 rounded-xl font-semibold gap-2"
+          >
+            Continuar
+            <IconArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Step 2: Detalhes */}
+      {step === 2 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold mb-1">Detalhes da Demanda</h2>
+            <p className="text-sm text-muted-foreground">
+              Especifique os tipos de serviço e localização
+            </p>
+          </div>
+
+          <div className="space-y-5">
             {/* Service Types */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tipos de Serviço * (selecione um ou mais)
-              </label>
-              <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Tipos de Serviço</Label>
+              <div className="grid grid-cols-2 gap-2">
                 {SERVICE_TYPES.map(type => (
-                  <label key={type} className="flex items-center">
-                    <input
-                      type="checkbox"
+                  <button
+                    key={type}
+                    onClick={() => handleServiceTypeChange(type)}
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border-2 transition-all ${
+                      formData.serviceTypes.includes(type)
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border hover:border-muted-foreground/50'
+                    }`}
+                  >
+                    <Checkbox
                       checked={formData.serviceTypes.includes(type)}
-                      onChange={() => handleServiceTypeChange(type)}
-                      className="rounded border-gray-300 text-blue-600"
+                      onCheckedChange={() => handleServiceTypeChange(type)}
+                      className="cursor-pointer"
                     />
-                    <span className="ml-2 text-sm text-gray-700">{SERVICE_LABELS[type]}</span>
-                  </label>
+                    <span className="text-xs font-medium">{SERVICE_LABELS[type]}</span>
+                  </button>
                 ))}
               </div>
             </div>
 
             {/* Location */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Localidade *
-                </label>
-                <input
-                  type="text"
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <IconMapPin className="h-4 w-4 text-primary" />
+                <Label className="text-sm font-medium">Localização</Label>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="city" className="text-xs font-medium text-muted-foreground">
+                  Localidade
+                </Label>
+                <Input
+                  id="city"
                   value={formData.city}
                   onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                  placeholder="Ex: Lisboa"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Ex: Lisboa, Porto, Covilhã"
+                  className="h-10 rounded-lg text-sm"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Código Postal
-                </label>
-                <input
-                  type="text"
+              <div className="space-y-2">
+                <Label htmlFor="postal" className="text-xs font-medium text-muted-foreground">
+                  Código Postal (opcional)
+                </Label>
+                <Input
+                  id="postal"
                   value={formData.postalCode}
                   onChange={e => setFormData(prev => ({ ...prev, postalCode: e.target.value }))}
                   placeholder="Ex: 1000-001"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="h-10 rounded-lg text-sm"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="address" className="text-xs font-medium text-muted-foreground">
+                  Endereço (opcional)
+                </Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                  placeholder="Endereço detalhado"
+                  className="h-10 rounded-lg text-sm"
                 />
               </div>
             </div>
 
-            {/* Address */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Endereço
-              </label>
-              <input
-                type="text"
-                value={formData.address}
-                onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                placeholder="Endereço detalhado (opcional)"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
             {/* Experience Level */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="space-y-2">
+              <Label htmlFor="experience" className="text-sm font-medium">
                 Nível de Experiência Requerido
-              </label>
+              </Label>
               <select
+                id="experience"
                 value={formData.requiredExperienceLevel}
                 onChange={e => setFormData(prev => ({ ...prev, requiredExperienceLevel: e.target.value }))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 <option value="BEGINNER">Iniciante</option>
                 <option value="INTERMEDIATE">Intermediário</option>
@@ -251,84 +422,282 @@ export default function NewDemandPage() {
                 <option value="EXPERT">Especialista</option>
               </select>
             </div>
+          </div>
 
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setStep(1)}
+              size="lg"
+              className="h-11 rounded-xl px-4"
+            >
+              <IconArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={formData.serviceTypes.length === 0 || !formData.city.trim()}
+              size="lg"
+              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+            >
+              Continuar
+              <IconArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Timeline */}
+      {step === 3 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold mb-1">Timeline e Horários</h2>
+            <p className="text-sm text-muted-foreground">
+              Defina quando e quantas horas por semana
+            </p>
+          </div>
+
+          <div className="space-y-5">
             {/* Care Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tipo de Cuidado
-              </label>
-              <select
-                value={formData.careType}
-                onChange={e => setFormData(prev => ({ ...prev, careType: e.target.value }))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="URGENT">Urgente</option>
-                <option value="RECURRING">Recorrente</option>
-                <option value="BOTH">Ambos</option>
-              </select>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Tipo de Cuidado</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { value: 'RECURRING', label: 'Recorrente' },
+                  { value: 'ONCE', label: 'Uma vez' },
+                  { value: 'URGENT', label: 'Urgente' },
+                  { value: 'BOTH', label: 'Ambos' },
+                ].map(option => (
+                  <button
+                    key={option.value}
+                    onClick={() => setFormData(prev => ({ ...prev, careType: option.value }))}
+                    className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                      formData.careType === option.value
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <IconCalendar className="h-4 w-4 text-primary" />
+                <Label className="text-sm font-medium">Datas</Label>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="startDate" className="text-xs font-medium text-muted-foreground">
                   Data Desejada de Início
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="startDate"
                   type="date"
                   value={formData.desiredStartDate}
                   onChange={e => setFormData(prev => ({ ...prev, desiredStartDate: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="h-10 rounded-lg text-sm"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data Desejada de Término
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="endDate" className="text-xs font-medium text-muted-foreground">
+                  Data Desejada de Término (opcional)
+                </Label>
+                <Input
+                  id="endDate"
                   type="date"
                   value={formData.desiredEndDate}
                   onChange={e => setFormData(prev => ({ ...prev, desiredEndDate: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="h-10 rounded-lg text-sm"
                 />
               </div>
             </div>
 
             {/* Hours per Week */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Horas por Semana
-              </label>
-              <input
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <IconClock className="h-4 w-4 text-primary" />
+                <Label htmlFor="hours" className="text-sm font-medium">
+                  Horas por Semana
+                </Label>
+              </div>
+              <Input
+                id="hours"
                 type="number"
                 value={formData.hoursPerWeek}
                 onChange={e => setFormData(prev => ({ ...prev, hoursPerWeek: e.target.value }))}
                 min="0"
                 placeholder="Ex: 20"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="h-10 rounded-lg text-sm"
               />
             </div>
+          </div>
 
-            {/* Buttons */}
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                {loading ? 'Criando...' : 'Criar Demanda'}
-              </button>
-              <Link
-                href="/app/family/demands"
-                className="flex-1 bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 text-center"
-              >
-                Cancelar
-              </Link>
-            </div>
-          </form>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setStep(2)}
+              size="lg"
+              className="h-11 rounded-xl px-4"
+            >
+              <IconArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={handleNext}
+              size="lg"
+              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+            >
+              Continuar
+              <IconArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Step 4: Revisão */}
+      {step === 4 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold mb-1">Revisar Demanda</h2>
+            <p className="text-sm text-muted-foreground">
+              Verifique todas as informações antes de publicar
+            </p>
+          </div>
+
+          {/* Summary Cards */}
+          <div className="space-y-3">
+            {/* Basic Info */}
+            <Card className="border-border/50 overflow-hidden">
+              <CardContent className="p-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  Informações Básicas
+                </p>
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-sm font-medium">{formData.title}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                      {formData.description}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Services & Location */}
+            <Card className="border-border/50 overflow-hidden">
+              <CardContent className="p-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                  Serviços e Localização
+                </p>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-1.5">
+                    {formData.serviceTypes.map(type => (
+                      <Badge
+                        key={type}
+                        variant="secondary"
+                        className="text-[10px] font-medium px-2 py-0.5 h-auto"
+                      >
+                        {SERVICE_LABELS[type]}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm mt-2">
+                    <IconMapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>
+                      {formData.city}
+                      {formData.postalCode && ` - ${formData.postalCode}`}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Timeline */}
+            {(formData.desiredStartDate || formData.hoursPerWeek) && (
+              <Card className="border-border/50 overflow-hidden">
+                <CardContent className="p-4">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                    Timeline
+                  </p>
+                  <div className="space-y-1.5 text-sm">
+                    {formData.desiredStartDate && (
+                      <div className="flex items-center gap-2">
+                        <IconCalendar className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>Início: {new Date(formData.desiredStartDate).toLocaleDateString('pt-PT')}</span>
+                      </div>
+                    )}
+                    {formData.hoursPerWeek && (
+                      <div className="flex items-center gap-2">
+                        <IconClock className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span>{formData.hoursPerWeek} horas/semana</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {submitError && (
+            <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl">
+              <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-destructive">{submitError}</p>
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setStep(3)}
+              size="lg"
+              className="h-11 rounded-xl px-4"
+              disabled={loading}
+            >
+              <IconArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={loading}
+              size="lg"
+              className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
+            >
+              {loading ? (
+                <>
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
+                  Publicando...
+                </>
+              ) : (
+                <>
+                  Publicar Demanda
+                  <IconArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function NewDemandPage() {
+  return (
+    <AppShell>
+      <Suspense
+        fallback={
+          <div className="max-w-lg mx-auto space-y-4 py-8">
+            <div className="animate-pulse space-y-4">
+              <div className="h-24 bg-muted rounded-2xl" />
+              <div className="h-64 bg-muted rounded-2xl" />
+            </div>
+          </div>
+        }
+      >
+        <NewDemandContent />
+      </Suspense>
+    </AppShell>
   );
 }
