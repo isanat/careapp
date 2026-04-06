@@ -33,9 +33,10 @@ interface Demand {
   };
 }
 
-export default function DemandDetailPage({ params }: { params: { id: string } }) {
+export default function DemandDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [demandId, setDemandId] = useState<string | null>(null);
   const [demand, setDemand] = useState<Demand | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,20 +46,28 @@ export default function DemandDetailPage({ params }: { params: { id: string } })
   const [estimatedStartDate, setEstimatedStartDate] = useState('');
 
   useEffect(() => {
+    const getParams = async () => {
+      const { id } = await params;
+      setDemandId(id);
+    };
+    getParams();
+  }, [params]);
+
+  useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status !== 'authenticated' || !demandId) return;
 
     const fetchDemand = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`/api/demands/${params.id}`);
+        const res = await fetch(`/api/demands/${demandId}`);
         if (!res.ok) throw new Error('Demanda não encontrada');
         const data = await res.json();
         setDemand(data);
@@ -70,11 +79,16 @@ export default function DemandDetailPage({ params }: { params: { id: string } })
     };
 
     fetchDemand();
-  }, [params.id, status]);
+  }, [demandId, status]);
 
   const handleSendProposal = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!demandId) {
+      setError('ID da demanda não encontrado');
+      return;
+    }
 
     if (!proposalMessage.trim()) {
       setError('Mensagem é obrigatória');
@@ -89,7 +103,7 @@ export default function DemandDetailPage({ params }: { params: { id: string } })
     try {
       setProposing(true);
 
-      const res = await fetch(`/api/demands/${params.id}/proposals`, {
+      const res = await fetch(`/api/demands/${demandId}/proposals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
