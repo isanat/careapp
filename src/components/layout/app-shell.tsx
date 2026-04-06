@@ -74,6 +74,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const navItems = isFamily
     ? [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
+        { href: "/app/family/demands", label: "Demandas", icon: IconSearch },
         { href: "/app/search", label: t.nav.searchCaregivers, icon: IconSearch },
         { href: "/app/interviews", label: "Entrevistas", icon: IconVideo },
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
@@ -83,6 +84,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
       ]
     : [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
+        { href: "/app/demands", label: "Demandas", icon: IconSearch },
         { href: "/app/interviews", label: "Entrevistas", icon: IconVideo },
         { href: "/app/proposals", label: "Propostas", icon: IconInbox },
         { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
