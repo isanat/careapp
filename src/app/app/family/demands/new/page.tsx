@@ -501,13 +501,13 @@ function NewDemandContent() {
         </div>
       )}
 
-      {/* Step 3: Timeline */}
+      {/* Step 3: Schedule & Frequency */}
       {step === 3 && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-bold mb-1">Timeline e Horários</h2>
+            <h2 className="text-lg font-bold mb-1">Agenda e Frequência</h2>
             <p className="text-sm text-muted-foreground">
-              Defina quando e quantas horas por semana
+              Defina quando, quanto tempo e que tipo de cuidado precisa
             </p>
           </div>
 
@@ -517,21 +517,21 @@ function NewDemandContent() {
               <Label className="text-sm font-medium">Tipo de Cuidado</Label>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { value: 'RECURRING', label: 'Recorrente' },
-                  { value: 'ONCE', label: 'Uma vez' },
-                  { value: 'URGENT', label: 'Urgente' },
-                  { value: 'BOTH', label: 'Ambos' },
+                  { value: 'RECURRING', label: 'Recorrente', desc: 'Cuidado regular' },
+                  { value: 'URGENT', label: 'Urgente', desc: 'Necessidade imediata' },
+                  { value: 'BOTH', label: 'Ambos', desc: 'Regular + Urgente' },
                 ].map(option => (
                   <button
                     key={option.value}
                     onClick={() => setFormData(prev => ({ ...prev, careType: option.value }))}
-                    className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                    className={`px-3 py-2.5 rounded-lg border-2 text-sm text-left transition-all ${
                       formData.careType === option.value
                         ? 'border-primary bg-primary/5'
-                        : 'border-border'
+                        : 'border-border hover:border-muted-foreground/50'
                     }`}
                   >
-                    {option.label}
+                    <p className="font-medium">{option.label}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{option.desc}</p>
                   </button>
                 ))}
               </div>
