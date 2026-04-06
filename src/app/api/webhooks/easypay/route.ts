@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     // Find payment by transaction key or Easypay UID
     const paymentResult = await db.execute({
       sql: `SELECT * FROM Payment WHERE stripeCheckoutSessionId = ? OR metadata LIKE ?`,
-      args: [uid, `%"transactionKey":"${transaction_key}"%`]
+      args: [uid, `%"transactionKey":"${transaction_key.replace(/[%_\\]/g, '\\$&')}"%`]
     });
 
     if (paymentResult.rows.length === 0) {

@@ -13,8 +13,16 @@ import * as bcrypt from 'bcryptjs';
 
 const TURSO_URL = process.env.TURSO_DATABASE_URL || 'libsql://idosolink-isanat.aws-us-east-1.turso.io';
 const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || '';
-const ADMIN_EMAIL = 'admin@evyra.pt';
-const ADMIN_PASSWORD = 'EvyraAdmin@2024!';
+
+// Generate secure temporary password for initial setup
+function generateTemporaryPassword(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+  let password = '';
+  for (let i = 0; i < 16; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
 
 // ============================================================
 // Complete schema DDL matching prisma/schema.prisma exactly
@@ -720,15 +728,18 @@ async function clearAllData(db: any) {
 }
 
 async function createAdminUser(db: any) {
-  const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  // Generate secure temporary password for initial setup
+  const tempPassword = generateTemporaryPassword();
+  const passwordHash = await bcrypt.hash(tempPassword, 12);
   const now = new Date().toISOString();
   const userId = `user_admin_${Date.now()}`;
   const adminId = `admin_${Date.now()}`;
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
 
   await db.execute({
     sql: `INSERT INTO "User" ("id","email","name","passwordHash","role","status","verificationStatus","preferredLanguage","timezone","createdAt","updatedAt","kycConfidence")
           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
-    args: [userId, ADMIN_EMAIL, 'Administrador', passwordHash, 'ADMIN', 'ACTIVE', 'VERIFIED', 'pt', 'Europe/Lisbon', now, now, 0],
+    args: [userId, adminEmail, 'Administrator', passwordHash, 'ADMIN', 'ACTIVE', 'VERIFIED', 'pt', 'Europe/Lisbon', now, now, 0],
   });
 
   await db.execute({
@@ -737,7 +748,9 @@ async function createAdminUser(db: any) {
     args: [adminId, userId, 'ADMIN', 1, 0, now, now],
   });
 
-  return { email: ADMIN_EMAIL, password: ADMIN_PASSWORD };
+  // Return setup confirmation without exposing the password in responses
+  // Admin should use password reset email or secure setup flow
+  return { email: adminEmail, setupCompleted: true, note: 'Use password reset email to set admin password' };
 }
 
 async function handleSync(request: NextRequest) {
@@ -781,7 +794,7 @@ async function handleSync(request: NextRequest) {
         tablesExist: tableNames,
         totalTables: tableNames.length,
         adminUserCreated: true,
-        adminCredentials: { email: adminCreds.email, password: adminCreds.password },
+        adminSetup: { email: adminCreds.email, note: adminCreds.note },
         timestamp: new Date().toISOString(),
       },
     });
