@@ -236,8 +236,12 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('[Demands API] POST error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to create demand' },
+      {
+        error: 'Failed to create demand',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }

@@ -12,45 +12,68 @@ import {
   IconTrendingUp,
   IconRefresh,
   IconDownload,
+  IconBarChart,
+  IconCheck,
+  IconEye,
 } from '@/components/icons';
 
-interface Metrics {
-  periodDays: number;
-  totalRevenue: number;
+interface KPIs {
   totalDemandsCreated: number;
-  avgConversionRate: number;
-  avgTimeToFirstProposal: number;
-  avgTicket: number;
+  activeDemands: number;
+  closedDemands: number;
+  pausedDemands: number;
+  totalRevenueEur: string;
+  totalRevenueCents: number;
+  completedPurchases: number;
+  pendingPurchases: number;
+  avgTicketEur: string;
+  totalViews: number;
+  totalProposals: number;
+  acceptedProposals: number;
+  conversionRatePercentage: string;
+  boostConversionPercentage: string;
+  avgViewsPerDemand: string;
+  avgProposalsPerDemand: string;
 }
 
-interface ChartDataPoint {
-  date: string;
-  revenue: string;
-}
-
-interface DemandsSummary {
-  byStatus: Record<string, number>;
-  byVisibility: Record<string, number>;
+interface ApiResponse {
+  period: string;
+  kpis: KPIs;
+  packageBreakdown: Array<{
+    package: string;
+    count: number;
+    revenueCents: number;
+    revenueEur: number;
+  }>;
+  dailyRevenueData: Array<{
+    date: string;
+    revenueCents: number;
+    revenueEur: string;
+  }>;
+  health: {
+    hasData: boolean;
+    activeSystem: boolean;
+    revenueGenerated: boolean;
+  };
 }
 
 export default function AdminDemandsPage() {
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
-  const [summary, setSummary] = useState<DemandsSummary | null>(null);
+  const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [period, setPeriod] = useState(7);
+  const [period, setPeriod] = useState<'today' | 'week' | 'month'>('week');
 
-  const fetchMetrics = async (days: number) => {
+  const fetchMetrics = async (p: 'today' | 'week' | 'month') => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`/api/admin/demands/metrics?period=${days}`);
-      if (!res.ok) throw new Error('Failed to fetch metrics');
-      const data = await res.json();
-      setMetrics(data.metrics);
-      setChartData(data.chartData);
-      setSummary(data.demandsSummary);
+      const res = await fetch(`/api/admin/demands/metrics?period=${p}`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to fetch metrics');
+      }
+      const responseData = await res.json();
+      setData(responseData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar métricas');
     } finally {
@@ -64,22 +87,25 @@ export default function AdminDemandsPage() {
 
   const handleExportCSV = async () => {
     try {
-      if (!metrics || !chartData) return;
+      if (!data) return;
 
+      const { kpis, dailyRevenueData } = data;
       const rows = [
         ['Dashboard de Demandas - Relatório'],
-        [`Período: Últimos ${period} dias`],
+        [`Período: ${period === 'week' ? 'Últimos 7 dias' : period === 'month' ? 'Últimos 30 dias' : 'Hoje'}`],
         [],
         ['MÉTRICAS GLOBAIS'],
-        ['Receita Total', `€${metrics.totalRevenue.toFixed(2)}`],
-        ['Demandas Criadas', metrics.totalDemandsCreated.toString()],
-        ['Taxa Conversão Média', `${metrics.avgConversionRate.toFixed(2)}%`],
-        ['Dias até 1ª Proposta (avg)', metrics.avgTimeToFirstProposal.toString()],
-        ['Ticket Médio', `€${metrics.avgTicket.toFixed(2)}`],
+        ['Receita Total', `€${kpis.totalRevenueEur}`],
+        ['Demandas Criadas', kpis.totalDemandsCreated.toString()],
+        ['Taxa Conversão (views→propostas)', `${kpis.conversionRatePercentage}%`],
+        ['Taxa Conversão (demandas→boosts)', `${kpis.boostConversionPercentage}%`],
+        ['Ticket Médio', `€${kpis.avgTicketEur}`],
+        ['Visualizações Totais', kpis.totalViews.toString()],
+        ['Propostas Totais', kpis.totalProposals.toString()],
         [],
         ['RECEITA DIÁRIA'],
         ['Data', 'Receita'],
-        ...chartData.map(d => [d.date, `€${d.revenue}`]),
+        ...dailyRevenueData.map(d => [d.date, `€${d.revenueEur}`]),
       ];
 
       const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
@@ -97,25 +123,25 @@ export default function AdminDemandsPage() {
     }
   };
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (valueStr: string) => {
     return new Intl.NumberFormat('pt-PT', {
       style: 'currency',
       currency: 'EUR',
-    }).format(value);
+    }).format(parseFloat(valueStr));
   };
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Marketplace de Demandas"
-        description="Gerenciamento e análise de demandas da plataforma"
+        description="Análise de demandas, visibilidade e receita"
         actions={
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => fetchMetrics(period)} disabled={loading}>
               <IconRefresh className="mr-2 h-4 w-4" />
               Atualizar
             </Button>
-            <Button variant="outline" onClick={handleExportCSV} disabled={loading || !metrics}>
+            <Button variant="outline" onClick={handleExportCSV} disabled={loading || !data}>
               <IconDownload className="mr-2 h-4 w-4" />
               Exportar
             </Button>
@@ -131,86 +157,85 @@ export default function AdminDemandsPage() {
 
       {/* Period Selector */}
       <div className="flex gap-2">
-        {[7, 30, 90].map(days => (
+        {['today', 'week', 'month'].map((p) => (
           <Button
-            key={days}
-            variant={period === days ? 'default' : 'outline'}
-            onClick={() => setPeriod(days)}
+            key={p}
+            variant={period === p ? 'default' : 'outline'}
+            onClick={() => setPeriod(p as 'today' | 'week' | 'month')}
             disabled={loading}
           >
-            {days === 7 && 'Últimos 7 dias'}
-            {days === 30 && 'Últimos 30 dias'}
-            {days === 90 && 'Últimos 90 dias'}
+            {p === 'week' && 'Últimos 7 dias'}
+            {p === 'month' && 'Últimos 30 dias'}
+            {p === 'today' && 'Hoje'}
           </Button>
         ))}
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="rounded-lg border border-gray-200 p-8 text-center">
+          <p className="text-sm text-gray-600">Carregando métricas...</p>
+        </div>
+      )}
+
       {/* KPI Cards */}
-      {metrics && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      {data && !loading && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatsCard
-            title="Receita (Visibilidade)"
-            value={formatCurrency(metrics.totalRevenue)}
-            change={`período: ${period} dias`}
+            title="Receita Total"
+            value={formatCurrency(data.kpis.totalRevenueEur)}
+            change={`${data.kpis.completedPurchases} boosts pagos`}
             trend="up"
             icon={<IconCoins className="h-6 w-6" />}
             loading={loading}
           />
           <StatsCard
             title="Demandas Criadas"
-            value={metrics.totalDemandsCreated.toString()}
-            change={`período: ${period} dias`}
+            value={data.kpis.totalDemandsCreated.toString()}
+            change={`${data.kpis.activeDemands} ativas`}
             trend="up"
-            icon={<IconHeartHandshake className="h-6 w-6" />}
+            icon={<IconBarChart className="h-6 w-6" />}
             loading={loading}
           />
           <StatsCard
-            title="Taxa Conversão (avg)"
-            value={`${metrics.avgConversionRate.toFixed(2)}%`}
-            change="demandas com boost vs sem"
+            title="Taxa Boost"
+            value={`${data.kpis.boostConversionPercentage}%`}
+            change="demandas com visibilidade paga"
             trend="neutral"
             icon={<IconTrendingUp className="h-6 w-6" />}
             loading={loading}
           />
           <StatsCard
-            title="Dias até 1ª Proposta"
-            value={metrics.avgTimeToFirstProposal.toString()}
-            change="tempo médio"
-            trend="down"
-            icon={<IconRefresh className="h-6 w-6" />}
-            loading={loading}
-          />
-          <StatsCard
             title="Ticket Médio"
-            value={formatCurrency(metrics.avgTicket)}
-            change="por boost"
+            value={formatCurrency(data.kpis.avgTicketEur)}
+            change="por visibilidade comprada"
             trend="neutral"
-            icon={<IconCoins className="h-6 w-6" />}
+            icon={<IconEye className="h-6 w-6" />}
             loading={loading}
           />
         </div>
       )}
 
-      {/* Chart Section */}
-      {chartData.length > 0 && (
+      {/* Revenue Chart */}
+      {data && data.dailyRevenueData.length > 0 && !loading && (
         <Card>
           <CardHeader>
-            <CardTitle>Receita Diária (Últimos {period} dias)</CardTitle>
+            <CardTitle>Receita Diária</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {chartData.map((point, idx) => (
+              {data.dailyRevenueData.map((point, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">{point.date}</span>
                   <div className="flex items-center gap-4">
                     <div
-                      className="h-2 bg-blue-500"
+                      className="h-2 bg-primary rounded-full"
                       style={{
-                        width: `${(parseFloat(point.revenue) / Math.max(...chartData.map(d => parseFloat(d.revenue))) * 200) || 2}px`,
+                        width: `${(point.revenueCents / Math.max(...data.dailyRevenueData.map(d => d.revenueCents || 1)) * 200) || 2}px`,
                       }}
                     />
-                    <span className="text-sm font-medium text-gray-900 w-16 text-right">
-                      €{point.revenue}
+                    <span className="text-sm font-medium text-gray-900 w-20 text-right">
+                      €{point.revenueEur}
                     </span>
                   </div>
                 </div>
@@ -220,73 +245,119 @@ export default function AdminDemandsPage() {
         </Card>
       )}
 
-      {/* Demands Summary */}
-      {summary && (
+      {/* Engagement Metrics & Package Breakdown */}
+      {data && !loading && (
         <div className="grid gap-6 md:grid-cols-2">
-          {/* By Status */}
+          {/* Engagement */}
           <Card>
             <CardHeader>
-              <CardTitle>Demandas por Status</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <IconEye className="h-5 w-5" />
+                Engajamento
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Visualizações</span>
+                  <span className="font-semibold">{data.kpis.totalViews}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Propostas Enviadas</span>
+                  <span className="font-semibold">{data.kpis.totalProposals}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Propostas Aceitas</span>
+                  <span className="font-semibold">{data.kpis.acceptedProposals}</span>
+                </div>
+                <div className="border-t pt-4 flex justify-between items-center">
+                  <span className="text-sm font-medium">Taxa de Conversão</span>
+                  <span className="font-semibold text-lg text-primary">
+                    {data.kpis.conversionRatePercentage}%
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Package Revenue */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <IconCoins className="h-5 w-5" />
+                Receita por Pacote
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {Object.entries(summary.byStatus).map(([status, count]) => (
-                  <div key={status} className="flex items-center justify-between">
+                {data.packageBreakdown.map((pkg, idx) => (
+                  <div key={idx} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Badge
-                        variant={
-                          status === 'ACTIVE'
-                            ? 'default'
-                            : status === 'CLOSED'
-                            ? 'secondary'
-                            : 'outline'
-                        }
-                      >
-                        {status === 'ACTIVE' && '✓ Ativa'}
-                        {status === 'CLOSED' && '✓ Fechada'}
-                        {status === 'PAUSED' && '⏸ Pausada'}
-                        {status === 'EXPIRED' && '✗ Expirada'}
+                      <Badge variant={pkg.package === 'NONE' ? 'outline' : 'default'}>
+                        {pkg.package === 'NONE' && 'Sem Boost'}
+                        {pkg.package === 'BASIC' && '7 dias'}
+                        {pkg.package === 'PREMIUM' && '30 dias'}
+                        {pkg.package === 'URGENT' && 'Urgente'}
                       </Badge>
                     </div>
-                    <span className="font-semibold">{count}</span>
+                    <div className="text-right">
+                      <div className="font-semibold">{pkg.count}</div>
+                      <div className="text-xs text-gray-600">€{pkg.revenueEur.toFixed(2)}</div>
+                    </div>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* By Visibility */}
+          {/* Status Breakdown */}
           <Card>
             <CardHeader>
-              <CardTitle>Demandas por Visibilidade</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <IconBarChart className="h-5 w-5" />
+                Status das Demandas
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {Object.entries(summary.byVisibility)
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([visibility, count]) => (
-                    <div key={visibility} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant={
-                            visibility === 'URGENT'
-                              ? 'destructive'
-                              : visibility === 'PREMIUM'
-                              ? 'default'
-                              : visibility === 'BASIC'
-                              ? 'secondary'
-                              : 'outline'
-                          }
-                        >
-                          {visibility === 'URGENT' && '🔴 Urgente'}
-                          {visibility === 'PREMIUM' && '⭐ Premium'}
-                          {visibility === 'BASIC' && '✓ Basic'}
-                          {visibility === 'NONE' && 'Normal'}
-                        </Badge>
-                      </div>
-                      <span className="font-semibold">{count}</span>
-                    </div>
-                  ))}
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Ativas</span>
+                  <span className="font-semibold text-green-600">{data.kpis.activeDemands}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Fechadas</span>
+                  <span className="font-semibold">{data.kpis.closedDemands}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Pausadas</span>
+                  <span className="font-semibold">{data.kpis.pausedDemands}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Averages */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <IconTrendingUp className="h-5 w-5" />
+                Médias
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Views/Demanda</span>
+                  <span className="font-semibold">{data.kpis.avgViewsPerDemand}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Propostas/Demanda</span>
+                  <span className="font-semibold">{data.kpis.avgProposalsPerDemand}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Compras Pendentes</span>
+                  <span className="font-semibold">{data.kpis.pendingPurchases}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
