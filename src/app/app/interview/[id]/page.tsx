@@ -359,6 +359,15 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               <IconVideo className="h-6 w-6 mr-3" />
               Entrar na Sala de Entrevista
             </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push("/app/interviews")}
+              size="lg"
+              className="w-full h-12 rounded-2xl"
+            >
+              <IconArrowLeft className="h-4 w-4 mr-2" />
+              Voltar às Entrevistas
+            </Button>
           </div>
         )}
 
@@ -396,6 +405,15 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 Finalizar
               </Button>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/app/interviews")}
+              className="w-full text-muted-foreground hover:text-foreground"
+            >
+              <IconArrowLeft className="h-4 w-4 mr-2" />
+              Voltar às Entrevistas
+            </Button>
           </div>
         )}
 
