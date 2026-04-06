@@ -76,7 +76,8 @@ const FREQUENCY_OPTIONS = [
 function NewContractContent() {
   const searchParams = useSearchParams();
   const caregiverId = searchParams.get("caregiverId");
-  const { status } = useSession();
+  const { status, data: session } = useSession();
+  const isFamily = session?.user?.role === "FAMILY";
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -702,34 +703,40 @@ function NewContractContent() {
               </div>
 
               <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
-                  <span className="text-red-500">-€{platformFee.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Taxa de contrato</span>
-                  <span className="text-red-500">-€{contractFee.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm font-semibold">
-                  <span>Cuidador recebe</span>
-                  <span className="text-green-600">€{caregiverReceives.toFixed(2)}</span>
-                </div>
+                {!isFamily && (
+                  <>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
+                      <span className="text-red-500">-€{platformFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Taxa de contrato</span>
+                      <span className="text-red-500">-€{contractFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-semibold">
+                      <span>Cuidador recebe</span>
+                      <span className="text-green-600">€{caregiverReceives.toFixed(2)}</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Contract fee notice */}
-          <div className="flex items-start gap-3 p-3.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-            <IconInfo className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-            <div className="text-sm">
-              <p className="font-medium text-blue-700 dark:text-blue-400">
-                Taxa de contrato de €{(CONTRACT_FEE_EUR_CENTS / 100).toFixed(2)}
-              </p>
-              <p className="text-xs text-blue-600 dark:text-blue-500 mt-0.5">
-                Esta taxa sera deduzida do valor que o cuidador recebe apos aceitar o contrato.
-              </p>
+          {/* Contract fee notice - only show to caregivers */}
+          {!isFamily && (
+            <div className="flex items-start gap-3 p-3.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+              <IconInfo className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-medium text-blue-700 dark:text-blue-400">
+                  Taxa de contrato de €{(CONTRACT_FEE_EUR_CENTS / 100).toFixed(2)}
+                </p>
+                <p className="text-xs text-blue-600 dark:text-blue-500 mt-0.5">
+                  Esta taxa sera deduzida do valor que o cuidador recebe apos aceitar o contrato.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Additional notes */}
           <div className="space-y-1.5">
