@@ -32,12 +32,12 @@ export async function POST(request: NextRequest) {
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
-    // Use user ID as string account for token generation
-    const token = RtcTokenBuilder.buildTokenWithUserAccount(
+    // Use UID=0 so Agora auto-assigns a numeric UID on join
+    const token = RtcTokenBuilder.buildTokenWithUid(
       appId,
       appCertificate,
       channelName,
-      session.user.id,
+      0,
       RtcRole.PUBLISHER,
       privilegeExpiredTs,
       privilegeExpiredTs
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       token,
       appId,
       channelName,
-      uid: session.user.id,
+      uid: 0,
       expiresIn: expirationTimeInSeconds
     });
   } catch (error) {
