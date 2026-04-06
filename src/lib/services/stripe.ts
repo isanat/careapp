@@ -3,9 +3,21 @@ import { db } from "@/lib/db-turso";
 import { ACTIVATION_COST_EUR_CENTS, CONTRACT_FEE_EUR_CENTS, APP_NAME } from "@/lib/constants";
 import { generateId } from "@/lib/utils/id";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_stub", {
-  apiVersion: "2023-10-16" as any,
-});
+// Lazy-load Stripe instance only when needed
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: "2023-10-16" as any,
+    });
+  }
+  return stripeInstance;
+}
 
 export class StripeService {
   /**
@@ -33,7 +45,7 @@ export class StripeService {
     });
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/payment?cancelled=true`,
@@ -62,6 +74,100 @@ export class StripeService {
     await db.execute({
       sql: `UPDATE Payment SET stripeCheckoutSessionId = ? WHERE id = ?`,
       args: [session.id, paymentId],
+    });
+
+    return {
+      sessionId: session.id,
+      url: session.url,
+    };
+  }
+
+  /**
+   * Create checkout session for visibility boost
+   */
+  async createVisibilityBoostCheckout(
+    userId: string,
+    demandId: string,
+    boostPackage: 'BASIC' | 'PREMIUM' | 'URGENT'
+  ) {
+    const packages: Record<string, { price: number; duration: number; label: string }> = {
+      BASIC: { price: 300, duration: 7, label: 'Visibilidade Básica (7 dias)' },
+      PREMIUM: { price: 800, duration: 30, label: 'Visibilidade Premium (30 dias)' },
+      URGENT: { price: 1500, duration: 3, label: 'Visibilidade Urgente (3 dias)' },
+    };
+
+    const packageInfo = packages[boostPackage];
+    if (!packageInfo) throw new Error('Invalid boost package');
+
+    // Get user and demand
+    const userResult = await db.execute({
+      sql: `SELECT id, email, name FROM User WHERE id = ?`,
+      args: [userId],
+    });
+
+    const demandResult = await db.execute({
+      sql: `SELECT id, title, familyUserId FROM Demand WHERE id = ?`,
+      args: [demandId],
+    });
+
+    if (userResult.rows.length === 0 || demandResult.rows.length === 0) {
+      throw new Error('User or demand not found');
+    }
+
+    const user = userResult.rows[0];
+    const demand = demandResult.rows[0];
+
+    if (demand.familyUserId !== userId) {
+      throw new Error('Unauthorized');
+    }
+
+    // Create Stripe checkout session
+    const session = await getStripe().checkout.sessions.create({
+      mode: 'payment',
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/family/demands/${demandId}?boost=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/family/demands/${demandId}?boost=cancelled`,
+      customer_email: String(user.email),
+      line_items: [
+        {
+          price_data: {
+            currency: 'eur',
+            unit_amount: packageInfo.price,
+            product_data: {
+              name: packageInfo.label,
+              description: `Aumentar visibilidade da demanda: "${demand.title}"`,
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        demandId,
+        familyUserId: userId,
+        boostPackage,
+        type: 'VISIBILITY_BOOST',
+      },
+    });
+
+    // Create VisibilityPurchase record
+    const purchaseId = generateId('vpurch');
+    const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
+
+    await db.execute({
+      sql: `
+        INSERT INTO VisibilityPurchase (
+          id, demandId, familyUserId, package, amountEurCents,
+          stripeCheckoutSessionId, status, purchasedAt, expiresAt, createdAt
+        ) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', datetime('now'), ?, datetime('now'))
+      `,
+      args: [
+        purchaseId,
+        demandId,
+        userId,
+        boostPackage,
+        packageInfo.price,
+        session.id,
+        expiresAt.toISOString(),
+      ],
     });
 
     return {
@@ -101,7 +207,7 @@ export class StripeService {
     });
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/contracts/${contractId}?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/contracts/${contractId}?cancelled=true`,
@@ -145,9 +251,76 @@ export class StripeService {
   async handleWebhook(event: Stripe.Event) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
+      const type = session.metadata?.type;
       const paymentId = session.metadata?.paymentId;
       const userId = session.metadata?.userId;
-      const type = session.metadata?.type;
+
+      // Handle visibility boost
+      if (type === "VISIBILITY_BOOST") {
+        const demandId = session.metadata?.demandId;
+        const boostPackage = session.metadata?.boostPackage;
+
+        if (!demandId || !boostPackage) return;
+
+        // Check if already completed (idempotency)
+        const checkResult = await db.execute({
+          sql: `SELECT status FROM VisibilityPurchase WHERE stripeCheckoutSessionId = ?`,
+          args: [session.id],
+        });
+
+        if (checkResult.rows.length > 0 && checkResult.rows[0].status === "COMPLETED") {
+          return;
+        }
+
+        const packages: Record<string, { duration: number }> = {
+          BASIC: { duration: 7 },
+          PREMIUM: { duration: 30 },
+          URGENT: { duration: 3 },
+        };
+
+        const packageInfo = packages[boostPackage];
+        if (!packageInfo) return;
+
+        // Wrap in transaction
+        const tx = await db.transaction("write");
+        try {
+          // Update VisibilityPurchase
+          const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
+          await tx.execute({
+            sql: `
+              UPDATE VisibilityPurchase
+              SET
+                status = 'COMPLETED',
+                stripePaymentIntentId = ?,
+                completedAt = datetime('now'),
+                expiresAt = ?
+              WHERE stripeCheckoutSessionId = ? AND status = 'PENDING'
+            `,
+            args: [session.payment_intent as string, expiresAt.toISOString(), session.id],
+          });
+
+          // Update Demand visibility
+          await tx.execute({
+            sql: `
+              UPDATE Demand
+              SET
+                visibilityPackage = ?,
+                visibilityExpiresAt = ?,
+                updatedAt = datetime('now')
+              WHERE id = ?
+            `,
+            args: [boostPackage, expiresAt.toISOString(), demandId],
+          });
+
+          await tx.commit();
+          console.log('[Webhook] ✓ Boost completed:', { demandId, boostPackage });
+        } catch (error) {
+          await tx.rollback();
+          throw error;
+        }
+
+        return;
+      }
 
       if (!paymentId || !userId) return;
 
@@ -160,9 +333,9 @@ export class StripeService {
       });
 
       if (paymentResult.rows.length === 0) return;
-      
+
       const payment = paymentResult.rows[0];
-      
+
       // Check if already completed (idempotency)
       if (payment.status === "COMPLETED") return;
 

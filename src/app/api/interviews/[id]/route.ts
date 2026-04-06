@@ -55,8 +55,8 @@ export async function GET(
         caregiverUserId: interview.caregiverUserId,
         familyName: interview.family_name,
         caregiverName: interview.caregiver_name,
-        questionnaire: interview.questionnaireJson ? JSON.parse(interview.questionnaireJson as string) : null,
-        caregiverQuestionnaire: interview.caregiverQuestionnaireJson ? JSON.parse(interview.caregiverQuestionnaireJson as string) : null,
+        questionnaire: interview.questionnaireJson ? JSON.parse(String(interview.questionnaireJson)) : null,
+        caregiverQuestionnaire: interview.caregiverQuestionnaireJson ? JSON.parse(String(interview.caregiverQuestionnaireJson)) : null,
         familyCompletedAt: interview.familyCompletedAt,
         caregiverCompletedAt: interview.caregiverCompletedAt
       }

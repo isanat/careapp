@@ -48,7 +48,7 @@ export async function GET(
       senderId: msg.senderId,
       senderRole: msg.senderRole,
       message: msg.message,
-      attachments: msg.attachments ? JSON.parse(msg.attachments as string) : [],
+      attachments: msg.attachments ? JSON.parse(String(msg.attachments)) : [],
       createdAt: msg.createdAt,
     }));
 

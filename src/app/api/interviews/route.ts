@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
         videoRoomUrl: row.videoRoomUrl,
         otherPartyName: row.other_party_name,
         otherPartyRole: row.other_party_role,
-        questionnaire: row.questionnaireJson ? JSON.parse(row.questionnaireJson as string) : null,
+        questionnaire: row.questionnaireJson ? JSON.parse(String(row.questionnaireJson)) : null,
         createdAt: row.createdAt
       }))
     });

@@ -200,6 +200,11 @@ export default function AdminDashboardPage() {
                 Resolver Disputas <IconArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+            <Button variant="outline" className="w-full justify-between" asChild>
+              <Link href="/admin/demands">
+                Marketplace de Demandas <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 

@@ -80,7 +80,7 @@ export async function GET(
           let specialties: string[] = [];
           try {
             if (p.services) {
-              specialties = JSON.parse(p.services as string);
+              specialties = JSON.parse(String(p.services));
             }
           } catch {
             specialties = [];
