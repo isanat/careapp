@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
-import db from '@/lib/db-turso';
+import { db } from '@/lib/db-turso';
 import { getDemandMetrics } from '@/lib/demands/metrics';
 
 /**

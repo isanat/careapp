@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
-import db from '@/lib/db-turso';
+import { db } from '@/lib/db-turso';
 import { notifyFamilyNewProposal } from '@/lib/services/email';
 
 /**
@@ -36,7 +36,7 @@ export async function POST(
 
     // Verify demand exists and is active
     const demandResult = await db.execute({
-      sql: `SELECT id, familyUserId FROM Demand WHERE id = ? AND status = 'ACTIVE'`,
+      sql: `SELECT id, familyUserId, title FROM Demand WHERE id = ? AND status = 'ACTIVE'`,
       args: [demandId],
     });
 

@@ -1,4 +1,4 @@
-import db from '@/lib/db-turso';
+import { db } from '@/lib/db-turso';
 
 /**
  * Calcula métricas de uma demanda específica

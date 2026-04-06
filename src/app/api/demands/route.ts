@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
-import db from '@/lib/db-turso';
-import { getDemandMetrics } from '@/lib/demands/metrics';
+import { db } from '@/lib/db-turso';
 
 /**
  * GET /api/demands
@@ -54,7 +53,7 @@ export async function GET(request: NextRequest) {
     const args: string[] = [];
 
     if (city) {
-      query += ` AND d.city ILIKE ?`;
+      query += ` AND d.city LIKE ?`;
       args.push(`%${city}%`);
     }
 
