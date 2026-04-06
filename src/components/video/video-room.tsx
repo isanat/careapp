@@ -57,16 +57,8 @@ export function VideoRoom({
     console.log('VideoRoom mounting with roomName:', roomName);
     checkPermissions();
 
-    // Timeout if Jitsi takes too long to load
-    const timeout = setTimeout(() => {
-      if (meetingState === 'loading') {
-        console.error('Jitsi failed to load within 15 seconds');
-        setError('Timeout ao carregar o video. Verifique sua conexao e tente recarregar.');
-        setMeetingState('error');
-      }
-    }, 15000);
-
-    return () => clearTimeout(timeout);
+    // Note: Removed timeout for devices not found scenario
+    // When there are no devices, Jitsi still attempts to join with audio-only
   }, [roomName, meetingState]);
 
   const checkPermissions = async () => {
@@ -284,12 +276,32 @@ export function VideoRoom({
       {/* Loading overlay */}
       {meetingState === 'loading' && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-950 z-50">
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-4 px-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-primary/20">
               <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-            <p className="text-slate-300 font-medium">Carregando sala de video...</p>
-            <p className="text-slate-500 text-sm">Isto pode levar alguns segundos</p>
+            <p className="text-slate-300 font-medium text-center">Carregando sala de video...</p>
+            <p className="text-slate-500 text-sm text-center">Isto pode levar alguns segundos</p>
+            <div className="flex gap-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setMeetingState('loading'); }}
+                className="text-xs"
+              >
+                <IconLoader2 className="h-3 w-3 mr-1 animate-spin" />
+                Tentar Novamente
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={openInNewTab}
+                className="text-xs"
+              >
+                <IconExternalLink className="h-3 w-3 mr-1" />
+                Abrir em Nova Aba
+              </Button>
+            </div>
           </div>
         </div>
       )}
@@ -332,30 +344,48 @@ export function VideoRoom({
             startWithAudioMuted: startWithAudioMuted,
             startWithVideoMuted: startWithVideoMuted,
             disableDeepLinking: true,
-            enableLobby: false,  // Disable lobby to prevent membersOnly errors
+            enableLobby: false,
             lobby: {
-              enabled: false,  // Explicitly disable lobby
+              enabled: false,
               showChat: false
             },
             securityUi: {
-              hideLobbyButton: true,  // Hide lobby button
+              hideLobbyButton: true,
             },
             'breakout-rooms': {
               enabled: false
             },
             moderation: {
-              enabled: false,  // Disable moderation to allow joining
+              enabled: false,
             },
-            // Disable speaker-selection feature to avoid "Unrecognized feature" warning
             'features.speaker-selection': {
               enabled: false
             },
-            // Disable features that might not be available
             analytics: {
               disabled: true
             },
-            // Allow continuing even if devices aren't available
+            // Allow joining without devices
             disallowMixedAudio: false,
+            capScreenShareBitrate: 1,
+            // Fail gracefully if no devices available
+            constraints: {
+              video: {
+                height: {
+                  ideal: 720,
+                  max: 720,
+                  min: 180
+                },
+                width: {
+                  ideal: 1280,
+                  max: 1280,
+                  min: 320
+                },
+                frameRate: {
+                  max: 30
+                }
+              },
+              audio: true
+            }
           } as any}
           interfaceConfigOverwrite={{
             SHOW_JITSI_WATERMARK: false,
