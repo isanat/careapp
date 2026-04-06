@@ -332,19 +332,19 @@ export function VideoRoom({
             startWithAudioMuted: startWithAudioMuted,
             startWithVideoMuted: startWithVideoMuted,
             disableDeepLinking: true,
-            enableLobby: enableLobby,
+            enableLobby: false,  // Disable lobby to prevent membersOnly errors
             lobby: {
-              enabled: enableLobby,
+              enabled: false,  // Explicitly disable lobby
               showChat: false
             },
             securityUi: {
-              hideLobbyButton: false,
+              hideLobbyButton: true,  // Hide lobby button
             },
             'breakout-rooms': {
               enabled: false
             },
             moderation: {
-              enabled: true,
+              enabled: false,  // Disable moderation to allow joining
             },
             // Disable speaker-selection feature to avoid "Unrecognized feature" warning
             'features.speaker-selection': {
