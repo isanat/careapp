@@ -117,12 +117,12 @@ export function AgoraRoom({
           console.log('Connection state changed:', curState);
         });
 
-        // Join channel
+        // Join channel with string UID (from user account token)
         const userID = await client.join(
           process.env.NEXT_PUBLIC_AGORA_APP_ID!,
           channelName,
           token,
-          uid
+          uid as any // Use string UID from token response
         );
 
         console.log('Joined channel, user ID:', userID);
