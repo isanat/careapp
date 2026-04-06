@@ -41,6 +41,8 @@ export async function GET(
           d.desiredEndDate,
           d.hoursPerWeek,
           d.scheduleJson,
+          d.budgetEurCents,
+          d.minimumHourlyRateEur,
           d.visibilityPackage,
           d.visibilityExpiresAt,
           d.status,
@@ -75,6 +77,10 @@ export async function GET(
       // View tracking failed, continue
     }
 
+    // Check if user is the family who created the demand or has an active contract
+    const isFamily = session.user.role === 'FAMILY' && session.user.id === row.familyUserId;
+    const showPrivateDetails = isFamily;
+
     const demand = {
       id: row.id,
       familyUserId: row.familyUserId,
@@ -83,12 +89,15 @@ export async function GET(
       title: row.title,
       description: row.description,
       serviceTypes: JSON.parse(String(row.serviceTypes || '[]')),
-      address: row.address,
+      // Privacy: Only show address to the family who created it or after contract is finalized
+      address: showPrivateDetails ? row.address : null,
       city: row.city,
-      postalCode: row.postalCode,
+      // Hide postal code from caregivers (privacy)
+      postalCode: showPrivateDetails ? row.postalCode : null,
       country: row.country,
-      latitude: row.latitude,
-      longitude: row.longitude,
+      // Hide coordinates from caregivers (privacy)
+      latitude: showPrivateDetails ? row.latitude : null,
+      longitude: showPrivateDetails ? row.longitude : null,
       requiredExperienceLevel: row.requiredExperienceLevel,
       requiredCertifications: row.requiredCertifications ? JSON.parse(String(row.requiredCertifications)) : [],
       careType: row.careType,
@@ -96,6 +105,8 @@ export async function GET(
       desiredEndDate: row.desiredEndDate,
       hoursPerWeek: row.hoursPerWeek,
       scheduleJson: row.scheduleJson ? JSON.parse(String(row.scheduleJson)) : null,
+      budgetEurCents: showPrivateDetails ? row.budgetEurCents : null,
+      minimumHourlyRateEur: showPrivateDetails ? row.minimumHourlyRateEur : null,
       visibilityPackage: row.visibilityPackage,
       visibilityExpiresAt: row.visibilityExpiresAt,
       status: row.status,

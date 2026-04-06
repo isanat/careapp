@@ -40,6 +40,8 @@ export async function GET(request: NextRequest) {
         d.desiredStartDate,
         d.desiredEndDate,
         d.hoursPerWeek,
+        d.budgetEurCents,
+        d.minimumHourlyRateEur,
         d.visibilityPackage,
         d.visibilityExpiresAt,
         d.status,
@@ -88,18 +90,24 @@ export async function GET(request: NextRequest) {
       title: row.title,
       description: row.description,
       serviceTypes: JSON.parse(String(row.serviceTypes || '[]')),
-      address: row.address,
+      // Privacy: Only show address to the family who created the demand or after contract is finalized
+      address: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.address : null,
       city: row.city,
-      postalCode: row.postalCode,
+      // Hide postal code from caregivers (privacy)
+      postalCode: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.postalCode : null,
       country: row.country,
-      latitude: row.latitude,
-      longitude: row.longitude,
+      // Hide coordinates from caregivers (privacy)
+      latitude: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.latitude : null,
+      longitude: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.longitude : null,
       requiredExperienceLevel: row.requiredExperienceLevel,
       requiredCertifications: row.requiredCertifications ? JSON.parse(String(row.requiredCertifications)) : [],
       careType: row.careType,
       desiredStartDate: row.desiredStartDate,
       desiredEndDate: row.desiredEndDate,
       hoursPerWeek: row.hoursPerWeek,
+      // Hide budget from caregivers (privacy)
+      budgetEurCents: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.budgetEurCents : null,
+      minimumHourlyRateEur: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.minimumHourlyRateEur : null,
       visibilityPackage: row.visibilityPackage,
       visibilityExpiresAt: row.visibilityExpiresAt,
       status: row.status,
@@ -159,6 +167,8 @@ export async function POST(request: NextRequest) {
       desiredStartDate,
       desiredEndDate,
       hoursPerWeek,
+      budgetEurCents,
+      minimumHourlyRateEur,
       scheduleJson,
     } = body;
 
@@ -186,8 +196,9 @@ export async function POST(request: NextRequest) {
           id, familyUserId, title, description, serviceTypes, address, city, postalCode,
           latitude, longitude, requiredExperienceLevel, requiredCertifications, careType,
           desiredStartDate, desiredEndDate, hoursPerWeek, scheduleJson,
+          budgetEurCents, minimumHourlyRateEur,
           visibilityPackage, status, createdAt, updatedAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       args: [
         demandId,
@@ -207,6 +218,8 @@ export async function POST(request: NextRequest) {
         desiredEndDate || null,
         hoursPerWeek || null,
         scheduleJson || null,
+        budgetEurCents || null,
+        minimumHourlyRateEur || null,
         'NONE',
         'ACTIVE',
         now,

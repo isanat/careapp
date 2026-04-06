@@ -1130,6 +1130,10 @@ model Demand {
   hoursPerWeek     Int?
   scheduleJson     String? // JSON com horários preferidos
 
+  // Orçamento (Valores em centavos: €100 = 10000)
+  budgetEurCents       Int? // Orçamento total que a família pode gastar
+  minimumHourlyRateEur Int? // Taxa horária mínima (negociável)
+
   // Visibilidade
   visibilityPackage   VisibilityPackage @default(NONE)
   visibilityExpiresAt DateTime?
