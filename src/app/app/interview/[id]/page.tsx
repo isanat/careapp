@@ -391,8 +391,8 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               email={session?.user?.email}
               subject={`Entrevista: ${otherPartyName}`}
               isModerator={isFamily}
-              enableLobby={true}
-              enablePrejoinPage={true}
+              enableLobby={false}
+              enablePrejoinPage={false}
               onLeave={handleLeaveMeeting}
               className="h-[calc(100vh-220px)] min-h-[400px]"
             />
