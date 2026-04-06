@@ -101,7 +101,7 @@ export default function ContractsPage() {
             </Button>
             {isFamily && (
               <Button asChild size="sm">
-                <Link href="/app/contracts/new">
+                <Link href="/app/search">
                   <IconPlus className="h-3.5 w-3.5 mr-1" />
                   {t.contracts.new}
                 </Link>
