@@ -8,6 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { AppShell } from '@/components/layout/app-shell';
 import {
   IconMapPin,
   IconClock,
@@ -19,6 +22,9 @@ import {
   IconCheck,
   IconFilter,
   IconChevronRight,
+  IconArrowLeft,
+  IconArrowRight,
+  IconLoader2,
 } from '@/components/icons';
 
 interface Demand {
@@ -38,6 +44,18 @@ interface Demand {
   createdAt: string;
   viewCount: number;
   proposalCount: number;
+  familyName?: string;
+  familyAvatar?: string;
+}
+
+interface ProposalWizardState {
+  demandId: string | null;
+  step: number;
+  message: string;
+  expectedRate: string;
+  aboutYou: string;
+  isSubmitting: boolean;
+  error: string | null;
 }
 
 const VISIBILITY_BADGES: Record<string, { variant: string; icon: any; label: string }> = {
@@ -55,6 +73,15 @@ export default function DemandsPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchCity, setSearchCity] = useState('');
   const [selectedService, setSelectedService] = useState('');
+  const [wizard, setWizard] = useState<ProposalWizardState>({
+    demandId: null,
+    step: 1,
+    message: '',
+    expectedRate: '',
+    aboutYou: '',
+    isSubmitting: false,
+    error: null,
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -93,10 +120,67 @@ export default function DemandsPage() {
     return () => clearTimeout(debounceTimer);
   }, [status, searchCity, selectedService]);
 
+  const handleOpenProposalWizard = (demandId: string) => {
+    setWizard({
+      demandId,
+      step: 1,
+      message: '',
+      expectedRate: '',
+      aboutYou: '',
+      isSubmitting: false,
+      error: null,
+    });
+  };
+
+  const handleCloseProposalWizard = () => {
+    setWizard({
+      demandId: null,
+      step: 1,
+      message: '',
+      expectedRate: '',
+      aboutYou: '',
+      isSubmitting: false,
+      error: null,
+    });
+  };
+
+  const handleSubmitProposal = async () => {
+    if (!wizard.demandId) return;
+    setWizard(prev => ({ ...prev, isSubmitting: true, error: null }));
+
+    try {
+      const res = await fetch('/api/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          demandId: wizard.demandId,
+          message: wizard.message,
+          expectedRate: wizard.expectedRate ? parseFloat(wizard.expectedRate) : undefined,
+          aboutYou: wizard.aboutYou,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Falha ao enviar proposta');
+      }
+
+      handleCloseProposalWizard();
+      // Show success message (could use toast)
+      alert('Proposta enviada com sucesso!');
+    } catch (err) {
+      setWizard(prev => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Erro inesperado',
+        isSubmitting: false,
+      }));
+    }
+  };
+
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-background py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <AppShell>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-center items-center py-16">
             <div className="text-center">
               <div className="inline-flex items-center gap-2 text-primary">
@@ -106,12 +190,13 @@ export default function DemandsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-6">
+    <AppShell>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Header Section */}
         <div className="space-y-2">
@@ -292,7 +377,14 @@ export default function DemandsPage() {
                           </div>
 
                           {/* CTA Button */}
-                          <Button size="sm" className="w-full md:w-full h-9 text-xs rounded-lg gap-1 group/btn">
+                          <Button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleOpenProposalWizard(demand.id);
+                            }}
+                            size="sm"
+                            className="w-full md:w-full h-9 text-xs rounded-lg gap-1 group/btn"
+                          >
                             <span>Propor</span>
                             <IconChevronRight className="h-3.5 w-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
                           </Button>
@@ -306,6 +398,213 @@ export default function DemandsPage() {
           </div>
         )}
       </div>
-    </div>
+
+      {/* Proposal Wizard Modal */}
+      {wizard.demandId && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-background rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
+            {/* Proposal Wizard */}
+            <div className="p-6 space-y-5">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold">Sua Proposta</h2>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Passo {wizard.step} de 3
+                  </p>
+                </div>
+                <button
+                  onClick={handleCloseProposalWizard}
+                  className="h-8 w-8 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Progress Bar */}
+              <div>
+                <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-500"
+                    style={{ width: `${(wizard.step / 3) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Step 1: Caregiver Info Summary */}
+              {wizard.step === 1 && (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-base font-semibold mb-1">Quem você é?</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Compartilhe informações sobre sua experiência e qualificações
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Sobre você (experiência, certificações)</Label>
+                      <Textarea
+                        value={wizard.aboutYou}
+                        onChange={e => setWizard(prev => ({ ...prev, aboutYou: e.target.value }))}
+                        placeholder="Ex: Tenho 10 anos de experiência em cuidados domiciliares, certificado em primeiros socorros..."
+                        rows={4}
+                        className="rounded-xl text-sm resize-none"
+                      />
+                      <p className="text-xs text-muted-foreground text-right">
+                        {wizard.aboutYou.length}/500
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
+                    disabled={wizard.aboutYou.trim().length === 0}
+                    size="lg"
+                    className="w-full h-12 rounded-xl font-semibold"
+                  >
+                    Continuar
+                    <IconArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              )}
+
+              {/* Step 2: Proposal Message */}
+              {wizard.step === 2 && (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-base font-semibold mb-1">Sua proposta</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Por que você é ideal para esta demanda?
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Mensagem para a família</Label>
+                      <Textarea
+                        value={wizard.message}
+                        onChange={e => setWizard(prev => ({ ...prev, message: e.target.value }))}
+                        placeholder="Descreva por que você é um bom encaixe para esta demanda e o que pode oferecer..."
+                        rows={4}
+                        className="rounded-xl text-sm resize-none"
+                      />
+                      <p className="text-xs text-muted-foreground text-right">
+                        {wizard.message.length}/1000
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Sua taxa por hora (€)</Label>
+                      <Input
+                        type="number"
+                        value={wizard.expectedRate}
+                        onChange={e => setWizard(prev => ({ ...prev, expectedRate: e.target.value }))}
+                        placeholder="Ex: 18.50"
+                        step="0.50"
+                        min="0"
+                        className="h-12 rounded-xl text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setWizard(prev => ({ ...prev, step: 1 }))}
+                      size="lg"
+                      className="h-12 rounded-xl px-4"
+                    >
+                      <IconArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={() => setWizard(prev => ({ ...prev, step: 3 }))}
+                      disabled={wizard.message.trim().length === 0 || !wizard.expectedRate}
+                      size="lg"
+                      className="flex-1 h-12 rounded-xl font-semibold"
+                    >
+                      Revisar
+                      <IconArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Review */}
+              {wizard.step === 3 && (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-base font-semibold mb-1">Revisar proposta</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Verifique suas informações antes de enviar
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 bg-surface rounded-xl border border-border/50 p-4">
+                    <div className="border-b border-border/50 pb-3">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                        Sobre você
+                      </p>
+                      <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
+                    </div>
+
+                    <div className="border-b border-border/50 pb-3">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                        Mensagem
+                      </p>
+                      <p className="text-sm line-clamp-3">{wizard.message}</p>
+                    </div>
+
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
+                        Taxa horária
+                      </p>
+                      <p className="text-lg font-bold">€{parseFloat(wizard.expectedRate || '0').toFixed(2)}/h</p>
+                    </div>
+                  </div>
+
+                  {wizard.error && (
+                    <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl">
+                      <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-destructive">{wizard.error}</p>
+                    </div>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
+                      size="lg"
+                      className="h-12 rounded-xl px-4"
+                      disabled={wizard.isSubmitting}
+                    >
+                      <IconArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={handleSubmitProposal}
+                      disabled={wizard.isSubmitting}
+                      size="lg"
+                      className="flex-1 h-12 rounded-xl font-semibold shadow-lg shadow-primary/25"
+                    >
+                      {wizard.isSubmitting ? (
+                        <>
+                          <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          Enviar Proposta
+                          <IconArrowRight className="h-4 w-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </AppShell>
   );
 }
