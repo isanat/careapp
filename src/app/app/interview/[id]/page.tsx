@@ -96,6 +96,11 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
         const response = await apiFetch(`/api/interviews/${resolvedParams.id}`);
         if (response.ok) {
           const data = await response.json();
+          console.log('Interview loaded:', {
+            id: data.interview.id,
+            status: data.interview.status,
+            videoRoomUrl: data.interview.videoRoomUrl
+          });
           setInterview(data.interview);
           if (data.interview.questionnaire) {
             setCommunicationRating(data.interview.questionnaire.communicationRating || 3);
@@ -223,8 +228,11 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
   const getRoomName = (url: string): string => {
     try {
-      return new URL(url).pathname.replace('/', '');
-    } catch {
+      const roomName = new URL(url).pathname.replace('/', '');
+      console.log('Extracted room name from URL:', url, '->', roomName);
+      return roomName;
+    } catch (e) {
+      console.error('Failed to parse URL for room name:', url, e);
       return url;
     }
   };
