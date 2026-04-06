@@ -15,7 +15,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { AppShell } from "@/components/layout/app-shell";
 import {
   IconContract,
-  IconToken,
   IconCheck,
   IconArrowRight,
   IconArrowLeft,
@@ -26,6 +25,7 @@ import {
   IconAlertCircle,
   IconCalendar,
   IconLoader2,
+  IconInfo,
 } from "@/components/icons";
 import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS } from "@/lib/constants";
 
@@ -146,14 +146,59 @@ function NewContractContent() {
       .catch(() => setPlatformFeePercent(10));
   }, [caregiverId]);
 
+  // Calculate actual hours based on dates
+  const calculateTotalHours = () => {
+    if (!startDate) return 0;
+
+    const hoursPerWeek = frequency === "custom"
+      ? customHours
+      : FREQUENCY_OPTIONS.find(f => f.key === frequency)?.hours || 10;
+
+    const start = new Date(startDate + "T00:00:00");
+    const end = endDate ? new Date(endDate + "T00:00:00") : start;
+
+    // Add 1 day to include the end date
+    const endWithInclusion = new Date(end.getTime() + 24 * 60 * 60 * 1000);
+    const diffMs = endWithInclusion.getTime() - start.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    // Count weekdays if weekdays frequency
+    let totalDays = diffDays;
+    if (frequency === "weekdays") {
+      totalDays = 0;
+      let current = new Date(start);
+      while (current < endWithInclusion) {
+        const dayOfWeek = current.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 0 = Sunday, 6 = Saturday
+          totalDays++;
+        }
+        current.setDate(current.getDate() + 1);
+      }
+    } else if (frequency === "weekends") {
+      totalDays = 0;
+      let current = new Date(start);
+      while (current < endWithInclusion) {
+        const dayOfWeek = current.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          totalDays++;
+        }
+        current.setDate(current.getDate() + 1);
+      }
+    }
+
+    const weeks = totalDays / 7;
+    return Math.round(weeks * hoursPerWeek * 10) / 10; // Round to 1 decimal
+  };
+
   // Calculated values
   const hoursPerWeek = frequency === "custom"
     ? customHours
     : FREQUENCY_OPTIONS.find(f => f.key === frequency)?.hours || 10;
-  const totalHoursMonthly = hoursPerWeek * 4;
-  const totalEur = totalHoursMonthly * hourlyRate;
+  const totalHours = calculateTotalHours();
+  const totalEur = totalHours * hourlyRate;
   const platformFee = totalEur * (platformFeePercent / 100);
-  const caregiverReceives = totalEur - platformFee;
+  const contractFee = CONTRACT_FEE_EUR_CENTS / 100;
+  const caregiverReceives = totalEur - platformFee - contractFee;
 
   // Build description from questionnaire answers
   const buildDescription = () => {
@@ -186,7 +231,7 @@ function NewContractContent() {
           caregiverUserId: caregiver.id,
           title: title.slice(0, 200),
           hourlyRateEur: Math.round(hourlyRate * 100), // Convert from euros to cents
-          totalHours: Math.round(totalHoursMonthly),
+          totalHours: Math.round(totalHours),
           description: buildDescription().slice(0, 2000),
           startDate: startDate || undefined,
           endDate: endDate || undefined,
@@ -588,18 +633,40 @@ function NewContractContent() {
 
             {/* Schedule */}
             <div className="p-4 border-b border-border/50">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Horario</p>
-              <p className="text-sm">
-                {selectedSchedule.map(k => SCHEDULE_OPTIONS.find(s => s.key === k)?.label).join(", ")}
-                {" - "}
-                {FREQUENCY_OPTIONS.find(f => f.key === frequency)?.label}
-              </p>
-              {startDate && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  A partir de {new Date(startDate + "T00:00:00").toLocaleDateString("pt-PT")}
-                  {endDate ? ` ate ${new Date(endDate + "T00:00:00").toLocaleDateString("pt-PT")}` : ""}
-                </p>
-              )}
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">Horario</p>
+              <div className="space-y-2">
+                <div className="bg-muted/50 rounded-lg p-2.5">
+                  <p className="text-xs font-medium text-muted-foreground mb-1.5">Periodos:</p>
+                  <div className="space-y-1">
+                    {selectedSchedule.map(k => {
+                      const opt = SCHEDULE_OPTIONS.find(s => s.key === k);
+                      return opt ? (
+                        <div key={k} className="text-sm">
+                          <span className="font-medium">{opt.label}</span>
+                          <span className="text-muted-foreground ml-2">({opt.desc})</span>
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">Frequencia:</p>
+                  <p className="text-sm font-medium">
+                    {FREQUENCY_OPTIONS.find(f => f.key === frequency)?.label}
+                    {" "}
+                    <span className="text-muted-foreground">({hoursPerWeek}h/semana)</span>
+                  </p>
+                </div>
+                {startDate && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Periodo:</p>
+                    <p className="text-sm">
+                      {new Date(startDate + "T00:00:00").toLocaleDateString("pt-PT")}
+                      {endDate ? ` até ${new Date(endDate + "T00:00:00").toLocaleDateString("pt-PT")}` : ""}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Financial - editable hourly rate */}
@@ -629,7 +696,7 @@ function NewContractContent() {
                   <span className="font-medium">{hoursPerWeek}h</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Estimativa mensal ({totalHoursMonthly}h)</span>
+                  <span className="text-muted-foreground">Total do período ({totalHours.toFixed(1)}h)</span>
                   <span className="font-bold text-base">€{totalEur.toFixed(2)}</span>
                 </div>
               </div>
@@ -638,6 +705,10 @@ function NewContractContent() {
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
                   <span className="text-red-500">-€{platformFee.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Taxa de contrato</span>
+                  <span className="text-red-500">-€{contractFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-semibold">
                   <span>Cuidador recebe</span>
@@ -648,14 +719,14 @@ function NewContractContent() {
           </div>
 
           {/* Contract fee notice */}
-          <div className="flex items-start gap-3 p-3.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-            <IconToken className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-3.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+            <IconInfo className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-medium text-amber-700 dark:text-amber-400">
-                Taxa de Contrato: {CONTRACT_FEE_EUR_CENTS / 100}
+              <p className="font-medium text-blue-700 dark:text-blue-400">
+                Taxa de contrato de €{(CONTRACT_FEE_EUR_CENTS / 100).toFixed(2)}
               </p>
-              <p className="text-xs text-amber-600 dark:text-amber-500 mt-0.5">
-                Voce paga {CONTRACT_FEE_EUR_CENTS / 100} tokens. O cuidador paga {CONTRACT_FEE_EUR_CENTS / 100} ao aceitar.
+              <p className="text-xs text-blue-600 dark:text-blue-500 mt-0.5">
+                Esta taxa sera deduzida do valor que o cuidador recebe apos aceitar o contrato.
               </p>
             </div>
           </div>
