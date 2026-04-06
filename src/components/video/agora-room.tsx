@@ -39,6 +39,7 @@ export function AgoraRoom({
   const [isMicEnabled, setIsMicEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [hasVideoDevice, setHasVideoDevice] = useState(true);
+  const [remoteUsers, setRemoteUsers] = useState<{ [key: number]: boolean }>({});
 
   const clientRef = useRef<IAgoraRTCClient | null>(null);
   const localAudioRef = useRef<ILocalAudioTrack | null>(null);
@@ -102,11 +103,18 @@ export function AgoraRoom({
           console.log('User published:', user.uid, mediaType);
           await client.subscribe(user, mediaType);
 
+          // Track remote users
+          setRemoteUsers(prev => ({ ...prev, [user.uid]: true }));
+
           if (mediaType === 'video') {
-            const remoteVideoContainer = document.getElementById(`remote-${user.uid}`);
-            if (remoteVideoContainer && user.videoTrack) {
-              user.videoTrack.play(remoteVideoContainer);
-            }
+            // Render video after a small delay to ensure container exists
+            setTimeout(() => {
+              const remoteVideoContainer = document.getElementById(`remote-${user.uid}`);
+              if (remoteVideoContainer && user.videoTrack) {
+                console.log('Playing remote video for user:', user.uid);
+                user.videoTrack.play(remoteVideoContainer);
+              }
+            }, 100);
           }
 
           if (mediaType === 'audio' && user.audioTrack) {
@@ -120,6 +128,11 @@ export function AgoraRoom({
 
         client.on('user-left', (user) => {
           console.log('User left:', user.uid);
+          setRemoteUsers(prev => {
+            const updated = { ...prev };
+            delete updated[user.uid];
+            return updated;
+          });
         });
 
         client.on('connection-state-change', (curState) => {
@@ -301,14 +314,39 @@ export function AgoraRoom({
   // Joined state
   return (
     <div className={`relative rounded-2xl overflow-hidden bg-slate-950 ${className}`}>
-      {/* Local video container */}
-      <div
-        ref={containerRef}
-        className="w-full h-full bg-slate-900 flex flex-col items-center justify-center"
-        style={{ minHeight: '400px' }}
-      >
-        {!hasVideoDevice && (
-          <div className="text-center px-6">
+      <div className="w-full h-full flex flex-col" style={{ minHeight: '400px' }}>
+        {/* Remote videos grid */}
+        <div className="flex-1 bg-slate-900 grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
+          {/* Remote user videos */}
+          {Object.keys(remoteUsers).length > 0 ? (
+            Object.keys(remoteUsers).map((uid) => (
+              <div
+                key={uid}
+                id={`remote-${uid}`}
+                className="bg-slate-800 rounded-lg overflow-hidden"
+                style={{ minHeight: '200px' }}
+              />
+            ))
+          ) : (
+            <div className="col-span-full flex items-center justify-center text-slate-400">
+              <p>Aguardando outro participante...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Local video - small preview if we have it */}
+        {hasVideoDevice && (
+          <div className="absolute bottom-20 right-4 w-24 h-24 bg-slate-800 rounded-lg overflow-hidden border-2 border-slate-600">
+            <div ref={containerRef} className="w-full h-full" />
+          </div>
+        )}
+
+        {/* Local video message if no camera */}
+        {!hasVideoDevice && Object.keys(remoteUsers).length === 0 && (
+          <div
+            ref={containerRef}
+            className="flex-1 bg-slate-900 flex flex-col items-center justify-center"
+          >
             <IconVideoOff className="h-12 w-12 text-slate-400 mx-auto mb-3" />
             <p className="text-slate-300 font-medium mb-1">Câmera não disponível</p>
             <p className="text-slate-500 text-sm">Conectado apenas com áudio. Você pode continuar a conversa normalmente.</p>
@@ -317,7 +355,7 @@ export function AgoraRoom({
       </div>
 
       {/* Control bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 to-transparent p-4 flex items-center justify-center gap-3">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950 to-transparent p-4 flex items-center justify-center gap-3 z-10">
         <Button
           variant={isMicEnabled ? "default" : "destructive"}
           size="lg"
