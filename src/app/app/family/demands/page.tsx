@@ -335,9 +335,19 @@ function FamilyDemandsContent() {
                               <p className="text-sm font-semibold text-foreground">€{demand.metrics.visibilitySpent}</p>
                             </div>
 
-                            {/* Arrow - 1 col */}
-                            <div className="hidden lg:flex p-4 md:p-5 justify-center">
-                              <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                            {/* Action - 1 col */}
+                            <div className="p-4 md:p-5 flex items-center justify-center gap-2">
+                              <Link
+                                href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="h-8 px-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-xs font-medium text-primary transition-colors flex items-center gap-1"
+                              >
+                                <IconEuro className="h-3 w-3" />
+                                <span className="hidden sm:inline">Boost</span>
+                              </Link>
+                              <div className="hidden lg:flex">
+                                <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                              </div>
                             </div>
                           </div>
                         </CardContent>
