@@ -22,6 +22,7 @@ import {
   IconExternalLink,
   IconContract,
   IconChat,
+  IconArrowLeft,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 import { apiFetch } from "@/lib/api-client";
