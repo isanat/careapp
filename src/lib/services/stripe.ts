@@ -3,9 +3,21 @@ import { db } from "@/lib/db-turso";
 import { ACTIVATION_COST_EUR_CENTS, CONTRACT_FEE_EUR_CENTS, APP_NAME } from "@/lib/constants";
 import { generateId } from "@/lib/utils/id";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_stub", {
-  apiVersion: "2023-10-16" as any,
-});
+// Lazy-load Stripe instance only when needed
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: "2023-10-16" as any,
+    });
+  }
+  return stripeInstance;
+}
 
 export class StripeService {
   /**
@@ -33,7 +45,7 @@ export class StripeService {
     });
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/payment?cancelled=true`,
@@ -110,7 +122,7 @@ export class StripeService {
     }
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/family/demands/${demandId}?boost=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/family/demands/${demandId}?boost=cancelled`,
@@ -195,7 +207,7 @@ export class StripeService {
     });
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/contracts/${contractId}?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/contracts/${contractId}?cancelled=true`,
