@@ -768,42 +768,88 @@ function NewDemandContent() {
         </div>
       )}
 
-      {/* Step 5: Visibility Package */}
+      {/* Step 5: Visibility Package - PREMIUM DESIGN */}
       {step === 5 && (
         <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-bold mb-1">Escolha Visibilidade</h2>
-            <p className="text-sm text-muted-foreground">
-              Aumente as chances de receber propostas com visibilidade na plataforma
-            </p>
+          {/* Premium Header */}
+          <div className="relative">
+            <div className="absolute -top-12 -left-4 -right-4 h-24 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-3xl blur-2xl" />
+            <div className="relative">
+              <div className="mb-2 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                <IconStar className="h-3 w-3 text-primary" />
+                <span className="text-xs font-semibold text-primary">ESCOLHA VISIBILIDADE</span>
+              </div>
+              <h2 className="text-3xl font-black mb-2">Potencialize sua Demanda</h2>
+              <p className="text-sm text-muted-foreground max-w-lg">
+                Demandas com visibilidade recebem <span className="font-bold text-primary">3x mais propostas</span> em média. Escolha o pacote perfeito para você.
+              </p>
+            </div>
           </div>
 
-          {/* Visibility Options */}
-          <div className="space-y-3">
-            {VISIBILITY_PACKAGES.map((pkg) => {
+          {/* Visibility Packages - Premium Grid */}
+          <div className="grid gap-3">
+            {VISIBILITY_PACKAGES.map((pkg, idx) => {
               const Icon = pkg.icon;
+              const isSelected = selectedPackage === pkg.value;
+              const isRecommended = pkg.value === 'PREMIUM';
+
               return (
                 <button
                   key={pkg.value}
                   onClick={() => setSelectedPackage(pkg.value)}
-                  className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                    selectedPackage === pkg.value
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-muted-foreground/50'
-                  }`}
+                  className={`relative group p-5 rounded-2xl border-2 transition-all duration-300 ${
+                    isSelected
+                      ? 'border-primary bg-primary/8 shadow-lg shadow-primary/20'
+                      : 'border-border hover:border-primary/40 hover:bg-primary/3 hover:shadow-md hover:shadow-primary/10'
+                  } ${isRecommended && !isSelected ? 'ring-2 ring-primary/20' : ''}`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Icon className="h-4 w-4 text-primary" />
-                        <p className="font-semibold">{pkg.label}</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{pkg.desc}</p>
+                  {/* Recommended Badge */}
+                  {isRecommended && (
+                    <div className="absolute -top-3 left-6 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                      MAIS POPULAR
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-lg">
-                        {pkg.price === 0 ? 'Grátis' : `€${pkg.price}`}
-                      </p>
+                  )}
+
+                  <div className="flex items-start justify-between">
+                    {/* Left: Icon + Title + Description */}
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-all ${
+                          isSelected
+                            ? 'bg-primary text-white'
+                            : 'bg-primary/10 text-primary group-hover:bg-primary/20'
+                        }`}>
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-lg">{pkg.label}</p>
+                          <p className="text-xs text-muted-foreground">{pkg.desc}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Price */}
+                    <div className="text-right ml-4">
+                      {pkg.price === 0 ? (
+                        <div className="flex flex-col items-end gap-1">
+                          <p className="text-2xl font-black text-foreground">Grátis</p>
+                          <p className="text-xs text-muted-foreground">1x/mês</p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-end gap-1">
+                          <p className="text-3xl font-black text-primary">€{pkg.price}</p>
+                          <p className="text-xs text-muted-foreground">{pkg.desc.split('/')[1] || '7 dias'}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Selection Indicator */}
+                    <div className={`ml-3 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      isSelected
+                        ? 'border-primary bg-primary'
+                        : 'border-border group-hover:border-primary/40'
+                    }`}>
+                      {isSelected && <IconCheck className="h-4 w-4 text-white" />}
                     </div>
                   </div>
                 </button>
@@ -811,45 +857,65 @@ function NewDemandContent() {
             })}
           </div>
 
-          {/* Info Box */}
-          <div className="bg-muted/50 p-4 rounded-xl border border-border/50">
-            <p className="text-xs text-muted-foreground">
-              💡 <strong>Dica:</strong> Demandas com visibilidade recebem {' '}
-              <span className="font-semibold">3x mais propostas</span> em média. Você pode sempre comprar mais visibilidade depois!
-            </p>
+          {/* Benefits Comparison - Simple */}
+          <div className="grid grid-cols-2 gap-3 p-4 bg-muted/30 rounded-2xl border border-border/50">
+            <div className="flex items-start gap-2">
+              <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold">Visibilidade Destacada</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Mais visualizações</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold">Mais Propostas</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">3x em média</p>
+              </div>
+            </div>
           </div>
 
           {submitError && (
-            <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl">
+            <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-xl">
               <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-destructive">{submitError}</p>
+              <div>
+                <p className="text-sm font-semibold text-destructive">Erro ao criar demanda</p>
+                <p className="text-xs text-destructive/80 mt-1">{submitError}</p>
+              </div>
             </div>
           )}
 
-          <div className="flex gap-3">
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-4 border-t border-border/30">
             <Button
               variant="outline"
               onClick={() => setStep(4)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-12 rounded-xl px-6"
               disabled={loading}
             >
-              <IconArrowLeft className="h-4 w-4" />
+              <IconArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
             </Button>
             <Button
               onClick={() => handleCreateDemand(selectedPackage)}
               disabled={loading}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
+              className="flex-1 h-12 rounded-xl font-bold gap-2 shadow-lg shadow-primary/30 text-base"
             >
               {loading ? (
                 <>
                   <IconLoader2 className="h-4 w-4 animate-spin" />
                   Publicando...
                 </>
+              ) : selectedPackage === 'NONE' ? (
+                <>
+                  Publicar Grátis
+                  <IconArrowRight className="h-4 w-4" />
+                </>
               ) : (
                 <>
-                  Publicar Demanda
+                  Ir para Pagamento (€{VISIBILITY_PACKAGES.find(p => p.value === selectedPackage)?.price})
                   <IconArrowRight className="h-4 w-4" />
                 </>
               )}
