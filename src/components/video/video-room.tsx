@@ -54,8 +54,20 @@ export function VideoRoom({
 
   // Check media permissions before loading Jitsi
   useEffect(() => {
+    console.log('VideoRoom mounting with roomName:', roomName);
     checkPermissions();
-  }, []);
+
+    // Timeout if Jitsi takes too long to load
+    const timeout = setTimeout(() => {
+      if (meetingState === 'loading') {
+        console.error('Jitsi failed to load within 15 seconds');
+        setError('Timeout ao carregar o video. Verifique sua conexao e tente recarregar.');
+        setMeetingState('error');
+      }
+    }, 15000);
+
+    return () => clearTimeout(timeout);
+  }, [roomName, meetingState]);
 
   const checkPermissions = async () => {
     try {
@@ -93,6 +105,8 @@ export function VideoRoom({
 
   // Handle Jitsi API events
   const handleApiReady = useCallback((api: any) => {
+    console.log('Jitsi API Ready for room:', roomName);
+
     api.addListener('videoConferenceJoined', () => {
       console.log('Jitsi: Video conference joined');
       setMeetingState('in-meeting');
@@ -132,7 +146,7 @@ export function VideoRoom({
 
     setMeetingState(enablePrejoinPage ? 'prejoin' : 'in-meeting');
     onReady?.();
-  }, [enablePrejoinPage, onReady, onLeave, onError]);
+  }, [enablePrejoinPage, onReady, onLeave, onError, roomName]);
 
   // Handle loading error
   const handleLoadError = useCallback((loadErr: any) => {
