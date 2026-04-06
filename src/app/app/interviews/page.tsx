@@ -234,13 +234,11 @@ export default function InterviewsPage() {
                         </div>
                       </div>
 
-                      {interview.status === "COMPLETED" && (
-                        <Link href={`/app/interview/${interview.id}`}>
-                          <Button variant="outline" size="sm">
-                            Ver Detalhes
-                          </Button>
-                        </Link>
-                      )}
+                      <Link href={`/app/interview/${interview.id}`}>
+                        <Button variant="outline" size="sm">
+                          Ver Detalhes
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
