@@ -68,6 +68,8 @@ interface FormData {
   desiredStartDate: string;
   desiredEndDate: string;
   hoursPerWeek: string;
+  budgetEurCents: string; // Total budget in cents (€100 = 10000)
+  minimumHourlyRateEur: string; // Minimum hourly rate in cents
   visibilityPackage: string;
 }
 
@@ -92,6 +94,8 @@ function NewDemandContent() {
     desiredStartDate: '',
     desiredEndDate: '',
     hoursPerWeek: '',
+    budgetEurCents: '',
+    minimumHourlyRateEur: '',
     visibilityPackage: 'BASIC',
   });
 
@@ -177,6 +181,8 @@ function NewDemandContent() {
           desiredStartDate: formData.desiredStartDate || undefined,
           desiredEndDate: formData.desiredEndDate || undefined,
           hoursPerWeek: formData.hoursPerWeek ? parseInt(formData.hoursPerWeek) : undefined,
+          budgetEurCents: formData.budgetEurCents ? parseInt(formData.budgetEurCents) : undefined,
+          minimumHourlyRateEur: formData.minimumHourlyRateEur ? parseInt(formData.minimumHourlyRateEur) : undefined,
           visibilityPackage: formData.visibilityPackage,
         }),
       });
@@ -402,6 +408,55 @@ function NewDemandContent() {
                   placeholder="Endereço detalhado"
                   className="h-10 rounded-lg text-sm"
                 />
+              </div>
+            </div>
+
+            {/* Budget Section */}
+            <div className="space-y-3 p-4 bg-muted/30 rounded-xl border border-border/50">
+              <p className="text-sm font-semibold">Orçamento</p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {/* Total Budget */}
+                <div className="space-y-2">
+                  <Label htmlFor="budget" className="text-xs font-medium text-muted-foreground">
+                    Orçamento Total (€)
+                  </Label>
+                  <Input
+                    id="budget"
+                    type="number"
+                    value={formData.budgetEurCents ? parseInt(formData.budgetEurCents) / 100 : ''}
+                    onChange={e => {
+                      const value = e.target.value ? parseInt(e.target.value) * 100 : '';
+                      setFormData(prev => ({ ...prev, budgetEurCents: value.toString() }));
+                    }}
+                    placeholder="Ex: 1500"
+                    min="0"
+                    step="50"
+                    className="h-10 rounded-lg text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground">Orçamento total que pode gastar</p>
+                </div>
+
+                {/* Minimum Hourly Rate */}
+                <div className="space-y-2">
+                  <Label htmlFor="hourly" className="text-xs font-medium text-muted-foreground">
+                    Taxa Mín./Hora (€)
+                  </Label>
+                  <Input
+                    id="hourly"
+                    type="number"
+                    value={formData.minimumHourlyRateEur ? parseInt(formData.minimumHourlyRateEur) / 100 : ''}
+                    onChange={e => {
+                      const value = e.target.value ? parseInt(e.target.value) * 100 : '';
+                      setFormData(prev => ({ ...prev, minimumHourlyRateEur: value.toString() }));
+                    }}
+                    placeholder="Ex: 12"
+                    min="0"
+                    step="1"
+                    className="h-10 rounded-lg text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground">Mínimo negociável</p>
+                </div>
               </div>
             </div>
 
@@ -633,6 +688,31 @@ function NewDemandContent() {
                       <div className="flex items-center gap-2">
                         <IconClock className="h-3.5 w-3.5 text-muted-foreground" />
                         <span>{formData.hoursPerWeek} horas/semana</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Budget */}
+            {(formData.budgetEurCents || formData.minimumHourlyRateEur) && (
+              <Card className="border-primary/20 overflow-hidden bg-primary/5">
+                <CardContent className="p-4">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                    Orçamento
+                  </p>
+                  <div className="space-y-2 text-sm">
+                    {formData.budgetEurCents && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Orçamento Total:</span>
+                        <span className="font-semibold">€{(parseInt(formData.budgetEurCents) / 100).toFixed(2)}</span>
+                      </div>
+                    )}
+                    {formData.minimumHourlyRateEur && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">Taxa Mín./Hora:</span>
+                        <span className="font-semibold">€{(parseInt(formData.minimumHourlyRateEur) / 100).toFixed(2)}</span>
                       </div>
                     )}
                   </div>
