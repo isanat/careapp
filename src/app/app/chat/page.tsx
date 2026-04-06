@@ -58,6 +58,7 @@ export default function ChatPage() {
   const [newMessage, setNewMessage] = useState("");
   const [isLoadingConversations, setIsLoadingConversations] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileShowChat, setMobileShowChat] = useState(false);
@@ -80,18 +81,26 @@ export default function ChatPage() {
     }
   }, []);
 
-  const fetchMessages = useCallback(async (chatRoomId: string) => {
-    setIsLoadingMessages(true);
+  const fetchMessages = useCallback(async (chatRoomId: string, isInitial = false) => {
+    // Only show loading state on initial load, not during polling
+    if (isInitial) {
+      setIsLoadingMessages(true);
+    }
     try {
       const response = await apiFetch(`/api/chat/messages?chatRoomId=${chatRoomId}`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
+        if (isInitial) {
+          setIsInitialLoad(false);
+        }
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
-      setIsLoadingMessages(false);
+      if (isInitial) {
+        setIsLoadingMessages(false);
+      }
     }
   }, []);
 
@@ -100,12 +109,12 @@ export default function ChatPage() {
   useEffect(() => {
     if (!selectedConversation) return;
 
-    // Fetch immediately
-    fetchMessages(selectedConversation.id);
+    // Fetch immediately with loading state
+    fetchMessages(selectedConversation.id, true);
 
-    // Poll every 3 seconds
+    // Poll every 3 seconds (without loading state to prevent flickering)
     pollingIntervalRef.current = setInterval(() => {
-      fetchMessages(selectedConversation.id);
+      fetchMessages(selectedConversation.id, false);
     }, 3000);
 
     return () => {
@@ -270,7 +279,7 @@ export default function ChatPage() {
 
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4">
-                  {isLoadingMessages ? (
+                  {isLoadingMessages && isInitialLoad ? (
                     <div className="space-y-3">
                       {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-10 w-3/4 rounded-xl" />))}
                     </div>
