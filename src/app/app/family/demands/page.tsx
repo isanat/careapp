@@ -1,9 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { AppShell } from '@/components/layout/app-shell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -52,7 +54,7 @@ interface FamilyAnalytics {
   closedDemands: number;
 }
 
-export default function FamilyDemandsPage() {
+function FamilyDemandsContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [demands, setDemands] = useState<Demand[]>([]);
@@ -98,16 +100,10 @@ export default function FamilyDemandsPage() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="min-h-screen bg-background py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center items-center py-16">
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 text-primary">
-                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                <span className="text-sm font-medium">Carregando demandas...</span>
-              </div>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto space-y-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-24 bg-muted rounded-2xl" />
+          <div className="h-64 bg-muted rounded-2xl" />
         </div>
       </div>
     );
@@ -115,20 +111,17 @@ export default function FamilyDemandsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-4 flex items-center gap-3">
-            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
-            <p className="text-sm text-destructive font-medium">{error}</p>
-          </div>
+      <div className="max-w-7xl mx-auto space-y-4">
+        <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-4 flex items-center gap-3">
+          <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
+          <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -356,7 +349,25 @@ export default function FamilyDemandsPage() {
             )}
           </TabsContent>
         </Tabs>
-      </div>
     </div>
+  );
+}
+
+export default function FamilyDemandsPage() {
+  return (
+    <AppShell>
+      <Suspense
+        fallback={
+          <div className="max-w-7xl mx-auto space-y-4 py-8">
+            <div className="animate-pulse space-y-4">
+              <div className="h-24 bg-muted rounded-2xl" />
+              <div className="h-64 bg-muted rounded-2xl" />
+            </div>
+          </div>
+        }
+      >
+        <FamilyDemandsContent />
+      </Suspense>
+    </AppShell>
   );
 }
