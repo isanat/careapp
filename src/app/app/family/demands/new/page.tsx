@@ -23,6 +23,9 @@ import {
   IconMapPin,
   IconCalendar,
   IconClock,
+  IconStar,
+  IconEuro,
+  IconTrendingUp,
 } from '@/components/icons';
 
 const SERVICE_TYPES = [
@@ -73,6 +76,13 @@ interface FormData {
   visibilityPackage: string;
 }
 
+const VISIBILITY_PACKAGES = [
+  { value: 'NONE', label: 'Publicar Grátis', price: 0, desc: '1x por mês (sem boost)', icon: IconCheck },
+  { value: 'BASIC', label: 'BASIC', price: 3, desc: '7 dias de visibilidade', icon: IconEuro },
+  { value: 'PREMIUM', label: 'PREMIUM', price: 8, desc: '30 dias destacado', icon: IconStar },
+  { value: 'URGENT', label: 'URGENTE', price: 15, desc: '3 dias no topo', icon: IconTrendingUp },
+];
+
 function NewDemandContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -80,6 +90,8 @@ function NewDemandContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showStripeModal, setShowStripeModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<string>('NONE');
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
@@ -155,7 +167,7 @@ function NewDemandContent() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleCreateDemand = async (visibilityPackage: string = 'NONE') => {
     if (!validateStep(4)) {
       setSubmitError('Verifique as informações preenchidas');
       return;
@@ -183,7 +195,7 @@ function NewDemandContent() {
           hoursPerWeek: formData.hoursPerWeek ? parseInt(formData.hoursPerWeek) : undefined,
           budgetEurCents: formData.budgetEurCents ? parseInt(formData.budgetEurCents) : undefined,
           minimumHourlyRateEur: formData.minimumHourlyRateEur ? parseInt(formData.minimumHourlyRateEur) : undefined,
-          visibilityPackage: formData.visibilityPackage,
+          visibilityPackage: visibilityPackage,
         }),
       });
 
@@ -193,10 +205,16 @@ function NewDemandContent() {
       }
 
       const data = await res.json();
-      router.push(`/app/family/demands/${data.id}`);
+
+      // Se pagou visibilidade, redireciona para checkout Stripe
+      if (visibilityPackage !== 'NONE') {
+        router.push(`/app/family/demands/${data.id}/boost?package=${visibilityPackage}`);
+      } else {
+        // Senão, vai pro dashboard
+        router.push('/app/family/demands');
+      }
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Erro inesperado');
-    } finally {
       setLoading(false);
     }
   };
@@ -212,7 +230,7 @@ function NewDemandContent() {
     );
   }
 
-  const totalSteps = 4;
+  const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
 
   return (
@@ -739,7 +757,87 @@ function NewDemandContent() {
               <IconArrowLeft className="h-4 w-4" />
             </Button>
             <Button
-              onClick={handleSubmit}
+              onClick={() => setStep(5)}
+              size="lg"
+              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+            >
+              Continuar
+              <IconArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 5: Visibility Package */}
+      {step === 5 && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold mb-1">Escolha Visibilidade</h2>
+            <p className="text-sm text-muted-foreground">
+              Aumente as chances de receber propostas com visibilidade na plataforma
+            </p>
+          </div>
+
+          {/* Visibility Options */}
+          <div className="space-y-3">
+            {VISIBILITY_PACKAGES.map((pkg) => {
+              const Icon = pkg.icon;
+              return (
+                <button
+                  key={pkg.value}
+                  onClick={() => setSelectedPackage(pkg.value)}
+                  className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
+                    selectedPackage === pkg.value
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-muted-foreground/50'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon className="h-4 w-4 text-primary" />
+                        <p className="font-semibold">{pkg.label}</p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{pkg.desc}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg">
+                        {pkg.price === 0 ? 'Grátis' : `€${pkg.price}`}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Info Box */}
+          <div className="bg-muted/50 p-4 rounded-xl border border-border/50">
+            <p className="text-xs text-muted-foreground">
+              💡 <strong>Dica:</strong> Demandas com visibilidade recebem {' '}
+              <span className="font-semibold">3x mais propostas</span> em média. Você pode sempre comprar mais visibilidade depois!
+            </p>
+          </div>
+
+          {submitError && (
+            <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl">
+              <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-destructive">{submitError}</p>
+            </div>
+          )}
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setStep(4)}
+              size="lg"
+              className="h-11 rounded-xl px-4"
+              disabled={loading}
+            >
+              <IconArrowLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={() => handleCreateDemand(selectedPackage)}
               disabled={loading}
               size="lg"
               className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
