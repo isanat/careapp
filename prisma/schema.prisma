@@ -1195,6 +1195,9 @@ model Demand {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   closedAt  DateTime?
+  closedReason String?
+  deletedAt DateTime?
+  deletionReason String?
 
   // Relations
   demandViews         DemandView[]
