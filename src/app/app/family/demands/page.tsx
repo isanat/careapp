@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DemandActionsDropdown } from '@/components/demands/demand-actions-dropdown';
 import {
   IconPlus,
   IconMapPin,
@@ -345,6 +346,11 @@ function FamilyDemandsContent() {
                                 <IconEuro className="h-3 w-3" />
                                 <span className="hidden sm:inline">Boost</span>
                               </Link>
+                              <DemandActionsDropdown
+                                demandId={demand.id}
+                                demandTitle={demand.title}
+                                onActionComplete={() => {}}
+                              />
                               <div className="hidden lg:flex">
                                 <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                               </div>
