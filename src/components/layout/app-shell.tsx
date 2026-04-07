@@ -120,8 +120,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Header - Clean white, dark blue text */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-surface border-b border-border/50 safe-area-inset-top">
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 bg-white/85 dark:bg-[#0B1120]/85 backdrop-blur-md border-b border-border/30 safe-area-inset-top">
         <div className="px-4 lg:px-6 mx-auto max-w-7xl">
           <div className="flex h-12 lg:h-14 items-center justify-between">
             {/* Left: Logo & Mobile Menu */}
@@ -233,12 +233,15 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         {/* Sidebar (Desktop) */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-surface border-r border-border/50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 shadow-soft lg:shadow-none",
+            "fixed inset-y-0 left-0 z-40 w-60 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
+            /* Mobile: solid bg for overlay panel */
+            "bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md lg:bg-transparent lg:dark:bg-transparent",
+            "border-r border-border/30 lg:border-r-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-full",
             "top-12 lg:top-0"
           )}
         >
-          <nav className="p-3 space-y-1 mt-2 lg:mt-4">
+          <nav className="p-3 space-y-0.5 mt-2 lg:mt-4">
             {navItems.map((item) => {
               const active = isActiveRoute(item.href);
               const Icon = item.icon;
@@ -249,14 +252,17 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                    "group relative flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-all duration-200",
                     active
-                      ? "bg-primary text-white shadow-sm"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "glass-pill text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/5"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
+                  <Icon className={cn(
+                    "h-5 w-5 flex-shrink-0 transition-colors duration-200",
+                    active ? "text-accent" : "text-muted-foreground group-hover:text-foreground"
+                  )} />
+                  <span className="tracking-tight">{item.label}</span>
                   {item.href === "/app/chat" && unreadCount > 0 && !active && (
                     <span className="ml-auto h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warm text-[10px] font-bold text-white">
                       {unreadCount}
@@ -283,8 +289,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation - White bg, orange active icons */}
-      <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-surface border-t border-border/50 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
+      {/* Mobile Bottom Navigation */}
+      <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-white/85 dark:bg-[#0B1120]/85 backdrop-blur-md border-t border-border/30 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
         <div className="flex items-center justify-around h-[3.5rem] px-1">
           {mobileNavItems.map((item) => {
             const active = isActiveRoute(item.href);
@@ -295,17 +301,17 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-w-[56px] rounded-xl transition-all duration-200",
+                  "flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-w-[56px] rounded-2xl transition-all duration-200",
                   active
-                    ? "text-primary"
-                    : "text-[#9A9A9A] active:scale-95"
+                    ? "text-accent"
+                    : "text-muted-foreground active:scale-95"
                 )}
               >
                 <div className={cn(
                   "relative flex items-center justify-center h-7 w-7 rounded-full transition-all duration-200",
-                  active && "bg-primary/15"
+                  active && "bg-accent/15"
                 )}>
-                  <Icon className={cn("h-5 w-5", active && "text-primary")} />
+                  <Icon className={cn("h-5 w-5", active && "text-accent")} />
                   {item.href === "/app/chat" && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-warm text-[9px] font-bold text-white">
                       {unreadCount > 9 ? "9+" : unreadCount}
@@ -314,7 +320,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 </div>
                 <span className={cn(
                   "text-[11px] font-medium leading-tight",
-                  active ? "text-primary font-semibold" : "text-[#9A9A9A]"
+                  active ? "text-accent font-semibold" : "text-muted-foreground"
                 )}>
                   {item.label}
                 </span>

@@ -88,8 +88,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-roboto)', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-roboto)', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        heading: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1.5' }],
@@ -117,13 +117,15 @@ const config: Config = {
         '3xl': '2rem',
       },
       boxShadow: {
-        'soft': '0 2px 8px -2px rgba(0, 0, 0, 0.05), 0 4px 16px -4px rgba(0, 0, 0, 0.08)',
-        'soft-md': '0 4px 12px -2px rgba(0, 0, 0, 0.06), 0 8px 24px -4px rgba(0, 0, 0, 0.1)',
-        'soft-lg': '0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 16px 48px -8px rgba(0, 0, 0, 0.12)',
-        'soft-xl': '0 12px 32px -8px rgba(0, 0, 0, 0.1), 0 24px 64px -12px rgba(0, 0, 0, 0.14)',
-        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.04)',
-        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.06)',
-        'card-hover': '0 4px 12px -2px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04)',
+        'soft': '0 2px 8px -2px rgba(76, 147, 206, 0.06), 0 4px 16px -4px rgba(76, 147, 206, 0.08)',
+        'soft-md': '0 4px 16px -4px rgba(76, 147, 206, 0.1), 0 10px 30px rgba(76, 147, 206, 0.08)',
+        'soft-lg': '0 8px 24px -4px rgba(76, 147, 206, 0.12), 0 16px 48px -8px rgba(76, 147, 206, 0.1)',
+        'soft-xl': '0 12px 32px -8px rgba(76, 147, 206, 0.14), 0 24px 64px -12px rgba(76, 147, 206, 0.1)',
+        'inner-soft': 'inset 0 2px 4px 0 rgba(76, 147, 206, 0.04)',
+        'card': '0 1px 3px 0 rgba(76, 147, 206, 0.04), 0 10px 30px rgba(76, 147, 206, 0.08)',
+        'card-hover': '0 10px 30px rgba(76, 147, 206, 0.12), 0 0 0 1px rgba(59, 130, 246, 0.2)',
+        'primary-glow': '0 0 20px rgba(59, 130, 246, 0.25)',
+        'accent-glow': '0 0 20px rgba(255, 127, 80, 0.25)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
