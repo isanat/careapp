@@ -1,6 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 interface BoostVisibilityModalProps {
@@ -76,60 +84,62 @@ export function BoostVisibilityModal({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-96 overflow-y-auto">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">Aumentar Visibilidade</h2>
-              <p className="text-sm text-gray-600 mt-1">{demandTitle}</p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-              disabled={loading}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open && !loading) onClose();
+      }}
+    >
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold">
+            Aumentar Visibilidade
+          </DialogTitle>
+          <DialogDescription>{demandTitle}</DialogDescription>
+        </DialogHeader>
 
-        <div className="p-6">
+        <div>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded mb-6">
               {error}
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {PACKAGES.map(pkg => (
+            {PACKAGES.map((pkg) => (
               <div
                 key={pkg.name}
                 className={`relative border-2 rounded-lg p-4 cursor-pointer transition ${
                   pkg.recommended
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border hover:border-muted-foreground/30'
                 }`}
               >
                 {pkg.recommended && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
                     RECOMENDADO
                   </div>
                 )}
 
                 <div className="mb-4">
-                  <div className="inline-block px-2 py-1 rounded text-xs font-semibold mb-2 bg-gray-100 text-gray-800">
+                  <div className="inline-block px-2 py-1 rounded text-xs font-semibold mb-2 bg-muted text-muted-foreground">
                     {pkg.badge}
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-1">{pkg.label}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{pkg.description}</p>
+                  <h3 className="font-bold text-foreground mb-1">
+                    {pkg.label}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {pkg.description}
+                  </p>
 
                   <div className="mb-3">
-                    <div className="text-2xl font-bold text-gray-900">€{pkg.price}</div>
-                    <div className="text-xs text-gray-600">{pkg.duration}</div>
+                    <div className="text-2xl font-bold text-foreground">
+                      €{pkg.price}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {pkg.duration}
+                    </div>
                   </div>
                 </div>
 
@@ -145,8 +155,10 @@ export function BoostVisibilityModal({
             ))}
           </div>
 
-          <div className="bg-gray-50 p-4 rounded text-sm text-gray-700 mb-4">
-            <p className="font-semibold mb-2">Dicas para aumentar propostas:</p>
+          <div className="bg-muted p-4 rounded text-sm text-muted-foreground mb-4">
+            <p className="font-semibold mb-2 text-foreground">
+              Dicas para aumentar propostas:
+            </p>
             <ul className="list-disc list-inside space-y-1 text-xs">
               <li>Use descrição clara e detalhada</li>
               <li>Especifique o nível de experiência requerido</li>
@@ -154,19 +166,19 @@ export function BoostVisibilityModal({
               <li>URGENT é perfeito para necessidades imediatas</li>
             </ul>
           </div>
-
-          <div className="flex gap-3">
-            <Button
-              onClick={onClose}
-              disabled={loading}
-              variant="outline"
-              className="flex-1"
-            >
-              Cancelar
-            </Button>
-          </div>
         </div>
-      </div>
-    </div>
+
+        <DialogFooter>
+          <Button
+            onClick={onClose}
+            disabled={loading}
+            variant="outline"
+            className="flex-1 sm:flex-none"
+          >
+            Cancelar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
