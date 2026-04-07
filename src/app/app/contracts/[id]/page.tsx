@@ -35,6 +35,7 @@ import { CONTRACT_STATUS, SERVICE_TYPES } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { PaymentSection } from "@/components/contracts/payment-section";
 import { ReviewSection } from "@/components/contracts/review-section";
+import { WeeklyApprovalPanel } from "@/components/contracts/weekly-approval-panel";
 
 interface ContractDetails {
   id: string;
@@ -51,6 +52,7 @@ interface ContractDetails {
   hoursPerWeek: number;
   caregiverId?: string;
   familyId?: string;
+  weeklyPaymentEnabled?: boolean;
   otherParty: {
     id?: string;
     name: string;
@@ -523,8 +525,22 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
               <PaymentSection contractId={contract.id} onPaymentSuccess={fetchContract} />
             )}
 
+            {/* Weekly Payment Approvals */}
+            {contract.status === 'ACTIVE' && contract.weeklyPaymentEnabled && (
+              <div className="bg-surface rounded-2xl border border-border/50 p-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                  <IconCalendar className="h-3.5 w-3.5 inline mr-1" />
+                  Aprovações Semanais
+                </p>
+                <WeeklyApprovalPanel
+                  contractId={contract.id}
+                  isFamily={isFamily}
+                />
+              </div>
+            )}
+
             {/* Active Contract: Payments & Receipts */}
-            {contract.status === 'ACTIVE' && isFamily && (
+            {contract.status === 'ACTIVE' && isFamily && !contract.weeklyPaymentEnabled && (
               <ActiveContractActions contractId={contract.id} />
             )}
 
