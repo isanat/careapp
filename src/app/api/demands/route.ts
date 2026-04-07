@@ -171,6 +171,7 @@ export async function POST(request: NextRequest) {
       hoursPerWeek,
       budgetEurCents,
       minimumHourlyRateEur,
+      visibilityPackage = 'NONE',
       scheduleJson,
     } = body;
 
@@ -192,6 +193,16 @@ export async function POST(request: NextRequest) {
     const demandId = crypto.randomUUID();
     const now = new Date().toISOString();
 
+    // Calculate visibilityExpiresAt based on package
+    let visibilityExpiresAt: string | null = null;
+    if (visibilityPackage && visibilityPackage !== 'NONE') {
+      const expiresDate = new Date();
+      if (visibilityPackage === 'BASIC') expiresDate.setDate(expiresDate.getDate() + 7); // 7 days
+      if (visibilityPackage === 'PREMIUM') expiresDate.setDate(expiresDate.getDate() + 14); // 14 days
+      if (visibilityPackage === 'URGENT') expiresDate.setDate(expiresDate.getDate() + 3); // 3 days with highest priority
+      visibilityExpiresAt = expiresDate.toISOString();
+    }
+
     await db.execute({
       sql: `
         INSERT INTO Demand (
@@ -199,8 +210,8 @@ export async function POST(request: NextRequest) {
           latitude, longitude, requiredExperienceLevel, requiredCertifications, careType,
           desiredStartDate, desiredEndDate, hoursPerWeek, scheduleJson,
           budgetEurCents, minimumHourlyRateEur,
-          visibilityPackage, status, createdAt, updatedAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          visibilityPackage, visibilityExpiresAt, status, createdAt, updatedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       args: [
         demandId,
@@ -222,7 +233,8 @@ export async function POST(request: NextRequest) {
         scheduleJson || null,
         budgetEurCents || null,
         minimumHourlyRateEur || null,
-        'NONE',
+        visibilityPackage,
+        visibilityExpiresAt,
         'ACTIVE',
         now,
         now,
