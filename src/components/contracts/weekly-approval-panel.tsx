@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,7 @@ export function WeeklyApprovalPanel({
   weeklyApprovals: initialApprovals,
 }: WeeklyApprovalPanelProps) {
   const { data: session } = useSession();
+  const { toast } = useToast();
   const [approvals, setApprovals] = useState<WeeklyApproval[]>(
     initialApprovals || []
   );
@@ -90,13 +92,13 @@ export function WeeklyApprovalPanel({
       if (res.ok) {
         // Refresh approvals
         await fetchApprovals();
-        alert(`Semana ${weekNumber} aprovada com sucesso!`);
+        toast({ title: "Sucesso", description: `Semana ${weekNumber} aprovada com sucesso!` });
       } else {
         const error = await res.json();
-        alert(`Erro: ${error.error}`);
+        toast({ title: "Erro", description: error.error, variant: "destructive" });
       }
     } catch (error) {
-      alert("Erro ao aprovar semana");
+      toast({ title: "Erro", description: "Erro ao aprovar semana", variant: "destructive" });
       console.error("Error approving:", error);
     } finally {
       setApproving(null);
@@ -106,7 +108,7 @@ export function WeeklyApprovalPanel({
   const handleDispute = async (weekNumber: number) => {
     const reason = disputeReason[weekNumber];
     if (!reason || reason.trim().length === 0) {
-      alert("Por favor, forneça um motivo para a disputa");
+      toast({ title: "Atenção", description: "Por favor, forneça um motivo para a disputa", variant: "destructive" });
       return;
     }
 
@@ -126,13 +128,13 @@ export function WeeklyApprovalPanel({
         await fetchApprovals();
         setShowDisputeForm((prev) => ({ ...prev, [weekNumber]: false }));
         setDisputeReason((prev) => ({ ...prev, [weekNumber]: "" }));
-        alert(`Disputa criada. Um administrador fará a mediação.`);
+        toast({ title: "Sucesso", description: "Disputa criada. Um administrador fará a mediação." });
       } else {
         const error = await res.json();
-        alert(`Erro: ${error.error}`);
+        toast({ title: "Erro", description: error.error, variant: "destructive" });
       }
     } catch (error) {
-      alert("Erro ao criar disputa");
+      toast({ title: "Erro", description: "Erro ao criar disputa", variant: "destructive" });
       console.error("Error disputing:", error);
     } finally {
       setDisputing(null);

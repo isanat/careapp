@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
+import { useToast } from "@/hooks/use-toast";
 import {
   IconMapPin,
   IconClock,
@@ -70,6 +71,7 @@ const VISIBILITY_BADGES: Record<string, { variant: string; icon: any; label: str
 function DemandsContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { toast } = useToast();
   const [demands, setDemands] = useState<Demand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,8 +170,7 @@ function DemandsContent() {
       }
 
       handleCloseProposalWizard();
-      // Show success message (could use toast)
-      alert('Proposta enviada com sucesso!');
+      toast({ title: "Sucesso", description: "Proposta enviada com sucesso!" });
     } catch (err) {
       setWizard(prev => ({
         ...prev,

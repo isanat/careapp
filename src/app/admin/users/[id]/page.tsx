@@ -27,6 +27,7 @@ import {
 } from "@/components/icons";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserDetail {
   id: string;
@@ -61,6 +62,7 @@ interface UserDetail {
 }
 
 export default function AdminUserDetailPage() {
+  const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
   const userId = params.id as string;
@@ -96,7 +98,7 @@ export default function AdminUserDetailPage() {
       if (!response.ok) throw new Error("Failed to suspend");
       router.refresh();
     } catch (error) {
-      alert("Erro ao suspender utilizador");
+      toast({ title: "Erro", description: "Erro ao suspender utilizador", variant: "destructive" });
     }
   };
 
@@ -108,7 +110,7 @@ export default function AdminUserDetailPage() {
       if (!response.ok) throw new Error("Failed to activate");
       router.refresh();
     } catch (error) {
-      alert("Erro ao ativar utilizador");
+      toast({ title: "Erro", description: "Erro ao ativar utilizador", variant: "destructive" });
     }
   };
 

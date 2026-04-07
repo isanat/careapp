@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useToast } from "@/hooks/use-toast";
 import { PageHeader } from '@/components/admin/common/page-header';
 import { StatsCard } from '@/components/admin/common/stats-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,6 +59,7 @@ interface ApiResponse {
 }
 
 export default function AdminDemandsPage() {
+  const { toast } = useToast();
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -119,7 +121,7 @@ export default function AdminDemandsPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      alert('Erro ao exportar CSV');
+      toast({ title: "Erro", description: "Erro ao exportar CSV", variant: "destructive" });
     }
   };
 

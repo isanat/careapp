@@ -28,6 +28,7 @@ import {
   IconChat,
 } from "@/components/icons";
 import { SERVICE_TYPES } from "@/lib/constants";
+import { useToast } from "@/hooks/use-toast";
 import { ScheduleInterviewDialog } from "@/components/interviews/schedule-dialog";
 
 interface CaregiverReview {
@@ -81,6 +82,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
   const resolvedParams = use(params);
   const { status } = useSession();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [caregiver, setCaregiver] = useState<CaregiverData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -128,7 +130,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
       const data = await res.json();
       router.push(`/app/chat?room=${data.chatRoomId}`);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Erro ao enviar mensagem.");
+      toast({ title: "Erro", description: err instanceof Error ? err.message : "Erro ao enviar mensagem.", variant: "destructive" });
       setIsSendingMessage(false);
     }
   }, [caregiver, router]);
