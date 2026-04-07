@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         (SELECT COUNT(*) FROM DemandView WHERE demandId = d.id) as viewCount,
         (SELECT COUNT(*) FROM Proposal WHERE demandId = d.id AND status != 'REJECTED' AND status != 'EXPIRED') as proposalCount
       FROM Demand d
-      WHERE d.status = 'ACTIVE'
+      WHERE d.status = 'ACTIVE' AND d.deletedAt IS NULL
     `;
 
     const args: string[] = [];
