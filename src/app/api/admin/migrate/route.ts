@@ -1,8 +1,9 @@
-import { auth } from "@/auth";
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth-turso';
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   // Only admins can run migrations
   if (!session?.user?.id || session.user.role !== "ADMIN") {
@@ -37,7 +38,11 @@ export async function POST(request: NextRequest) {
       'CREATE INDEX "Demand_deletedAt_idx" ON "Demand"("deletedAt");',
     ];
 
-    const results = [];
+    const results: Array<{
+      statement: string;
+      success: boolean;
+      error?: string;
+    }> = [];
 
     // Execute each statement
     for (const stmt of statements) {
@@ -66,7 +71,7 @@ export async function POST(request: NextRequest) {
           results.push({
             statement: stmt,
             success: false,
-            error: data.error || response.statusText,
+            error: (data as any).error || response.statusText,
           });
         } else {
           results.push({

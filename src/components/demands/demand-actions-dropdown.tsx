@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { IconEllipsis, IconEdit, IconCopy, IconLock, IconTrash2 } from '@/components/icons';
+import { IconMoreVertical, IconEdit, IconCopy, IconLock, IconTrash } from '@/components/icons';
 
 interface DemandActionsDropdownProps {
   demandId: string;
@@ -134,7 +134,7 @@ export function DemandActionsDropdown({
             className="h-8 w-8 p-0"
             onClick={(e) => e.stopPropagation()}
           >
-            <IconEllipsis className="h-4 w-4" />
+            <IconMoreVertical className="h-4 w-4" />
             <span className="sr-only">Abrir menu de ações</span>
           </Button>
         </DropdownMenuTrigger>
@@ -164,7 +164,7 @@ export function DemandActionsDropdown({
             disabled={isLoading}
             className="text-destructive focus:text-destructive"
           >
-            <IconTrash2 className="h-4 w-4 mr-2" />
+            <IconTrash className="h-4 w-4 mr-2" />
             <span>Deletar</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
