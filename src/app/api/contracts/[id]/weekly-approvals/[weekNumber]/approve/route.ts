@@ -38,7 +38,7 @@ export async function POST(
       return NextResponse.json({ error: "Contract not found" }, { status: 404 });
     }
 
-    const contract = contractResult.rows[0];
+    const contract = contractResult.rows[0] as any;
 
     // Verify family owns contract
     if (contract.familyUserId !== session.user.id) {
@@ -61,7 +61,7 @@ export async function POST(
       );
     }
 
-    const approval = approvalResult.rows[0];
+    const approval = approvalResult.rows[0] as any;
 
     // Check status
     if (approval.status !== "PENDING") {
@@ -186,11 +186,11 @@ export async function POST(
         });
 
         if (nextWeekResult.rows.length > 0) {
-          const nextWeek = nextWeekResult.rows[0];
+          const nextWeek = nextWeekResult.rows[0] as any;
           const hold = await stripeService.createPaymentHold(
             contractId,
             contract.familyUserId,
-            nextWeek.weeklyAmountCents,
+            nextWeek.weeklyAmountCents as number,
             weekNumber + 1
           );
 

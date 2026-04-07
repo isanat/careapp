@@ -66,7 +66,7 @@ export async function POST(
       );
     }
 
-    const approval = approvalResult.rows[0];
+    const approval = approvalResult.rows[0] as any;
 
     // Check status
     if (approval.status !== "PENDING") {
@@ -86,7 +86,7 @@ export async function POST(
     // Void Stripe payment hold
     if (approval.stripePaymentHoldId) {
       try {
-        await stripeService.voidPaymentHold(approval.stripePaymentHoldId);
+        await stripeService.voidPaymentHold(approval.stripePaymentHoldId as string);
       } catch (error) {
         console.error("Error voiding payment hold:", error);
         // Continue anyway - hold will expire naturally

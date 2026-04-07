@@ -437,7 +437,7 @@ export class StripeService {
       const paymentIntent = await getStripe().paymentIntents.create({
         amount: weeklyAmountCents,
         currency: "eur",
-        customer_email: String(user.email),
+        receipt_email: String(user.email),
         capture_method: "manual", // Key: Don't capture immediately
         statement_descriptor: `Weekly Approval W${weekNumber}`,
         metadata: {

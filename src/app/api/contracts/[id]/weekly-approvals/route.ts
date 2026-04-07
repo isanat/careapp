@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Contract not found" }, { status: 404 });
     }
 
-    const contract = contractResult.rows[0];
+    const contract = contractResult.rows[0] as any;
 
     // Verify user is family or caregiver in this contract
     if (session.user.id !== contract.familyUserId && session.user.id !== contract.caregiverUserId) {
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "Contract not found" }, { status: 404 });
     }
 
-    const contract = contractResult.rows[0];
+    const contract = contractResult.rows[0] as any;
 
     // Verify family owns contract
     if (contract.familyUserId !== session.user.id) {
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const startDate = new Date(contract.startDate);
 
     // Create 4 weekly payment approvals
-    const weeklyApprovals = [];
+    const weeklyApprovals: Array<{ id: string; weekNumber: number; amount: number; dueAt: string }> = [];
     const platformFeePct = 15; // 15% platform fee
 
     for (let week = 1; week <= 4; week++) {

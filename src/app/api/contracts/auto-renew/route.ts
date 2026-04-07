@@ -36,13 +36,13 @@ export async function POST(req: NextRequest) {
     });
 
     const contractsToRenew = expiringResult.rows;
-    const renewedContracts = [];
+    const renewedContracts: any[] = [];
 
-    for (const contract of contractsToRenew) {
+    for (const contract of contractsToRenew as any[]) {
       try {
         // Create new contract with same terms
         const newContractId = generateId("cont");
-        const oldEndDate = new Date(contract.endDate);
+        const oldEndDate = new Date(contract.endDate as string);
         const newStartDate = new Date(oldEndDate.getTime() + 1000); // Start next second
         const newEndDate = new Date(newStartDate);
         newEndDate.setDate(newEndDate.getDate() + 30); // 30 days later
