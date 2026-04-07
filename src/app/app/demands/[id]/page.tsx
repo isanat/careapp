@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { use } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { AppShell } from '@/components/layout/app-shell';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface Demand {
   id: string;
@@ -34,9 +38,10 @@ interface Demand {
 }
 
 export default function DemandDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [demandId, setDemandId] = useState<string | null>(null);
+  const { toast } = useToast();
   const [demand, setDemand] = useState<Demand | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,28 +51,20 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
   const [estimatedStartDate, setEstimatedStartDate] = useState('');
 
   useEffect(() => {
-    const getParams = async () => {
-      const { id } = await params;
-      setDemandId(id);
-    };
-    getParams();
-  }, [params]);
-
-  useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated' || !demandId) return;
+    if (status !== 'authenticated' || !resolvedParams.id) return;
 
     const fetchDemand = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`/api/demands/${demandId}`);
+        const res = await fetch(`/api/demands/${resolvedParams.id}`);
         if (!res.ok) throw new Error('Demanda não encontrada');
         const data = await res.json();
         setDemand(data);
@@ -79,13 +76,13 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
     };
 
     fetchDemand();
-  }, [demandId, status]);
+  }, [resolvedParams.id, status]);
 
   const handleSendProposal = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!demandId) {
+    if (!resolvedParams.id) {
       setError('ID da demanda não encontrado');
       return;
     }
@@ -103,7 +100,7 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
     try {
       setProposing(true);
 
-      const res = await fetch(`/api/demands/${demandId}/proposals`, {
+      const res = await fetch(`/api/demands/${resolvedParams.id}/proposals`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -118,7 +115,7 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
         throw new Error(error.error || 'Falha ao enviar proposta');
       }
 
-      alert('Proposta enviada com sucesso!');
+      toast({title: "Sucesso", description: "Proposta enviada com sucesso!"}); // OLD: alert-style
       setProposalMessage('');
       setProposedHourlyRate('');
       setEstimatedStartDate('');
@@ -159,8 +156,8 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
     : { bg: 'bg-gray-100', text: 'text-gray-800', label: 'NORMAL' };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <AppShell>
+      <div className="max-w-4xl mx-auto pb-8 space-y-4">
         <Link href="/app/demands" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Voltar
         </Link>
@@ -353,6 +350,6 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
