@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
 import { stripeService } from "@/lib/services/stripe";
 import { generateId } from "@/lib/utils/id";
@@ -12,16 +12,17 @@ import { generateId } from "@/lib/utils/id";
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string; weekNumber: string } }
+  { params }: { params: Promise<{ id: string; weekNumber: string }> }
 ) {
+  const { id, weekNumber: weekNumberStr } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const contractId = params.id;
-    const weekNumber = parseInt(params.weekNumber);
+    const contractId = id;
+    const weekNumber = parseInt(weekNumberStr);
 
     if (isNaN(weekNumber) || weekNumber < 1 || weekNumber > 4) {
       return NextResponse.json({ error: "Invalid week number" }, { status: 400 });
@@ -84,7 +85,7 @@ export async function POST(
     if (approval.stripePaymentHoldId) {
       try {
         const captureResult = await stripeService.capturePaymentHold(
-          approval.stripePaymentHoldId
+          approval.stripePaymentHoldId as string
         );
         chargeId = captureResult.chargeId;
 
@@ -99,8 +100,8 @@ export async function POST(
           // For now, we'll store transfer intent
           try {
             const transfer = await stripeService.transferToCaregiverAccount(
-              approval.caregiverAmountCents,
-              `acct_${contract.caregiverUserId.slice(0, 16)}`, // Mock account ID
+              approval.caregiverAmountCents as number,
+              `acct_${(contract.caregiverUserId as string).slice(0, 16)}`, // Mock account ID
               {
                 contractId,
                 weekNumber,
@@ -143,9 +144,9 @@ export async function POST(
           transferRecord,
           contract.caregiverUserId,
           contractId,
-          approval.weeklyAmountCents,
-          approval.weeklyAmountCents - approval.caregiverAmountCents,
-          approval.caregiverAmountCents,
+          approval.weeklyAmountCents as number,
+          (approval.weeklyAmountCents as number) - (approval.caregiverAmountCents as number),
+          approval.caregiverAmountCents as number,
           transferId,
         ],
       });

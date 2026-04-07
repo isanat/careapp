@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
 import { stripeService } from "@/lib/services/stripe";
 import { generateId } from "@/lib/utils/id";
@@ -9,14 +9,15 @@ import { generateId } from "@/lib/utils/id";
  * GET /api/contracts/{id}/weekly-approvals
  * Fetch all weekly payment approvals for a contract
  */
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const contractId = params.id;
+    const contractId = id;
 
     // Get contract and verify ownership
     const contractResult = await db.execute({
@@ -84,14 +85,15 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
  * Create weekly payment approvals for a contract
  * Called after contract fee is paid
  */
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const contractId = params.id;
+    const contractId = id;
 
     // Get contract
     const contractResult = await db.execute({

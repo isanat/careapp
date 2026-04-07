@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
 import { stripeService } from "@/lib/services/stripe";
 import { generateId } from "@/lib/utils/id";
@@ -12,16 +12,17 @@ import { generateId } from "@/lib/utils/id";
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string; weekNumber: string } }
+  { params }: { params: Promise<{ id: string; weekNumber: string }> }
 ) {
+  const { id, weekNumber: weekNumberStr } = await params;
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const contractId = params.id;
-    const weekNumber = parseInt(params.weekNumber);
+    const contractId = id;
+    const weekNumber = parseInt(weekNumberStr);
     const body = await req.json();
     const { reason } = body;
 
