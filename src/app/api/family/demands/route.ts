@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
           (SELECT COUNT(*) FROM Proposal WHERE demandId = d.id AND status != 'REJECTED' AND status != 'EXPIRED') as proposalCount,
           (SELECT SUM(amountEurCents) FROM VisibilityPurchase WHERE demandId = d.id AND status = 'COMPLETED') as visibilitySpent
         FROM Demand d
-        WHERE d.familyUserId = ? AND (? = '' OR d.status = ?) AND d.deletedAt IS NULL
+        WHERE d.familyUserId = ? AND (? = '' OR d.status = ?)
         ORDER BY d.createdAt DESC
         LIMIT ? OFFSET ?
       `,
