@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Ranking: URGENT > PREMIUM > BASIC > NONE + date
+    // Note: NULLS LAST not supported in all SQLite/Turso versions - use CASE instead
     query += `
       ORDER BY
         CASE
@@ -73,7 +74,8 @@ export async function GET(request: NextRequest) {
           WHEN d.visibilityPackage = 'BASIC' THEN 2
           ELSE 3
         END,
-        d.visibilityExpiresAt DESC NULLS LAST,
+        CASE WHEN d.visibilityExpiresAt IS NULL THEN 1 ELSE 0 END,
+        d.visibilityExpiresAt DESC,
         d.createdAt DESC
       LIMIT ? OFFSET ?
     `;
