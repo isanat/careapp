@@ -137,9 +137,9 @@ export default function AdminSupportPage() {
   const getStatusBadge = (status: string) => {
     const config: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string; className?: string }> = {
       open: { variant: "destructive", label: "Aberto" },
-      in_progress: { variant: "secondary", label: "Em Progresso", className: "bg-blue-100 text-blue-700" },
+      in_progress: { variant: "secondary", label: "Em Progresso", className: "bg-primary/10 text-primary" },
       waiting_user: { variant: "outline", label: "Aguardando Usuário" },
-      resolved: { variant: "default", label: "Resolvido", className: "bg-green-100 text-green-700" },
+      resolved: { variant: "default", label: "Resolvido", className: "bg-success/10 text-success" },
       closed: { variant: "outline", label: "Fechado" },
     };
     const c = config[status] || config.open;
@@ -148,10 +148,10 @@ export default function AdminSupportPage() {
 
   const getPriorityBadge = (priority: string) => {
     const config: Record<string, { className: string; label: string }> = {
-      urgent: { className: "bg-red-100 text-red-700", label: "URGENTE" },
-      high: { className: "bg-orange-100 text-orange-700", label: "Alta" },
-      normal: { className: "bg-yellow-100 text-yellow-700", label: "Normal" },
-      low: { className: "bg-gray-100 text-gray-700", label: "Baixa" },
+      urgent: { className: "bg-destructive/10 text-destructive", label: "URGENTE" },
+      high: { className: "bg-warning/10 text-warning", label: "Alta" },
+      normal: { className: "bg-warning/10 text-warning", label: "Normal" },
+      low: { className: "bg-muted text-muted-foreground", label: "Baixa" },
     };
     const c = config[priority] || config.normal;
     return <Badge variant="outline" className={c.className}>{c.label}</Badge>;
@@ -202,28 +202,28 @@ export default function AdminSupportPage() {
           description="Aguardando atendimento"
           icon={<IconAlertTriangle className="h-5 w-5" />}
           loading={loading}
-          className="border-red-200"
+          className="border-destructive/20"
         />
         <StatsCard
           title="Em Progresso"
           value={stats.inProgress}
           icon={<IconClock className="h-5 w-5" />}
           loading={loading}
-          className="border-blue-200"
+          className="border-primary/20"
         />
         <StatsCard
           title="Resolvidos"
           value={stats.resolved}
           icon={<IconCheck className="h-5 w-5" />}
           loading={loading}
-          className="border-green-200"
+          className="border-success/20"
         />
         <StatsCard
           title="Urgentes"
           value={stats.urgent}
           icon={<IconAlertTriangle className="h-5 w-5" />}
           loading={loading}
-          className="border-orange-200"
+          className="border-warning/20"
         />
       </div>
 
@@ -396,7 +396,7 @@ export default function AdminSupportPage() {
               {selectedTicket.resolvedAt && (
                 <div>
                   <p className="text-slate-500 text-sm mb-2">Resolução</p>
-                  <p className="text-sm bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-green-700 dark:text-green-400">
+                  <p className="text-sm bg-success/10 p-3 rounded-lg text-success">
                     Resolvido em {new Date(selectedTicket.resolvedAt).toLocaleString("pt-PT")}
                   </p>
                 </div>

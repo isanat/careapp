@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   id: string;
@@ -65,6 +66,7 @@ export default function AdminFamiliesPage() {
 }
 
 function AdminFamiliesContent() {
+  const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [users, setUsers] = useState<User[]>([]);
@@ -120,7 +122,7 @@ function AdminFamiliesContent() {
       if (!response.ok) throw new Error("Failed to suspend user");
       fetchUsers();
     } catch (error) {
-      alert("Erro ao suspender utilizador");
+      toast({ title: "Erro", description: "Erro ao suspender utilizador", variant: "destructive" });
     }
   };
 
@@ -132,7 +134,7 @@ function AdminFamiliesContent() {
       if (!response.ok) throw new Error("Failed to activate user");
       fetchUsers();
     } catch (error) {
-      alert("Erro ao ativar utilizador");
+      toast({ title: "Erro", description: "Erro ao ativar utilizador", variant: "destructive" });
     }
   };
 

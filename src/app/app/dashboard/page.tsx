@@ -125,66 +125,66 @@ export default function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Stats - 4 columns, ultra compact */}
-        <div className="grid grid-cols-4 gap-2">
-          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
-            <IconContract className="h-4 w-4 text-primary mx-auto" />
-            <p className="text-lg font-bold mt-0.5">{stats?.activeContracts || 0}</p>
-            <p className="text-[10px] text-muted-foreground">{t.nav.contracts}</p>
+        {/* Stats - 4 columns, optimized spacing */}
+        <div className="grid grid-cols-4 gap-3">
+          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
+            <IconContract className="h-5 w-5 text-primary mx-auto" />
+            <p className="text-xl font-bold mt-2">{stats?.activeContracts || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t.nav.contracts}</p>
           </div>
-          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
-            <IconClock className="h-4 w-4 text-secondary mx-auto" />
-            <p className="text-lg font-bold mt-0.5">{stats?.totalHours || 0}h</p>
-            <p className="text-[10px] text-muted-foreground">Horas</p>
+          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
+            <IconClock className="h-5 w-5 text-secondary mx-auto" />
+            <p className="text-xl font-bold mt-2">{stats?.totalHours || 0}h</p>
+            <p className="text-xs text-muted-foreground mt-1">Horas</p>
           </div>
-          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
-            <IconStar className="h-4 w-4 text-amber-500 mx-auto" />
-            <p className="text-lg font-bold mt-0.5">{stats?.rating?.toFixed(1) || '-'}</p>
-            <p className="text-[10px] text-muted-foreground">Nota</p>
+          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
+            <IconStar className="h-5 w-5 text-amber-500 mx-auto" />
+            <p className="text-xl font-bold mt-2">{stats?.rating?.toFixed(1) || '-'}</p>
+            <p className="text-xs text-muted-foreground mt-1">Nota</p>
           </div>
-          <div className="bg-surface rounded-xl p-2.5 border border-border/50 text-center">
-            <IconEuro className="h-4 w-4 text-success mx-auto" />
-            <p className="text-lg font-bold mt-0.5">{stats?.totalReviews || 0}</p>
-            <p className="text-[10px] text-muted-foreground">Reviews</p>
+          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
+            <IconEuro className="h-5 w-5 text-success mx-auto" />
+            <p className="text-xl font-bold mt-2">{stats?.totalReviews || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1">Reviews</p>
           </div>
         </div>
 
         {/* Quick Actions - horizontal row */}
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           {isFamily && (
             <Link href="/app/search" className="flex-1">
-              <div className="bg-surface rounded-xl p-3 border border-border/50 hover:border-primary/30 transition-all flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <IconSearch className="h-4 w-4 text-primary" />
+              <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-primary/30 transition-all flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <IconSearch className="h-5 w-5 text-primary" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold truncate">{t.nav.searchCaregivers}</p>
-                  <p className="text-[10px] text-muted-foreground">Encontrar</p>
+                  <p className="text-sm font-semibold truncate">{t.nav.searchCaregivers}</p>
+                  <p className="text-xs text-muted-foreground">Encontrar</p>
                 </div>
               </div>
             </Link>
           )}
           {isCaregiver && (
             <Link href="/app/proposals" className="flex-1">
-              <div className="bg-surface rounded-xl p-3 border border-border/50 hover:border-secondary/30 transition-all flex items-center gap-2.5">
-                <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-                  <IconInbox className="h-4 w-4 text-secondary" />
+              <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-secondary/30 transition-all flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
+                  <IconInbox className="h-5 w-5 text-secondary" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold truncate">Propostas</p>
-                  <p className="text-[10px] text-muted-foreground">Solicitacoes</p>
+                  <p className="text-sm font-semibold truncate">Propostas</p>
+                  <p className="text-xs text-muted-foreground">Solicitacoes</p>
                 </div>
               </div>
             </Link>
           )}
           <Link href="/app/contracts" className="flex-1">
-            <div className="bg-surface rounded-xl p-3 border border-border/50 hover:border-accent/30 transition-all flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                <IconContract className="h-4 w-4 text-accent-foreground" />
+            <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-accent/30 transition-all flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                <IconContract className="h-5 w-5 text-accent-foreground" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold truncate">{t.contracts.title}</p>
-                <p className="text-[10px] text-muted-foreground">{t.dashboard.viewAll}</p>
+                <p className="text-sm font-semibold truncate">{t.contracts.title}</p>
+                <p className="text-xs text-muted-foreground">{t.dashboard.viewAll}</p>
               </div>
             </div>
           </Link>
@@ -215,13 +215,13 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Platform Benefits - compact 2-col */}
-        <div className="bg-surface rounded-xl p-3 border border-primary/10">
-          <div className="flex items-center gap-2 mb-2">
-            <IconShield className="h-4 w-4 text-primary" />
-            <span className="text-xs font-semibold">Beneficios da Plataforma</span>
+        {/* Platform Benefits - optimized 2-col */}
+        <div className="bg-surface rounded-xl p-4 border border-primary/10">
+          <div className="flex items-center gap-2 mb-3">
+            <IconShield className="h-5 w-5 text-primary" />
+            <span className="text-sm font-semibold">Beneficios da Plataforma</span>
           </div>
-          <div className="grid grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-2 gap-2">
             {(isFamily
               ? [
                   { title: "Cuidadores Verificados", sub: "KYC e antecedentes" },
@@ -236,9 +236,9 @@ export default function DashboardPage() {
                   { title: "Protecao Juridica", sub: "Contrato formal" },
                 ]
             ).map((item, i) => (
-              <div key={i} className="flex items-center gap-1.5 py-1 px-2 bg-muted/30 rounded-lg">
-                <IconCheck className="h-3 w-3 text-success shrink-0" />
-                <span className="text-[10px] font-medium truncate">{item.title}</span>
+              <div key={i} className="flex items-center gap-2 py-2 px-3 bg-muted/30 rounded-lg">
+                <IconCheck className="h-4 w-4 text-success shrink-0" />
+                <span className="text-xs font-medium truncate">{item.title}</span>
               </div>
             ))}
           </div>
@@ -254,9 +254,9 @@ export default function DashboardPage() {
           </div>
 
           {recentActivity.length > 0 ? (
-            <div className="space-y-1">
+            <div className="space-y-2">
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-2 px-3 bg-surface rounded-lg border border-border/30">
+                <div key={index} className="flex items-center justify-between py-3 px-4 bg-surface rounded-lg border border-border/30">
                   <div className="flex items-center gap-2">
                     <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${
                       activity.type === "credit" ? "bg-success/10" : "bg-error/10"

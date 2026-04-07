@@ -284,7 +284,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-5xl mx-auto px-3 lg:px-6 py-3 lg:py-5">
+        <main className="flex-1 w-full max-w-7xl mx-auto px-3 lg:px-6 py-3 lg:py-5">
           {children}
         </main>
       </div>

@@ -40,6 +40,7 @@ import { StatusBadge } from "@/components/admin/common/status-badge";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { apiFetch } from "@/lib/api-client";
+import { useToast } from "@/hooks/use-toast";
 
 // ==================== TYPES ====================
 
@@ -156,6 +157,7 @@ export default function AdminPaymentsPage() {
 // ==================== TRANSACTIONS TAB ====================
 
 function TransactionsTab() {
+  const { toast } = useToast();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [stats, setStats] = useState<PaymentStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -213,8 +215,8 @@ function TransactionsTab() {
         body: JSON.stringify({ reason }),
       });
       if (response.ok) fetchData();
-      else { const data = await response.json(); alert(data.error || "Erro ao processar reembolso"); }
-    } catch { alert("Erro ao processar reembolso"); }
+      else { const data = await response.json(); toast({ title: "Erro", description: data.error || "Erro ao processar reembolso", variant: "destructive" }); }
+    } catch { toast({ title: "Erro", description: "Erro ao processar reembolso", variant: "destructive" }); }
   };
 
   return (

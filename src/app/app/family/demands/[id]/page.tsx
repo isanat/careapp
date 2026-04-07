@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { AppShell } from '@/components/layout/app-shell';
 import { BoostVisibilityModal } from '@/components/demands/boost-visibility-modal';
 
 interface DemandMetrics {
@@ -50,7 +51,8 @@ interface Demand {
   metrics: DemandMetrics;
 }
 
-export default function FamilyDemandDetailPage({ params }: { params: { id: string } }) {
+export default function FamilyDemandDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -72,9 +74,9 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
     if (searchParams.get('boost') === 'success') {
       setBoostSuccess(true);
       // Remove query param
-      router.replace(`/app/family/demands/${params.id}`);
+      router.replace(`/app/family/demands/${resolvedParams.id}`);
     }
-  }, [searchParams, params.id, router]);
+  }, [searchParams, resolvedParams.id, router]);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -85,7 +87,7 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
         setError(null);
 
         // Fetch demand details
-        const demandRes = await fetch(`/api/demands/${params.id}`);
+        const demandRes = await fetch(`/api/demands/${resolvedParams.id}`);
         if (!demandRes.ok) throw new Error('Demanda não encontrada');
         const demandData = await demandRes.json();
         setDemand(demandData);
@@ -96,7 +98,7 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
         }
 
         // Fetch proposals
-        const proposalsRes = await fetch(`/api/demands/${params.id}/proposals`);
+        const proposalsRes = await fetch(`/api/demands/${resolvedParams.id}/proposals`);
         if (proposalsRes.ok) {
           const proposalsData = await proposalsRes.json();
           setProposals(proposalsData.proposals);
@@ -109,7 +111,7 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
     };
 
     fetchData();
-  }, [params.id, session?.user?.id, status]);
+  }, [resolvedParams.id, session?.user?.id, status]);
 
   if (loading) {
     return <div className="flex justify-center items-center min-h-screen">Carregando...</div>;
@@ -139,7 +141,8 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
     : { bg: 'bg-gray-100', text: 'text-gray-800', label: 'NORMAL' };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <AppShell>
+      <div className="pb-8">
       <div className="max-w-4xl mx-auto px-4">
         <Link href="/app/family/demands" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Voltar
@@ -323,6 +326,7 @@ export default function FamilyDemandDetailPage({ params }: { params: { id: strin
           }}
         />
       )}
-    </div>
+      </div>
+    </AppShell>
   );
 }

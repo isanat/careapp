@@ -107,6 +107,89 @@ function parseDescription(desc: string): { label: string; value: string }[] {
   });
 }
 
+// Parse elderly health data (JSON string from questionnaire)
+function parseElderlyData(dataStr: string): Record<string, any> | null {
+  if (!dataStr) return null;
+  try {
+    // Check if it looks like JSON
+    if (dataStr.trim().startsWith('{')) {
+      return JSON.parse(dataStr);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// Format elderly data for display
+function formatElderlyData(data: Record<string, any> | null) {
+  if (!data) return [];
+
+  const items: Array<{ icon?: string; label: string; value: string }> = [];
+
+  // Mobility level
+  if (data.mobilityLevel) {
+    const mobilityLabel: Record<string, string> = {
+      'completa': 'Mobilidade completa',
+      'parcial': 'Mobilidade parcial',
+      'nenhuma': 'Sem mobilidade'
+    };
+    items.push({
+      label: 'Mobilidade',
+      value: mobilityLabel[data.mobilityLevel] || data.mobilityLevel
+    });
+  }
+
+  // Medical conditions
+  if (data.medicalConditions && Array.isArray(data.medicalConditions) && data.medicalConditions.length > 0) {
+    const medicalLabels: Record<string, string> = {
+      'diabetes': 'Diabetes',
+      'hipertensao': 'Hipertensão',
+      'cancer': 'Câncer',
+      'artrite': 'Artrite',
+      'avc': 'AVC',
+      'parkinson': 'Parkinson',
+      'alzheimer': 'Alzheimer',
+      'demencia': 'Demência'
+    };
+    const conditions = data.medicalConditions
+      .map((c: string) => medicalLabels[c] || c)
+      .join(', ');
+    items.push({
+      label: 'Condições Médicas',
+      value: conditions
+    });
+  }
+
+  // Dietary restrictions
+  if (data.dietaryRestrictions && Array.isArray(data.dietaryRestrictions) && data.dietaryRestrictions.length > 0) {
+    const dietaryLabels: Record<string, string> = {
+      'diabetes_diet': 'Dieta para diabetes',
+      'sem_gluten': 'Sem glúten',
+      'sem_lactose': 'Sem lactose',
+      'vegetariana': 'Vegetariana',
+      'vegana': 'Vegana'
+    };
+    const restrictions = data.dietaryRestrictions
+      .map((r: string) => dietaryLabels[r] || r)
+      .join(', ');
+    items.push({
+      label: 'Restrições Alimentares',
+      value: restrictions
+    });
+  }
+
+  // Additional notes
+  if (data.additionalNotes && typeof data.additionalNotes === 'string' && data.additionalNotes.trim()) {
+    items.push({
+      label: 'Observações',
+      value: data.additionalNotes
+    });
+  }
+
+  return items;
+}
+
 export default function ContractDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { data: session, status } = useSession();
@@ -282,16 +365,30 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
               {/* Elder info (for caregiver view) */}
               {!isFamily && contract.family && (
-                <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
+                <div className="mt-3 pt-3 border-t border-border/50 space-y-2.5">
                   {contract.family.elderName && (
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-muted-foreground">Idoso(a):</span>
-                      <span className="font-medium">{contract.family.elderName}</span>
+                      <span className="font-semibold">{contract.family.elderName}</span>
                     </div>
                   )}
-                  {contract.family.elderNeeds && (
-                    <p className="text-sm text-muted-foreground">{contract.family.elderNeeds}</p>
-                  )}
+
+                  {/* Formatted health data */}
+                  {contract.family.elderNeeds && (() => {
+                    const elderData = parseElderlyData(contract.family.elderNeeds);
+                    const formattedData = formatElderlyData(elderData);
+                    return formattedData.length > 0 ? (
+                      <div className="space-y-1.5 text-sm">
+                        {formattedData.map((item, i) => (
+                          <div key={i}>
+                            <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
+                            <p className="text-sm">{item.value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null;
+                  })()}
+
                   {contract.family.phone && (
                     <div className="flex items-center gap-2 text-sm">
                       <IconPhone className="h-3.5 w-3.5 text-muted-foreground" />
@@ -499,24 +596,76 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
             {/* Accept Action */}
             {canAccept && userNeedsToAccept && (
-              <div className="bg-primary/5 border-2 border-primary/30 rounded-2xl p-5 text-center space-y-4">
-                <IconContract className="h-12 w-12 text-primary mx-auto" />
-                <div>
-                  <h3 className="font-bold text-lg">Aceitar Contrato</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Leia todos os detalhes acima antes de aceitar.
-                    Seu aceite sera registrado com data, hora e IP.
-                  </p>
+              <div className="space-y-4">
+                {/* Main action card */}
+                <div className="bg-primary/5 border-2 border-primary/30 rounded-2xl p-6 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <IconContract className="h-10 w-10 text-primary flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg">Revisar & Aceitar Contrato</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Certifique-se de que todos os detalhes estão corretos antes de confirmar.
+                        Seu aceite sera registrado digitalmente com data, hora e IP.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Summary of key contract details */}
+                  <div className="grid grid-cols-2 gap-3 my-3 p-3 bg-background rounded-lg">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Valor/Hora</p>
+                      <p className="text-sm font-semibold">€{hourlyRate}/h</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Total Mensal</p>
+                      <p className="text-sm font-semibold">€{totalEur}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Voce Recebe</p>
+                      <p className="text-sm font-semibold text-success">€{caregiverReceives}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Taxa Plataforma</p>
+                      <p className="text-sm font-semibold">€{platformFee}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      size="lg"
+                      className="flex-1 h-12 text-base font-semibold rounded-xl"
+                      onClick={() => setShowAcceptDialog(true)}
+                      disabled={isAccepting}
+                    >
+                      <IconCheck className="h-5 w-5 mr-2" />
+                      Aceitar Contrato
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="flex-1 h-12 text-base font-semibold rounded-xl"
+                      asChild
+                    >
+                      <Link href={`/app/chat?userId=${contract.otherParty?.id || ""}`}>
+                        <IconChat className="h-5 w-5 mr-2" />
+                        Fazer Pergunta
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-                <Button
-                  size="lg"
-                  className="w-full h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/25"
-                  onClick={() => setShowAcceptDialog(true)}
-                  disabled={isAccepting}
-                >
-                  <IconCheck className="h-5 w-5 mr-2" />
-                  Aceitar Contrato
-                </Button>
+
+                {/* Decline option */}
+                <div className="text-center">
+                  <Button
+                    variant="ghost"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/5"
+                    asChild
+                  >
+                    <Link href="/app/contracts">
+                      Não aceitar agora
+                    </Link>
+                  </Button>
+                </div>
               </div>
             )}
 

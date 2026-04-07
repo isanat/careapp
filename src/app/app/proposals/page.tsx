@@ -495,7 +495,7 @@ export default function ProposalsPage() {
             </div>
             <DialogFooter className="gap-2">
               <Button variant="outline" size="sm" onClick={() => setCounterDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" className="bg-purple-600 hover:bg-purple-700" onClick={confirmCounter} disabled={actionLoading !== null}>
+              <Button size="sm" onClick={confirmCounter} disabled={actionLoading !== null}>
                 {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconEdit className="h-4 w-4 mr-1" /> Enviar Contraproposta</>}
               </Button>
             </DialogFooter>

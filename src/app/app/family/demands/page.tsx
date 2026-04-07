@@ -141,10 +141,10 @@ function FamilyDemandsContent() {
 
         {/* Analytics Cards */}
         {analytics && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {/* Active Demands */}
             <Card className="border-border/40">
-              <CardContent className="p-4">
+              <CardContent className="p-5">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 justify-between">
                     <p className="text-xs font-medium text-muted-foreground">Ativas</p>
@@ -271,9 +271,9 @@ function FamilyDemandsContent() {
                     <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group block">
                       <Card className="border-border/40 hover:border-primary/30 hover:shadow-md transition-all duration-200 overflow-hidden">
                         <CardContent className="p-0">
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-0 divide-y md:divide-y-0 md:divide-x md:divide-border/30 items-center">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2 md:gap-0 md:divide-x md:divide-border/30 items-center">
                             {/* Title & Description - 2 cols */}
-                            <div className="lg:col-span-2 min-w-0 p-4 md:p-5">
+                            <div className="lg:col-span-2 min-w-0 p-5 md:p-5">
                               <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                                 {demand.title}
                               </h3>
@@ -287,11 +287,11 @@ function FamilyDemandsContent() {
                             </div>
 
                             {/* Visibility Package - 1 col */}
-                            <div className="p-4 md:p-5">
+                            <div className="p-5 md:p-6">
                               <p className="text-xs text-muted-foreground font-medium mb-1">Visibilidade</p>
                               <Badge
                                 variant={visibilityBadgeVariant as any}
-                                className="text-[10px] h-5 flex items-center justify-center gap-1 w-fit px-2"
+                                className="text-xs h-6 flex items-center justify-center gap-1 w-fit px-2"
                               >
                                 {VisibilityIcon && <VisibilityIcon className="h-3 w-3" />}
                                 {demand.visibilityPackage || 'Nenhum'}
@@ -299,7 +299,7 @@ function FamilyDemandsContent() {
                             </div>
 
                             {/* Views - 1 col */}
-                            <div className="p-4 md:p-5 text-center">
+                            <div className="p-5 md:p-6 text-center">
                               <p className="text-xs text-muted-foreground font-medium mb-1">Vistas</p>
                               <div className="flex items-center justify-center gap-1">
                                 <IconEye className="h-3 w-3 text-secondary" />
