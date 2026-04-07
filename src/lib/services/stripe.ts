@@ -409,6 +409,124 @@ export class StripeService {
       }
     }
   }
+
+  /**
+   * Create a payment hold (authorize without capturing)
+   * Used for weekly payment approvals - family authorizes but payment isn't captured until approval
+   */
+  async createPaymentHold(
+    contractId: string,
+    familyUserId: string,
+    weeklyAmountCents: number,
+    weekNumber: number
+  ) {
+    try {
+      // Get family user details
+      const userResult = await db.execute({
+        sql: `SELECT id, email, name FROM User WHERE id = ?`,
+        args: [familyUserId],
+      });
+
+      if (userResult.rows.length === 0) {
+        throw new Error("Family user not found");
+      }
+
+      const user = userResult.rows[0];
+
+      // Create PaymentIntent with manual capture
+      const paymentIntent = await getStripe().paymentIntents.create({
+        amount: weeklyAmountCents,
+        currency: "eur",
+        receipt_email: String(user.email),
+        capture_method: "manual", // Key: Don't capture immediately
+        statement_descriptor: `Weekly Approval W${weekNumber}`,
+        metadata: {
+          contractId,
+          familyUserId,
+          weekNumber,
+          type: "WEEKLY_APPROVAL",
+        },
+      });
+
+      return {
+        paymentIntentId: paymentIntent.id,
+        clientSecret: paymentIntent.client_secret || "",
+        status: "requires_payment_method",
+      };
+    } catch (error) {
+      console.error("Error creating payment hold:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Capture a payment hold (after family approves)
+   * Transfers funds and creates caregiver transfer record
+   */
+  async capturePaymentHold(paymentIntentId: string): Promise<{ success: boolean; chargeId: string }> {
+    try {
+      const paymentIntent = await getStripe().paymentIntents.confirm(paymentIntentId);
+
+      if (paymentIntent.status !== "succeeded") {
+        throw new Error(`Payment intent capture failed: ${paymentIntent.status}`);
+      }
+
+      const chargeId = paymentIntent.latest_charge as string;
+
+      return {
+        success: true,
+        chargeId,
+      };
+    } catch (error) {
+      console.error("Error capturing payment hold:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Void a payment hold (if family disputes)
+   * Cancels the authorization without charging
+   */
+  async voidPaymentHold(paymentIntentId: string): Promise<boolean> {
+    try {
+      await getStripe().paymentIntents.cancel(paymentIntentId);
+      return true;
+    } catch (error) {
+      console.error("Error voiding payment hold:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Transfer funds to caregiver's Stripe Connect account
+   * Called after payment is captured and approved by family
+   */
+  async transferToCaregiverAccount(
+    amountCents: number,
+    caregiverConnectAccountId: string,
+    metadata: { contractId: string; weekNumber: number }
+  ): Promise<{ transferId: string }> {
+    try {
+      if (!caregiverConnectAccountId) {
+        throw new Error("Caregiver Stripe Connect account not set up");
+      }
+
+      // Create transfer using Stripe Connect
+      const transfer = await getStripe().transfers.create({
+        amount: amountCents,
+        currency: "eur",
+        destination: caregiverConnectAccountId,
+        metadata,
+      });
+
+      return {
+        transferId: transfer.id,
+      };
+    } catch (error) {
+      console.error("Error transferring to caregiver account:", error);
+      throw error;
+    }
+  }
 }
 
 export const stripeService = new StripeService();
