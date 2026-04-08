@@ -15,7 +15,7 @@ export async function POST(
     const auth = await requireAdmin();
     if (auth instanceof NextResponse) return auth;
 
-    const adminId = auth.user?.id;
+    const adminId = auth.adminUserId;
     const { id } = await params;
     const body = await request.json();
     const { reason } = body;
@@ -89,16 +89,18 @@ export async function POST(
 
     // Send rejection email
     try {
-      await sendEmail({
-        to: payment.userEmail,
-        subject: 'Pagamento Rejeitado - Evyra',
-        html: `
-          <p>Olá ${payment.userName},</p>
-          <p>Seu pagamento de €${(payment.amountEurCents / 100).toFixed(2)} foi rejeitado.</p>
-          <p><strong>Motivo:</strong> ${reason}</p>
-          <p>Se tiver dúvidas, entre em contato com nosso suporte.</p>
-        `,
-      });
+      if (payment.userEmail) {
+        await sendEmail({
+          to: String(payment.userEmail),
+          subject: 'Pagamento Rejeitado - Evyra',
+          html: `
+            <p>Olá ${payment.userName},</p>
+            <p>Seu pagamento de €${(Number(payment.amountEurCents) / 100).toFixed(2)} foi rejeitado.</p>
+            <p><strong>Motivo:</strong> ${reason}</p>
+            <p>Se tiver dúvidas, entre em contato com nosso suporte.</p>
+          `,
+        });
+      }
     } catch (emailError) {
       console.error('Error sending rejection email:', emailError);
       // Don't fail the request due to email error
