@@ -102,7 +102,9 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
         const proposalsRes = await fetch(`/api/demands/${resolvedParams.id}/proposals`);
         if (proposalsRes.ok) {
           const proposalsData = await proposalsRes.json();
-          setProposals(proposalsData.proposals);
+          setProposals(proposalsData.proposals || []);
+        } else {
+          console.error('[FamilyDemand] Proposals fetch failed:', proposalsRes.status, await proposalsRes.text());
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erro ao carregar demanda');
