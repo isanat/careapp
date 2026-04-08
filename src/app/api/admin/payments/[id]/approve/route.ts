@@ -15,7 +15,7 @@ export async function POST(
     const auth = await requireAdmin();
     if (auth instanceof NextResponse) return auth;
 
-    const adminId = auth.user?.id;
+    const adminId = auth.adminUserId;
     const { id } = await params;
 
     // Get payment details
