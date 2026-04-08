@@ -95,7 +95,7 @@ export async function POST(
           subject: 'Pagamento Rejeitado - Evyra',
           html: `
             <p>Olá ${payment.userName},</p>
-            <p>Seu pagamento de €${(payment.amountEurCents / 100).toFixed(2)} foi rejeitado.</p>
+            <p>Seu pagamento de €${(Number(payment.amountEurCents) / 100).toFixed(2)} foi rejeitado.</p>
             <p><strong>Motivo:</strong> ${reason}</p>
             <p>Se tiver dúvidas, entre em contato com nosso suporte.</p>
           `,
