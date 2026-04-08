@@ -221,8 +221,7 @@ export async function GET(
           u.name as caregiverName,
           u.email as caregiverEmail,
           pc.experienceYears,
-          pc.certifications,
-          pc.hourlyRateEur
+          pc.certifications
         FROM Proposal p
         JOIN User u ON p.caregiverId = u.id
         LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
@@ -240,7 +239,7 @@ export async function GET(
       caregiverEmail: row.caregiverEmail,
       experienceYears: row.experienceYears,
       certifications: row.certifications ? JSON.parse(String(row.certifications)) : [],
-      standardHourlyRate: row.hourlyRateEur,
+      standardHourlyRate: null,
       message: row.message,
       proposedHourlyRate: row.proposedHourlyRate,
       estimatedStartDate: row.estimatedStartDate,
