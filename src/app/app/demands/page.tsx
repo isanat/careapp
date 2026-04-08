@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
 import { useToast } from "@/hooks/use-toast";
+import { getServiceTypeLabel } from '@/lib/service-types';
 import {
   IconMapPin,
   IconClock,
@@ -328,7 +329,7 @@ function DemandsContent() {
                                 variant="secondary"
                                 className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
                               >
-                                {service.replace(/_/g, ' ')}
+                                {getServiceTypeLabel(service)}
                               </Badge>
                             ))}
                             {demand.serviceTypes.length > 2 && (

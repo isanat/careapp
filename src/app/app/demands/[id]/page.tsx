@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { getServiceTypeLabel } from '@/lib/service-types';
 
 interface Demand {
   id: string;
@@ -217,7 +218,7 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
               <div className="flex flex-wrap gap-2">
                 {demand.serviceTypes.map((service, idx) => (
                   <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    {service.replace(/_/g, ' ')}
+                    {getServiceTypeLabel(service)}
                   </span>
                 ))}
               </div>

@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { BoostVisibilityModal } from '@/components/demands/boost-visibility-modal';
+import { getServiceTypeLabel } from '@/lib/service-types';
 
 interface DemandMetrics {
   viewCount: number;
@@ -220,7 +221,7 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                 <div className="flex flex-wrap gap-2">
                   {demand.serviceTypes.map((type, idx) => (
                     <span key={idx} className="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm">
-                      {type.replace(/_/g, ' ')}
+                      {getServiceTypeLabel(type)}
                     </span>
                   ))}
                 </div>
