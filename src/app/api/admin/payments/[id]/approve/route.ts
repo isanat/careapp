@@ -86,16 +86,18 @@ export async function POST(
 
     // Send confirmation email
     try {
-      await sendEmail({
-        to: payment.userEmail,
-        subject: 'Pagamento Aprovado - Evyra',
-        html: `
-          <p>Olá ${payment.userName},</p>
-          <p>Seu pagamento de €${(payment.amountEurCents / 100).toFixed(2)} foi aprovado com sucesso!</p>
-          ${payment.type === 'VISIBILITY_BOOST' ? '<p>Sua demanda agora tem maior visibilidade.</p>' : ''}
-          <p>Obrigado por usar Evyra.</p>
-        `,
-      });
+      if (payment.userEmail) {
+        await sendEmail({
+          to: payment.userEmail,
+          subject: 'Pagamento Aprovado - Evyra',
+          html: `
+            <p>Olá ${payment.userName},</p>
+            <p>Seu pagamento de €${(payment.amountEurCents / 100).toFixed(2)} foi aprovado com sucesso!</p>
+            ${payment.type === 'VISIBILITY_BOOST' ? '<p>Sua demanda agora tem maior visibilidade.</p>' : ''}
+            <p>Obrigado por usar Evyra.</p>
+          `,
+        });
+      }
     } catch (emailError) {
       console.error('Error sending approval email:', emailError);
       // Don't fail the request due to email error
