@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/api/auth';
 import { db } from '@/lib/db-turso';
-import { sendEmail } from '@/lib/email';
+import { sendEmail } from '@/lib/services/email';
 
 /**
  * POST /api/admin/payments/[id]/reject
