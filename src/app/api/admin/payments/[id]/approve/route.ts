@@ -88,7 +88,7 @@ export async function POST(
     try {
       if (payment.userEmail) {
         await sendEmail({
-          to: payment.userEmail,
+          to: String(payment.userEmail),
           subject: 'Pagamento Aprovado - Evyra',
           html: `
             <p>Olá ${payment.userName},</p>
