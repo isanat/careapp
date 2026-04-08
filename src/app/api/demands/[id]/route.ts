@@ -119,7 +119,7 @@ export async function GET(
   } catch (error) {
     console.error('[Demands API] GET detail error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch demand' },
+      { error: 'Failed to fetch demand', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

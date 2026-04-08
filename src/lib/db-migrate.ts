@@ -77,12 +77,17 @@ export async function runAutoMigrations(db: Client) {
         desiredEndDate TEXT,
         hoursPerWeek INTEGER,
         scheduleJson TEXT,
+        budgetEurCents INTEGER,
+        minimumHourlyRateEur INTEGER,
         visibilityPackage TEXT DEFAULT 'NONE',
         visibilityExpiresAt TEXT,
         status TEXT DEFAULT 'ACTIVE',
         createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
         updatedAt TEXT DEFAULT CURRENT_TIMESTAMP,
         closedAt TEXT,
+        closedReason TEXT,
+        deletedAt TEXT,
+        deletionReason TEXT,
         FOREIGN KEY (familyUserId) REFERENCES User(id) ON DELETE CASCADE
       )`,
 
@@ -174,6 +179,12 @@ export async function runAutoMigrations(db: Client) {
     const alterMigrations = [
       `ALTER TABLE Interview ADD COLUMN caregiverQuestionnaireJson TEXT`,
       `ALTER TABLE Interview ADD COLUMN caregiverCompletedAt TEXT`,
+      // Demand budget columns - added after initial table creation
+      `ALTER TABLE Demand ADD COLUMN budgetEurCents INTEGER`,
+      `ALTER TABLE Demand ADD COLUMN minimumHourlyRateEur INTEGER`,
+      `ALTER TABLE Demand ADD COLUMN closedReason TEXT`,
+      `ALTER TABLE Demand ADD COLUMN deletedAt TEXT`,
+      `ALTER TABLE Demand ADD COLUMN deletionReason TEXT`,
     ];
 
     for (const sql of migrations) {
