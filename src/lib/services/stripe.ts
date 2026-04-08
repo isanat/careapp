@@ -122,10 +122,11 @@ export class StripeService {
     }
 
     // Create Stripe checkout session
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://projetoevyrapt.vercel.app';
     const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/family/demands/${demandId}?boost=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/app/family/demands/${demandId}?boost=cancelled`,
+      success_url: `${appUrl}/app/family/demands/${demandId}?boost=success`,
+      cancel_url: `${appUrl}/app/family/demands/${demandId}?boost=cancelled`,
       customer_email: String(user.email),
       line_items: [
         {
