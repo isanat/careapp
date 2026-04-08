@@ -151,13 +151,14 @@ export class StripeService {
     // Create VisibilityPurchase record
     const purchaseId = generateId('vpurch');
     const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
+    const now = new Date().toISOString();
 
     await db.execute({
       sql: `
         INSERT INTO VisibilityPurchase (
           id, demandId, familyUserId, package, amountEurCents,
           stripeCheckoutSessionId, status, purchasedAt, expiresAt, createdAt
-        ) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', datetime('now'), ?, datetime('now'))
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       args: [
         purchaseId,
@@ -166,7 +167,10 @@ export class StripeService {
         boostPackage,
         packageInfo.price,
         session.id,
+        'PENDING',
+        now,
         expiresAt.toISOString(),
+        now,
       ],
     });
 
