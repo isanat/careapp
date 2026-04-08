@@ -56,9 +56,11 @@ export function BoostVisibilityModal({
 }: BoostVisibilityModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSelectPackage = async (packageName: string) => {
     setError(null);
+    setSuccess(null);
     setLoading(true);
 
     try {
@@ -73,9 +75,22 @@ export function BoostVisibilityModal({
         throw new Error(data.error || 'Falha ao criar checkout');
       }
 
-      const { url } = await res.json();
-      if (url) {
-        window.location.href = url;
+      const data = await res.json();
+
+      if (data.isMockPayment) {
+        // Mock payment: show success message, payment awaits admin approval
+        setSuccess(
+          `Pedido de ${data.label || 'visibilidade'} (€${data.amountEur || packageName}) registrado com sucesso! ` +
+          `Aguardando aprovação da administração.`
+        );
+        setTimeout(() => {
+          onSuccess?.();
+          onClose();
+          setSuccess(null);
+        }, 3000);
+      } else if (data.url) {
+        // Real Stripe: redirect to checkout
+        window.location.href = data.url;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao processar');
@@ -106,7 +121,14 @@ export function BoostVisibilityModal({
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {success && (
+            <div className="bg-green-500/10 border border-green-500/20 text-green-700 dark:text-green-400 px-4 py-6 rounded mb-6 text-center">
+              <div className="text-3xl mb-2">&#10003;</div>
+              <p className="font-semibold">{success}</p>
+            </div>
+          )}
+
+          {!success && <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {PACKAGES.map((pkg) => (
               <div
                 key={pkg.name}
@@ -165,7 +187,7 @@ export function BoostVisibilityModal({
               <li>Premium dura 30 dias - excelente valor</li>
               <li>URGENT é perfeito para necessidades imediatas</li>
             </ul>
-          </div>
+          </div>}
         </div>
 
         <DialogFooter>

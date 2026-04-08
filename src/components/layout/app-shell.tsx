@@ -70,8 +70,17 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const unreadCount = useUnreadCount();
 
   const isFamily = session?.user?.role === "FAMILY";
+  const isAdmin = session?.user?.role === "ADMIN";
 
-  const navItems = isFamily
+  const navItems = isAdmin
+    ? [
+        { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
+        { href: "/app/admin/payments", label: "Pagamentos", icon: IconWallet },
+        { href: "/app/demands", label: "Demandas", icon: IconSearch },
+        { href: "/app/contracts", label: t.nav.contracts, icon: IconContract },
+        { href: "/app/profile", label: t.nav.profile, icon: IconUser },
+      ]
+    : isFamily
     ? [
         { href: "/app/dashboard", label: t.nav.dashboard, icon: IconHome },
         { href: "/app/family/demands", label: "Demandas", icon: IconSearch },

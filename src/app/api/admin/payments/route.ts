@@ -18,12 +18,17 @@ export async function GET(request: NextRequest) {
     let sql = `SELECT
       p.id, p.type, p.status, p.provider,
       p.amountEurCents, p.platformFee,
+      p.description, p.metadata,
       p.createdAt, p.paidAt, p.refundedAt,
+      p.approvedAt, p.approvedByAdminId,
+      p.demandId,
       u.name as userName, u.email as userEmail,
-      c.title as contractTitle
+      c.title as contractTitle,
+      d.title as demandTitle
     FROM Payment p
     LEFT JOIN User u ON p.userId = u.id
     LEFT JOIN Contract c ON p.contractId = c.id
+    LEFT JOIN Demand d ON p.demandId = d.id
     WHERE 1=1`;
 
     const args: any[] = [];

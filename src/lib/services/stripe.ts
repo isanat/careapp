@@ -121,129 +121,117 @@ export class StripeService {
       throw new Error('Unauthorized');
     }
 
-    // Check if mock payments are enabled
-    const enableMockPayments = process.env.ENABLE_MOCK_PAYMENTS === 'true';
+    const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
+    const now = new Date().toISOString();
 
-    if (enableMockPayments) {
-      // Create mock payment for admin approval
-      const paymentId = generateId('pay');
-      const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
-      const now = new Date().toISOString();
+    // Determine if we should use mock payments:
+    // 1. ENABLE_MOCK_PAYMENTS=true explicitly set
+    // 2. Stripe key is a placeholder/dev key
+    // 3. Stripe is not configured at all
+    const stripeKey = process.env.STRIPE_SECRET_KEY || '';
+    const useMockPayments = process.env.ENABLE_MOCK_PAYMENTS === 'true'
+      || !stripeKey
+      || stripeKey === 'sk_test_dev'
+      || stripeKey.length < 20;
 
-      // Create Payment record with INTERNAL provider
-      await db.execute({
-        sql: `
-          INSERT INTO Payment (
-            id, userId, type, status, provider, amountEurCents,
-            demandId, description, metadata, createdAt
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        args: [
-          paymentId,
-          userId,
-          'VISIBILITY_BOOST',
-          'PENDING',
-          'INTERNAL',
-          packageInfo.price,
-          demandId,
-          `Visibilidade boost para demanda: "${demand.title}"`,
-          JSON.stringify({
-            package: boostPackage,
-            expiresAt: expiresAt.toISOString(),
-          }),
-          now,
-        ],
-      });
+    if (!useMockPayments) {
+      // Try real Stripe checkout
+      try {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://projetoevyrapt.vercel.app';
+        const session = await getStripe().checkout.sessions.create({
+          mode: 'payment',
+          success_url: `${appUrl}/app/family/demands/${demandId}?boost=success`,
+          cancel_url: `${appUrl}/app/family/demands/${demandId}?boost=cancelled`,
+          customer_email: String(user.email),
+          line_items: [
+            {
+              price_data: {
+                currency: 'eur',
+                unit_amount: packageInfo.price,
+                product_data: {
+                  name: packageInfo.label,
+                  description: `Aumentar visibilidade da demanda: "${demand.title}"`,
+                },
+              },
+              quantity: 1,
+            },
+          ],
+          metadata: {
+            demandId,
+            familyUserId: userId,
+            boostPackage,
+            type: 'VISIBILITY_BOOST',
+          },
+        });
 
-      // Also create VisibilityPurchase record for backwards compatibility
-      const purchaseId = generateId('vpurch');
-      await db.execute({
-        sql: `
-          INSERT INTO VisibilityPurchase (
-            id, demandId, familyUserId, package, amountEurCents,
-            status, purchasedAt, expiresAt, createdAt
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        args: [
-          purchaseId,
-          demandId,
-          userId,
-          boostPackage,
-          packageInfo.price,
-          'PENDING',
-          now,
-          expiresAt.toISOString(),
-          now,
-        ],
-      });
+        // Create VisibilityPurchase record
+        const purchaseId = generateId('vpurch');
+        await db.execute({
+          sql: `
+            INSERT INTO VisibilityPurchase (
+              id, demandId, familyUserId, package, amountEurCents,
+              stripeCheckoutSessionId, status, purchasedAt, expiresAt, createdAt
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `,
+          args: [
+            purchaseId, demandId, userId, boostPackage, packageInfo.price,
+            session.id, 'PENDING', now, expiresAt.toISOString(), now,
+          ],
+        });
 
-      // Return mock payment URL that redirects to admin payments page
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://projetoevyrapt.vercel.app';
-      return {
-        sessionId: paymentId,
-        url: `${appUrl}/app/admin/payments?pending=true&type=VISIBILITY_BOOST`,
-        isMockPayment: true,
-      };
+        return {
+          sessionId: session.id,
+          url: session.url,
+          isMockPayment: false,
+        };
+      } catch (stripeError) {
+        console.warn('[Stripe] Checkout failed, falling back to mock payment:', stripeError);
+        // Fall through to mock payment
+      }
     }
 
-    // Create real Stripe checkout session
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://projetoevyrapt.vercel.app';
-    const session = await getStripe().checkout.sessions.create({
-      mode: 'payment',
-      success_url: `${appUrl}/app/family/demands/${demandId}?boost=success`,
-      cancel_url: `${appUrl}/app/family/demands/${demandId}?boost=cancelled`,
-      customer_email: String(user.email),
-      line_items: [
-        {
-          price_data: {
-            currency: 'eur',
-            unit_amount: packageInfo.price,
-            product_data: {
-              name: packageInfo.label,
-              description: `Aumentar visibilidade da demanda: "${demand.title}"`,
-            },
-          },
-          quantity: 1,
-        },
+    // === MOCK PAYMENT (admin approval flow) ===
+    const paymentId = generateId('pay');
+
+    // Create Payment record with INTERNAL provider for admin approval
+    await db.execute({
+      sql: `
+        INSERT INTO Payment (
+          id, userId, type, status, provider, amountEurCents,
+          demandId, description, metadata, createdAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      args: [
+        paymentId, userId, 'VISIBILITY_BOOST', 'PENDING', 'INTERNAL',
+        packageInfo.price, demandId,
+        `Boost ${packageInfo.label} - "${demand.title}"`,
+        JSON.stringify({ package: boostPackage, expiresAt: expiresAt.toISOString() }),
+        now,
       ],
-      metadata: {
-        demandId,
-        familyUserId: userId,
-        boostPackage,
-        type: 'VISIBILITY_BOOST',
-      },
     });
 
     // Create VisibilityPurchase record
     const purchaseId = generateId('vpurch');
-    const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
-    const now = new Date().toISOString();
-
     await db.execute({
       sql: `
         INSERT INTO VisibilityPurchase (
           id, demandId, familyUserId, package, amountEurCents,
-          stripeCheckoutSessionId, status, purchasedAt, expiresAt, createdAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          status, purchasedAt, expiresAt, createdAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       args: [
-        purchaseId,
-        demandId,
-        userId,
-        boostPackage,
-        packageInfo.price,
-        session.id,
-        'PENDING',
-        now,
-        expiresAt.toISOString(),
-        now,
+        purchaseId, demandId, userId, boostPackage, packageInfo.price,
+        'PENDING', now, expiresAt.toISOString(), now,
       ],
     });
 
+    // Return mock payment response (NO redirect URL)
     return {
-      sessionId: session.id,
-      url: session.url,
-      isMockPayment: false,
+      sessionId: paymentId,
+      isMockPayment: true,
+      package: boostPackage,
+      label: packageInfo.label,
+      amountEur: (packageInfo.price / 100).toFixed(2),
     };
   }
 

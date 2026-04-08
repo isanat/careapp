@@ -35,11 +35,11 @@ interface Payment {
   type: string;
   status: string;
   provider: string;
-  amountEur: string;
+  amountEurCents: number;
   demandId?: string;
   demandTitle?: string;
   description: string;
-  metadata?: any;
+  metadata?: string;
   createdAt: string;
 }
 
@@ -79,7 +79,7 @@ export default function AdminPaymentsPage() {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState('VISIBILITY_BOOST');
+  const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('PENDING');
 
   useEffect(() => {
@@ -197,19 +197,23 @@ export default function AdminPaymentsPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-2 py-1 rounded border text-sm"
+            className="px-2 py-1 rounded border text-sm bg-background"
           >
             <option value="PENDING">Pendentes</option>
+            <option value="COMPLETED">Aprovados</option>
+            <option value="FAILED">Rejeitados</option>
             <option value="">Todos</option>
           </select>
 
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-2 py-1 rounded border text-sm"
+            className="px-2 py-1 rounded border text-sm bg-background"
           >
-            <option value="VISIBILITY_BOOST">Boosts de Visibilidade</option>
             <option value="">Todos os Tipos</option>
+            <option value="VISIBILITY_BOOST">Boosts de Visibilidade</option>
+            <option value="CONTRACT_FEE">Taxas de Contrato</option>
+            <option value="SERVICE_PAYMENT">Pagamento de Serviço</option>
           </select>
         </div>
 
@@ -276,7 +280,7 @@ export default function AdminPaymentsPage() {
                     <div className="flex items-baseline gap-1 justify-end mb-2">
                       <span className="text-lg font-bold">€</span>
                       <span className="text-xl font-semibold">
-                        {payment.amountEur}
+                        {(Number(payment.amountEurCents) / 100).toFixed(2)}
                       </span>
                     </div>
                     <p className="text-xs text-muted-foreground">
@@ -332,7 +336,7 @@ export default function AdminPaymentsPage() {
               <DialogTitle className="text-base">Aprovar Pagamento?</DialogTitle>
               <DialogDescription className="text-sm">
                 {selectedPayment?.userName} -- €
-                {selectedPayment?.amountEur}
+                {selectedPayment ? (Number(selectedPayment.amountEurCents) / 100).toFixed(2) : '0.00'}
               </DialogDescription>
             </DialogHeader>
             <div className="p-3 bg-muted/50 rounded-lg text-sm space-y-2">
