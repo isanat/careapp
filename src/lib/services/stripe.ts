@@ -121,7 +121,72 @@ export class StripeService {
       throw new Error('Unauthorized');
     }
 
-    // Create Stripe checkout session
+    // Check if mock payments are enabled
+    const enableMockPayments = process.env.ENABLE_MOCK_PAYMENTS === 'true';
+
+    if (enableMockPayments) {
+      // Create mock payment for admin approval
+      const paymentId = generateId('pay');
+      const expiresAt = new Date(Date.now() + packageInfo.duration * 24 * 60 * 60 * 1000);
+      const now = new Date().toISOString();
+
+      // Create Payment record with INTERNAL provider
+      await db.execute({
+        sql: `
+          INSERT INTO Payment (
+            id, userId, type, status, provider, amountEurCents,
+            demandId, description, metadata, createdAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        args: [
+          paymentId,
+          userId,
+          'VISIBILITY_BOOST',
+          'PENDING',
+          'INTERNAL',
+          packageInfo.price,
+          demandId,
+          `Visibilidade boost para demanda: "${demand.title}"`,
+          JSON.stringify({
+            package: boostPackage,
+            expiresAt: expiresAt.toISOString(),
+          }),
+          now,
+        ],
+      });
+
+      // Also create VisibilityPurchase record for backwards compatibility
+      const purchaseId = generateId('vpurch');
+      await db.execute({
+        sql: `
+          INSERT INTO VisibilityPurchase (
+            id, demandId, familyUserId, package, amountEurCents,
+            status, purchasedAt, expiresAt, createdAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        args: [
+          purchaseId,
+          demandId,
+          userId,
+          boostPackage,
+          packageInfo.price,
+          'PENDING',
+          now,
+          expiresAt.toISOString(),
+          now,
+        ],
+      });
+
+      // Return mock payment URL that redirects to admin payments page
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://projetoevyrapt.vercel.app';
+      return {
+        sessionId: paymentId,
+        url: `${appUrl}/app/admin/payments?pending=true&type=VISIBILITY_BOOST`,
+        isMockPayment: true,
+      };
+    }
+
+    // Create real Stripe checkout session
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://projetoevyrapt.vercel.app';
     const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
@@ -178,6 +243,7 @@ export class StripeService {
     return {
       sessionId: session.id,
       url: session.url,
+      isMockPayment: false,
     };
   }
 
