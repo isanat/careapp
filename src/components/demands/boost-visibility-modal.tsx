@@ -128,66 +128,70 @@ export function BoostVisibilityModal({
             </div>
           )}
 
-          {!success && <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {PACKAGES.map((pkg) => (
-              <div
-                key={pkg.name}
-                className={`relative border-2 rounded-lg p-4 cursor-pointer transition ${
-                  pkg.recommended
-                    ? 'border-primary bg-primary/10'
-                    : 'border-border hover:border-muted-foreground/30'
-                }`}
-              >
-                {pkg.recommended && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
-                    RECOMENDADO
-                  </div>
-                )}
+          {!success && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {PACKAGES.map((pkg) => (
+                  <div
+                    key={pkg.name}
+                    className={`relative border-2 rounded-lg p-4 cursor-pointer transition ${
+                      pkg.recommended
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-muted-foreground/30'
+                    }`}
+                  >
+                    {pkg.recommended && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                        RECOMENDADO
+                      </div>
+                    )}
 
-                <div className="mb-4">
-                  <div className="inline-block px-2 py-1 rounded text-xs font-semibold mb-2 bg-muted text-muted-foreground">
-                    {pkg.badge}
-                  </div>
-                  <h3 className="font-bold text-foreground mb-1">
-                    {pkg.label}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {pkg.description}
-                  </p>
+                    <div className="mb-4">
+                      <div className="inline-block px-2 py-1 rounded text-xs font-semibold mb-2 bg-muted text-muted-foreground">
+                        {pkg.badge}
+                      </div>
+                      <h3 className="font-bold text-foreground mb-1">
+                        {pkg.label}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {pkg.description}
+                      </p>
 
-                  <div className="mb-3">
-                    <div className="text-2xl font-bold text-foreground">
-                      €{pkg.price}
+                      <div className="mb-3">
+                        <div className="text-2xl font-bold text-foreground">
+                          €{pkg.price}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {pkg.duration}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {pkg.duration}
-                    </div>
-                  </div>
-                </div>
 
-                <Button
-                  onClick={() => handleSelectPackage(pkg.name)}
-                  disabled={loading}
-                  className="w-full"
-                  variant={pkg.recommended ? 'default' : 'outline'}
-                >
-                  {loading ? 'Processando...' : 'Selecionar'}
-                </Button>
+                    <Button
+                      onClick={() => handleSelectPackage(pkg.name)}
+                      disabled={loading}
+                      className="w-full"
+                      variant={pkg.recommended ? 'default' : 'outline'}
+                    >
+                      {loading ? 'Processando...' : 'Selecionar'}
+                    </Button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="bg-muted p-4 rounded text-sm text-muted-foreground mb-4">
-            <p className="font-semibold mb-2 text-foreground">
-              Dicas para aumentar propostas:
-            </p>
-            <ul className="list-disc list-inside space-y-1 text-xs">
-              <li>Use descrição clara e detalhada</li>
-              <li>Especifique o nível de experiência requerido</li>
-              <li>Premium dura 30 dias - excelente valor</li>
-              <li>URGENT é perfeito para necessidades imediatas</li>
-            </ul>
-          </div>}
+              <div className="bg-muted p-4 rounded text-sm text-muted-foreground mb-4">
+                <p className="font-semibold mb-2 text-foreground">
+                  Dicas para aumentar propostas:
+                </p>
+                <ul className="list-disc list-inside space-y-1 text-xs">
+                  <li>Use descrição clara e detalhada</li>
+                  <li>Especifique o nível de experiência requerido</li>
+                  <li>Premium dura 30 dias - excelente valor</li>
+                  <li>URGENT é perfeito para necessidades imediatas</li>
+                </ul>
+              </div>
+            </>
+          )}
         </div>
 
         <DialogFooter>
