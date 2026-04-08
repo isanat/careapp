@@ -91,54 +91,54 @@
   /* Border radius base */
   --radius: 1.25rem;
 
-  /* Primary - Ocean Blue (#3B82F6) - Action/CTA */
-  --color-primary: #3B82F6;
+  /* Primary - Evyra Blue (#4A9EFF) - Innovation, Trust, Digital */
+  --color-primary: #4A9EFF;
   --color-primary-foreground: #FFFFFF;
-  --color-primary-light: #60A5FA;
-  --color-primary-dark: #2563EB;
+  --color-primary-light: #7FB8FF;
+  --color-primary-dark: #1E78FF;
 
-  /* Secondary - Navy (#0F172A) - Identity/Headers */
-  --color-secondary: #1E40AF;
+  /* Secondary - Trust Teal (#2DD4BF) - Care, Health, Calm */
+  --color-secondary: #2DD4BF;
   --color-secondary-foreground: #FFFFFF;
-  --color-secondary-light: #BFDBFE;
+  --color-secondary-light: #5FE3D0;
 
-  /* Accent - Coral Orange (#FF7F50) - Energy/Highlight */
-  --color-accent: #FF7F50;
-  --color-accent-foreground: #FFFFFF;
+  /* Accent - Midnight (#080C14) - Depth, Trust, Sophistication */
+  --color-accent: #080C14;
+  --color-accent-foreground: #E8EEF8;
 
-  /* Warm - Rose (#F43F5E) - Notifications */
-  --color-warm: #F43F5E;
-  --color-warm-foreground: #FFFFFF;
-  --color-warm-light: #FB7185;
+  /* Warm - Soft White (#E8EEF8) - Care, Warmth, Accessibility */
+  --color-warm: #E8EEF8;
+  --color-warm-foreground: #080C14;
+  --color-warm-light: #F2F5FA;
 
-  /* Success - Emerald */
-  --color-success: #10B981;
+  /* Success - Soft Green (#5B9A6F) */
+  --color-success: #5B9A6F;
   --color-success-foreground: #FFFFFF;
-  --color-success-light: #6EE7B7;
+  --color-success-light: #A8D5B8;
 
-  /* Warning - Amber */
-  --color-warning: #F59E0B;
-  --color-warning-foreground: #1C1917;
-  --color-warning-light: #FCD34D;
+  /* Warning - Soft Amber (#E8A65D) */
+  --color-warning: #E8A65D;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #F5D4A8;
 
-  /* Error - Red */
-  --color-error: #EF4444;
+  /* Error - Soft Red (#C96B6B) */
+  --color-error: #C96B6B;
   --color-error-foreground: #FFFFFF;
-  --color-error-light: #FCA5A5;
+  --color-error-light: #F0C8C8;
 
-  /* Background & Surface - Light Mode "Pure & Clinical" */
-  --color-background: #F8FAFC;
+  /* Background & Surface */
+  --color-background: #F8FAFB;
   --color-surface: #FFFFFF;
-  --color-foreground: #0F172A;
+  --color-foreground: #080C14;
 
   /* Muted */
-  --color-muted: #E2EBF6;
-  --color-muted-foreground: #64748B;
+  --color-muted: #EEF3F2;
+  --color-muted-foreground: #4B5563;
 
   /* Border & Input */
-  --color-border: #E2EBF6;
-  --color-input: #E2EBF6;
-  --color-ring: #3B82F6;
+  --color-border: #E0E7E5;
+  --color-input: #E0E7E5;
+  --color-ring: #4A9EFF;
 
   /* Popover & Card */
   --color-popover: #FFFFFF;
@@ -146,63 +146,63 @@
   --color-card: #FFFFFF;
   --color-card-foreground: #0F172A;
 
-  /* Colored shadow tokens */
-  --shadow-color: rgba(76, 147, 206, 0.08);
-  --shadow-color-md: rgba(76, 147, 206, 0.12);
-  --shadow-color-lg: rgba(76, 147, 206, 0.16);
-  --shadow-primary-glow: rgba(59, 130, 246, 0.3);
+  /* Colored shadow tokens - Evyra Teal */
+  --shadow-color: rgba(47, 111, 109, 0.05);
+  --shadow-color-md: rgba(47, 111, 109, 0.08);
+  --shadow-color-lg: rgba(47, 111, 109, 0.12);
+  --shadow-primary-glow: rgba(74, 158, 255, 0.2);
 }
 
-/* Dark Mode "Deep Night" */
+/* Dark Mode "Deep Night" - Evyra */
 .dark {
-  /* Primary - Blue lighter for contrast */
-  --color-primary: #60A5FA;
-  --color-primary-foreground: #0F172A;
-  --color-primary-light: #93C5FD;
-  --color-primary-dark: #3B82F6;
+  /* Primary - Evyra Blue lighter for contrast */
+  --color-primary: #7FB8FF;
+  --color-primary-foreground: #080C14;
+  --color-primary-light: #AACFFF;
+  --color-primary-dark: #4A9EFF;
 
-  /* Secondary */
-  --color-secondary: #93C5FD;
-  --color-secondary-foreground: #0F172A;
-  --color-secondary-light: #1E40AF;
+  /* Secondary - Trust Teal lighter */
+  --color-secondary: #5FE3D0;
+  --color-secondary-foreground: #080C14;
+  --color-secondary-light: #2DD4BF;
 
-  /* Accent - Coral Orange stays vibrant */
-  --color-accent: #FF7F50;
-  --color-accent-foreground: #FFFFFF;
+  /* Accent - Soft White text on dark */
+  --color-accent: #E8EEF8;
+  --color-accent-foreground: #080C14;
 
-  /* Warm */
-  --color-warm: #FB7185;
-  --color-warm-foreground: #4C0519;
-  --color-warm-light: #FDA4AF;
+  /* Warm - Soft White*/
+  --color-warm: #F2F5FA;
+  --color-warm-foreground: #080C14;
+  --color-warm-light: #E8EEF8;
 
   /* Success */
-  --color-success: #34D399;
-  --color-success-foreground: #064E3B;
-  --color-success-light: #6EE7B7;
+  --color-success: #5B9A6F;
+  --color-success-foreground: #FFFFFF;
+  --color-success-light: #A8D5B8;
 
   /* Warning */
-  --color-warning: #FBBF24;
-  --color-warning-foreground: #1C1917;
-  --color-warning-light: #FCD34D;
+  --color-warning: #E8A65D;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #F5D4A8;
 
   /* Error */
-  --color-error: #F87171;
-  --color-error-foreground: #7F1D1D;
-  --color-error-light: #FCA5A5;
+  --color-error: #C96B6B;
+  --color-error-foreground: #FFFFFF;
+  --color-error-light: #F0C8C8;
 
   /* Background & Surface - Dark Mode "Deep Night" */
   --color-background: #0B1120;
   --color-surface: rgba(30, 41, 59, 0.8);
-  --color-foreground: #F1F5F9;
+  --color-foreground: #E8EEF8;
 
   /* Muted */
   --color-muted: #1E293B;
   --color-muted-foreground: #94A3B8;
 
   /* Border & Input */
-  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(74, 158, 255, 0.15);
   --color-input: #1E293B;
-  --color-ring: #60A5FA;
+  --color-ring: #7FB8FF;
 
   /* Popover & Card */
   --color-popover: #1E293B;
@@ -210,11 +210,11 @@
   --color-card: rgba(30, 41, 59, 0.8);
   --color-card-foreground: #F1F5F9;
 
-  /* Colored shadow tokens for dark mode */
-  --shadow-color: rgba(96, 165, 250, 0.06);
-  --shadow-color-md: rgba(96, 165, 250, 0.1);
-  --shadow-color-lg: rgba(96, 165, 250, 0.14);
-  --shadow-primary-glow: rgba(96, 165, 250, 0.4);
+  /* Colored shadow tokens for dark mode - Evyra */
+  --shadow-color: rgba(74, 158, 255, 0.08);
+  --shadow-color-md: rgba(74, 158, 255, 0.12);
+  --shadow-color-lg: rgba(74, 158, 255, 0.16);
+  --shadow-primary-glow: rgba(74, 158, 255, 0.3);
 }
 
 @layer base {

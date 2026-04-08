@@ -87,6 +87,36 @@ export async function POST(
       ],
     });
 
+    // Create notification for family
+    try {
+      const notificationId = crypto.randomUUID();
+      const caregiverName = session.user.name || 'Cuidador';
+
+      await db.execute({
+        sql: `
+          INSERT INTO Notification (
+            id, userId, type, title, message,
+            referenceType, referenceId, isRead, emailSent, createdAt
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        args: [
+          notificationId,
+          String(demand.familyUserId),
+          'PROPOSAL',
+          'Nova Proposta Recebida',
+          `${caregiverName} enviou uma proposta para "${String(demand.title)}"`,
+          'PROPOSAL',
+          proposalId,
+          false,
+          false,
+          now,
+        ],
+      });
+    } catch (notifError) {
+      console.warn('[Proposals] Failed to create notification:', notifError);
+      // Don't fail the request if notification creation fails
+    }
+
     // Send notification email to family
     try {
       // Get family info
@@ -112,6 +142,16 @@ export async function POST(
             { id: demandId, title: String(demand.title || '') },
             { caregiverName: session.user.name || 'Cuidador', message }
           );
+
+          // Mark notification as email sent
+          try {
+            await db.execute({
+              sql: `UPDATE Notification SET emailSent = true WHERE referenceId = ?`,
+              args: [proposalId],
+            });
+          } catch (e) {
+            console.warn('[Proposals] Failed to mark notification email sent:', e);
+          }
         }
       }
     } catch (emailError) {
@@ -122,7 +162,7 @@ export async function POST(
     return NextResponse.json(
       {
         id: proposalId,
-        message: 'Proposal sent successfully',
+        message: 'Proposta enviada com sucesso! A família foi notificada.',
       },
       { status: 201 }
     );

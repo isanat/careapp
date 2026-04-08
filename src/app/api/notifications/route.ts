@@ -2,152 +2,111 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-turso';
 import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
 
-// Get user notifications
+/**
+ * GET /api/notifications
+ * Obter notificações do usuário (não lidas primeiro)
+ */
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user.id;
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const unreadOnly = searchParams.get('unreadOnly') === 'true';
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
 
-    const sql = unreadOnly
-      ? `SELECT * FROM Notification WHERE userId = ? AND isRead = 0 ORDER BY createdAt DESC LIMIT ? OFFSET ?`
-      : `SELECT * FROM Notification WHERE userId = ? ORDER BY createdAt DESC LIMIT ? OFFSET ?`;
+    let query = `
+      SELECT
+        id, type, title, message, referenceType, referenceId,
+        isRead, readAt, emailSent, createdAt
+      FROM Notification
+      WHERE userId = ?
+    `;
+    const args: (string | number)[] = [session.user.id];
+
+    if (unreadOnly) {
+      query += ` AND isRead = false`;
+    }
+
+    query += ` ORDER BY createdAt DESC LIMIT ?`;
+    args.push(limit);
 
     const result = await db.execute({
-      sql,
-      args: [userId, limit, offset]
+      sql: query,
+      args,
     });
-
-    // Get unread count
-    const countResult = await db.execute({
-      sql: `SELECT COUNT(*) as count FROM Notification WHERE userId = ? AND isRead = 0`,
-      args: [userId]
-    });
-
-    const unreadCount = countResult.rows.length > 0 
-      ? Number(countResult.rows[0].count) || 0 
-      : 0;
-
-    const notifications = result.rows.map(row => ({
-      id: row.id,
-      type: row.type,
-      title: row.title,
-      message: row.message,
-      referenceType: row.referenceType,
-      referenceId: row.referenceId,
-      isRead: Boolean(row.isRead),
-      readAt: row.readAt,
-      createdAt: row.createdAt,
-    }));
 
     return NextResponse.json({
-      notifications,
-      unreadCount,
-      hasMore: result.rows.length === limit
+      notifications: result.rows.map(row => ({
+        id: row.id,
+        type: row.type,
+        title: row.title,
+        message: row.message,
+        referenceType: row.referenceType,
+        referenceId: row.referenceId,
+        isRead: row.isRead,
+        readAt: row.readAt,
+        emailSent: row.emailSent,
+        createdAt: row.createdAt,
+      })),
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('[Notifications API] GET error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch notifications' },
+      { status: 500 }
+    );
   }
 }
 
-// Mark notification(s) as read
-export async function PATCH(request: NextRequest) {
+/**
+ * PUT /api/notifications
+ * Marcar notificação como lida
+ */
+export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    const { notificationIds, markAllAsRead } = body;
+    const { id: notificationId, isRead } = body;
 
-    if (markAllAsRead) {
-      // Mark all as read
-      const now = new Date().toISOString();
-      await db.execute({
-        sql: `UPDATE Notification SET isRead = 1, readAt = ? WHERE userId = ? AND isRead = 0`,
-        args: [now, session.user.id]
-      });
-
-      return NextResponse.json({ 
-        success: true, 
-        message: 'Todas as notificações marcadas como lidas' 
-      });
+    if (!notificationId || typeof isRead !== 'boolean') {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
     }
 
-    if (!notificationIds || !Array.isArray(notificationIds) || notificationIds.length === 0) {
-      return NextResponse.json({ error: 'notificationIds é obrigatório' }, { status: 400 });
-    }
-
-    // Mark specific notifications as read
-    const now = new Date().toISOString();
-    const placeholders = notificationIds.map(() => '?').join(',');
-    
-    await db.execute({
-      sql: `UPDATE Notification SET isRead = 1, readAt = ? WHERE userId = ? AND id IN (${placeholders})`,
-      args: [now, session.user.id, ...notificationIds]
-    });
-
-    return NextResponse.json({ 
-      success: true, 
-      message: `${notificationIds.length} notificação(ões) marcada(s) como lida(s)` 
-    });
-  } catch (error) {
-    console.error('Error marking notifications as read:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
-}
-
-// Create a new notification (internal use)
-export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    
-    // Only allow internal calls or admin
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const { userId, type, title, message, referenceType, referenceId } = body;
-
-    if (!userId || !type || !title || !message) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-    }
-
-    // Only allow creating notifications for self, or require ADMIN role
-    if (userId !== session.user.id && session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden - Can only create notifications for yourself' }, { status: 403 });
-    }
-
-    const notificationId = generateId("notif");
     const now = new Date().toISOString();
 
     await db.execute({
-      sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [notificationId, userId, type, title, message, referenceType || null, referenceId || null, now]
+      sql: `
+        UPDATE Notification
+        SET isRead = ?, readAt = ?
+        WHERE id = ? AND userId = ?
+      `,
+      args: [
+        isRead ? 1 : 0,
+        isRead ? now : null,
+        notificationId,
+        session.user.id,
+      ],
     });
 
     return NextResponse.json({
-      success: true,
-      notificationId
+      message: 'Notification updated',
     });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    console.error('Error creating notification:', msg);
-    return NextResponse.json({ error: 'Internal server error', detail: msg }, { status: 500 });
+    console.error('[Notifications API] PUT error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update notification' },
+      { status: 500 }
+    );
   }
 }

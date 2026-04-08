@@ -116,7 +116,11 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
         throw new Error(error.error || 'Falha ao enviar proposta');
       }
 
-      toast({title: "Sucesso", description: "Proposta enviada com sucesso!"}); // OLD: alert-style
+      const data = await res.json();
+      toast({
+        title: "✓ Proposta Enviada",
+        description: data.message || "A família foi notificada sobre sua proposta!"
+      });
       setProposalMessage('');
       setProposedHourlyRate('');
       setEstimatedStartDate('');
