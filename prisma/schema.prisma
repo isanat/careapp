@@ -46,6 +46,7 @@ enum PaymentType {
   ACTIVATION // Pagamento de ativação
   CONTRACT_FEE // Taxa de contrato
   SERVICE_PAYMENT // Pagamento de serviço
+  VISIBILITY_BOOST // Boost de visibilidade de demanda
 }
 
 enum PaymentStatus {
@@ -322,9 +323,16 @@ model Payment {
   contractId String? // Se for pagamento de contrato
   contract   Contract? @relation(fields: [contractId], references: [id])
 
+  demandId String? // Se for pagamento de visibilidade de demanda
+  demand   Demand? @relation(fields: [demandId], references: [id], onDelete: Cascade)
+
   // Metadata
   description String?
-  metadata    String? // JSON adicional
+  metadata    String? // JSON adicional (para visibility boost: {"package": "BASIC", "expiresAt": "..."}
+
+  // Approval (para mock/internal payments)
+  approvedAt DateTime?
+  approvedByAdminId String?
 
   // Timestamps
   createdAt  DateTime  @default(now())
@@ -333,6 +341,7 @@ model Payment {
 
   @@index([userId, status])
   @@index([status, createdAt])
+  @@index([provider, status])
 }
 
 // ==================== CONTRACTS ====================
