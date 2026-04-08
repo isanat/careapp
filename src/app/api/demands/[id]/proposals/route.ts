@@ -191,7 +191,7 @@ export async function GET(
 
     const { id: demandId } = await params;
 
-    // Verify ownership
+    // Verify access: family owner or admin
     const demandResult = await db.execute({
       sql: `SELECT familyUserId FROM Demand WHERE id = ?`,
       args: [demandId],
@@ -201,7 +201,15 @@ export async function GET(
       return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
     }
 
-    if (demandResult.rows[0].familyUserId !== session.user.id) {
+    const isAdmin = session.user.role === 'ADMIN';
+    const isOwner = String(demandResult.rows[0].familyUserId) === String(session.user.id);
+
+    if (!isAdmin && !isOwner) {
+      console.error('[Proposals GET] Forbidden:', {
+        familyUserId: demandResult.rows[0].familyUserId,
+        sessionUserId: session.user.id,
+        role: session.user.role,
+      });
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
