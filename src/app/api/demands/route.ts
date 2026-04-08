@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
           desiredStartDate, desiredEndDate, hoursPerWeek, scheduleJson,
           budgetEurCents, minimumHourlyRateEur,
           visibilityPackage, visibilityExpiresAt, status, createdAt, updatedAt
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       args: [
         demandId,
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: 'Failed to create demand',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        details: errorMessage,
       },
       { status: 500 }
     );
