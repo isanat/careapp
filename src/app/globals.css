@@ -1,154 +1,383 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@custom-variant dark (&:is(.dark *));
 
-@layer base {
-  :root {
-    --background: 210 20% 98%;
-    --foreground: 215 28% 10%;
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --font-sans: 'Plus Jakarta Sans';
+  --font-heading: 'Plus Jakarta Sans';
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 10%;
+  /* Primary (Ocean Blue - Action/CTA) */
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 10%;
+  /* Secondary (Navy - Identity) */
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+  --color-secondary-light: var(--color-secondary-light);
 
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
+  /* Accent (Coral Orange - Energy/Highlight) */
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 215 28% 17%;
+  /* Warm (Rose - Notifications) */
+  --color-warm: var(--color-warm);
+  --color-warm-foreground: var(--color-warm-foreground);
+  --color-warm-light: var(--color-warm-light);
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+  /* Semantic colors */
+  --color-success: var(--color-success);
+  --color-success-foreground: var(--color-success-foreground);
+  --color-success-light: var(--color-success-light);
 
-    --accent: 210 20% 96%;
-    --accent-foreground: 215 28% 17%;
+  --color-warning: var(--color-warning);
+  --color-warning-foreground: var(--color-warning-foreground);
+  --color-warning-light: var(--color-warning-light);
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+  --color-error: var(--color-error);
+  --color-error-foreground: var(--color-error-foreground);
+  --color-error-light: var(--color-error-light);
 
-    --success: 160 84% 39%;
-    --success-foreground: 0 0% 100%;
+  /* Base */
+  --color-surface: var(--color-surface);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-border: var(--color-border);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+  /* Popover & Card */
+  --color-popover: var(--color-popover);
+  --color-popover-foreground: var(--color-popover-foreground);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
 
-    --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
+  /* Destructive */
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-error-foreground);
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+  /* Sidebar */
+  --color-sidebar: transparent;
+  --color-sidebar-foreground: var(--color-foreground);
+  --color-sidebar-primary: var(--color-accent);
+  --color-sidebar-primary-foreground: #FFFFFF;
+  --color-sidebar-accent: var(--color-muted);
+  --color-sidebar-accent-foreground: var(--color-foreground);
+  --color-sidebar-border: transparent;
+  --color-sidebar-ring: var(--color-ring);
 
-    --radius: 0.75rem;
+  /* Chart */
+  --color-chart-1: var(--color-primary);
+  --color-chart-2: var(--color-secondary);
+  --color-chart-3: var(--color-accent);
+  --color-chart-4: var(--color-warm);
+  --color-chart-5: var(--color-success);
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 215 16% 47%;
-    --sidebar-primary: 221 83% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 221 83% 96%;
-    --sidebar-accent-foreground: 221 83% 53%;
-    --sidebar-border: 214 32% 94%;
-    --sidebar-ring: 221 83% 53%;
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
 
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-body: 'Inter', sans-serif;
+:root {
+  /* Border radius base */
+  --radius: 1.25rem;
 
-    --shadow-card: 0 1px 3px 0 hsl(215 28% 10% / 0.04), 0 1px 2px -1px hsl(215 28% 10% / 0.04);
-    --shadow-elevated: 0 10px 40px -10px hsl(221 83% 53% / 0.12), 0 4px 16px -4px hsl(215 28% 10% / 0.06);
-    --shadow-glow: 0 0 30px -5px hsl(221 83% 53% / 0.25);
-  }
+  /* Primary - Evyra Blue (#4A9EFF) - Innovation, Trust, Digital */
+  --color-primary: #4A9EFF;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-light: #7FB8FF;
+  --color-primary-dark: #1E78FF;
 
-  .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 14%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --success: 160 84% 30%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 40%;
-    --warning-foreground: 0 0% 100%;
-    --info: 199 89% 38%;
-    --info-foreground: 0 0% 100%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 221 83% 53%;
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 215 20% 65%;
-    --sidebar-primary: 221 83% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 14%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 14%;
-    --sidebar-ring: 221 83% 53%;
-  }
+  /* Secondary - Trust Teal (#2DD4BF) - Care, Health, Calm */
+  --color-secondary: #2DD4BF;
+  --color-secondary-foreground: #FFFFFF;
+  --color-secondary-light: #5FE3D0;
+
+  /* Accent - Midnight (#080C14) - Depth, Trust, Sophistication */
+  --color-accent: #080C14;
+  --color-accent-foreground: #E8EEF8;
+
+  /* Warm - Soft White (#E8EEF8) - Care, Warmth, Accessibility */
+  --color-warm: #E8EEF8;
+  --color-warm-foreground: #080C14;
+  --color-warm-light: #F2F5FA;
+
+  /* Success - Soft Green (#5B9A6F) */
+  --color-success: #5B9A6F;
+  --color-success-foreground: #FFFFFF;
+  --color-success-light: #A8D5B8;
+
+  /* Warning - Soft Amber (#E8A65D) */
+  --color-warning: #E8A65D;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #F5D4A8;
+
+  /* Error - Soft Red (#C96B6B) */
+  --color-error: #C96B6B;
+  --color-error-foreground: #FFFFFF;
+  --color-error-light: #F0C8C8;
+
+  /* Background & Surface */
+  --color-background: #F8FAFB;
+  --color-surface: #FFFFFF;
+  --color-foreground: #080C14;
+
+  /* Muted */
+  --color-muted: #EEF3F2;
+  --color-muted-foreground: #4B5563;
+
+  /* Border & Input */
+  --color-border: #E0E7E5;
+  --color-input: #E0E7E5;
+  --color-ring: #4A9EFF;
+
+  /* Popover & Card */
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #0F172A;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0F172A;
+
+  /* Colored shadow tokens - Evyra Teal */
+  --shadow-color: rgba(47, 111, 109, 0.05);
+  --shadow-color-md: rgba(47, 111, 109, 0.08);
+  --shadow-color-lg: rgba(47, 111, 109, 0.12);
+  --shadow-primary-glow: rgba(74, 158, 255, 0.2);
+}
+
+/* Dark Mode "Deep Night" - Evyra */
+.dark {
+  /* Primary - Evyra Blue lighter for contrast */
+  --color-primary: #7FB8FF;
+  --color-primary-foreground: #080C14;
+  --color-primary-light: #AACFFF;
+  --color-primary-dark: #4A9EFF;
+
+  /* Secondary - Trust Teal lighter */
+  --color-secondary: #5FE3D0;
+  --color-secondary-foreground: #080C14;
+  --color-secondary-light: #2DD4BF;
+
+  /* Accent - Soft White text on dark */
+  --color-accent: #E8EEF8;
+  --color-accent-foreground: #080C14;
+
+  /* Warm - Soft White*/
+  --color-warm: #F2F5FA;
+  --color-warm-foreground: #080C14;
+  --color-warm-light: #E8EEF8;
+
+  /* Success */
+  --color-success: #5B9A6F;
+  --color-success-foreground: #FFFFFF;
+  --color-success-light: #A8D5B8;
+
+  /* Warning */
+  --color-warning: #E8A65D;
+  --color-warning-foreground: #1F2933;
+  --color-warning-light: #F5D4A8;
+
+  /* Error */
+  --color-error: #C96B6B;
+  --color-error-foreground: #FFFFFF;
+  --color-error-light: #F0C8C8;
+
+  /* Background & Surface - Dark Mode "Deep Night" */
+  --color-background: #0B1120;
+  --color-surface: rgba(30, 41, 59, 0.8);
+  --color-foreground: #E8EEF8;
+
+  /* Muted */
+  --color-muted: #1E293B;
+  --color-muted-foreground: #94A3B8;
+
+  /* Border & Input */
+  --color-border: rgba(74, 158, 255, 0.15);
+  --color-input: #1E293B;
+  --color-ring: #7FB8FF;
+
+  /* Popover & Card */
+  --color-popover: #1E293B;
+  --color-popover-foreground: #F1F5F9;
+  --color-card: rgba(30, 41, 59, 0.8);
+  --color-card-foreground: #F1F5F9;
+
+  /* Colored shadow tokens for dark mode - Evyra */
+  --shadow-color: rgba(74, 158, 255, 0.08);
+  --shadow-color-md: rgba(74, 158, 255, 0.12);
+  --shadow-color-lg: rgba(74, 158, 255, 0.16);
+  --shadow-primary-glow: rgba(74, 158, 255, 0.3);
 }
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    @apply border-border outline-ring/50;
   }
-
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+    font-feature-settings: "kern" 1, "liga" 1;
   }
 
+  /* Headings use medium+ weight */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Improve focus visibility for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  /* Minimum touch target size */
+  button:not([class*="h-"]):not([class*="size-"]):not([class*="absolute"]):not(nav button),
+  [role="button"]:not([class*="h-"]):not([class*="size-"]) {
+    min-height: 36px;
+  }
+
+  /* Ensure readable text */
+  p, li, span, label {
+    @apply text-foreground;
   }
 }
 
+/* Custom scrollbar styling */
 @layer utilities {
-  .font-display {
-    font-family: var(--font-display);
+  .scrollbar-soft {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-muted-foreground) transparent;
   }
 
-  .font-body {
-    font-family: var(--font-body);
+  .scrollbar-soft::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 
-  .text-gradient-primary {
-    background-clip: text;
-    color: transparent;
-    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--info)));
+  .scrollbar-soft::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .shadow-card {
-    box-shadow: var(--shadow-card);
+  .scrollbar-soft::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 3px;
   }
 
-  .shadow-elevated {
-    box-shadow: var(--shadow-elevated);
+  .scrollbar-soft::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-muted-foreground);
   }
 
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
+  /* Mobile-first responsive utilities */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
   }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+
+  /* Gradient utilities - Blue/Coral palette */
+  .gradient-primary {
+    background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  }
+  .gradient-secondary {
+    background: linear-gradient(135deg, #0F172A 0%, #1E40AF 100%);
+  }
+  .gradient-warm {
+    background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+  }
+  .gradient-accent {
+    background: linear-gradient(135deg, #FF7F50 0%, #FF6B35 100%);
+  }
+  .gradient-amber {
+    background: linear-gradient(135deg, #FF7F50 0%, #FF6B35 100%);
+  }
+  .gradient-success {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  }
+  .gradient-surface {
+    background: linear-gradient(135deg, #F8FAFC 0%, #E2EBF6 100%);
+  }
+  .dark .gradient-surface {
+    background: linear-gradient(135deg, #1E293B 0%, #0B1120 100%);
+  }
+
+  /* Glass effect - Light mode */
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  /* Glass effect - Dark mode (Glassmorphism) */
+  .dark .glass {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  /* Glass card - always glassmorphism style */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 10px 30px var(--shadow-color);
+  }
+
+  .dark .glass-card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px var(--shadow-color);
+  }
+
+  /* Glass pill - sidebar active indicator */
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
+  }
+
+  .dark .glass-pill {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.15);
+  }
+
+  /* Interactive card - hover lift + primary border glow */
+  .card-interactive {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card-interactive:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px var(--shadow-color-md), 0 0 0 1px var(--shadow-primary-glow);
   }
 }
