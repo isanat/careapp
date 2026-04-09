@@ -174,33 +174,72 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
   const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
   const config = statusConfig[contract.status] || statusConfig.DRAFT;
 
+  // Map status to colors for border
+  const statusColorMap: Record<string, string> = {
+    DRAFT: "border-muted/30 hover:border-muted/60",
+    PENDING_ACCEPTANCE: "border-amber-200/50 hover:border-amber-300/60",
+    PENDING_PAYMENT: "border-orange-200/50 hover:border-orange-300/60",
+    ACTIVE: "border-success/30 hover:border-success/50",
+    COMPLETED: "border-primary/30 hover:border-primary/50",
+    CANCELLED: "border-error/30 hover:border-error/50",
+    DISPUTED: "border-secondary/30 hover:border-secondary/50",
+  };
+
   return (
-    <Link href={`/app/contracts/${contract.id}`} className="block">
-      <div className={`bg-surface rounded-xl py-2.5 px-3 border border-border/30 border-l-[3px] ${config.border} hover:bg-muted/30 transition-all flex items-center gap-3`}>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold truncate">{contract.title || t.contracts.title}</h3>
-            <Badge className={`${config.bg} ${config.color} border-0 text-[9px] px-1.5 py-0 h-4`}>
-              {statusLabel}
-            </Badge>
+    <Link href={`/app/contracts/${contract.id}`} className="group">
+      <div className={`bg-surface rounded-xl p-4 border-2 ${statusColorMap[contract.status] || statusColorMap.DRAFT} transition-all duration-300 card-interactive`}>
+        {/* Header with status badge */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+              {contract.title || t.contracts.title}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">{contract.description && contract.description.slice(0, 60)}</p>
           </div>
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
-            <span className="flex items-center gap-0.5">
-              <IconUser className="h-3 w-3" />
-              {contract.otherParty?.name || t.none}
-            </span>
-            {contract.startDate && (
-              <span className="flex items-center gap-0.5">
-                <IconCalendar className="h-3 w-3" />
-                {new Date(contract.startDate).toLocaleDateString('pt-PT')}
-              </span>
-            )}
-            {hourlyRate > 0 && (
-              <span className="font-medium text-foreground">{"\u20AC"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
-            )}
+          <Badge className={`${config.bg} ${config.color} border-0 text-[10px] px-2 py-0.5 h-5 shrink-0 font-semibold`}>
+            {statusLabel}
+          </Badge>
+        </div>
+
+        {/* Info grid */}
+        <div className="grid grid-cols-2 gap-2 py-3 border-y border-border/30">
+          {/* Other Party */}
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+              <IconUser className="h-4 w-4 text-secondary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] text-muted-foreground font-medium">Cuidador</p>
+              <p className="text-xs font-semibold text-foreground truncate">{contract.otherParty?.name || t.none}</p>
+            </div>
+          </div>
+
+          {/* Duration */}
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <IconClock className="h-4 w-4 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] text-muted-foreground font-medium">Duração</p>
+              <p className="text-xs font-semibold text-foreground">{contract.hoursPerWeek}h/semana</p>
+            </div>
           </div>
         </div>
-        <IconChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+
+        {/* Footer: Date & Rate */}
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
+          <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+            <IconCalendar className="h-3.5 w-3.5" />
+            {contract.startDate && (
+              <span>{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            <IconEuro className="h-4 w-4 text-success" />
+            <span className="text-sm font-bold text-success">{hourlyRate.toFixed(0)}€</span>
+            <span className="text-[11px] text-muted-foreground">/h</span>
+          </div>
+        </div>
       </div>
     </Link>
   );

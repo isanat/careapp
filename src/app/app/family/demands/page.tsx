@@ -251,7 +251,7 @@ function FamilyDemandsContent() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {demands.map(demand => {
                   const conversionRate = demand.metrics.conversionRate.toFixed(1);
                   const visibilityBadgeVariant =
@@ -268,92 +268,122 @@ function FamilyDemandsContent() {
 
                   const VisibilityIcon = visibilityBadgeIcon;
 
+                  // Visual color based on visibility
+                  const cardColorClass = {
+                    'URGENT': 'border-destructive/30 hover:border-destructive/50',
+                    'PREMIUM': 'border-primary/30 hover:border-primary/50',
+                    'BASIC': 'border-secondary/30 hover:border-secondary/50',
+                  }[demand.visibilityPackage] || 'border-border/40 hover:border-border/60';
+
+                  const headerBgClass = {
+                    'URGENT': 'bg-destructive/5',
+                    'PREMIUM': 'bg-primary/5',
+                    'BASIC': 'bg-secondary/5',
+                  }[demand.visibilityPackage] || 'bg-muted/30';
+
                   return (
-                    <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group block">
-                      <Card className="border-border/40 hover:border-primary/30 hover:shadow-md transition-all duration-200 overflow-hidden">
-                        <CardContent className="p-0">
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2 md:gap-0 md:divide-x md:divide-border/30 items-center">
-                            {/* Title & Description - 2 cols */}
-                            <div className="lg:col-span-2 min-w-0 p-5 md:p-5">
-                              <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                    <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group">
+                      <Card className={`h-full border-2 ${cardColorClass} transition-all duration-300 overflow-hidden card-interactive`}>
+                        {/* Header with color indicator */}
+                        <div className={`h-2 ${
+                          demand.visibilityPackage === 'URGENT' ? 'bg-destructive' :
+                          demand.visibilityPackage === 'PREMIUM' ? 'bg-primary' :
+                          demand.visibilityPackage === 'BASIC' ? 'bg-secondary' :
+                          'bg-border'
+                        }`} />
+
+                        <CardContent className="p-5 flex flex-col h-full gap-3">
+                          {/* Top Section: Title & Visibility Badge */}
+                          <div className="space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                                 {demand.title}
                               </h3>
-                              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                                <IconMapPin className="h-3 w-3 shrink-0" />
-                                <p className="truncate">{demand.city}</p>
+                              {VisibilityIcon && (
+                                <Badge
+                                  variant={visibilityBadgeVariant as any}
+                                  className="shrink-0 text-xs h-6 flex items-center gap-1 px-2 font-semibold"
+                                >
+                                  {<VisibilityIcon className="h-3 w-3" />}
+                                </Badge>
+                              )}
+                            </div>
+
+                            {/* Location */}
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <IconMapPin className="h-3.5 w-3.5 shrink-0" />
+                              <span className="truncate font-medium">{demand.city}</span>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                              {demand.description}
+                            </p>
+                          </div>
+
+                          {/* Metrics Grid */}
+                          <div className="grid grid-cols-3 gap-2.5 py-3 border-y border-border/30">
+                            {/* Views */}
+                            <div className="text-center">
+                              <div className="flex justify-center mb-1">
+                                <IconEye className="h-4 w-4 text-secondary" />
                               </div>
-                              <p className="text-xs text-muted-foreground truncate mt-1">
-                                {demand.description}
-                              </p>
+                              <p className="text-sm font-bold text-foreground">{demand.metrics.viewCount}</p>
+                              <p className="text-[11px] text-muted-foreground">Vistas</p>
                             </div>
 
-                            {/* Visibility Package - 1 col */}
-                            <div className="p-5 md:p-6">
-                              <p className="text-xs text-muted-foreground font-medium mb-1">Visibilidade</p>
-                              <Badge
-                                variant={visibilityBadgeVariant as any}
-                                className="text-xs h-6 flex items-center justify-center gap-1 w-fit px-2"
-                              >
-                                {VisibilityIcon && <VisibilityIcon className="h-3 w-3" />}
-                                {demand.visibilityPackage || 'Nenhum'}
-                              </Badge>
-                            </div>
-
-                            {/* Views - 1 col */}
-                            <div className="p-5 md:p-6 text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-1">Vistas</p>
-                              <div className="flex items-center justify-center gap-1">
-                                <IconEye className="h-3 w-3 text-secondary" />
-                                <p className="text-sm font-semibold text-foreground">{demand.metrics.viewCount}</p>
+                            {/* Proposals */}
+                            <div className="text-center">
+                              <div className="flex justify-center mb-1">
+                                <IconMessageSquare className="h-4 w-4 text-accent" />
                               </div>
+                              <p className="text-sm font-bold text-foreground">{demand.metrics.proposalCount}</p>
+                              <p className="text-[11px] text-muted-foreground">Propostas</p>
                             </div>
 
-                            {/* Proposals - 1 col */}
-                            <div className="p-4 md:p-5 text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-1">Propostas</p>
-                              <div className="flex items-center justify-center gap-1">
-                                <IconMessageSquare className="h-3 w-3 text-accent" />
-                                <p className="text-sm font-semibold text-foreground">{demand.metrics.proposalCount}</p>
-                              </div>
-                            </div>
-
-                            {/* Conversion Rate - 1 col */}
-                            <div className="p-4 md:p-5 text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-1">Conversão</p>
-                              <div className="flex items-center justify-center gap-1">
+                            {/* Conversion */}
+                            <div className="text-center">
+                              <div className="flex justify-center mb-1">
                                 {parseFloat(conversionRate) > 5 ? (
-                                  <IconTrendingUp className="h-3 w-3 text-success" />
+                                  <IconTrendingUp className="h-4 w-4 text-success" />
                                 ) : (
-                                  <IconTrendingDown className="h-3 w-3 text-warning" />
+                                  <IconTrendingDown className="h-4 w-4 text-warning" />
                                 )}
-                                <p className="text-sm font-semibold text-foreground">{conversionRate}%</p>
                               </div>
+                              <p className="text-sm font-bold text-foreground">{conversionRate}%</p>
+                              <p className="text-[11px] text-muted-foreground">Conv.</p>
                             </div>
+                          </div>
 
-                            {/* Spent - 1 col */}
-                            <div className="p-4 md:p-5 text-center">
-                              <p className="text-xs text-muted-foreground font-medium mb-1">Gasto</p>
-                              <p className="text-sm font-semibold text-foreground">€{demand.metrics.visibilitySpent}</p>
-                            </div>
+                          {/* Spent Info */}
+                          <div className="flex items-center justify-between p-2.5 bg-muted/30 rounded-lg">
+                            <span className="text-xs font-medium text-muted-foreground">Investido:</span>
+                            <span className="text-sm font-bold text-foreground">€{demand.metrics.visibilitySpent}</span>
+                          </div>
 
-                            {/* Action - 1 col */}
-                            <div className="p-4 md:p-5 flex items-center justify-center gap-2">
-                              <Link
-                                href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 mt-auto pt-2">
+                            <Link
+                              href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex-1"
+                            >
+                              <Button
+                                size="sm"
+                                variant="default"
+                                className="w-full"
                                 onClick={(e) => e.stopPropagation()}
-                                className="h-8 px-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-xs font-medium text-primary transition-colors flex items-center gap-1"
                               >
-                                <IconEuro className="h-3 w-3" />
-                                <span className="hidden sm:inline">Boost</span>
-                              </Link>
+                                <IconEuro className="h-3.5 w-3.5 mr-1" />
+                                Boost
+                              </Button>
+                            </Link>
+                            <div onClick={(e) => e.stopPropagation()} className="shrink-0">
                               <DemandActionsDropdown
                                 demandId={demand.id}
                                 demandTitle={demand.title}
                                 onActionComplete={() => {}}
                               />
-                              <div className="hidden lg:flex">
-                                <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                              </div>
                             </div>
                           </div>
                         </CardContent>

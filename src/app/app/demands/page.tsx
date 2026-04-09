@@ -278,114 +278,128 @@ function DemandsContent() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {demands.map(demand => {
               const badgeConfig = VISIBILITY_BADGES[demand.visibilityPackage];
               const BadgeIcon = badgeConfig?.icon;
               const createdDate = new Date(demand.createdAt);
               const daysAgo = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
 
+              // Visual color based on visibility
+              const cardColorClass = {
+                'URGENT': 'border-destructive/30 hover:border-destructive/50',
+                'PREMIUM': 'border-primary/30 hover:border-primary/50',
+                'BASIC': 'border-secondary/30 hover:border-secondary/50',
+                'NONE': 'border-border/40 hover:border-border/60'
+              }[demand.visibilityPackage] || 'border-border/40 hover:border-border/60';
+
               return (
-                <Link key={demand.id} href={`/app/demands/${demand.id}`} className="group block">
-                  <Card className="border-border/40 hover:border-primary/30 hover:shadow-md transition-all duration-200 overflow-hidden">
-                    <CardContent className="p-0">
-                      <div className="flex flex-col md:flex-row gap-0 divide-y md:divide-y-0 md:divide-x md:divide-border/30">
-                        {/* Main Content */}
-                        <div className="flex-1 min-w-0 p-4 md:p-5 flex flex-col gap-3">
-                          <div className="flex items-start justify-between gap-3 min-w-0">
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-sm font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                                {demand.title}
-                              </h3>
-                              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                                <IconMapPin className="h-3 w-3 shrink-0" />
-                                <span className="truncate">{demand.city}</span>
-                                {demand.postalCode && (
-                                  <span className="text-muted-foreground shrink-0">({demand.postalCode})</span>
-                                )}
-                              </div>
+                <Link key={demand.id} href={`/app/demands/${demand.id}`} className="group">
+                  <Card className={`h-full border-2 ${cardColorClass} transition-all duration-300 overflow-hidden card-interactive`}>
+                    {/* Header color indicator */}
+                    <div className={`h-2 ${
+                      demand.visibilityPackage === 'URGENT' ? 'bg-destructive' :
+                      demand.visibilityPackage === 'PREMIUM' ? 'bg-primary' :
+                      demand.visibilityPackage === 'BASIC' ? 'bg-secondary' :
+                      'bg-border'
+                    }`} />
+
+                    <CardContent className="p-5 flex flex-col h-full gap-3">
+                      {/* Badge & Title */}
+                      <div className="space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                              {demand.title}
+                            </h3>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1.5 font-medium">
+                              <IconMapPin className="h-3.5 w-3.5 shrink-0" />
+                              <span className="truncate">{demand.city}</span>
+                              {demand.postalCode && <span className="shrink-0">({demand.postalCode})</span>}
                             </div>
-                            {badgeConfig && (
-                              <Badge
-                                variant={badgeConfig.variant as any}
-                                className="shrink-0 text-[11px] h-5 flex items-center gap-1 px-2"
-                              >
-                                {BadgeIcon && <BadgeIcon className="h-3 w-3" />}
-                                {badgeConfig.label}
-                              </Badge>
-                            )}
                           </div>
-
-                          {/* Description */}
-                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                            {demand.description}
-                          </p>
-
-                          {/* Service Types */}
-                          <div className="flex flex-wrap gap-1.5">
-                            {demand.serviceTypes.slice(0, 2).map((service, idx) => (
-                              <Badge
-                                key={idx}
-                                variant="secondary"
-                                className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
-                              >
-                                {getServiceTypeLabel(service)}
-                              </Badge>
-                            ))}
-                            {demand.serviceTypes.length > 2 && (
-                              <Badge
-                                variant="secondary"
-                                className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
-                              >
-                                +{demand.serviceTypes.length - 2}
-                              </Badge>
-                            )}
-                          </div>
+                          {badgeConfig && (
+                            <Badge
+                              variant={badgeConfig.variant as any}
+                              className="shrink-0 text-xs h-6 flex items-center gap-1 px-2 font-semibold"
+                            >
+                              {BadgeIcon && <BadgeIcon className="h-3 w-3" />}
+                            </Badge>
+                          )}
                         </div>
 
-                        {/* Stats & Action */}
-                        <div className="px-4 md:px-5 py-4 md:py-5 md:w-60 flex items-center justify-between md:flex-col gap-4 md:gap-3">
-                          {/* Stats Grid */}
-                          <div className="grid grid-cols-3 gap-2.5 flex-1 md:w-full">
-                            {demand.hoursPerWeek && (
-                              <div className="text-center">
-                                <div className="flex items-center justify-center gap-1 mb-1">
-                                  <IconClock className="h-3 w-3 text-primary" />
-                                </div>
-                                <p className="text-xs font-semibold text-foreground">{demand.hoursPerWeek}h</p>
-                                <p className="text-[10px] text-muted-foreground">semana</p>
-                              </div>
-                            )}
-                            <div className="text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <IconEye className="h-3 w-3 text-secondary" />
-                              </div>
-                              <p className="text-xs font-semibold text-foreground">{demand.viewCount}</p>
-                              <p className="text-[10px] text-muted-foreground">vistas</p>
-                            </div>
-                            <div className="text-center">
-                              <div className="flex items-center justify-center gap-1 mb-1">
-                                <IconMessageSquare className="h-3 w-3 text-accent" />
-                              </div>
-                              <p className="text-xs font-semibold text-foreground">{demand.proposalCount}</p>
-                              <p className="text-[10px] text-muted-foreground">propostas</p>
-                            </div>
-                          </div>
+                        {/* Description */}
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {demand.description}
+                        </p>
 
-                          {/* CTA Button */}
-                          <Button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleOpenProposalWizard(demand.id);
-                            }}
-                            size="sm"
-                            className="w-full md:w-full h-9 text-xs rounded-lg gap-1 group/btn"
-                          >
-                            <span>Propor</span>
-                            <IconChevronRight className="h-3.5 w-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-                          </Button>
+                        {/* Service Types */}
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          {demand.serviceTypes.slice(0, 2).map((service, idx) => (
+                            <Badge
+                              key={idx}
+                              variant="secondary"
+                              className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
+                            >
+                              {getServiceTypeLabel(service)}
+                            </Badge>
+                          ))}
+                          {demand.serviceTypes.length > 2 && (
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
+                            >
+                              +{demand.serviceTypes.length - 2}
+                            </Badge>
+                          )}
                         </div>
                       </div>
+
+                      {/* Metrics */}
+                      <div className="grid grid-cols-3 gap-2.5 py-3 border-y border-border/30">
+                        {demand.hoursPerWeek && (
+                          <div className="text-center">
+                            <div className="flex justify-center mb-1">
+                              <IconClock className="h-4 w-4 text-primary" />
+                            </div>
+                            <p className="text-sm font-bold text-foreground">{demand.hoursPerWeek}h</p>
+                            <p className="text-[11px] text-muted-foreground">semana</p>
+                          </div>
+                        )}
+                        <div className="text-center">
+                          <div className="flex justify-center mb-1">
+                            <IconEye className="h-4 w-4 text-secondary" />
+                          </div>
+                          <p className="text-sm font-bold text-foreground">{demand.viewCount}</p>
+                          <p className="text-[11px] text-muted-foreground">vistas</p>
+                        </div>
+                        <div className="text-center">
+                          <div className="flex justify-center mb-1">
+                            <IconMessageSquare className="h-4 w-4 text-accent" />
+                          </div>
+                          <p className="text-sm font-bold text-foreground">{demand.proposalCount}</p>
+                          <p className="text-[11px] text-muted-foreground">propostas</p>
+                        </div>
+                      </div>
+
+                      {/* Time posted */}
+                      <div className="text-[11px] text-muted-foreground font-medium">
+                        Publicado {daysAgo === 0 ? 'hoje' : `há ${daysAgo}d`}
+                      </div>
+
+                      {/* CTA Button */}
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleOpenProposalWizard(demand.id);
+                        }}
+                        size="sm"
+                        variant="default"
+                        className="w-full mt-auto"
+                      >
+                        <span>Propor</span>
+                        <IconChevronRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                      </Button>
                     </CardContent>
                   </Card>
                 </Link>

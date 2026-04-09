@@ -125,27 +125,35 @@ export default function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Stats - 4 columns, optimized spacing */}
-        <div className="grid grid-cols-4 gap-3">
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconContract className="h-5 w-5 text-primary mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.activeContracts || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">{t.nav.contracts}</p>
+        {/* Stats - 4 columns with enhanced visual */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="bg-surface rounded-xl p-4 border-2 border-primary/20 hover:border-primary/40 transition-colors text-center group">
+            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/15 transition-colors">
+              <IconContract className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.activeContracts || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">{t.nav.contracts}</p>
           </div>
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconClock className="h-5 w-5 text-secondary mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.totalHours || 0}h</p>
-            <p className="text-xs text-muted-foreground mt-1">Horas</p>
+          <div className="bg-surface rounded-xl p-4 border-2 border-secondary/20 hover:border-secondary/40 transition-colors text-center group">
+            <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center mx-auto group-hover:bg-secondary/15 transition-colors">
+              <IconClock className="h-5 w-5 text-secondary" />
+            </div>
+            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.totalHours || 0}h</p>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">Horas</p>
           </div>
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconStar className="h-5 w-5 text-amber-500 mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.rating?.toFixed(1) || '-'}</p>
-            <p className="text-xs text-muted-foreground mt-1">Nota</p>
+          <div className="bg-surface rounded-xl p-4 border-2 border-amber-200/30 hover:border-amber-300/40 transition-colors text-center group">
+            <div className="h-9 w-9 rounded-lg bg-amber-100/20 flex items-center justify-center mx-auto group-hover:bg-amber-100/30 transition-colors">
+              <IconStar className="h-5 w-5 text-amber-600" />
+            </div>
+            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.rating?.toFixed(1) || '-'}</p>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">Nota</p>
           </div>
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconEuro className="h-5 w-5 text-success mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.totalReviews || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Reviews</p>
+          <div className="bg-surface rounded-xl p-4 border-2 border-success/20 hover:border-success/40 transition-colors text-center group">
+            <div className="h-9 w-9 rounded-lg bg-success/10 flex items-center justify-center mx-auto group-hover:bg-success/15 transition-colors">
+              <IconEuro className="h-5 w-5 text-success" />
+            </div>
+            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.totalReviews || 0}</p>
+            <p className="text-xs text-muted-foreground mt-1 font-medium">Reviews</p>
           </div>
         </div>
 
@@ -256,33 +264,37 @@ export default function DashboardPage() {
           {recentActivity.length > 0 ? (
             <div className="space-y-2">
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-3 px-4 bg-surface rounded-lg border border-border/30">
-                  <div className="flex items-center gap-2">
-                    <div className={`h-7 w-7 rounded-lg flex items-center justify-center ${
-                      activity.type === "credit" ? "bg-success/10" : "bg-error/10"
+                <div key={index} className={`flex items-center justify-between py-3 px-4 bg-surface rounded-lg border-2 transition-colors ${
+                  activity.type === "credit"
+                    ? "border-success/20 hover:border-success/40"
+                    : "border-error/20 hover:border-error/40"
+                }`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`h-10 w-10 rounded-lg flex items-center justify-center font-display font-bold ${
+                      activity.type === "credit" ? "bg-success/10 text-success" : "bg-error/10 text-error"
                     }`}>
                       {activity.type === "credit"
-                        ? <IconArrowUp className="h-3.5 w-3.5 text-success" />
-                        : <IconArrowDown className="h-3.5 w-3.5 text-error" />
+                        ? <IconArrowUp className="h-4 w-4" />
+                        : <IconArrowDown className="h-4 w-4" />
                       }
                     </div>
                     <div>
-                      <p className="text-xs font-medium truncate max-w-[160px]">{activity.description}</p>
-                      <p className="text-[10px] text-muted-foreground">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
+                      <p className="text-sm font-semibold text-foreground truncate max-w-[200px]">{activity.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
                     </div>
                   </div>
-                  <span className={`text-xs font-semibold ${
+                  <span className={`text-sm font-bold font-display ${
                     activity.type === "credit" ? "text-success" : "text-error"
                   }`}>
-                    {activity.type === "credit" ? "+" : ""}{activity.amount}
+                    {activity.type === "credit" ? "+" : ""}{activity.amount}€
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 bg-surface rounded-xl border border-border/30">
-              <IconWallet className="h-5 w-5 text-muted-foreground mx-auto mb-1" />
-              <p className="text-xs text-muted-foreground">{t.dashboard.noActivity}</p>
+            <div className="text-center py-8 bg-surface rounded-xl border-2 border-dashed border-border/30">
+              <IconWallet className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground font-medium">{t.dashboard.noActivity}</p>
             </div>
           )}
         </div>
