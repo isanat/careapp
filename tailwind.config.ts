@@ -3,15 +3,6 @@ import type { Config } from "tailwindcss";
 export default {
   darkMode: "class",
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
-  safelist: [
-    "border-border",
-    "border-border/30",
-    "border-border/50",
-    "border-t-border",
-    "border-r-border",
-    "border-b-border",
-    "border-l-border",
-  ],
   prefix: "",
   theme: {
     container: {
