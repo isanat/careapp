@@ -1,14 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
-  --font-sans: 'Plus Jakarta Sans';
-  --font-heading: 'Plus Jakarta Sans';
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
 
   /* Primary (Ocean Blue - Action/CTA) */
   --color-primary: var(--color-primary);
@@ -89,132 +89,132 @@
 
 :root {
   /* Border radius base */
-  --radius: 1.25rem;
+  --radius: 0.5rem;
 
-  /* Primary - Evyra Blue (#4A9EFF) - Innovation, Trust, Digital */
-  --color-primary: #4A9EFF;
-  --color-primary-foreground: #FFFFFF;
-  --color-primary-light: #7FB8FF;
-  --color-primary-dark: #1E78FF;
+  /* Primary - Bloom Blue (#3B82F6) */
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #1e40af;
 
-  /* Secondary - Trust Teal (#2DD4BF) - Care, Health, Calm */
-  --color-secondary: #2DD4BF;
-  --color-secondary-foreground: #FFFFFF;
-  --color-secondary-light: #5FE3D0;
+  /* Secondary - Slate (#64748B) */
+  --color-secondary: #64748b;
+  --color-secondary-foreground: #ffffff;
+  --color-secondary-light: #cbd5e1;
 
-  /* Accent - Midnight (#080C14) - Depth, Trust, Sophistication */
-  --color-accent: #080C14;
-  --color-accent-foreground: #E8EEF8;
+  /* Accent - Cyan (#06B6D4) */
+  --color-accent: #06b6d4;
+  --color-accent-foreground: #ffffff;
 
-  /* Warm - Soft White (#E8EEF8) - Care, Warmth, Accessibility */
-  --color-warm: #E8EEF8;
-  --color-warm-foreground: #080C14;
-  --color-warm-light: #F2F5FA;
+  /* Warm - Soft White (for notifications) */
+  --color-warm: #f1f5f9;
+  --color-warm-foreground: #0f172a;
+  --color-warm-light: #f8fafc;
 
-  /* Success - Soft Green (#5B9A6F) */
-  --color-success: #5B9A6F;
-  --color-success-foreground: #FFFFFF;
-  --color-success-light: #A8D5B8;
+  /* Success - Green (#10B981) */
+  --color-success: #10b981;
+  --color-success-foreground: #ffffff;
+  --color-success-light: #a7f3d0;
 
-  /* Warning - Soft Amber (#E8A65D) */
-  --color-warning: #E8A65D;
-  --color-warning-foreground: #1F2933;
-  --color-warning-light: #F5D4A8;
+  /* Warning - Amber (#F59E0B) */
+  --color-warning: #f59e0b;
+  --color-warning-foreground: #ffffff;
+  --color-warning-light: #fcd34d;
 
-  /* Error - Soft Red (#C96B6B) */
-  --color-error: #C96B6B;
-  --color-error-foreground: #FFFFFF;
-  --color-error-light: #F0C8C8;
+  /* Error - Red (#EF4444) */
+  --color-error: #ef4444;
+  --color-error-foreground: #ffffff;
+  --color-error-light: #fecaca;
 
   /* Background & Surface */
-  --color-background: #F8FAFB;
-  --color-surface: #FFFFFF;
-  --color-foreground: #080C14;
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-foreground: #0f172a;
 
   /* Muted */
-  --color-muted: #EEF3F2;
-  --color-muted-foreground: #4B5563;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
 
   /* Border & Input */
-  --color-border: #E0E7E5;
-  --color-input: #E0E7E5;
-  --color-ring: #4A9EFF;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #3b82f6;
 
   /* Popover & Card */
-  --color-popover: #FFFFFF;
-  --color-popover-foreground: #0F172A;
-  --color-card: #FFFFFF;
-  --color-card-foreground: #0F172A;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
 
-  /* Colored shadow tokens - Evyra Teal */
-  --shadow-color: rgba(47, 111, 109, 0.05);
-  --shadow-color-md: rgba(47, 111, 109, 0.08);
-  --shadow-color-lg: rgba(47, 111, 109, 0.12);
-  --shadow-primary-glow: rgba(74, 158, 255, 0.2);
+  /* Colored shadow tokens */
+  --shadow-color: rgba(59, 130, 246, 0.05);
+  --shadow-color-md: rgba(59, 130, 246, 0.08);
+  --shadow-color-lg: rgba(59, 130, 246, 0.12);
+  --shadow-primary-glow: rgba(59, 130, 246, 0.2);
 }
 
-/* Dark Mode "Deep Night" - Evyra */
+/* Dark Mode - Bloom Elements */
 .dark {
-  /* Primary - Evyra Blue lighter for contrast */
-  --color-primary: #7FB8FF;
-  --color-primary-foreground: #080C14;
-  --color-primary-light: #AACFFF;
-  --color-primary-dark: #4A9EFF;
+  /* Primary - Light blue for contrast */
+  --color-primary: #60a5fa;
+  --color-primary-foreground: #0f172a;
+  --color-primary-light: #93c5fd;
+  --color-primary-dark: #1e40af;
 
-  /* Secondary - Trust Teal lighter */
-  --color-secondary: #5FE3D0;
-  --color-secondary-foreground: #080C14;
-  --color-secondary-light: #2DD4BF;
+  /* Secondary - Light slate */
+  --color-secondary: #cbd5e1;
+  --color-secondary-foreground: #0f172a;
+  --color-secondary-light: #e2e8f0;
 
-  /* Accent - Soft White text on dark */
-  --color-accent: #E8EEF8;
-  --color-accent-foreground: #080C14;
+  /* Accent - Light cyan */
+  --color-accent: #22d3ee;
+  --color-accent-foreground: #0f172a;
 
-  /* Warm - Soft White*/
-  --color-warm: #F2F5FA;
-  --color-warm-foreground: #080C14;
-  --color-warm-light: #E8EEF8;
+  /* Warm - Light gray */
+  --color-warm: #e2e8f0;
+  --color-warm-foreground: #0f172a;
+  --color-warm-light: #f1f5f9;
 
   /* Success */
-  --color-success: #5B9A6F;
-  --color-success-foreground: #FFFFFF;
-  --color-success-light: #A8D5B8;
+  --color-success: #34d399;
+  --color-success-foreground: #0f172a;
+  --color-success-light: #a7f3d0;
 
   /* Warning */
-  --color-warning: #E8A65D;
-  --color-warning-foreground: #1F2933;
-  --color-warning-light: #F5D4A8;
+  --color-warning: #fcd34d;
+  --color-warning-foreground: #0f172a;
+  --color-warning-light: #fef3c7;
 
   /* Error */
-  --color-error: #C96B6B;
-  --color-error-foreground: #FFFFFF;
-  --color-error-light: #F0C8C8;
+  --color-error: #f87171;
+  --color-error-foreground: #0f172a;
+  --color-error-light: #fecaca;
 
-  /* Background & Surface - Dark Mode "Deep Night" */
-  --color-background: #0B1120;
-  --color-surface: rgba(30, 41, 59, 0.8);
-  --color-foreground: #E8EEF8;
+  /* Background & Surface - Dark */
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-foreground: #f1f5f9;
 
   /* Muted */
-  --color-muted: #1E293B;
-  --color-muted-foreground: #94A3B8;
+  --color-muted: #334155;
+  --color-muted-foreground: #cbd5e1;
 
   /* Border & Input */
-  --color-border: rgba(74, 158, 255, 0.15);
-  --color-input: #1E293B;
-  --color-ring: #7FB8FF;
+  --color-border: #334155;
+  --color-input: #334155;
+  --color-ring: #60a5fa;
 
   /* Popover & Card */
-  --color-popover: #1E293B;
-  --color-popover-foreground: #F1F5F9;
-  --color-card: rgba(30, 41, 59, 0.8);
-  --color-card-foreground: #F1F5F9;
+  --color-popover: #1e293b;
+  --color-popover-foreground: #f1f5f9;
+  --color-card: #1e293b;
+  --color-card-foreground: #f1f5f9;
 
-  /* Colored shadow tokens for dark mode - Evyra */
-  --shadow-color: rgba(74, 158, 255, 0.08);
-  --shadow-color-md: rgba(74, 158, 255, 0.12);
-  --shadow-color-lg: rgba(74, 158, 255, 0.16);
-  --shadow-primary-glow: rgba(74, 158, 255, 0.3);
+  /* Colored shadow tokens for dark mode */
+  --shadow-color: rgba(59, 130, 246, 0.08);
+  --shadow-color-md: rgba(59, 130, 246, 0.12);
+  --shadow-color-lg: rgba(59, 130, 246, 0.16);
+  --shadow-primary-glow: rgba(59, 130, 246, 0.3);
 }
 
 @layer base {
