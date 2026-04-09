@@ -12,8 +12,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F5F8FB" },
-    { media: "(prefers-color-scheme: dark)", color: "#0D2237" },
+    { media: "(prefers-color-scheme: light)", color: "#f8fafb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1419" },
   ],
 };
 
@@ -75,7 +75,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt" suppressHydrationWarning>
-      <body className="font-sans antialiased bg-background text-foreground">
+      <body className="font-body antialiased bg-background text-foreground">
         <Providers>
           <div className="relative flex min-h-screen flex-col">
             {children}
