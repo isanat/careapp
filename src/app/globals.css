@@ -2,6 +2,14 @@
 
 @tailwind base;
 @tailwind components;
+
+/* Custom utility for border-border */
+@layer utilities {
+  .border-border {
+    @apply border-[color:hsl(var(--border))];
+  }
+}
+
 @tailwind utilities;
 
 @layer base {
