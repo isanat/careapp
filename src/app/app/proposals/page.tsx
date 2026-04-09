@@ -303,24 +303,24 @@ export default function ProposalsPage() {
         )}
 
         {!isLoading && proposals.length > 0 && (
-          <Tabs defaultValue="pending" className="px-4">
-            <TabsList className="grid w-full grid-cols-3 h-9">
-              <TabsTrigger value="pending" className="text-xs py-1.5">
-                Novas <Badge variant="secondary" className="ml-1 h-4 px-1 text-[10px]">{pendingProposals.length}</Badge>
+          <Tabs defaultValue="pending" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3 h-10 rounded-lg bg-muted p-1">
+              <TabsTrigger value="pending" className="text-xs font-medium data-[state=active]:shadow-sm">
+                Novas <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px] font-semibold">{pendingProposals.length}</Badge>
               </TabsTrigger>
-              <TabsTrigger value="counter" className="text-xs py-1.5">
-                Contrapropostas <Badge variant="secondary" className="ml-1 h-4 px-1 text-[10px]">{counterProposals.length}</Badge>
+              <TabsTrigger value="counter" className="text-xs font-medium data-[state=active]:shadow-sm">
+                Contrapropostas <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px] font-semibold">{counterProposals.length}</Badge>
               </TabsTrigger>
-              <TabsTrigger value="accepted" className="text-xs py-1.5">
-                Aceitas <Badge variant="secondary" className="ml-1 h-4 px-1 text-[10px]">{acceptedProposals.length}</Badge>
+              <TabsTrigger value="accepted" className="text-xs font-medium data-[state=active]:shadow-sm">
+                Aceitas <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px] font-semibold">{acceptedProposals.length}</Badge>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pending" className="mt-3 space-y-2">
+            <TabsContent value="pending" className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {pendingProposals.length === 0 ? (
-                <div className="py-6 text-center text-muted-foreground text-sm">
-                  <IconCheck className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                  Nenhuma nova proposta
+                <div className="col-span-full py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
+                  <IconCheck className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground font-medium">Nenhuma nova proposta</p>
                 </div>
               ) : (
                 pendingProposals.map((p) => (
@@ -337,11 +337,11 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="counter" className="mt-3 space-y-2">
+            <TabsContent value="counter" className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {counterProposals.length === 0 ? (
-                <div className="py-6 text-center text-muted-foreground text-sm">
-                  <IconEdit className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                  Nenhuma contraproposta enviada
+                <div className="col-span-full py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
+                  <IconEdit className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground font-medium">Nenhuma contraproposta enviada</p>
                 </div>
               ) : (
                 counterProposals.map((p) => (
@@ -350,11 +350,11 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="accepted" className="mt-3 space-y-2">
+            <TabsContent value="accepted" className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {acceptedProposals.length === 0 ? (
-                <div className="py-6 text-center text-muted-foreground text-sm">
-                  <IconClock className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                  Nenhuma proposta aceita
+                <div className="col-span-full py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
+                  <IconClock className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground font-medium">Nenhuma proposta aceita</p>
                 </div>
               ) : (
                 acceptedProposals.map((p) => (
@@ -516,61 +516,123 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
 }) {
   const totalEur = proposal.totalEurCents ? proposal.totalEurCents / 100 : 0;
 
+  const statusColorMap: Record<string, string> = {
+    PENDING_ACCEPTANCE: "border-amber-200/50 hover:border-amber-300/60",
+    COUNTER_PROPOSED: "border-secondary/30 hover:border-secondary/50",
+    PENDING_PAYMENT: "border-orange-200/50 hover:border-orange-300/60",
+    ACTIVE: "border-success/30 hover:border-success/50",
+    COMPLETED: "border-primary/30 hover:border-primary/50",
+    CANCELLED: "border-error/30 hover:border-error/50",
+  };
+
+  const borderClass = statusColorMap[proposal.status] || "border-border/40 hover:border-border/60";
+
   return (
-    <div className={`p-3 border rounded-lg ${
-      showActions
-        ? "border-yellow-500/30 bg-yellow-500/5"
-        : proposal.status === "COUNTER_PROPOSED"
-          ? "border-purple-500/30 bg-purple-500/5"
-          : ""
-    }`}>
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="p-1.5 bg-primary/10 rounded-full shrink-0">
-            <IconFamily className="h-4 w-4 text-primary" />
+    <div className={`bg-surface rounded-xl p-5 border-2 ${borderClass} transition-all duration-300 card-interactive flex flex-col h-full`}>
+      {/* Top color indicator */}
+      <div className={`h-1 -mx-5 -mt-5 mb-4 rounded-t-lg ${
+        showActions ? "bg-amber-500" :
+        proposal.status === "COUNTER_PROPOSED" ? "bg-secondary" :
+        proposal.status === "PENDING_PAYMENT" ? "bg-orange-500" :
+        proposal.status === "ACTIVE" ? "bg-success" :
+        proposal.status === "COMPLETED" ? "bg-primary" :
+        "bg-border"
+      }`} />
+
+      {/* Header: Family info + Badge */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="h-10 w-10 bg-primary/15 rounded-lg flex items-center justify-center flex-shrink-0">
+            <IconFamily className="h-5 w-5 text-primary" />
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="font-medium text-sm truncate">{proposal.family.name}</span>
-              <Badge className={`${statusColors[proposal.status]} text-[10px] px-1.5 py-0`}>{statusLabels[proposal.status]}</Badge>
-            </div>
-            <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
-              {proposal.family.city && <span className="flex items-center gap-0.5"><IconMapPin className="h-3 w-3" />{proposal.family.city}</span>}
-              <span>€{totalEur.toFixed(0)}</span>
-              <span>{proposal.hoursPerWeek}h/sem</span>
-            </div>
+            <h3 className="text-base font-bold text-foreground truncate">{proposal.family.name}</h3>
+            {proposal.family.city && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                <IconMapPin className="h-3 w-3 shrink-0" />
+                <span className="truncate">{proposal.family.city}</span>
+              </div>
+            )}
           </div>
         </div>
-
-        {showActions && (
-          <div className="flex gap-1 shrink-0">
-            <Button size="sm" className="h-7 px-2 text-xs" onClick={onAccept} disabled={isLoading}>
-              {isLoading ? <IconLoader2 className="h-3 w-3 animate-spin" /> : <IconCheck className="h-3 w-3" />}
-            </Button>
-            <Button size="sm" variant="outline" className="h-7 px-2 text-xs bg-purple-500/10 border-purple-500/30 text-purple-600 hover:bg-purple-500/20" onClick={onCounter} disabled={isLoading} title="Contraproposta">
-              <IconEdit className="h-3 w-3" />
-            </Button>
-            <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={onReject} disabled={isLoading}>
-              <IconX className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
-
-        {!showActions && proposal.status === "PENDING_PAYMENT" && (
-          <span className="text-[10px] text-orange-600 bg-orange-500/10 px-1.5 py-0.5 rounded">Aguard. pagamento</span>
-        )}
-
-        {!showActions && proposal.status === "COUNTER_PROPOSED" && (
-          <span className="text-[10px] text-purple-600 bg-purple-500/10 px-1.5 py-0.5 rounded">Aguard. resposta</span>
-        )}
+        <Badge className={`${statusColors[proposal.status]} text-white text-[11px] px-2.5 py-0.5 font-semibold shrink-0`}>
+          {statusLabels[proposal.status]}
+        </Badge>
       </div>
 
+      {/* Service types */}
       {proposal.serviceTypes && proposal.serviceTypes.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {proposal.serviceTypes.slice(0, 3).map((s, i) => (
-            <Badge key={i} variant="outline" className="text-[10px] px-1 py-0">{serviceLabels[s] || s}</Badge>
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {proposal.serviceTypes.slice(0, 2).map((s, i) => (
+            <Badge key={i} variant="secondary" className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10">
+              {serviceLabels[s] || s}
+            </Badge>
           ))}
-          {proposal.serviceTypes.length > 3 && <span className="text-[10px] text-muted-foreground">+{proposal.serviceTypes.length - 3}</span>}
+          {proposal.serviceTypes.length > 2 && (
+            <Badge variant="secondary" className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10">
+              +{proposal.serviceTypes.length - 2}
+            </Badge>
+          )}
+        </div>
+      )}
+
+      {/* Info Grid */}
+      <div className="grid grid-cols-3 gap-2 py-3 border-y border-border/30 mb-3">
+        <div className="text-center">
+          <p className="text-[11px] text-muted-foreground font-medium">Taxa</p>
+          <p className="text-sm font-bold text-success">€{(proposal.hourlyRateEur / 100).toFixed(0)}/h</p>
+        </div>
+        <div className="text-center">
+          <p className="text-[11px] text-muted-foreground font-medium">Horas</p>
+          <p className="text-sm font-bold text-primary">{proposal.hoursPerWeek}h</p>
+        </div>
+        <div className="text-center">
+          <p className="text-[11px] text-muted-foreground font-medium">Total</p>
+          <p className="text-sm font-bold text-foreground">€{totalEur.toFixed(0)}</p>
+        </div>
+      </div>
+
+      {/* Date info */}
+      <div className="text-xs text-muted-foreground mb-3 font-medium">
+        Início: {proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('pt-PT') : "A definir"}
+      </div>
+
+      {/* Actions */}
+      {showActions && (
+        <div className="flex gap-2 mt-auto pt-2">
+          <Button
+            size="sm"
+            variant="default"
+            className="flex-1"
+            onClick={onAccept}
+            disabled={isLoading}
+          >
+            {isLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconCheck className="h-4 w-4 mr-1" /> Aceitar</>}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={onCounter}
+            disabled={isLoading}
+            title="Contraproposta"
+          >
+            <IconEdit className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-error hover:text-error"
+            onClick={onReject}
+            disabled={isLoading}
+          >
+            <IconX className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {!showActions && proposal.status === "COUNTER_PROPOSED" && (
+        <div className="mt-auto pt-2 text-center">
+          <Badge variant="secondary" className="text-[10px] bg-secondary/15 text-secondary">Aguard. resposta</Badge>
         </div>
       )}
     </div>

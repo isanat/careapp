@@ -518,19 +518,19 @@ export default function ProfilePage() {
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { value: profile?.totalContracts || 0, label: "Contratos", color: "text-primary" },
-              { value: profile?.totalReviews || 0, label: "Avaliacoes", color: "text-secondary" },
-              { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", color: "text-amber-500", icon: true },
-              { value: `\u20AC${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", color: "text-success" },
+              { value: profile?.totalContracts || 0, label: "Contratos", color: "text-primary", bg: "bg-primary/10" },
+              { value: profile?.totalReviews || 0, label: "Avaliações", color: "text-secondary", bg: "bg-secondary/10" },
+              { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", color: "text-amber-600", bg: "bg-amber-100/20", icon: true },
+              { value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", color: "text-success", bg: "bg-success/10" },
             ].map((stat, i) => (
-              <div key={i} className="bg-surface rounded-lg p-2 text-center border border-border/30">
-                <p className={`text-sm font-bold ${stat.color} flex items-center justify-center gap-0.5`}>
-                  {stat.icon && <IconStar className="h-3 w-3 fill-amber-400 text-amber-400" />}
-                  {stat.value}
-                </p>
-                <p className="text-[9px] text-muted-foreground">{stat.label}</p>
+              <div key={i} className="bg-surface rounded-xl p-4 border-2 border-border/30 text-center">
+                <div className={`h-10 w-10 rounded-lg ${stat.bg} flex items-center justify-center mx-auto mb-2`}>
+                  {stat.icon && <IconStar className="h-4 w-4 fill-amber-500 text-amber-500" />}
+                </div>
+                <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
+                <p className="text-xs font-medium text-muted-foreground mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
