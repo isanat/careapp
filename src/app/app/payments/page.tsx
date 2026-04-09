@@ -13,6 +13,8 @@ import {
   IconClock,
   IconCheck,
   IconArrowRight,
+  IconCalendar,
+  IconArrowUp,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
@@ -119,13 +121,19 @@ export default function PaymentsPage() {
   if (isLoading) {
     return (
       <AppShell>
-        <div className="max-w-4xl mx-auto space-y-6 pb-8">
-          <div className="grid grid-cols-3 gap-4">
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-32" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-24 rounded-xl" />
+              <Skeleton key={i} className="h-20 rounded-xl" />
             ))}
           </div>
-          <Skeleton className="h-64 rounded-xl" />
+          <Skeleton className="h-6 w-40 mt-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-32 rounded-xl" />
+            ))}
+          </div>
         </div>
       </AppShell>
     );
@@ -133,137 +141,132 @@ export default function PaymentsPage() {
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto space-y-6 pb-8">
+      <div className="space-y-4">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold">Meus Ganhos</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-lg font-bold">Meus Ganhos</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
             Acompanhe seus ganhos e histórico de pagamentos
           </p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Total Earnings */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <IconEuro className="h-4 w-4" />
-                Total de Ganhos
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                €{(walletData?.totalEarnings || 0) / 100}
+          <div className="bg-surface rounded-xl p-4 border-2 border-primary/20 hover:border-primary/40 transition-colors">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <IconEuro className="h-4 w-4 text-primary" />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Desde o início na plataforma
-              </p>
-            </CardContent>
-          </Card>
+              <span className="text-xs font-medium text-muted-foreground">Total de Ganhos</span>
+            </div>
+            <p className="text-2xl font-bold text-foreground">
+              €{(walletData?.totalEarnings || 0) / 100}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Desde o início</p>
+          </div>
 
           {/* Available Balance */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                <IconCheck className="h-4 w-4 text-green-600" />
-                Saldo Disponível
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                €{(walletData?.availableBalance || 0) / 100}
+          <div className="bg-surface rounded-xl p-4 border-2 border-success/20 hover:border-success/40 transition-colors">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center">
+                <IconCheck className="h-4 w-4 text-success" />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Pronto para levantamento
-              </p>
-            </CardContent>
-          </Card>
+              <span className="text-xs font-medium text-muted-foreground">Saldo Disponível</span>
+            </div>
+            <p className="text-2xl font-bold text-success">
+              €{(walletData?.availableBalance || 0) / 100}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Para levantamento</p>
+          </div>
 
           {/* Pending */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+          <div className="bg-surface rounded-xl p-4 border-2 border-amber-200/30 hover:border-amber-300/40 transition-colors">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-8 w-8 rounded-lg bg-amber-100/20 flex items-center justify-center">
                 <IconClock className="h-4 w-4 text-amber-600" />
-                Pendente
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-amber-600">
-                €{(walletData?.pendingAmount || 0) / 100}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Em contratos ativos
-              </p>
-            </CardContent>
-          </Card>
+              <span className="text-xs font-medium text-muted-foreground">Pendente</span>
+            </div>
+            <p className="text-2xl font-bold text-amber-600">
+              €{(walletData?.pendingAmount || 0) / 100}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">Em contratos ativos</p>
+          </div>
         </div>
 
         {/* Recent Payments */}
         {walletData && walletData.recentPayments.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Histórico de Ganhos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {walletData.recentPayments.map((payment) => (
-                  <div
-                    key={payment.id}
-                    className="flex items-center justify-between p-4 border border-border/50 rounded-lg"
-                  >
-                    <div className="space-y-1">
-                      <p className="font-medium">{payment.description}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline">
-                        {payment.status === "COMPLETED"
-                          ? "Concluído"
-                          : payment.status === "ACTIVE"
-                          ? "Ativo"
-                          : "Pendente"}
-                      </Badge>
-                      <div className="text-right">
-                        <p className="font-semibold text-green-600">
-                          +€{(payment.amount / 100).toFixed(2)}
-                        </p>
+          <div>
+            <h2 className="text-sm font-bold mb-3">Histórico de Ganhos</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {walletData.recentPayments.map((payment) => {
+                const statusColors: Record<string, { border: string; top: string; icon: string; badge: string }> = {
+                  COMPLETED: { border: "border-success/30 hover:border-success/50", top: "bg-success", icon: "bg-success/10 text-success", badge: "bg-success/10 text-success" },
+                  ACTIVE: { border: "border-primary/30 hover:border-primary/50", top: "bg-primary", icon: "bg-primary/10 text-primary", badge: "bg-primary/10 text-primary" },
+                  PENDING: { border: "border-amber-200/50 hover:border-amber-300/60", top: "bg-amber-500", icon: "bg-amber-100/20 text-amber-600", badge: "bg-amber-100/20 text-amber-600" },
+                };
+                const statusConfig = statusColors[payment.status] || statusColors.PENDING;
+
+                return (
+                  <div key={payment.id} className={`bg-surface rounded-xl border-2 ${statusConfig.border} transition-all card-interactive overflow-hidden`}>
+                    <div className={`h-1 ${statusConfig.top}`} />
+                    <div className="p-4">
+                      {/* Header */}
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground line-clamp-1">{payment.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                            <IconCalendar className="h-3 w-3" />
+                            {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })}
+                          </p>
+                        </div>
+                        <Badge className={`${statusConfig.badge} border-0 text-[10px] px-2 py-0.5 h-5 shrink-0 font-semibold`}>
+                          {payment.status === "COMPLETED"
+                            ? "Concluído"
+                            : payment.status === "ACTIVE"
+                            ? "Ativo"
+                            : "Pendente"}
+                        </Badge>
+                      </div>
+
+                      {/* Amount Section */}
+                      <div className="flex items-end gap-3">
+                        <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${statusConfig.icon}`}>
+                          <IconArrowUp className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Ganho</p>
+                          <p className="text-lg font-bold text-success">+€{(payment.amount / 100).toFixed(2)}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* Empty State */}
         {(!walletData || walletData.recentPayments.length === 0) && !error && (
-          <Card>
-            <CardContent className="py-12">
-              <div className="text-center space-y-3">
-                <IconTrendingUp className="h-12 w-12 text-muted-foreground mx-auto opacity-50" />
-                <h3 className="font-medium">Sem ganhos ainda</h3>
-                <p className="text-sm text-muted-foreground">
-                  Seus ganhos aparecerão aqui quando completar contratos
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="text-center py-12 bg-surface rounded-xl border-2 border-dashed border-border/30">
+            <IconTrendingUp className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-50" />
+            <h3 className="font-semibold text-foreground">Sem ganhos ainda</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Seus ganhos aparecerão aqui quando completar contratos
+            </p>
+          </div>
         )}
 
         {error && (
-          <Card className="border-red-200 bg-red-50">
-            <CardContent className="py-6">
-              <p className="text-sm text-red-800">{error}</p>
-            </CardContent>
-          </Card>
+          <div className="bg-error/5 border border-error/20 rounded-xl p-4">
+            <p className="text-sm text-error">{error}</p>
+          </div>
         )}
       </div>
     </AppShell>
