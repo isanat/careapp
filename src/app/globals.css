@@ -6,7 +6,7 @@
 /* Custom utility for border-border */
 @layer utilities {
   .border-border {
-    @apply border-[color:hsl(var(--border))];
+    border-color: hsl(var(--border));
   }
 }
 
