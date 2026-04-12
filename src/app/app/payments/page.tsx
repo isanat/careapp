@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty, BloomStatBlock } from "@/components/bloom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconEuro,
@@ -148,40 +148,28 @@ export default function PaymentsPage() {
           desc="Acompanhe seus ganhos e histórico de pagamentos"
         />
 
-        {/* Summary Cards - Bloom style */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Total Earnings */}
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                <IconEuro className="h-5 w-5 text-primary" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">€{(walletData?.totalEarnings || 0) / 100}</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Total de Ganhos</p>
-            </div>
-          </BloomCard>
+        {/* Summary Cards - Bloom StatBlock pattern */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <BloomStatBlock
+            label="Total de Ganhos"
+            value={`€${(walletData?.totalEarnings || 0) / 100}`}
+            icon={<IconEuro size={24} />}
+            colorClass="text-primary"
+          />
 
-          {/* Available Balance */}
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center mb-3">
-                <IconCheck className="h-5 w-5 text-success" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-success tracking-tighter">€{(walletData?.availableBalance || 0) / 100}</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Saldo Disponível</p>
-            </div>
-          </BloomCard>
+          <BloomStatBlock
+            label="Saldo Disponível"
+            value={`€${(walletData?.availableBalance || 0) / 100}`}
+            icon={<IconCheck size={24} />}
+            colorClass="text-success"
+          />
 
-          {/* Pending */}
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center mb-3">
-                <IconClock className="h-5 w-5 text-warning" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-warning tracking-tighter">€{(walletData?.pendingAmount || 0) / 100}</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Pendente</p>
-            </div>
-          </BloomCard>
+          <BloomStatBlock
+            label="Pendente"
+            value={`€${(walletData?.pendingAmount || 0) / 100}`}
+            icon={<IconClock size={24} />}
+            colorClass="text-warning"
+          />
         </div>
 
         {/* Recent Payments */}
