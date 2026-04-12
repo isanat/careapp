@@ -367,20 +367,22 @@ export default function ProposalsPage() {
 
         {/* Accept Dialog */}
         <Dialog open={acceptDialogOpen} onOpenChange={setAcceptDialogOpen}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle className="text-base">Aceitar Proposta?</DialogTitle>
-              <DialogDescription className="text-sm">
-                {selectedProposal?.family.name} -- €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)} total
+          <DialogContent className="max-w-sm border-2 border-success/20 bg-surface">
+            <DialogHeader className="pb-4 border-b border-border/30">
+              <DialogTitle className="text-base font-bold">Aceitar Proposta?</DialogTitle>
+              <DialogDescription className="text-sm mt-2">
+                {selectedProposal?.family.name} • €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)} total
               </DialogDescription>
             </DialogHeader>
-            <div className="p-3 bg-muted/50 rounded-lg text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Horas/sem:</span><span>{selectedProposal?.hoursPerWeek}h</span></div>
-              <div className="flex justify-between mt-1"><span className="text-muted-foreground">Inicio:</span><span>{selectedProposal?.startDate ? new Date(selectedProposal.startDate).toLocaleDateString('pt-PT') : "A definir"}</span></div>
+            <div className="space-y-3 py-4">
+              <div className="p-3 bg-success/5 border border-success/20 rounded-lg text-sm">
+                <div className="flex justify-between mb-2"><span className="text-muted-foreground">Horas/sem:</span><span className="font-semibold">{selectedProposal?.hoursPerWeek}h</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Início:</span><span className="font-semibold">{selectedProposal?.startDate ? new Date(selectedProposal.startDate).toLocaleDateString('pt-PT') : "A definir"}</span></div>
+              </div>
             </div>
-            <DialogFooter className="gap-2">
+            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
               <Button variant="outline" size="sm" onClick={() => setAcceptDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" onClick={confirmAccept} disabled={actionLoading !== null}>
+              <Button size="sm" className="bg-success hover:bg-success/90" onClick={confirmAccept} disabled={actionLoading !== null}>
                 {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconCheck className="h-4 w-4 mr-1" /> Aceitar</>}
               </Button>
             </DialogFooter>
@@ -389,13 +391,15 @@ export default function ProposalsPage() {
 
         {/* Reject Dialog */}
         <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle className="text-base">Recusar Proposta</DialogTitle>
-              <DialogDescription className="text-sm">Motivo (opcional)</DialogDescription>
+          <DialogContent className="max-w-sm border-2 border-error/20 bg-surface">
+            <DialogHeader className="pb-4 border-b border-border/30">
+              <DialogTitle className="text-base font-bold">Recusar Proposta</DialogTitle>
+              <DialogDescription className="text-sm mt-2">Insira um motivo (opcional)</DialogDescription>
             </DialogHeader>
-            <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={2} placeholder="Ex: Horario incompativel..." className="text-sm" />
-            <DialogFooter className="gap-2">
+            <div className="py-4">
+              <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={3} placeholder="Ex: Horário incompatível, orçamento limitado..." className="text-sm rounded-lg" />
+            </div>
+            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
               <Button variant="outline" size="sm" onClick={() => setRejectDialogOpen(false)}>Cancelar</Button>
               <Button variant="destructive" size="sm" onClick={confirmReject} disabled={actionLoading !== null}>
                 {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconX className="h-4 w-4 mr-1" /> Recusar</>}
@@ -406,32 +410,32 @@ export default function ProposalsPage() {
 
         {/* Counter-Proposal Dialog */}
         <Dialog open={counterDialogOpen} onOpenChange={setCounterDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base">Contraproposta</DialogTitle>
-              <DialogDescription className="text-sm">
-                Proponha novos valores para {selectedProposal?.family.name}. Altere apenas os campos que deseja modificar.
+          <DialogContent className="max-w-md border-2 border-secondary/20 bg-surface">
+            <DialogHeader className="pb-4 border-b border-border/30">
+              <DialogTitle className="text-base font-bold">Contraproposta</DialogTitle>
+              <DialogDescription className="text-sm mt-2">
+                Proponha novos valores para {selectedProposal?.family.name}
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-4 py-4">
               {/* Current values summary */}
-              <div className="p-3 bg-muted/50 rounded-lg text-sm">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Valores atuais</p>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Taxa horaria:</span>
-                  <span>€{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}/h</span>
+              <div className="p-3 bg-secondary/5 border border-secondary/20 rounded-lg text-sm">
+                <p className="text-xs font-semibold text-secondary mb-2">Valores atuais</p>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Taxa horária:</span>
+                  <span className="font-semibold">€{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}/h</span>
                 </div>
-                <div className="flex justify-between mt-1">
+                <div className="flex justify-between text-sm mt-1.5">
                   <span className="text-muted-foreground">Total horas:</span>
-                  <span>{selectedProposal?.totalHours || 0}h</span>
+                  <span className="font-semibold">{selectedProposal?.totalHours || 0}h</span>
                 </div>
-                <div className="flex justify-between mt-1">
+                <div className="flex justify-between text-sm mt-1.5">
                   <span className="text-muted-foreground">Horas/semana:</span>
-                  <span>{selectedProposal?.hoursPerWeek || 0}h</span>
+                  <span className="font-semibold">{selectedProposal?.hoursPerWeek || 0}h</span>
                 </div>
-                <div className="flex justify-between mt-1 font-medium">
+                <div className="flex justify-between text-sm mt-1.5 font-bold border-t border-secondary/30 pt-1.5">
                   <span className="text-muted-foreground">Total:</span>
-                  <span>€{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}</span>
+                  <span className="text-secondary">€{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}</span>
                 </div>
               </div>
 
@@ -485,17 +489,17 @@ export default function ProposalsPage() {
 
               {/* Preview new total */}
               {counterHourlyRate && counterTotalHours && (
-                <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg text-sm">
-                  <p className="text-xs font-medium text-purple-600 mb-1">Novo valor total estimado</p>
-                  <p className="font-semibold text-purple-700">
+                <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg text-sm">
+                  <p className="text-xs font-semibold text-primary mb-1">Novo valor total estimado</p>
+                  <p className="font-bold text-lg text-primary">
                     €{(parseFloat(counterHourlyRate) * parseInt(counterTotalHours || "0")).toFixed(2)}
                   </p>
                 </div>
               )}
             </div>
-            <DialogFooter className="gap-2">
+            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
               <Button variant="outline" size="sm" onClick={() => setCounterDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" onClick={confirmCounter} disabled={actionLoading !== null}>
+              <Button size="sm" className="bg-secondary hover:bg-secondary/90" onClick={confirmCounter} disabled={actionLoading !== null}>
                 {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconEdit className="h-4 w-4 mr-1" /> Enviar Contraproposta</>}
               </Button>
             </DialogFooter>

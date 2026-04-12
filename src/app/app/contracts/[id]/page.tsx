@@ -706,76 +706,76 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
         {/* Accept Confirmation Dialog */}
         <Dialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirmar Aceite do Contrato</DialogTitle>
-              <DialogDescription>
-                Ao aceitar, voce concorda com todos os termos. Seu aceite sera registrado legalmente.
+          <DialogContent className="max-w-md border-2 border-success/20 bg-surface">
+            <DialogHeader className="pb-4 border-b border-border/30">
+              <DialogTitle className="text-base font-bold">Confirmar Aceite do Contrato</DialogTitle>
+              <DialogDescription className="text-sm mt-2">
+                Ao aceitar, você concorda com todos os termos legais
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3 py-2">
-              <label className="flex items-start gap-3 cursor-pointer">
+            <div className="space-y-2.5 py-4">
+              <label className="flex items-start gap-3 cursor-pointer p-3 hover:bg-muted/30 rounded-lg transition-colors">
                 <Checkbox
                   checked={acceptTerms}
                   onCheckedChange={(c) => setAcceptTerms(c === true)}
-                  className="mt-0.5"
+                  className="mt-1"
                 />
                 <span className="text-sm leading-relaxed">
                   Li e concordo com todos os detalhes do contrato, incluindo valores,
-                  horarios e responsabilidades descritas.
+                  horários e responsabilidades descritas.
                 </span>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer">
+              <label className="flex items-start gap-3 cursor-pointer p-3 hover:bg-muted/30 rounded-lg transition-colors">
                 <Checkbox
                   checked={acceptLiability}
                   onCheckedChange={(c) => setAcceptLiability(c === true)}
-                  className="mt-0.5"
+                  className="mt-1"
                 />
                 <span className="text-sm leading-relaxed">
-                  Entendo que a plataforma atua como intermediaria e nao e responsavel
-                  pela qualidade ou resultado dos servicos.
+                  Entendo que a plataforma atua como intermediária e não é responsável
+                  pela qualidade ou resultado dos serviços.
                 </span>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+              <label className="flex items-start gap-3 cursor-pointer p-3 bg-amber-100/20 hover:bg-amber-100/30 border border-amber-200/50 rounded-lg transition-all">
                 <Checkbox
                   checked={acceptNonCircumvention}
                   onCheckedChange={(c) => setAcceptNonCircumvention(c === true)}
-                  className="mt-0.5"
+                  className="mt-1"
                 />
                 <span className="text-sm leading-relaxed">
-                  <span className="font-semibold text-amber-700 dark:text-amber-400">Clausula de Nao-Circunvencao:</span>{" "}
-                  Concordo que qualquer relacao profissional iniciada atraves desta plataforma
-                  deve ser mantida e gerida pela plataforma por um periodo minimo de 24 meses.
-                  A contratacao direta fora da plataforma durante este periodo constitui
-                  violacao dos Termos de Uso e sujeita a penalizacao.
+                  <span className="font-semibold text-amber-700">Cláusula de Não-Circunvenção:</span>{" "}
+                  Concordo que qualquer relação profissional iniciada através desta plataforma
+                  deve ser mantida por um período mínimo de 24 meses.
                 </span>
               </label>
 
-              <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 p-2 rounded-lg">
-                <IconShield className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>O aceite sera registrado digitalmente com assinatura SHA-256, data, hora e endereco IP.</span>
+              <div className="flex items-start gap-2 text-xs bg-success/5 border border-success/20 p-3 rounded-lg">
+                <IconShield className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                <span className="text-muted-foreground">O aceite será registrado digitalmente com data, hora e endereço IP.</span>
               </div>
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button variant="outline" onClick={() => setShowAcceptDialog(false)}>
+            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
+              <Button variant="outline" size="sm" onClick={() => setShowAcceptDialog(false)}>
                 Cancelar
               </Button>
               <Button
+                size="sm"
+                className="bg-success hover:bg-success/90"
                 onClick={handleAcceptContract}
                 disabled={isAccepting || !acceptTerms || !acceptLiability || !acceptNonCircumvention}
               >
                 {isAccepting ? (
                   <>
-                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <IconLoader2 className="h-4 w-4 mr-1.5 animate-spin" />
                     Aceitando...
                   </>
                 ) : (
                   <>
-                    <IconCheck className="h-4 w-4 mr-2" />
+                    <IconCheck className="h-4 w-4 mr-1.5" />
                     Confirmar Aceite
                   </>
                 )}
