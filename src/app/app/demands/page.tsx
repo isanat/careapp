@@ -5,21 +5,19 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
+import { BloomSectionHeader, BloomEmpty } from '@/components/bloom';
 import { useToast } from "@/hooks/use-toast";
 import { getServiceTypeLabel } from '@/lib/service-types';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   IconMapPin,
   IconClock,
   IconEye,
   IconMessageSquare,
-  IconTrendingUp,
   IconAlertCircle,
   IconStar,
   IconCheck,
@@ -61,13 +59,6 @@ interface ProposalWizardState {
   isSubmitting: boolean;
   error: string | null;
 }
-
-const VISIBILITY_BADGES: Record<string, { variant: string; icon: any; label: string }> = {
-  URGENT: { variant: 'destructive', icon: IconAlertCircle, label: 'URGENTE' },
-  PREMIUM: { variant: 'default', icon: IconStar, label: 'DESTACADO' },
-  BASIC: { variant: 'secondary', icon: IconCheck, label: 'VISÍVEL' },
-  NONE: { variant: 'outline', icon: undefined, label: 'NORMAL' },
-};
 
 function DemandsContent() {
   const { data: session, status } = useSession();
@@ -183,249 +174,193 @@ function DemandsContent() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="max-w-lg mx-auto space-y-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-muted rounded-2xl" />
-          <div className="h-64 bg-muted rounded-2xl" />
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="space-y-2">
+          <div className="h-10 bg-muted rounded-2xl w-64 animate-pulse" />
+          <div className="h-5 bg-muted rounded-xl w-96 animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} className="h-64 bg-muted rounded-3xl animate-pulse" />
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header Section */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-foreground">Marketplace de Demandas</h1>
-            <Badge variant="secondary" className="text-xs font-medium">
-              {demands.length}
-            </Badge>
-          </div>
-          <p className="text-sm text-muted-foreground max-w-2xl">
-            Explore oportunidades de trabalho disponíveis na plataforma e envie suas propostas aos familiares
-          </p>
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <BloomSectionHeader
+          title="Marketplace de Demandas"
+          desc="Explore oportunidades de trabalho disponíveis e envie suas propostas."
+        />
+        <span className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
+          {demands.length} vagas
+        </span>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div className="flex items-center gap-4 p-5 bg-destructive/10 rounded-2xl border border-destructive/20">
+          <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
+          <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
+      )}
 
-        {/* Error Alert */}
-        {error && (
-          <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-4 flex items-center gap-3">
-            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-destructive font-medium">{error}</p>
-            </div>
+      {/* Filters */}
+      <div className="bg-card p-8 rounded-3xl border border-border shadow-card">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center text-primary shadow-sm border border-border">
+            <IconFilter className="h-5 w-5" />
           </div>
-        )}
-
-        {/* Filters Section */}
-        <Card className="border-border/40">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <IconFilter className="h-4 w-4 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-base">Filtros</CardTitle>
-                <CardDescription className="text-xs mt-0.5">Refine sua busca de oportunidades</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-foreground">Localidade</label>
-                <Input
-                  type="text"
-                  value={searchCity}
-                  onChange={e => setSearchCity(e.target.value)}
-                  placeholder="Ex: Lisboa, Porto, Covilhã..."
-                  className="h-10 rounded-lg"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-foreground">Tipo de Serviço</label>
-                <select
-                  value={selectedService}
-                  onChange={e => setSelectedService(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground shadow-xs transition-[color,box-shadow] outline-none focus:border-ring focus:ring-ring/50 focus:ring-[3px]"
-                >
-                  <option value="">Todos os serviços</option>
-                  <option value="PERSONAL_CARE">Cuidados Pessoais</option>
-                  <option value="MEDICATION">Medicação</option>
-                  <option value="MOBILITY">Mobilidade</option>
-                  <option value="COMPANIONSHIP">Companhia</option>
-                  <option value="MEAL_PREPARATION">Refeições</option>
-                  <option value="LIGHT_HOUSEWORK">Tarefas Domésticas</option>
-                  <option value="TRANSPORTATION">Transporte</option>
-                  <option value="COGNITIVE_SUPPORT">Estimulação Cognitiva</option>
-                  <option value="NIGHT_CARE">Cuidados Noturnos</option>
-                </select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Demands List */}
-        {demands.length === 0 ? (
-          <div className="bg-surface rounded-2xl border border-border/40 py-16 px-4 flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 rounded-lg bg-muted/30 flex items-center justify-center mb-3 mx-auto">
-              <IconMapPin className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <p className="text-foreground font-semibold mb-1">Nenhuma demanda encontrada</p>
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Tente ajustar seus filtros para encontrar mais oportunidades de trabalho
-            </p>
+          <div>
+            <p className="font-display font-bold text-foreground text-sm uppercase">Filtros</p>
+            <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">Refine sua busca de oportunidades</p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {demands.map(demand => {
-              const badgeConfig = VISIBILITY_BADGES[demand.visibilityPackage];
-              const BadgeIcon = badgeConfig?.icon;
-              const createdDate = new Date(demand.createdAt);
-              const daysAgo = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-
-              // Visual color based on visibility
-              const cardColorClass = {
-                'URGENT': 'border-destructive/30 hover:border-destructive/50',
-                'PREMIUM': 'border-primary/30 hover:border-primary/50',
-                'BASIC': 'border-secondary/30 hover:border-secondary/50',
-                'NONE': 'border-border/40 hover:border-border/60'
-              }[demand.visibilityPackage] || 'border-border/40 hover:border-border/60';
-
-              return (
-                <Link key={demand.id} href={`/app/demands/${demand.id}`} className="group">
-                  <Card className={`h-full border-2 ${cardColorClass} transition-all duration-300 overflow-hidden card-interactive`}>
-                    {/* Header color indicator */}
-                    <div className={`h-2 ${
-                      demand.visibilityPackage === 'URGENT' ? 'bg-destructive' :
-                      demand.visibilityPackage === 'PREMIUM' ? 'bg-primary' :
-                      demand.visibilityPackage === 'BASIC' ? 'bg-secondary' :
-                      'bg-border'
-                    }`} />
-
-                    <CardContent className="p-5 flex flex-col h-full gap-3">
-                      {/* Badge & Title */}
-                      <div className="space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
-                              {demand.title}
-                            </h3>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1.5 font-medium">
-                              <IconMapPin className="h-3.5 w-3.5 shrink-0" />
-                              <span className="truncate">{demand.city}</span>
-                              {demand.postalCode && <span className="shrink-0">({demand.postalCode})</span>}
-                            </div>
-                          </div>
-                          {badgeConfig && (
-                            <Badge
-                              variant={badgeConfig.variant as any}
-                              className="shrink-0 text-xs h-6 flex items-center gap-1 px-2 font-semibold"
-                            >
-                              {BadgeIcon && <BadgeIcon className="h-3 w-3" />}
-                            </Badge>
-                          )}
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                          {demand.description}
-                        </p>
-
-                        {/* Service Types */}
-                        <div className="flex flex-wrap gap-1.5 pt-1">
-                          {demand.serviceTypes.slice(0, 2).map((service, idx) => (
-                            <Badge
-                              key={idx}
-                              variant="secondary"
-                              className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
-                            >
-                              {getServiceTypeLabel(service)}
-                            </Badge>
-                          ))}
-                          {demand.serviceTypes.length > 2 && (
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10 text-secondary-foreground border-secondary/20"
-                            >
-                              +{demand.serviceTypes.length - 2}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Metrics */}
-                      <div className="grid grid-cols-3 gap-2.5 py-3 border-y border-border/30">
-                        {demand.hoursPerWeek && (
-                          <div className="text-center">
-                            <div className="flex justify-center mb-1">
-                              <IconClock className="h-4 w-4 text-primary" />
-                            </div>
-                            <p className="text-sm font-bold text-foreground">{demand.hoursPerWeek}h</p>
-                            <p className="text-[11px] text-muted-foreground">semana</p>
-                          </div>
-                        )}
-                        <div className="text-center">
-                          <div className="flex justify-center mb-1">
-                            <IconEye className="h-4 w-4 text-secondary" />
-                          </div>
-                          <p className="text-sm font-bold text-foreground">{demand.viewCount}</p>
-                          <p className="text-[11px] text-muted-foreground">vistas</p>
-                        </div>
-                        <div className="text-center">
-                          <div className="flex justify-center mb-1">
-                            <IconMessageSquare className="h-4 w-4 text-accent" />
-                          </div>
-                          <p className="text-sm font-bold text-foreground">{demand.proposalCount}</p>
-                          <p className="text-[11px] text-muted-foreground">propostas</p>
-                        </div>
-                      </div>
-
-                      {/* Time posted */}
-                      <div className="text-[11px] text-muted-foreground font-medium">
-                        Publicado {daysAgo === 0 ? 'hoje' : `há ${daysAgo}d`}
-                      </div>
-
-                      {/* CTA Button */}
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleOpenProposalWizard(demand.id);
-                        }}
-                        size="sm"
-                        variant="default"
-                        className="w-full mt-auto"
-                      >
-                        <span>Propor</span>
-                        <IconChevronRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Localidade</label>
+            <input
+              type="text"
+              value={searchCity}
+              onChange={e => setSearchCity(e.target.value)}
+              placeholder="Ex: Lisboa, Porto, Covilhã..."
+              className="w-full h-11 px-4 bg-secondary rounded-xl border border-border/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 transition-colors"
+            />
           </div>
-        )}
+          <div className="space-y-2">
+            <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Tipo de Serviço</label>
+            <select
+              value={selectedService}
+              onChange={e => setSelectedService(e.target.value)}
+              className="w-full h-11 px-4 bg-secondary rounded-xl border border-border/50 text-sm text-foreground focus:outline-none focus:border-primary/40 transition-colors"
+            >
+              <option value="">Todos os serviços</option>
+              <option value="PERSONAL_CARE">Cuidados Pessoais</option>
+              <option value="MEDICATION">Medicação</option>
+              <option value="MOBILITY">Mobilidade</option>
+              <option value="COMPANIONSHIP">Companhia</option>
+              <option value="MEAL_PREPARATION">Refeições</option>
+              <option value="LIGHT_HOUSEWORK">Tarefas Domésticas</option>
+              <option value="TRANSPORTATION">Transporte</option>
+              <option value="COGNITIVE_SUPPORT">Estimulação Cognitiva</option>
+              <option value="NIGHT_CARE">Cuidados Noturnos</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-      {/* Proposal Wizard Modal - Improved styling */}
+      {/* Demands Grid */}
+      {demands.length === 0 ? (
+        <BloomEmpty
+          icon={<IconMapPin className="h-8 w-8" />}
+          title="Nenhuma demanda encontrada"
+          description="Tente ajustar seus filtros para encontrar mais oportunidades"
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {demands.map(demand => {
+            const createdDate = new Date(demand.createdAt);
+            const daysAgo = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+
+            const visibilityBadge = demand.visibilityPackage === 'URGENT'
+              ? { label: 'URGENTE', classes: 'bg-destructive/10 text-destructive' }
+              : demand.visibilityPackage === 'PREMIUM'
+              ? { label: 'DESTACADO', classes: 'bg-primary/10 text-primary' }
+              : demand.visibilityPackage === 'BASIC'
+              ? { label: 'VISÍVEL', classes: 'bg-success/10 text-success' }
+              : null;
+
+            return (
+              <div key={demand.id} className="bg-card rounded-3xl p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group flex flex-col h-full">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3 mb-5">
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/app/demands/${demand.id}`}>
+                      <h3 className="text-base font-display font-black text-foreground group-hover:text-primary transition-colors truncate uppercase">{demand.title}</h3>
+                    </Link>
+                    <div className="flex items-center gap-1 mt-1">
+                      <IconMapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest truncate">{demand.city}{demand.postalCode && ` (${demand.postalCode})`}</span>
+                    </div>
+                  </div>
+                  {visibilityBadge && (
+                    <span className={`px-3 py-1 text-[9px] font-display font-bold rounded-lg uppercase tracking-widest shrink-0 ${visibilityBadge.classes}`}>
+                      {visibilityBadge.label}
+                    </span>
+                  )}
+                </div>
+
+                {/* Description */}
+                <div className="flex-1 mb-5">
+                  <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-2">{demand.description}</p>
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {demand.serviceTypes.slice(0, 3).map((service, idx) => (
+                      <span key={idx} className="text-[9px] font-display font-bold text-muted-foreground border border-border px-2 py-0.5 rounded-lg uppercase tracking-widest">
+                        {getServiceTypeLabel(service)}
+                      </span>
+                    ))}
+                    {demand.serviceTypes.length > 3 && (
+                      <span className="text-[9px] font-display font-bold text-muted-foreground border border-border px-2 py-0.5 rounded-lg uppercase tracking-widest">
+                        +{demand.serviceTypes.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stats row */}
+                <div className="flex items-center justify-between pt-5 border-t border-border">
+                  <div className="flex items-center gap-4">
+                    {demand.hoursPerWeek && (
+                      <div className="flex items-center gap-1.5">
+                        <IconClock className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{demand.hoursPerWeek}h/sem</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <IconEye className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{demand.viewCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <IconMessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{demand.proposalCount}</span>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleOpenProposalWizard(demand.id);
+                    }}
+                    size="sm"
+                    variant="dark"
+                  >
+                    Propor
+                    <IconChevronRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Proposal Wizard Modal */}
       {wizard.demandId && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-background rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
-            {/* Proposal Wizard */}
-            <div className="p-6 space-y-5">
-              {/* Header with Close Button */}
+          <div className="bg-card rounded-3xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-elevated border border-border">
+            <div className="p-8 space-y-6">
+              {/* Header */}
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold">Sua Proposta</h2>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Passo {wizard.step} de 3
-                  </p>
+                  <h2 className="text-xl font-display font-black text-foreground uppercase tracking-tighter">Sua Proposta</h2>
+                  <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-1">Passo {wizard.step} de 3</p>
                 </div>
                 <button
                   onClick={handleCloseProposalWizard}
-                  className="h-9 w-9 rounded-lg bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors"
-                  aria-label="Fechar"
+                  className="h-9 w-9 rounded-xl bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
                 >
                   <IconX className="h-5 w-5" />
                 </button>
@@ -433,85 +368,63 @@ function DemandsContent() {
 
               {/* Progress Bar */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Passo {wizard.step} de 3
-                  </span>
-                  <span className="text-xs text-muted-foreground">{Math.round((wizard.step / 3) * 100)}%</span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+                    className="h-full bg-primary rounded-full transition-all duration-500"
                     style={{ width: `${(wizard.step / 3) * 100}%` }}
                   />
                 </div>
               </div>
 
-              {/* Step 1: Caregiver Info Summary */}
+              {/* Step 1 */}
               {wizard.step === 1 && (
                 <div className="space-y-5">
                   <div>
-                    <h3 className="text-base font-semibold mb-1">Quem você é?</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Compartilhe informações sobre sua experiência e qualificações
-                    </p>
+                    <h3 className="font-display font-bold text-foreground uppercase text-sm">Quem você é?</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Compartilhe informações sobre sua experiência e qualificações</p>
                   </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-medium">Sobre você (experiência, certificações)</Label>
-                      <Textarea
-                        value={wizard.aboutYou}
-                        onChange={e => setWizard(prev => ({ ...prev, aboutYou: e.target.value }))}
-                        placeholder="Ex: Tenho 10 anos de experiência em cuidados domiciliares, certificado em primeiros socorros..."
-                        rows={4}
-                        className="rounded-xl text-sm resize-none"
-                      />
-                      <p className="text-xs text-muted-foreground text-right">
-                        {wizard.aboutYou.length}/500
-                      </p>
-                    </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Sobre você</label>
+                    <Textarea
+                      value={wizard.aboutYou}
+                      onChange={e => setWizard(prev => ({ ...prev, aboutYou: e.target.value }))}
+                      placeholder="Ex: Tenho 10 anos de experiência em cuidados domiciliares..."
+                      rows={4}
+                      className="rounded-xl text-sm resize-none bg-secondary border-border/50"
+                    />
+                    <p className="text-[10px] text-muted-foreground text-right">{wizard.aboutYou.length}/500</p>
                   </div>
-
                   <Button
                     onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
                     disabled={wizard.aboutYou.trim().length === 0}
                     size="lg"
-                    className="w-full h-11 rounded-xl font-semibold gap-2"
+                    className="w-full"
                   >
-                    Continuar
-                    <IconArrowRight className="h-4 w-4" />
+                    Continuar <IconArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
               )}
 
-              {/* Step 2: Proposal Message */}
+              {/* Step 2 */}
               {wizard.step === 2 && (
                 <div className="space-y-5">
                   <div>
-                    <h3 className="text-base font-semibold mb-1">Sua proposta</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Por que você é ideal para esta demanda?
-                    </p>
+                    <h3 className="font-display font-bold text-foreground uppercase text-sm">Sua proposta</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Por que você é ideal para esta demanda?</p>
                   </div>
-
                   <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-medium">Mensagem para a família</Label>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Mensagem para a família</label>
                       <Textarea
                         value={wizard.message}
                         onChange={e => setWizard(prev => ({ ...prev, message: e.target.value }))}
-                        placeholder="Descreva por que você é um bom encaixe para esta demanda e o que pode oferecer..."
+                        placeholder="Descreva por que você é um bom encaixe..."
                         rows={4}
-                        className="rounded-xl text-sm resize-none"
+                        className="rounded-xl text-sm resize-none bg-secondary border-border/50"
                       />
-                      <p className="text-xs text-muted-foreground text-right">
-                        {wizard.message.length}/1000
-                      </p>
                     </div>
-
-                    <div className="space-y-1.5">
-                      <Label className="text-sm font-medium">Sua taxa por hora (€)</Label>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Taxa por hora (€)</label>
                       <Input
                         type="number"
                         value={wizard.expectedRate}
@@ -519,99 +432,64 @@ function DemandsContent() {
                         placeholder="Ex: 18.50"
                         step="0.50"
                         min="0"
-                        className="h-11 rounded-xl text-sm"
+                        className="h-11 rounded-xl bg-secondary border-border/50"
                       />
                     </div>
                   </div>
-
                   <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setWizard(prev => ({ ...prev, step: 1 }))}
-                      size="lg"
-                      className="h-11 rounded-xl px-4"
-                    >
+                    <Button variant="outline" onClick={() => setWizard(prev => ({ ...prev, step: 1 }))} size="lg" className="h-11 px-4">
                       <IconArrowLeft className="h-4 w-4" />
                     </Button>
                     <Button
                       onClick={() => setWizard(prev => ({ ...prev, step: 3 }))}
                       disabled={wizard.message.trim().length === 0 || !wizard.expectedRate}
                       size="lg"
-                      className="flex-1 h-11 rounded-xl font-semibold gap-2"
+                      className="flex-1"
                     >
-                      Revisar
-                      <IconArrowRight className="h-4 w-4" />
+                      Revisar <IconArrowRight className="h-4 w-4 ml-2" />
                     </Button>
                   </div>
                 </div>
               )}
 
-              {/* Step 3: Review */}
+              {/* Step 3 */}
               {wizard.step === 3 && (
                 <div className="space-y-5">
                   <div>
-                    <h3 className="text-base font-semibold mb-1">Revisar proposta</h3>
-                    <p className="text-xs text-muted-foreground">
-                      Verifique suas informações antes de enviar
-                    </p>
+                    <h3 className="font-display font-bold text-foreground uppercase text-sm">Revisar proposta</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Verifique suas informações antes de enviar</p>
                   </div>
-
-                  <div className="space-y-3 bg-surface rounded-xl border border-border/50 p-4">
+                  <div className="space-y-3 bg-secondary rounded-2xl border border-border/50 p-5">
                     <div className="border-b border-border/50 pb-3">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                        Sobre você
-                      </p>
+                      <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Sobre você</p>
                       <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
                     </div>
-
                     <div className="border-b border-border/50 pb-3">
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                        Mensagem
-                      </p>
+                      <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Mensagem</p>
                       <p className="text-sm line-clamp-3">{wizard.message}</p>
                     </div>
-
                     <div>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-                        Taxa horária
-                      </p>
-                      <p className="text-lg font-bold">€{parseFloat(wizard.expectedRate || '0').toFixed(2)}/h</p>
+                      <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Taxa horária</p>
+                      <p className="text-2xl font-display font-black text-foreground tracking-tighter">€{parseFloat(wizard.expectedRate || '0').toFixed(2)}/h</p>
                     </div>
                   </div>
 
                   {wizard.error && (
-                    <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl">
-                      <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                      <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                       <p className="text-sm text-destructive">{wizard.error}</p>
                     </div>
                   )}
 
                   <div className="flex gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
-                      size="lg"
-                      className="h-11 rounded-xl px-4"
-                      disabled={wizard.isSubmitting}
-                    >
+                    <Button variant="outline" onClick={() => setWizard(prev => ({ ...prev, step: 2 }))} size="lg" className="h-11 px-4" disabled={wizard.isSubmitting}>
                       <IconArrowLeft className="h-4 w-4" />
                     </Button>
-                    <Button
-                      onClick={handleSubmitProposal}
-                      disabled={wizard.isSubmitting}
-                      size="lg"
-                      className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
-                    >
+                    <Button onClick={handleSubmitProposal} disabled={wizard.isSubmitting} size="lg" className="flex-1">
                       {wizard.isSubmitting ? (
-                        <>
-                          <IconLoader2 className="h-4 w-4 animate-spin" />
-                          Enviando...
-                        </>
+                        <><IconLoader2 className="h-4 w-4 animate-spin mr-2" />Enviando...</>
                       ) : (
-                        <>
-                          Enviar Proposta
-                          <IconArrowRight className="h-4 w-4" />
-                        </>
+                        <>Enviar Proposta <IconArrowRight className="h-4 w-4 ml-2" /></>
                       )}
                     </Button>
                   </div>
@@ -630,10 +508,10 @@ export default function DemandsPage() {
     <AppShell>
       <Suspense
         fallback={
-          <div className="max-w-lg mx-auto space-y-4 py-8">
+          <div className="max-w-7xl mx-auto space-y-6">
             <div className="animate-pulse space-y-4">
-              <div className="h-24 bg-muted rounded-2xl" />
-              <div className="h-64 bg-muted rounded-2xl" />
+              <div className="h-10 bg-muted rounded-2xl w-64" />
+              <div className="h-64 bg-muted rounded-3xl" />
             </div>
           </div>
         }

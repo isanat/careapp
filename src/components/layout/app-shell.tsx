@@ -263,15 +263,15 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                   className={cn(
                     "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                     active
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
                   <Icon className={cn(
                     "h-5 w-5 flex-shrink-0 transition-colors duration-200",
-                    active ? "text-accent" : "text-muted-foreground group-hover:text-foreground"
+                    active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"
                   )} />
-                  <span className="tracking-tight">{item.label}</span>
+                  <span className="text-sm font-display font-bold tracking-tight">{item.label}</span>
                   {item.href === "/app/chat" && unreadCount > 0 && !active && (
                     <span className="ml-auto h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white">
                       {unreadCount}

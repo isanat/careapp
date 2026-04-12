@@ -164,7 +164,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <BloomCard interactive>
+      <div className="bg-card p-8 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
         {/* Header with status badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
@@ -182,8 +182,8 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
         <div className="grid grid-cols-2 gap-3 py-4 border-y border-border/30">
           {/* Other Party */}
           <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <IconUser className="h-4 w-4 text-secondary" />
+            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-muted-foreground">
+              <IconUser className="h-4 w-4" />
             </div>
             <div className="min-w-0">
               <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Cuidador</p>
@@ -193,8 +193,8 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
           {/* Duration */}
           <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <IconClock className="h-4 w-4 text-primary" />
+            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-primary">
+              <IconClock className="h-4 w-4" />
             </div>
             <div className="min-w-0">
               <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Duração</p>
@@ -217,7 +217,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
             <span className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">/h</span>
           </div>
         </div>
-      </BloomCard>
+      </div>
     </Link>
   );
 }
