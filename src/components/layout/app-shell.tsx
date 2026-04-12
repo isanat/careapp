@@ -129,10 +129,10 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Header */}
-      <header className="sticky top-0 z-50 bg-white/85 dark:bg-[#0B1120]/85 backdrop-blur-md border-b border-border/30 safe-area-inset-top">
+      {/* Top Header - Bloom Elements Glassmorphic */}
+      <header className="sticky top-0 z-50 h-16 bg-card/80 backdrop-blur-md border-b border-border shadow-sm safe-area-inset-top">
         <div className="px-4 lg:px-6 mx-auto max-w-7xl">
-          <div className="flex h-12 lg:h-14 items-center justify-between">
+          <div className="flex h-16 items-center justify-between">
             {/* Left: Logo & Mobile Menu */}
             <div className="flex items-center gap-3">
               <Button
@@ -164,7 +164,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 <Button variant="ghost" size="icon" className="relative h-9 w-9">
                   <IconBell className="h-5 w-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-warm text-[10px] font-bold text-white">
+                    <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
@@ -176,7 +176,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center gap-1.5 h-9 px-2">
                     <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary-dark text-white text-sm font-semibold">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-info text-white text-sm font-semibold">
                         {session?.user?.name?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
@@ -261,10 +261,10 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    "group relative flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-all duration-200",
+                    "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                     active
-                      ? "glass-pill text-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/5"
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   )}
                 >
                   <Icon className={cn(
@@ -273,7 +273,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                   )} />
                   <span className="tracking-tight">{item.label}</span>
                   {item.href === "/app/chat" && unreadCount > 0 && !active && (
-                    <span className="ml-auto h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warm text-[10px] font-bold text-white">
+                    <span className="ml-auto h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white">
                       {unreadCount}
                     </span>
                   )}
@@ -322,7 +322,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 )}>
                   <Icon className={cn("h-5 w-5", active && "text-accent")} />
                   {item.href === "/app/chat" && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-warm text-[9px] font-bold text-white">
+                    <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-warning text-[9px] font-bold text-white">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
