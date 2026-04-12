@@ -306,7 +306,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           <div className="flex items-center justify-between gap-4 mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
-                <IconVideo size={20} />
+                <IconVideo className="h-5 w-5" />
               </div>
               <span className="text-sm font-display font-bold text-muted-foreground uppercase tracking-widest">Entrevista em Video</span>
             </div>
@@ -345,7 +345,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             <div className="bg-card rounded-3xl p-8 border border-border shadow-card">
               <h3 className="font-display font-black text-lg text-foreground mb-6 flex items-center gap-3 uppercase">
                 <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
-                  <IconVideo size={20} />
+                  <IconVideo className="h-5 w-5" />
                 </div>
                 Preparação
               </h3>

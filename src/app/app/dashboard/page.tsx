@@ -127,25 +127,25 @@ export default function DashboardPage() {
           <BloomStatBlock
             label={t.nav.contracts}
             value={stats?.activeContracts || 0}
-            icon={<IconContract size={24} />}
+            icon={<IconContract className="h-6 w-6" />}
             colorClass="text-primary"
           />
           <BloomStatBlock
             label="Horas"
             value={`${stats?.totalHours || 0}h`}
-            icon={<IconClock size={24} />}
+            icon={<IconClock className="h-6 w-6" />}
             colorClass="text-secondary"
           />
           <BloomStatBlock
             label="Nota"
             value={stats?.rating?.toFixed(1) || '-'}
-            icon={<IconStar size={24} />}
+            icon={<IconStar className="h-6 w-6" />}
             colorClass="text-info"
           />
           <BloomStatBlock
             label="Reviews"
             value={stats?.totalReviews || 0}
-            icon={<IconEuro size={24} />}
+            icon={<IconEuro className="h-6 w-6" />}
             colorClass="text-success"
           />
         </div>
@@ -157,7 +157,7 @@ export default function DashboardPage() {
               <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
-                    <IconSearch size={20} />
+                    <IconSearch className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-bold text-foreground text-sm">{t.nav.searchCaregivers}</p>
@@ -172,7 +172,7 @@ export default function DashboardPage() {
               <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-secondary group-hover:scale-110 transition-transform flex-shrink-0">
-                    <IconInbox size={20} />
+                    <IconInbox className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-bold text-foreground text-sm">Propostas</p>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
             <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
-                  <IconContract size={20} />
+                  <IconContract className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-display font-bold text-foreground text-sm">{t.contracts.title}</p>
@@ -232,7 +232,7 @@ export default function DashboardPage() {
         <BloomCard>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary">
-              <IconShield size={20} />
+              <IconShield className="h-5 w-5" />
             </div>
             <h2 className="text-xl font-display font-black text-foreground uppercase">Benefícios</h2>
           </div>
