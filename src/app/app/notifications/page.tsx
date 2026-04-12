@@ -97,77 +97,90 @@ export default function NotificationsPage() {
   return (
     <AppShell>
       <div className="space-y-4">
-        <div className="flex items-center justify-between px-4 py-3 sticky top-0 z-10 bg-background border-b">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold">{"Notificações"}</h1>
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-lg font-bold">Notificações</h1>
             {unreadCount > 0 && (
-              <Badge variant="secondary">{unreadCount}</Badge>
+              <Badge className="bg-primary/10 text-primary border-0 px-2 py-1">
+                {unreadCount} nova{unreadCount !== 1 ? "s" : ""}
+              </Badge>
             )}
           </div>
           {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={markAllAsRead}>
-              <IconCheck className="h-4 w-4 mr-1" />
-              {"Marcar todas como lidas"}
+            <Button size="sm" variant="outline" onClick={markAllAsRead} className="h-8 text-xs">
+              <IconCheck className="h-3.5 w-3.5 mr-1" />
+              Marcar todas como lidas
             </Button>
           )}
         </div>
 
         {isLoading && (
-          <div className="px-4 space-y-2">
+          <div className="space-y-2">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-16 w-full rounded-lg" />
+              <Skeleton key={i} className="h-16 rounded-xl" />
             ))}
           </div>
         )}
 
         {!isLoading && notifications.length === 0 && (
-          <div className="px-4 py-12 text-center">
-            <IconBell className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <p className="text-sm text-muted-foreground">{"Nenhuma notificação"}</p>
+          <div className="py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
+            <IconBell className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+            <p className="text-sm font-medium text-foreground">Nenhuma notificação</p>
+            <p className="text-xs text-muted-foreground mt-1">Você receberá notificações sobre contratos e propostas aqui</p>
           </div>
         )}
 
         {!isLoading && notifications.length > 0 && (
-          <div className="px-4 space-y-2">
+          <div className="space-y-2">
             {notifications.map((notification) => {
               const Icon = typeIcons[notification.type] || IconBell;
+              const isUnread = !notification.isRead;
+
               return (
-                <Card
+                <div
                   key={notification.id}
-                  className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                    !notification.isRead ? "border-primary/30 bg-primary/5" : ""
+                  className={`bg-surface rounded-xl p-4 border-2 cursor-pointer transition-all card-interactive ${
+                    isUnread
+                      ? "border-primary/30 hover:border-primary/50"
+                      : "border-border/30 hover:border-border/50"
                   }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <CardContent className="p-3">
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2 rounded-full shrink-0 ${!notification.isRead ? "bg-primary/10" : "bg-muted"}`}>
-                        <Icon className={`h-4 w-4 ${!notification.isRead ? "text-primary" : "text-muted-foreground"}`} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className={`text-sm truncate ${!notification.isRead ? "font-semibold" : "font-medium"}`}>
-                            {notification.title}
-                          </p>
-                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                            {new Date(notification.createdAt).toLocaleDateString("pt-PT", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                          {notification.message}
-                        </p>
-                      </div>
-                      {!notification.isRead && (
-                        <div className="h-2 w-2 bg-primary rounded-full shrink-0 mt-2" />
-                      )}
+                  <div className="flex items-start gap-3">
+                    {/* Icon */}
+                    <div className={`h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      isUnread ? "bg-primary/10" : "bg-muted/30"
+                    }`}>
+                      <Icon className={`h-5 w-5 ${isUnread ? "text-primary" : "text-muted-foreground"}`} />
                     </div>
-                  </CardContent>
-                </Card>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <p className={`text-sm truncate ${isUnread ? "font-bold text-foreground" : "font-semibold text-foreground"}`}>
+                          {notification.title}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0 ml-2">
+                          {new Date(notification.createdAt).toLocaleDateString("pt-PT", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <p className={`text-xs line-clamp-2 ${isUnread ? "text-foreground/80" : "text-muted-foreground"}`}>
+                        {notification.message}
+                      </p>
+                    </div>
+
+                    {/* Unread indicator */}
+                    {isUnread && (
+                      <div className="h-2.5 w-2.5 bg-primary rounded-full shrink-0 mt-1.5" />
+                    )}
+                  </div>
+                </div>
               );
             })}
           </div>
