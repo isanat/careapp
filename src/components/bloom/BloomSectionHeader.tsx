@@ -1,38 +1,26 @@
 import { ReactNode } from 'react';
 
-interface BloomSectionHeaderProps {
+interface SectionHeaderProps {
   title: string;
-  description?: string | ReactNode;
-  icon?: ReactNode;
-  action?: ReactNode;
-  className?: string;
+  desc?: string | ReactNode;
 }
 
 /**
- * Bloom Elements section header component
- * Padrão: text-2xl sm:text-3xl md:text-4xl font-display font-black uppercase
+ * Bloom Elements SectionHeader - Page section titles
+ * Matches: https://github.com/isanat/bloom-elements/src/components/evyra/EvyraShared.tsx
  */
 export function BloomSectionHeader({
   title,
-  description,
-  icon,
-  action,
-  className = '',
-}: BloomSectionHeaderProps) {
+  desc,
+}: SectionHeaderProps) {
   return (
-    <div className={`space-y-2 ${className}`}>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          {icon && <div className="h-6 w-6 sm:h-7 sm:w-7">{icon}</div>}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground uppercase">
-            {title}
-          </h1>
-        </div>
-        {action && <div>{action}</div>}
-      </div>
-      {description && (
-        <p className="text-sm sm:text-base leading-relaxed text-muted-foreground">
-          {description}
+    <div className="space-y-2">
+      <h2 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+        {title}
+      </h2>
+      {desc && (
+        <p className="text-base text-muted-foreground font-medium">
+          {desc}
         </p>
       )}
     </div>
