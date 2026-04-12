@@ -240,12 +240,12 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   // Star rating component
   const StarRating = ({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) => (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-sm font-medium text-foreground">{label}</span>
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map(i => (
           <button key={i} onClick={() => onChange(i)} className="p-0.5 touch-manipulation">
             <IconStar className={`h-6 w-6 transition-colors ${
-              i <= value ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20"
+              i <= value ? "fill-info text-info" : "text-muted-foreground/20"
             }`} />
           </button>
         ))}
@@ -287,10 +287,10 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
   const getStatusBadge = () => {
     switch (interview.status) {
-      case "SCHEDULED": return <Badge variant="secondary">Agendada</Badge>;
-      case "IN_PROGRESS": return <Badge className="bg-green-500">Em Andamento</Badge>;
-      case "COMPLETED": return <Badge className="bg-primary">Concluida</Badge>;
-      case "CANCELLED": return <Badge variant="destructive">Cancelada</Badge>;
+      case "SCHEDULED": return <Badge className="bg-warning/10 text-warning border-0">Agendada</Badge>;
+      case "IN_PROGRESS": return <Badge className="bg-success/10 text-success border-0">Em Andamento</Badge>;
+      case "COMPLETED": return <Badge className="bg-primary/10 text-primary border-0">Concluida</Badge>;
+      case "CANCELLED": return <Badge className="bg-destructive/10 text-destructive border-0">Cancelada</Badge>;
       default: return null;
     }
   };
@@ -301,33 +301,32 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
       <div className="space-y-5 max-w-4xl mx-auto pb-6">
         {/* Header */}
-        <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md gradient-secondary">
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <IconVideo className="h-5 w-5" />
-                <span className="text-sm font-medium opacity-80">Entrevista em Video</span>
+        <div className="bg-surface rounded-2xl border-2 border-primary/20 p-5">
+          <div className="h-1 -mx-5 -mt-5 mb-5 rounded-t-lg bg-primary" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <IconVideo className="h-5 w-5 text-primary" />
               </div>
-              {getStatusBadge()}
+              <span className="text-sm font-semibold text-muted-foreground">Entrevista em Video</span>
             </div>
-            <h1 className="text-xl font-bold">
-              {isFamily ? "Entrevista com" : "Entrevista da"} {otherPartyName}
-            </h1>
-            {interview.status === "SCHEDULED" && (
-              <div className="flex items-center gap-2 mt-2 text-sm opacity-80">
-                <IconClock className="h-4 w-4" />
-                <span>
-                  {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
-                    weekday: "short", day: "numeric", month: "short"
-                  })} as {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
-                    hour: "2-digit", minute: "2-digit"
-                  })} ({interview.durationMinutes} min)
-                </span>
-              </div>
-            )}
+            {getStatusBadge()}
           </div>
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
-          <div className="absolute -right-2 -bottom-6 h-32 w-32 rounded-full bg-white/5" />
+          <h1 className="text-2xl font-bold text-foreground">
+            {isFamily ? "Entrevista com" : "Entrevista da"} {otherPartyName}
+          </h1>
+          {interview.status === "SCHEDULED" && (
+            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+              <IconClock className="h-4 w-4" />
+              <span>
+                {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
+                  weekday: "short", day: "numeric", month: "short"
+                })} as {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
+                  hour: "2-digit", minute: "2-digit"
+                })} ({interview.durationMinutes} min)
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Error */}
@@ -341,11 +340,11 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
         {/* ====== SCHEDULED ====== */}
         {interview.status === "SCHEDULED" && (
           <div className="space-y-4">
-            <div className="bg-surface rounded-2xl p-5 shadow-card border border-border/50">
+            <div className="bg-surface rounded-2xl p-5 border-2 border-border/30">
               <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <IconVideo className="h-4 w-4 text-primary" />
-                </span>
+                </div>
                 Preparacao
               </h3>
               <div className="space-y-3">
@@ -448,7 +447,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             </div>
 
             {/* Section 1: About the interview itself */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-1">
+            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4 space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                 Avaliacao da Entrevista
               </p>
@@ -458,7 +457,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             </div>
 
             {/* Section 2: Recommendation */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4">
+            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 Recomendacao
               </p>
@@ -466,26 +465,26 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 <button
                   onClick={() => setWouldRecommend(true)}
                   className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
-                    wouldRecommend ? "border-green-500 bg-green-50 dark:bg-green-950/20" : "border-border"
+                    wouldRecommend ? "border-success/40 bg-success/10 text-success" : "border-border/30 text-muted-foreground"
                   }`}
                 >
                   <span className="text-xl block mb-1">{"\uD83D\uDC4D"}</span>
-                  <span className={`text-sm font-medium ${wouldRecommend ? "text-green-600" : ""}`}>Recomendo</span>
+                  <span className="text-sm font-medium">Recomendo</span>
                 </button>
                 <button
                   onClick={() => setWouldRecommend(false)}
                   className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
-                    !wouldRecommend ? "border-red-500 bg-red-50 dark:bg-red-950/20" : "border-border"
+                    !wouldRecommend ? "border-destructive/40 bg-destructive/10 text-destructive" : "border-border/30 text-muted-foreground"
                   }`}
                 >
                   <span className="text-xl block mb-1">{"\uD83D\uDC4E"}</span>
-                  <span className={`text-sm font-medium ${!wouldRecommend ? "text-red-600" : ""}`}>Nao recomendo</span>
+                  <span className="text-sm font-medium">Nao recomendo</span>
                 </button>
               </div>
             </div>
 
             {/* Section 3: Legal acknowledgements */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3.5">
+            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4 space-y-3.5">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Confirmacoes Importantes
               </p>

@@ -141,9 +141,9 @@ export default function DashboardPage() {
             <p className="text-2xl font-bold mt-2 text-foreground">{stats?.totalHours || 0}h</p>
             <p className="text-xs text-muted-foreground mt-1 font-medium">Horas</p>
           </div>
-          <div className="bg-surface rounded-xl p-4 border-2 border-amber-200/30 hover:border-amber-300/40 transition-colors text-center group">
-            <div className="h-9 w-9 rounded-lg bg-amber-100/20 flex items-center justify-center mx-auto group-hover:bg-amber-100/30 transition-colors">
-              <IconStar className="h-5 w-5 text-amber-600" />
+          <div className="bg-surface rounded-xl p-4 border-2 border-info/20 hover:border-info/40 transition-colors text-center group">
+            <div className="h-9 w-9 rounded-lg bg-info/10 flex items-center justify-center mx-auto group-hover:bg-info/15 transition-colors">
+              <IconStar className="h-5 w-5 text-info" />
             </div>
             <p className="text-2xl font-bold mt-2 text-foreground">{stats?.rating?.toFixed(1) || '-'}</p>
             <p className="text-xs text-muted-foreground mt-1 font-medium">Nota</p>

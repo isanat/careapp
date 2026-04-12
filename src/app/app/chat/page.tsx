@@ -203,31 +203,41 @@ export default function ChatPage() {
                       <button
                         key={conv.id}
                         onClick={() => { setSelectedConversation(conv); setMobileShowChat(true); }}
-                        className={`w-full p-3 rounded-xl text-left transition-all hover:bg-muted/70 ${
-                          selectedConversation?.id === conv.id ? "bg-primary/5 border border-primary/20" : ""
+                        className={`w-full text-left transition-all rounded-xl p-3 border-2 ${
+                          selectedConversation?.id === conv.id
+                            ? "bg-primary/5 border-primary/40 hover:border-primary/60"
+                            : "border-border/30 hover:border-border/60 hover:bg-muted/30"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 rounded-xl">
-                            <AvatarFallback className="rounded-xl text-sm font-semibold bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                          <Avatar className="h-10 w-10 rounded-lg flex-shrink-0">
+                            <AvatarFallback className="rounded-lg text-sm font-semibold bg-primary/10 text-primary">
                               {conv.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between">
-                              <p className="text-sm font-semibold truncate">{conv.participant?.name || "Usuario"}</p>
+                            <div className="flex items-center justify-between gap-2 mb-0.5">
+                              <p className={`text-sm font-semibold truncate ${
+                                selectedConversation?.id === conv.id ? "text-primary" : "text-foreground"
+                              }`}>
+                                {conv.participant?.name || "Usuario"}
+                              </p>
                               {conv.lastMessage && (
-                                <span className="text-[10px] text-muted-foreground">
+                                <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
                                   {new Date(conv.lastMessage.createdAt).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" })}
                                 </span>
                               )}
                             </div>
-                            <div className="flex items-center justify-between mt-0.5">
-                              <p className="text-xs text-muted-foreground truncate pr-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className={`text-xs truncate ${
+                                conv.unreadCount > 0
+                                  ? "font-semibold text-foreground"
+                                  : "text-muted-foreground"
+                              }`}>
                                 {conv.lastMessage?.content || t.chat.noMessages}
                               </p>
                               {conv.unreadCount > 0 && (
-                                <Badge className="h-5 min-w-[20px] px-1.5 flex items-center justify-center text-[10px] bg-primary rounded-full">
+                                <Badge className="h-5 min-w-[20px] px-1.5 flex items-center justify-center text-[10px] font-bold bg-primary text-white rounded-full shrink-0">
                                   {conv.unreadCount}
                                 </Badge>
                               )}
