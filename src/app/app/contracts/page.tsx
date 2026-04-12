@@ -5,10 +5,10 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
 import {
   IconContract,
   IconPlus,
@@ -43,15 +43,6 @@ interface Contract {
   };
 }
 
-const statusConfig: Record<string, { color: string; bg: string; border: string }> = {
-  DRAFT: { color: "text-muted-foreground", bg: "bg-muted", border: "border-l-muted-foreground" },
-  PENDING_ACCEPTANCE: { color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-950/30", border: "border-l-amber-500" },
-  PENDING_PAYMENT: { color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-950/30", border: "border-l-orange-500" },
-  ACTIVE: { color: "text-success", bg: "bg-success/5", border: "border-l-success" },
-  COMPLETED: { color: "text-primary", bg: "bg-primary/5", border: "border-l-primary" },
-  CANCELLED: { color: "text-error", bg: "bg-error/5", border: "border-l-error" },
-  DISPUTED: { color: "text-secondary", bg: "bg-secondary/5", border: "border-l-secondary" },
-};
 
 export default function ContractsPage() {
   const { data: session, status } = useSession();
@@ -91,33 +82,23 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-3">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold">{t.contracts.title}</h1>
-          <div className="flex gap-1.5">
-            <Button variant="outline" onClick={fetchContracts} disabled={isLoading} size="icon" className="h-8 w-8">
-              <IconRefresh className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            </Button>
-            {isFamily && (
-              <Button asChild size="sm">
-                <Link href="/app/search">
-                  <IconPlus className="h-3.5 w-3.5 mr-1" />
-                  {t.contracts.new}
-                </Link>
-              </Button>
-            )}
-          </div>
-        </div>
+      <div className="space-y-6 max-w-4xl">
+        {/* Header - Bloom style */}
+        <BloomSectionHeader
+          title={t.contracts.title}
+          icon={<IconContract className="h-6 w-6 text-primary" />}
+        />
 
-        {/* Error */}
+        {/* Error - Bloom style */}
         {error && (
-          <div className="bg-error/5 border border-error/20 rounded-xl p-3">
-            <p className="text-xs text-error">{error}</p>
-            <Button variant="outline" onClick={fetchContracts} size="sm" className="mt-1.5 h-7 text-xs">
-              {t.submit}
-            </Button>
-          </div>
+          <BloomCard topBar topBarColor="bg-destructive">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-destructive">{error}</p>
+              <Button variant="outline" onClick={fetchContracts} size="sm" className="h-8 text-xs">
+                {t.submit}
+              </Button>
+            </div>
+          </BloomCard>
         )}
 
         {/* Loading */}
@@ -154,10 +135,10 @@ export default function ContractsPage() {
                     <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
                   ))}
                   {items.length === 0 && (
-                    <div className="text-center py-8 bg-surface rounded-xl border border-border/30">
-                      <EmptyIcon className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
-                      <p className="text-xs text-muted-foreground">{t.contracts.noContracts}</p>
-                    </div>
+                    <BloomEmpty
+                      icon={<EmptyIcon className="h-6 w-6" />}
+                      title={t.contracts.noContracts}
+                    />
                   )}
                 </TabsContent>
               );
@@ -172,75 +153,74 @@ export default function ContractsPage() {
 function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily: boolean; t: any }) {
   const statusLabel = CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status;
   const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
-  const config = statusConfig[contract.status] || statusConfig.DRAFT;
 
-  // Map status to colors for border
-  const statusColorMap: Record<string, string> = {
-    DRAFT: "border-muted/30 hover:border-muted/60",
-    PENDING_ACCEPTANCE: "border-amber-200/50 hover:border-amber-300/60",
-    PENDING_PAYMENT: "border-orange-200/50 hover:border-orange-300/60",
-    ACTIVE: "border-success/30 hover:border-success/50",
-    COMPLETED: "border-primary/30 hover:border-primary/50",
-    CANCELLED: "border-error/30 hover:border-error/50",
-    DISPUTED: "border-secondary/30 hover:border-secondary/50",
+  // Map status to BloomBadge variants
+  const statusVariantMap: Record<string, "primary" | "success" | "warning" | "destructive" | "muted"> = {
+    DRAFT: "muted",
+    PENDING_ACCEPTANCE: "warning",
+    PENDING_PAYMENT: "warning",
+    ACTIVE: "success",
+    COMPLETED: "primary",
+    CANCELLED: "destructive",
+    DISPUTED: "destructive",
   };
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <div className={`bg-surface rounded-xl p-4 border-2 ${statusColorMap[contract.status] || statusColorMap.DRAFT} transition-all duration-300 card-interactive`}>
+      <BloomCard interactive>
         {/* Header with status badge */}
-        <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+            <h3 className="font-display font-black text-foreground truncate uppercase text-sm group-hover:text-primary transition-colors">
               {contract.title || t.contracts.title}
             </h3>
-            <p className="text-xs text-muted-foreground mt-1">{contract.description && contract.description.slice(0, 60)}</p>
+            <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 truncate">{contract.description && contract.description.slice(0, 60)}</p>
           </div>
-          <Badge className={`${config.bg} ${config.color} border-0 text-[10px] px-2 py-0.5 h-5 shrink-0 font-semibold`}>
+          <BloomBadge variant={statusVariantMap[contract.status] || "muted"}>
             {statusLabel}
-          </Badge>
+          </BloomBadge>
         </div>
 
         {/* Info grid */}
-        <div className="grid grid-cols-2 gap-2 py-3 border-y border-border/30">
+        <div className="grid grid-cols-2 gap-3 py-4 border-y border-border/30">
           {/* Other Party */}
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+          <div className="flex items-start gap-3">
+            <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <IconUser className="h-4 w-4 text-secondary" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] text-muted-foreground font-medium">Cuidador</p>
-              <p className="text-xs font-semibold text-foreground truncate">{contract.otherParty?.name || t.none}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Cuidador</p>
+              <p className="text-xs font-semibold text-foreground truncate mt-1">{contract.otherParty?.name || t.none}</p>
             </div>
           </div>
 
           {/* Duration */}
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <div className="flex items-start gap-3">
+            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               <IconClock className="h-4 w-4 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] text-muted-foreground font-medium">Duração</p>
-              <p className="text-xs font-semibold text-foreground">{contract.hoursPerWeek}h/semana</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Duração</p>
+              <p className="text-xs font-semibold text-foreground mt-1">{contract.hoursPerWeek}h/semana</p>
             </div>
           </div>
         </div>
 
         {/* Footer: Date & Rate */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
-          <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-            <IconCalendar className="h-3.5 w-3.5" />
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
+          <div className="flex items-center gap-2 text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
+            <IconCalendar className="h-4 w-4" />
             {contract.startDate && (
               <span>{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
             )}
           </div>
           <div className="flex items-center gap-1">
             <IconEuro className="h-4 w-4 text-success" />
-            <span className="text-sm font-bold text-success">{hourlyRate.toFixed(0)}€</span>
-            <span className="text-[11px] text-muted-foreground">/h</span>
+            <span className="text-base font-display font-black tracking-tighter text-success">{hourlyRate.toFixed(0)}€</span>
+            <span className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">/h</span>
           </div>
         </div>
-      </div>
+      </BloomCard>
     </Link>
   );
 }
