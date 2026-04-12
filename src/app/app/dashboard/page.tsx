@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty, BloomStatBlock } from "@/components/bloom";
 import {
   IconToken,
   IconContract,
@@ -109,120 +109,108 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        {/* Welcome + Status inline - Bloom Header */}
+        {/* Welcome + Status inline - Bloom Elements Header */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-display font-black text-foreground uppercase">
+            <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
               {t.dashboard.welcome}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">{firstName}</p>
+            <p className="text-base text-muted-foreground font-medium mt-2">{firstName}</p>
           </div>
           <BloomBadge variant={session?.user?.status === "ACTIVE" ? "success" : "warning"}>
             {session?.user?.status === "ACTIVE" ? t.dashboard.status.active : t.dashboard.status.pending}
           </BloomBadge>
         </div>
 
-        {/* Stats - 4 columns Bloom pattern */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                <IconContract className="h-5 w-5 text-primary" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.activeContracts || 0}</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">{t.nav.contracts}</p>
-            </div>
-          </BloomCard>
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center mb-3">
-                <IconClock className="h-5 w-5 text-secondary" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.totalHours || 0}h</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Horas</p>
-            </div>
-          </BloomCard>
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-info/10 flex items-center justify-center mb-3">
-                <IconStar className="h-5 w-5 text-info" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.rating?.toFixed(1) || '-'}</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Nota</p>
-            </div>
-          </BloomCard>
-          <BloomCard interactive>
-            <div className="flex flex-col items-center text-center">
-              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center mb-3">
-                <IconEuro className="h-5 w-5 text-success" />
-              </div>
-              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.totalReviews || 0}</p>
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Reviews</p>
-            </div>
-          </BloomCard>
+        {/* Stats - 4 columns Bloom Elements StatBlock pattern */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          <BloomStatBlock
+            label={t.nav.contracts}
+            value={stats?.activeContracts || 0}
+            icon={<IconContract size={24} />}
+            colorClass="text-primary"
+          />
+          <BloomStatBlock
+            label="Horas"
+            value={`${stats?.totalHours || 0}h`}
+            icon={<IconClock size={24} />}
+            colorClass="text-secondary"
+          />
+          <BloomStatBlock
+            label="Nota"
+            value={stats?.rating?.toFixed(1) || '-'}
+            icon={<IconStar size={24} />}
+            colorClass="text-info"
+          />
+          <BloomStatBlock
+            label="Reviews"
+            value={stats?.totalReviews || 0}
+            icon={<IconEuro size={24} />}
+            colorClass="text-success"
+          />
         </div>
 
-        {/* Quick Actions - horizontal row Bloom */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        {/* Quick Actions - horizontal row Bloom Elements pattern */}
+        <div className="flex flex-col sm:flex-row gap-5">
           {isFamily && (
             <Link href="/app/search" className="sm:flex-1">
-              <BloomCard interactive className="h-full">
+              <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <IconSearch className="h-6 w-6 text-primary" />
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+                    <IconSearch size={20} />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-foreground truncate">{t.nav.searchCaregivers}</p>
-                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Encontrar</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display font-bold text-foreground text-sm">{t.nav.searchCaregivers}</p>
+                    <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Encontrar</p>
                   </div>
                 </div>
-              </BloomCard>
+              </div>
             </Link>
           )}
           {isCaregiver && (
             <Link href="/app/proposals" className="sm:flex-1">
-              <BloomCard interactive className="h-full">
+              <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                    <IconInbox className="h-6 w-6 text-secondary" />
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-secondary group-hover:scale-110 transition-transform flex-shrink-0">
+                    <IconInbox size={20} />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-foreground truncate">Propostas</p>
-                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Solicitacoes</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display font-bold text-foreground text-sm">Propostas</p>
+                    <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Solicitações</p>
                   </div>
                 </div>
-              </BloomCard>
+              </div>
             </Link>
           )}
           <Link href="/app/contracts" className="sm:flex-1">
-            <BloomCard interactive className="h-full">
+            <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <IconContract className="h-6 w-6 text-primary" />
+                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+                  <IconContract size={20} />
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-foreground truncate">{t.contracts.title}</p>
-                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">{t.dashboard.viewAll}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-display font-bold text-foreground text-sm">{t.contracts.title}</p>
+                  <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{t.dashboard.viewAll}</p>
                 </div>
               </div>
-            </BloomCard>
+            </div>
           </Link>
         </div>
 
-        {/* Next Steps - Bloom style */}
+        {/* Next Steps - Bloom Elements style */}
         {pendingSteps.length > 0 && (
-          <BloomCard topBar topBarColor="bg-warning">
-            <div className="space-y-3">
+          <BloomCard>
+            <div className="space-y-3 border-l-4 border-warning pl-4">
               <div className="flex items-center gap-2">
                 <IconAlertCircle className="h-5 w-5 text-warning" />
                 <h3 className="text-sm font-display font-black text-foreground uppercase">{t.dashboard.nextSteps.title}</h3>
               </div>
               <div className="space-y-2">
                 {pendingSteps.map((step) => (
-                  <Link key={step.key} href={step.href} className="flex items-center gap-3 py-2.5 px-3 hover:bg-muted/50 rounded-lg transition-colors">
-                    <step.icon className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                  <Link key={step.key} href={step.href} className="flex items-center gap-3 py-2.5 px-3 hover:bg-secondary/50 rounded-lg transition-colors group">
+                    <step.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
                     <span className="flex-1 text-sm font-medium text-foreground">{step.label}</span>
-                    <IconChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
                   </Link>
                 ))}
               </div>
@@ -230,52 +218,55 @@ export default function DashboardPage() {
           </BloomCard>
         )}
 
-        {/* All set - Bloom style */}
+        {/* All set - Bloom Elements style */}
         {pendingSteps.length === 0 && (
-          <BloomCard topBar topBarColor="bg-success" interactive>
-            <div className="flex items-center gap-3">
+          <BloomCard>
+            <div className="flex items-center gap-3 border-l-4 border-success pl-4">
               <IconCheck className="h-6 w-6 text-success flex-shrink-0" />
-              <span className="text-sm font-semibold text-success">{t.dashboard.allSet}</span>
+              <span className="text-sm font-display font-bold text-success uppercase">{t.dashboard.allSet}</span>
             </div>
           </BloomCard>
         )}
 
-        {/* Platform Benefits - Bloom style */}
-        <BloomCard topBar>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <IconShield className="h-5 w-5 text-primary" />
+        {/* Platform Benefits - Bloom Elements style */}
+        <BloomCard>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary">
+              <IconShield size={20} />
             </div>
-            <h2 className="text-lg font-display font-black text-foreground uppercase">Beneficios</h2>
+            <h2 className="text-xl font-display font-black text-foreground uppercase">Benefícios</h2>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {(isFamily
               ? [
                   { title: "Cuidadores Verificados", sub: "KYC e antecedentes" },
-                  { title: "Contratos Juridicos", sub: "Assinatura digital" },
-                  { title: "Pagamento Seguro", sub: "Protecao financeira" },
-                  { title: "Recibos Fiscais", sub: "Validos para IRS" },
+                  { title: "Contratos Jurídicos", sub: "Assinatura digital" },
+                  { title: "Pagamento Seguro", sub: "Proteção financeira" },
+                  { title: "Recibos Fiscais", sub: "Válidos para IRS" },
                 ]
               : [
                   { title: "Pagamento Garantido", sub: "Receba pontualmente" },
-                  { title: "Perfil Verificado", sub: "Mais familias confiam" },
-                  { title: "Reputacao Publica", sub: "Avaliacoes verificaveis" },
-                  { title: "Protecao Juridica", sub: "Contrato formal" },
+                  { title: "Perfil Verificado", sub: "Mais famílias confiam" },
+                  { title: "Reputação Pública", sub: "Avaliações verificáveis" },
+                  { title: "Proteção Jurídica", sub: "Contrato formal" },
                 ]
             ).map((item, i) => (
-              <div key={i} className="flex items-center gap-2 py-2 px-3 bg-muted/30 rounded-lg">
-                <IconCheck className="h-4 w-4 text-success shrink-0" />
-                <span className="text-xs font-medium truncate">{item.title}</span>
+              <div key={i} className="flex items-start gap-3 p-3 bg-secondary/30 rounded-2xl border border-border/50 hover:bg-secondary/50 transition-colors">
+                <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-display font-bold text-foreground">{item.title}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.sub}</p>
+                </div>
               </div>
             ))}
           </div>
         </BloomCard>
 
-        {/* Recent Activity - Bloom style */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-display font-black text-foreground uppercase">{t.dashboard.recentActivity}</h2>
-            <Link href="/app/payments" className="text-[9px] font-display font-bold text-primary uppercase tracking-widest hover:text-primary/80 transition-colors">
+        {/* Recent Activity - Bloom Elements style */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-display font-black text-foreground uppercase">{t.dashboard.recentActivity}</h2>
+            <Link href="/app/payments" className="text-[10px] font-display font-bold text-primary uppercase tracking-widest hover:text-primary/80 transition-colors">
               {t.dashboard.viewAll}
             </Link>
           </div>
@@ -283,10 +274,10 @@ export default function DashboardPage() {
           {recentActivity.length > 0 ? (
             <div className="space-y-3">
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <BloomCard key={index} interactive>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`h-12 w-12 rounded-lg flex items-center justify-center font-display font-bold ${
+                <div key={index} className="bg-card p-5 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${
                         activity.type === "credit" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
                       }`}>
                         {activity.type === "credit"
@@ -294,18 +285,18 @@ export default function DashboardPage() {
                           : <IconArrowDown className="h-5 w-5" />
                         }
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-foreground truncate">{activity.description}</p>
-                        <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-display font-bold text-foreground truncate">{activity.description}</p>
+                        <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
                       </div>
                     </div>
-                    <span className={`text-sm sm:text-base font-display font-black tracking-tighter flex-shrink-0 ml-4 ${
+                    <span className={`text-base font-display font-black tracking-tighter flex-shrink-0 ${
                       activity.type === "credit" ? "text-success" : "text-destructive"
                     }`}>
                       {activity.type === "credit" ? "+" : ""}{activity.amount}€
                     </span>
                   </div>
-                </BloomCard>
+                </div>
               ))}
             </div>
           ) : (
