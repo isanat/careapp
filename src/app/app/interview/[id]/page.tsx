@@ -299,29 +299,29 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
   return (
     <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
-      <div className="space-y-5 max-w-4xl mx-auto pb-6">
-        {/* Header */}
-        <div className="bg-surface rounded-2xl border-2 border-primary/20 p-5">
-          <div className="h-1 -mx-5 -mt-5 mb-5 rounded-t-lg bg-primary" />
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <IconVideo className="h-5 w-5 text-primary" />
+      <div className="space-y-6 max-w-4xl mx-auto pb-6">
+        {/* Header - Bloom Elements style */}
+        <div className="bg-card rounded-3xl border border-border shadow-card p-8 overflow-hidden">
+          <div className="h-1 -mx-8 -mt-8 mb-6 bg-primary" />
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
+                <IconVideo size={20} />
               </div>
-              <span className="text-sm font-semibold text-muted-foreground">Entrevista em Video</span>
+              <span className="text-sm font-display font-bold text-muted-foreground uppercase tracking-widest">Entrevista em Video</span>
             </div>
             {getStatusBadge()}
           </div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl md:text-3xl font-display font-black text-foreground uppercase tracking-tighter">
             {isFamily ? "Entrevista com" : "Entrevista da"} {otherPartyName}
           </h1>
           {interview.status === "SCHEDULED" && (
-            <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
               <IconClock className="h-4 w-4" />
               <span>
                 {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
                   weekday: "short", day: "numeric", month: "short"
-                })} as {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
+                })} às {new Date(interview.scheduledAt).toLocaleTimeString("pt-PT", {
                   hour: "2-digit", minute: "2-digit"
                 })} ({interview.durationMinutes} min)
               </span>
@@ -329,34 +329,36 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           )}
         </div>
 
-        {/* Error */}
+        {/* Error - Bloom Elements style */}
         {error && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex items-start gap-3">
-            <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-            <p className="text-destructive text-sm">{error}</p>
+          <div className="bg-card rounded-3xl border border-border shadow-card p-8 border-l-4 border-l-destructive">
+            <div className="flex items-start gap-4">
+              <IconAlertCircle className="h-6 w-6 text-destructive flex-shrink-0" />
+              <p className="text-destructive text-sm font-medium">{error}</p>
+            </div>
           </div>
         )}
 
         {/* ====== SCHEDULED ====== */}
         {interview.status === "SCHEDULED" && (
-          <div className="space-y-4">
-            <div className="bg-surface rounded-2xl p-5 border-2 border-border/30">
-              <h3 className="font-semibold text-base mb-3 flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <IconVideo className="h-4 w-4 text-primary" />
+          <div className="space-y-5">
+            <div className="bg-card rounded-3xl p-8 border border-border shadow-card">
+              <h3 className="font-display font-black text-lg text-foreground mb-6 flex items-center gap-3 uppercase">
+                <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
+                  <IconVideo size={20} />
                 </div>
-                Preparacao
+                Preparação
               </h3>
               <div className="space-y-3">
                 {[
-                  { icon: "\uD83C\uDFA5", text: "Verifique se sua camera e microfone funcionam" },
+                  { icon: "\uD83C\uDFA5", text: "Verifique se sua câmera e microfone funcionam" },
                   { icon: "\uD83D\uDD07", text: "Escolha um local silencioso e bem iluminado" },
                   { icon: "\uD83D\uDCDD", text: "Tenha suas perguntas anotadas" },
-                  { icon: "\uD83D\uDD12", text: "A entrevista e privada e segura" },
+                  { icon: "\uD83D\uDD12", text: "A entrevista é privada e segura" },
                 ].map((tip, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm">
-                    <span className="text-lg flex-shrink-0">{tip.icon}</span>
-                    <span className="text-muted-foreground">{tip.text}</span>
+                  <div key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <span className="text-lg flex-shrink-0 mt-0.5">{tip.icon}</span>
+                    <span>{tip.text}</span>
                   </div>
                 ))}
               </div>
@@ -364,16 +366,16 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             <Button
               onClick={handleStartInterview}
               size="lg"
-              className="w-full h-16 text-lg font-semibold rounded-2xl shadow-lg shadow-primary/25 bg-primary hover:bg-primary/90"
+              className="w-full h-14 text-base font-display font-bold uppercase tracking-wide"
             >
-              <IconVideo className="h-6 w-6 mr-3" />
+              <IconVideo className="h-5 w-5 mr-2" />
               Entrar na Sala de Entrevista
             </Button>
             <Button
               variant="outline"
               onClick={() => router.push("/app/interviews")}
               size="lg"
-              className="w-full h-12 rounded-2xl"
+              className="w-full h-12"
             >
               <IconArrowLeft className="h-4 w-4 mr-2" />
               Voltar às Entrevistas
@@ -383,7 +385,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
         {/* ====== IN PROGRESS ====== */}
         {interview.status === "IN_PROGRESS" && (
-          <div className="space-y-3">
+          <div className="space-y-5">
             <AgoraRoom
               channelName={roomName}
               displayName={session?.user?.name || "Usuario"}
@@ -391,25 +393,27 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               className="h-[calc(100vh-220px)] min-h-[400px]"
             />
 
-            {/* Warning when user left meeting */}
+            {/* Warning when user left meeting - Bloom Elements style */}
             {userLeftMeeting && (
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3">
-                <IconAlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-amber-700">Você saiu da reunião</p>
-                  <p className="text-sm text-amber-600 mt-1">
-                    Para finalizar a entrevista e ir para feedback, clique em "Finalizar" abaixo.
-                  </p>
+              <div className="bg-card rounded-3xl p-8 border border-border shadow-card border-l-4 border-l-warning">
+                <div className="flex items-start gap-4">
+                  <IconAlertCircle className="h-6 w-6 text-warning flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-display font-bold text-foreground">Você saiu da reunião</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Para finalizar a entrevista e ir para feedback, clique em "Finalizar" abaixo.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Button
                 variant="outline"
                 size="lg"
                 onClick={() => window.open(interview.videoRoomUrl, "_blank")}
-                className="flex-1 h-12 rounded-xl"
+                className="flex-1 h-12"
               >
                 <IconExternalLink className="h-4 w-4 mr-2" />
                 Nova Aba
@@ -418,7 +422,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 variant="destructive"
                 size="lg"
                 onClick={handleCompleteInterview}
-                className="flex-1 h-12 rounded-xl"
+                className="flex-1 h-12"
               >
                 <IconCheck className="h-4 w-4 mr-2" />
                 Finalizar
@@ -436,57 +440,57 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
           </div>
         )}
 
-        {/* ====== COMPLETED - Questionnaire (Family) ====== */}
+        {/* ====== COMPLETED - Questionnaire (Family) - Bloom Elements style ====== */}
         {interview.status === "COMPLETED" && isFamily && !interview.familyCompletedAt && (
-          <div className="space-y-5 max-w-lg mx-auto">
-            <div>
-              <h2 className="text-lg font-bold">Feedback da Entrevista</h2>
-              <p className="text-sm text-muted-foreground mt-1">
+          <div className="space-y-6 max-w-lg mx-auto">
+            <div className="space-y-2">
+              <h2 className="text-2xl md:text-3xl font-display font-black text-foreground uppercase tracking-tighter">Feedback da Entrevista</h2>
+              <p className="text-base text-muted-foreground font-medium">
                 Avalie a entrevista com {interview.caregiverName}. Este registro protege ambas as partes.
               </p>
             </div>
 
             {/* Section 1: About the interview itself */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4 space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                Avaliacao da Entrevista
+            <div className="bg-card rounded-3xl p-8 border border-border shadow-card space-y-4">
+              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.3em]">
+                Avaliação da Entrevista
               </p>
-              <StarRating label="Comunicacao" value={communicationRating} onChange={setCommunicationRating} />
-              <StarRating label="Experiencia demonstrada" value={experienceRating} onChange={setExperienceRating} />
+              <StarRating label="Comunicação" value={communicationRating} onChange={setCommunicationRating} />
+              <StarRating label="Experiência demonstrada" value={experienceRating} onChange={setExperienceRating} />
               <StarRating label="Pontualidade" value={punctualityRating} onChange={setPunctualityRating} />
             </div>
 
             {/* Section 2: Recommendation */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Recomendacao
+            <div className="bg-card rounded-3xl p-8 border border-border shadow-card space-y-4">
+              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.3em]">
+                Recomendação
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   onClick={() => setWouldRecommend(true)}
-                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                  className={`flex-1 p-4 rounded-2xl border transition-all ${
                     wouldRecommend ? "border-success/40 bg-success/10 text-success" : "border-border/30 text-muted-foreground"
                   }`}
                 >
-                  <span className="text-xl block mb-1">{"\uD83D\uDC4D"}</span>
-                  <span className="text-sm font-medium">Recomendo</span>
+                  <span className="text-2xl block mb-2">{"\uD83D\uDC4D"}</span>
+                  <span className="text-sm font-display font-bold">Recomendo</span>
                 </button>
                 <button
                   onClick={() => setWouldRecommend(false)}
-                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                  className={`flex-1 p-4 rounded-2xl border transition-all ${
                     !wouldRecommend ? "border-destructive/40 bg-destructive/10 text-destructive" : "border-border/30 text-muted-foreground"
                   }`}
                 >
-                  <span className="text-xl block mb-1">{"\uD83D\uDC4E"}</span>
-                  <span className="text-sm font-medium">Nao recomendo</span>
+                  <span className="text-2xl block mb-2">{"\uD83D\uDC4E"}</span>
+                  <span className="text-sm font-display font-bold">Não recomendo</span>
                 </button>
               </div>
             </div>
 
             {/* Section 3: Legal acknowledgements */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4 space-y-3.5">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Confirmacoes Importantes
+            <div className="bg-card rounded-3xl p-8 border border-border shadow-card space-y-4">
+              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.3em]">
+                Confirmações Importantes
               </p>
 
               <label className="flex items-start gap-3 cursor-pointer">
