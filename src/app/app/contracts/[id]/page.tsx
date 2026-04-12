@@ -80,14 +80,14 @@ interface ContractDetails {
   };
 }
 
-const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  DRAFT: { color: "bg-gray-500", label: "Rascunho" },
-  PENDING_ACCEPTANCE: { color: "bg-amber-500", label: "Aguardando Aceite" },
-  PENDING_PAYMENT: { color: "bg-orange-500", label: "Aguardando Pagamento" },
-  ACTIVE: { color: "bg-green-500", label: "Ativo" },
-  COMPLETED: { color: "bg-blue-500", label: "Concluido" },
-  CANCELLED: { color: "bg-red-500", label: "Cancelado" },
-  DISPUTED: { color: "bg-purple-500", label: "Em Disputa" },
+const STATUS_CONFIG: Record<string, { color: string; bgColor: string; label: string }> = {
+  DRAFT: { color: "text-muted-foreground", bgColor: "bg-muted/10", label: "Rascunho" },
+  PENDING_ACCEPTANCE: { color: "text-warning", bgColor: "bg-warning/10", label: "Aguardando Aceite" },
+  PENDING_PAYMENT: { color: "text-info", bgColor: "bg-info/10", label: "Aguardando Pagamento" },
+  ACTIVE: { color: "text-success", bgColor: "bg-success/10", label: "Ativo" },
+  COMPLETED: { color: "text-primary", bgColor: "bg-primary/10", label: "Concluido" },
+  CANCELLED: { color: "text-destructive", bgColor: "bg-destructive/10", label: "Cancelado" },
+  DISPUTED: { color: "text-warning", bgColor: "bg-warning/10", label: "Em Disputa" },
 };
 
 // Map service type keys to readable labels
@@ -299,7 +299,9 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
             </Link>
           </Button>
           {statusConfig && (
-            <Badge className={`${statusConfig.color} ml-auto`}>{statusConfig.label}</Badge>
+            <Badge className={`${statusConfig.bgColor} ${statusConfig.color} border-0 ml-auto`}>
+              {statusConfig.label}
+            </Badge>
           )}
         </div>
 
@@ -322,31 +324,35 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
         {contract && !isLoading && (
           <>
             {/* Contract Title Card */}
-            <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-soft-md gradient-secondary">
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-1">
-                  <IconContract className="h-4 w-4 opacity-60" />
-                  <span className="text-xs font-medium opacity-60">Contrato #{contract.id.slice(-8)}</span>
+            <div className="bg-surface rounded-2xl border-2 border-primary/20 p-5">
+              <div className="h-1 -mx-5 -mt-5 mb-4 rounded-t-lg bg-primary" />
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <IconContract className="h-5 w-5 text-primary" />
                 </div>
-                <h1 className="text-lg font-bold">{contract.title || "Contrato de Cuidado"}</h1>
-                <p className="text-sm opacity-70 mt-0.5">
-                  Criado em {new Date(contract.createdAt).toLocaleDateString("pt-PT")}
-                </p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">
+                    Contrato #{contract.id.slice(-8)}
+                  </p>
+                  <h1 className="text-lg font-bold text-foreground">{contract.title || "Contrato de Cuidado"}</h1>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Criado em {new Date(contract.createdAt).toLocaleDateString("pt-PT")}
+                  </p>
+                </div>
               </div>
-              <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-white/5" />
             </div>
 
             {/* Other Party Info */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4">
+            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4 card-interactive">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 {isFamily ? "Cuidador(a)" : "Familia"}
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
                   {contract.otherParty?.name?.split(" ").map(n => n[0]).join("").slice(0, 2) || "?"}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold">{contract.otherParty?.name}</p>
+                  <p className="font-semibold text-foreground">{contract.otherParty?.name}</p>
                   {contract.otherParty?.title && (
                     <p className="text-sm text-muted-foreground">{contract.otherParty.title}</p>
                   )}
@@ -400,16 +406,16 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
             </div>
 
             {/* Service Details - Full description */}
-            <div className="bg-surface rounded-2xl border border-border/50 overflow-hidden">
+            <div className="bg-surface rounded-2xl border-2 border-border/30 overflow-hidden">
               {/* Service Types */}
               {contract.serviceTypes && contract.serviceTypes.length > 0 && contract.serviceTypes[0] !== "" && (
-                <div className="p-4 border-b border-border/50">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <div className="p-4 border-b border-border/30">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                     Servicos
                   </p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {contract.serviceTypes.map((service, i) => (
-                      <Badge key={i} variant="secondary" className="rounded-lg text-xs">
+                      <Badge key={i} variant="secondary" className="rounded-lg text-xs border-0 bg-secondary/20 text-secondary">
                         {getServiceLabel(service)}
                       </Badge>
                     ))}
@@ -419,19 +425,19 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
               {/* Parsed Description Details */}
               {descriptionParts.length > 0 && (
-                <div className="p-4 border-b border-border/50 space-y-2.5">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <div className="p-4 border-b border-border/30 space-y-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Detalhes do Cuidado
                   </p>
                   {descriptionParts.map((part, i) => (
                     <div key={i}>
                       {part.label ? (
                         <div>
-                          <span className="text-xs font-medium text-muted-foreground">{part.label}</span>
-                          <p className="text-sm">{part.value}</p>
+                          <span className="text-xs font-semibold text-muted-foreground">{part.label}</span>
+                          <p className="text-sm text-foreground mt-0.5">{part.value}</p>
                         </div>
                       ) : (
-                        <p className="text-sm">{part.value}</p>
+                        <p className="text-sm text-foreground">{part.value}</p>
                       )}
                     </div>
                   ))}
@@ -439,44 +445,52 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
               )}
 
               {/* Schedule */}
-              <div className="p-4 border-b border-border/50">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              <div className="p-4 border-b border-border/30">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                   Horario
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {contract.hoursPerWeek > 0 && (
                     <div className="flex items-center gap-2">
-                      <IconClock className="h-4 w-4 text-muted-foreground" />
-                      <div>
+                      <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                        <IconClock className="h-4 w-4 text-secondary" />
+                      </div>
+                      <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Horas/semana</p>
-                        <p className="text-sm font-medium">{contract.hoursPerWeek}h</p>
+                        <p className="text-sm font-medium text-foreground">{contract.hoursPerWeek}h</p>
                       </div>
                     </div>
                   )}
                   {contract.totalHours > 0 && (
                     <div className="flex items-center gap-2">
-                      <IconClock className="h-4 w-4 text-muted-foreground" />
-                      <div>
+                      <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                        <IconClock className="h-4 w-4 text-secondary" />
+                      </div>
+                      <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Total mensal</p>
-                        <p className="text-sm font-medium">{contract.totalHours}h</p>
+                        <p className="text-sm font-medium text-foreground">{contract.totalHours}h</p>
                       </div>
                     </div>
                   )}
                   {contract.startDate && (
                     <div className="flex items-center gap-2">
-                      <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                      <div>
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <IconCalendar className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Inicio</p>
-                        <p className="text-sm font-medium">{new Date(contract.startDate).toLocaleDateString("pt-PT")}</p>
+                        <p className="text-sm font-medium text-foreground">{new Date(contract.startDate).toLocaleDateString("pt-PT")}</p>
                       </div>
                     </div>
                   )}
                   {contract.endDate && (
                     <div className="flex items-center gap-2">
-                      <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                      <div>
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <IconCalendar className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">Termino</p>
-                        <p className="text-sm font-medium">{new Date(contract.endDate).toLocaleDateString("pt-PT")}</p>
+                        <p className="text-sm font-medium text-foreground">{new Date(contract.endDate).toLocaleDateString("pt-PT")}</p>
                       </div>
                     </div>
                   )}
@@ -485,28 +499,28 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
               {/* Financial */}
               <div className="p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                   Valores
                 </p>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Valor por hora</span>
-                    <span className="font-semibold">{hourlyRate}/h</span>
+                    <span className="font-semibold text-foreground">€{hourlyRate}/h</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Total mensal ({contract.totalHours}h)</span>
-                    <span className="font-bold text-base">{totalEur}</span>
+                    <span className="font-bold text-base text-foreground">€{totalEur}</span>
                   </div>
                   {!isFamily && (
                     <>
-                      <div className="border-t border-border/50 pt-2 mt-2">
+                      <div className="border-t border-border/30 pt-3 mt-3">
                         <div className="flex justify-between text-xs">
                           <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
-                          <span className="text-red-500">-{platformFee}</span>
+                          <span className="text-destructive font-medium">-€{platformFee}</span>
                         </div>
-                        <div className="flex justify-between text-sm font-semibold mt-1">
-                          <span>Voce recebe</span>
-                          <span className="text-green-600">{caregiverReceives}</span>
+                        <div className="flex justify-between text-sm font-semibold mt-2">
+                          <span className="text-foreground">Voce recebe</span>
+                          <span className="text-success">€{caregiverReceives}</span>
                         </div>
                       </div>
                     </>
@@ -516,30 +530,34 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
             </div>
 
             {/* Acceptance Status */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                <IconShield className="h-3.5 w-3.5 inline mr-1" />
-                Status de Aceite
-              </p>
+            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <IconShield className="h-4 w-4 text-primary" />
+                </div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Status de Aceite
+                </p>
+              </div>
               <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Familia</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
+                  <span className="text-sm font-medium text-foreground">Familia</span>
                   {contract.acceptance?.familyAccepted ? (
-                    <Badge className="bg-green-500 text-xs">
+                    <Badge className="bg-success/10 text-success border-0 text-xs font-semibold">
                       <IconCheck className="h-3 w-3 mr-1" /> Aceito
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="text-xs">Pendente</Badge>
+                    <Badge className="bg-warning/10 text-warning border-0 text-xs font-semibold">Pendente</Badge>
                   )}
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Cuidador(a)</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
+                  <span className="text-sm font-medium text-foreground">Cuidador(a)</span>
                   {contract.acceptance?.caregiverAccepted ? (
-                    <Badge className="bg-green-500 text-xs">
+                    <Badge className="bg-success/10 text-success border-0 text-xs font-semibold">
                       <IconCheck className="h-3 w-3 mr-1" /> Aceito
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="text-xs">Pendente</Badge>
+                    <Badge className="bg-warning/10 text-warning border-0 text-xs font-semibold">Pendente</Badge>
                   )}
                 </div>
                 {contract.acceptance?.familyAcceptedAt && (
@@ -557,17 +575,20 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
             {/* Digital Signature Confirmation */}
             {digitalSignature && (
-              <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-2xl p-4">
+              <div className="bg-surface rounded-2xl border-2 border-success/30 p-4">
+                <div className="h-1 -mx-4 -mt-4 mb-4 rounded-t-lg bg-success" />
                 <div className="flex items-start gap-3">
-                  <IconShield className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-green-700 dark:text-green-400">
+                  <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+                    <IconShield className="h-5 w-5 text-success" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">
                       Assinatura Digital Registrada
                     </p>
-                    <p className="text-xs text-green-600 dark:text-green-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Hash: {digitalSignature.hash.slice(0, 16)}...{digitalSignature.hash.slice(-8)}
                     </p>
-                    <p className="text-xs text-green-600 dark:text-green-500">
+                    <p className="text-xs text-muted-foreground">
                       Data: {new Date(digitalSignature.timestamp).toLocaleString("pt-PT")}
                     </p>
                   </div>
@@ -577,14 +598,17 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
             {/* Non-Circumvention Notice */}
             {contract.acceptance?.familyAccepted && contract.acceptance?.caregiverAccepted && (
-              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+              <div className="bg-surface rounded-2xl border-2 border-warning/30 p-4">
+                <div className="h-1 -mx-4 -mt-4 mb-4 rounded-t-lg bg-warning" />
                 <div className="flex items-start gap-3">
-                  <IconContract className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+                  <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center flex-shrink-0">
+                    <IconContract className="h-5 w-5 text-warning" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">
                       Clausula de Nao-Circunvencao Ativa
                     </p>
-                    <p className="text-xs text-amber-600 dark:text-amber-500 mt-1 leading-relaxed">
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                       Ambas as partes concordaram em manter a relacao profissional
                       exclusivamente atraves da plataforma por 24 meses. Todos os pagamentos
                       e comunicacoes devem ser realizados pela plataforma.
@@ -598,11 +622,14 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
             {canAccept && userNeedsToAccept && (
               <div className="space-y-4">
                 {/* Main action card */}
-                <div className="bg-primary/5 border-2 border-primary/30 rounded-2xl p-6 space-y-4">
+                <div className="bg-surface rounded-2xl border-2 border-primary/30 p-6 space-y-4">
+                  <div className="h-1 -mx-6 -mt-6 mb-4 rounded-t-lg bg-primary" />
                   <div className="flex items-start gap-3">
-                    <IconContract className="h-10 w-10 text-primary flex-shrink-0" />
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <IconContract className="h-5 w-5 text-primary" />
+                    </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg">Revisar & Aceitar Contrato</h3>
+                      <h3 className="font-bold text-lg text-foreground">Revisar & Aceitar Contrato</h3>
                       <p className="text-sm text-muted-foreground mt-1">
                         Certifique-se de que todos os detalhes estão corretos antes de confirmar.
                         Seu aceite sera registrado digitalmente com data, hora e IP.
@@ -611,14 +638,14 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                   </div>
 
                   {/* Summary of key contract details */}
-                  <div className="grid grid-cols-2 gap-3 my-3 p-3 bg-background rounded-lg">
+                  <div className="grid grid-cols-2 gap-3 my-3 p-4 bg-muted/20 rounded-lg">
                     <div>
                       <p className="text-xs text-muted-foreground">Valor/Hora</p>
-                      <p className="text-sm font-semibold">€{hourlyRate}/h</p>
+                      <p className="text-sm font-semibold text-foreground">€{hourlyRate}/h</p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Total Mensal</p>
-                      <p className="text-sm font-semibold">€{totalEur}</p>
+                      <p className="text-sm font-semibold text-foreground">€{totalEur}</p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Voce Recebe</p>
@@ -626,7 +653,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Taxa Plataforma</p>
-                      <p className="text-sm font-semibold">€{platformFee}</p>
+                      <p className="text-sm font-semibold text-foreground">€{platformFee}</p>
                     </div>
                   </div>
 
@@ -676,11 +703,15 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
             {/* Weekly Payment Approvals */}
             {contract.status === 'ACTIVE' && contract.weeklyPaymentEnabled && (
-              <div className="bg-surface rounded-2xl border border-border/50 p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-                  <IconCalendar className="h-3.5 w-3.5 inline mr-1" />
-                  Aprovações Semanais
-                </p>
+              <div className="bg-surface rounded-2xl border-2 border-border/30 p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <IconCalendar className="h-4 w-4 text-secondary" />
+                  </div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Aprovações Semanais
+                  </p>
+                </div>
                 <WeeklyApprovalPanel
                   contractId={contract.id}
                   isFamily={isFamily}

@@ -99,11 +99,14 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -121,7 +124,10 @@
   }
 
   .text-gradient-primary {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-info;
+    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--info)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
   }
 
   .shadow-card {
