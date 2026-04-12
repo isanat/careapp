@@ -244,11 +244,11 @@ export default function InterviewsPage() {
                             <p className="text-xs text-muted-foreground mt-0.5 truncate">{interview.otherPartyName}</p>
                           </div>
                         </div>
-                        <Badge className={`${statusConfig.badge} border-0 text-[10px] px-2 py-0.5 h-5 shrink-0 font-semibold`}>
+                        <span className={`${statusConfig.badge} border border-current/30 rounded-lg text-[10px] px-2.5 py-1 shrink-0 font-display font-bold uppercase tracking-widest`}>
                           {interview.status === "COMPLETED" ? "Concluída" :
                            interview.status === "CANCELLED" ? "Cancelada" :
                            "Não Compareceu"}
-                        </Badge>
+                        </span>
                       </div>
 
                       {/* Info Grid */}

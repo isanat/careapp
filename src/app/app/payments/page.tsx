@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconEuro,
@@ -15,6 +14,7 @@ import {
   IconArrowRight,
   IconCalendar,
   IconArrowUp,
+  IconWallet,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 
@@ -141,111 +141,105 @@ export default function PaymentsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-4">
-        {/* Header */}
-        <div>
-          <h1 className="text-lg font-bold">Meus Ganhos</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Acompanhe seus ganhos e histórico de pagamentos
-          </p>
-        </div>
+      <div className="space-y-6 max-w-4xl">
+        {/* Header - Bloom style */}
+        <BloomSectionHeader
+          title="Meus Ganhos"
+          description="Acompanhe seus ganhos e histórico de pagamentos"
+          icon={<IconWallet className="h-6 w-6 text-primary" />}
+        />
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Summary Cards - Bloom style */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* Total Earnings */}
-          <div className="bg-surface rounded-xl p-4 border-2 border-primary/20 hover:border-primary/40 transition-colors">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <IconEuro className="h-4 w-4 text-primary" />
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                <IconEuro className="h-5 w-5 text-primary" />
               </div>
-              <span className="text-xs font-medium text-muted-foreground">Total de Ganhos</span>
+              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">€{(walletData?.totalEarnings || 0) / 100}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Total de Ganhos</p>
             </div>
-            <p className="text-2xl font-bold text-foreground">
-              €{(walletData?.totalEarnings || 0) / 100}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Desde o início</p>
-          </div>
+          </BloomCard>
 
           {/* Available Balance */}
-          <div className="bg-surface rounded-xl p-4 border-2 border-success/20 hover:border-success/40 transition-colors">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center">
-                <IconCheck className="h-4 w-4 text-success" />
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center mb-3">
+                <IconCheck className="h-5 w-5 text-success" />
               </div>
-              <span className="text-xs font-medium text-muted-foreground">Saldo Disponível</span>
+              <p className="text-xl sm:text-2xl font-display font-black text-success tracking-tighter">€{(walletData?.availableBalance || 0) / 100}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Saldo Disponível</p>
             </div>
-            <p className="text-2xl font-bold text-success">
-              €{(walletData?.availableBalance || 0) / 100}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Para levantamento</p>
-          </div>
+          </BloomCard>
 
           {/* Pending */}
-          <div className="bg-surface rounded-xl p-4 border-2 border-amber-200/30 hover:border-amber-300/40 transition-colors">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-lg bg-amber-100/20 flex items-center justify-center">
-                <IconClock className="h-4 w-4 text-amber-600" />
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center mb-3">
+                <IconClock className="h-5 w-5 text-warning" />
               </div>
-              <span className="text-xs font-medium text-muted-foreground">Pendente</span>
+              <p className="text-xl sm:text-2xl font-display font-black text-warning tracking-tighter">€{(walletData?.pendingAmount || 0) / 100}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Pendente</p>
             </div>
-            <p className="text-2xl font-bold text-amber-600">
-              €{(walletData?.pendingAmount || 0) / 100}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Em contratos ativos</p>
-          </div>
+          </BloomCard>
         </div>
 
         {/* Recent Payments */}
         {walletData && walletData.recentPayments.length > 0 && (
-          <div>
-            <h2 className="text-sm font-bold mb-3">Histórico de Ganhos</h2>
+          <div className="space-y-4">
+            <h2 className="text-lg font-display font-black text-foreground uppercase">Histórico de Ganhos</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {walletData.recentPayments.map((payment) => {
-                const statusColors: Record<string, { border: string; top: string; icon: string; badge: string }> = {
-                  COMPLETED: { border: "border-success/30 hover:border-success/50", top: "bg-success", icon: "bg-success/10 text-success", badge: "bg-success/10 text-success" },
-                  ACTIVE: { border: "border-primary/30 hover:border-primary/50", top: "bg-primary", icon: "bg-primary/10 text-primary", badge: "bg-primary/10 text-primary" },
-                  PENDING: { border: "border-amber-200/50 hover:border-amber-300/60", top: "bg-amber-500", icon: "bg-amber-100/20 text-amber-600", badge: "bg-amber-100/20 text-amber-600" },
+                const statusVariantMap: Record<string, "primary" | "success" | "warning" | "destructive" | "muted"> = {
+                  COMPLETED: "success",
+                  ACTIVE: "primary",
+                  PENDING: "warning",
                 };
-                const statusConfig = statusColors[payment.status] || statusColors.PENDING;
 
                 return (
-                  <div key={payment.id} className={`bg-surface rounded-xl border-2 ${statusConfig.border} transition-all card-interactive overflow-hidden`}>
-                    <div className={`h-1 ${statusConfig.top}`} />
-                    <div className="p-4">
-                      {/* Header */}
-                      <div className="flex items-start justify-between gap-3 mb-3">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground line-clamp-1">{payment.description}</p>
-                          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                            <IconCalendar className="h-3 w-3" />
-                            {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })}
-                          </p>
-                        </div>
-                        <Badge className={`${statusConfig.badge} border-0 text-[10px] px-2 py-0.5 h-5 shrink-0 font-semibold`}>
-                          {payment.status === "COMPLETED"
-                            ? "Concluído"
-                            : payment.status === "ACTIVE"
-                            ? "Ativo"
-                            : "Pendente"}
-                        </Badge>
+                  <BloomCard key={payment.id} interactive topBar topBarColor={
+                    payment.status === "COMPLETED" ? "bg-success" :
+                    payment.status === "ACTIVE" ? "bg-primary" :
+                    "bg-warning"
+                  }>
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-display font-black text-foreground truncate uppercase text-sm">{payment.description}</p>
+                        <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 flex items-center gap-1">
+                          <IconCalendar className="h-3.5 w-3.5" />
+                          {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
+                        </p>
                       </div>
+                      <BloomBadge variant={statusVariantMap[payment.status] || "muted"}>
+                        {payment.status === "COMPLETED"
+                          ? "Concluído"
+                          : payment.status === "ACTIVE"
+                          ? "Ativo"
+                          : "Pendente"}
+                      </BloomBadge>
+                    </div>
 
-                      {/* Amount Section */}
-                      <div className="flex items-end gap-3">
-                        <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${statusConfig.icon}`}>
-                          <IconArrowUp className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Ganho</p>
-                          <p className="text-lg font-bold text-success">+€{(payment.amount / 100).toFixed(2)}</p>
-                        </div>
+                    {/* Amount Section */}
+                    <div className="flex items-end gap-3 py-4 border-t border-border/30">
+                      <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${
+                        payment.status === "COMPLETED" ? "bg-success/10 text-success" :
+                        payment.status === "ACTIVE" ? "bg-primary/10 text-primary" :
+                        "bg-warning/10 text-warning"
+                      }`}>
+                        <IconArrowUp className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Ganho</p>
+                        <p className="text-base sm:text-lg font-display font-black tracking-tighter text-success mt-1">+€{(payment.amount / 100).toFixed(2)}</p>
                       </div>
                     </div>
-                  </div>
+                  </BloomCard>
                 );
               })}
             </div>
@@ -254,19 +248,18 @@ export default function PaymentsPage() {
 
         {/* Empty State */}
         {(!walletData || walletData.recentPayments.length === 0) && !error && (
-          <div className="text-center py-12 bg-surface rounded-xl border-2 border-dashed border-border/30">
-            <IconTrendingUp className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <h3 className="font-semibold text-foreground">Sem ganhos ainda</h3>
-            <p className="text-xs text-muted-foreground mt-1">
-              Seus ganhos aparecerão aqui quando completar contratos
-            </p>
-          </div>
+          <BloomEmpty
+            icon={<IconTrendingUp className="h-8 w-8" />}
+            title="Sem ganhos ainda"
+            description="Seus ganhos aparecerão aqui quando completar contratos"
+          />
         )}
 
+        {/* Error */}
         {error && (
-          <div className="bg-error/5 border border-error/20 rounded-xl p-4">
-            <p className="text-sm text-error">{error}</p>
-          </div>
+          <BloomCard topBar topBarColor="bg-destructive">
+            <p className="text-sm font-medium text-destructive">{error}</p>
+          </BloomCard>
         )}
       </div>
     </AppShell>
