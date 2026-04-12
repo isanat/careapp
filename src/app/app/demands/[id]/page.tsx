@@ -9,7 +9,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getServiceTypeLabel } from '@/lib/service-types';
-import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from '@/components/bloom';
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty, BloomStatBlock } from '@/components/bloom';
 import { IconAlertCircle, IconArrowLeft } from '@/components/icons';
 
 interface Demand {
@@ -179,17 +179,17 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
           Voltar
         </Link>
 
-        {/* Header Card - Bloom style */}
+        {/* Header Card - Bloom Elements style */}
         <BloomCard topBar>
           <div className="flex items-start justify-between gap-6">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl sm:text-4xl font-display font-black text-foreground uppercase mb-3">{demand.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-display font-black text-foreground uppercase tracking-tighter mb-3">{demand.title}</h1>
               <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">{demand.familyCity}</span> • {demand.city}
+                <p className="text-base text-muted-foreground font-medium">
+                  <span className="font-bold text-foreground">{demand.familyCity}</span> • {demand.city}
                   {demand.postalCode && ` (${demand.postalCode})`}
                 </p>
-                <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
+                <p className="text-[10px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
                   Criada há {demand.metrics.daysActive} dias
                 </p>
               </div>
@@ -207,46 +207,42 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </BloomCard>
 
-        {/* Metrics Cards - Bloom pattern */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <BloomCard interactive>
-            <div className="text-center">
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Visualizações</p>
-              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">{demand.metrics.viewCount}</p>
-            </div>
-          </BloomCard>
-          <BloomCard interactive>
-            <div className="text-center">
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Propostas</p>
-              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">{demand.metrics.proposalCount}</p>
-            </div>
-          </BloomCard>
-          <BloomCard interactive>
-            <div className="text-center">
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Taxa Conversão</p>
-              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">{demand.metrics.conversionRate.toFixed(1)}%</p>
-            </div>
-          </BloomCard>
-          <BloomCard interactive>
-            <div className="text-center">
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Taxa Spent</p>
-              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">€{demand.metrics.visibilitySpent.toFixed(2)}</p>
-            </div>
-          </BloomCard>
+        {/* Metrics Cards - Bloom StatBlock pattern */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          <BloomStatBlock
+            label="Visualizações"
+            value={demand.metrics.viewCount}
+            colorClass="text-primary"
+          />
+          <BloomStatBlock
+            label="Propostas"
+            value={demand.metrics.proposalCount}
+            colorClass="text-secondary"
+          />
+          <BloomStatBlock
+            label="Taxa Conversão"
+            value={`${demand.metrics.conversionRate.toFixed(1)}%`}
+            colorClass="text-info"
+          />
+          <BloomStatBlock
+            label="Gasto em Visibilidade"
+            value={`€${demand.metrics.visibilitySpent.toFixed(2)}`}
+            colorClass="text-success"
+          />
         </div>
 
         {/* Main Content - Bloom Style */}
         <div className="space-y-6">
           {/* Description */}
           <BloomCard topBar>
-            <h2 className="text-lg font-display font-black text-foreground uppercase mb-4">Descrição</h2>
+            <h2 className="text-lg font-display font-black text-foreground uppercase tracking-wider mb-6">Descrição</h2>
             <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">{demand.description}</p>
           </BloomCard>
 
           {/* Service Types */}
           <BloomCard topBar topBarColor="bg-secondary">
-            <h3 className="text-lg font-display font-black text-foreground uppercase mb-4">Tipos de Serviço</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="text-lg font-display font-black text-foreground uppercase tracking-wider mb-6">Tipos de Serviço</h3>
+            <div className="flex flex-wrap gap-3">
               {demand.serviceTypes.map((service, idx) => (
                 <BloomBadge key={idx} variant="secondary">
                   {getServiceTypeLabel(service)}
