@@ -83,11 +83,8 @@ export default function ContractsPage() {
   return (
     <AppShell>
       <div className="space-y-6 max-w-4xl">
-        {/* Header - Bloom style */}
-        <BloomSectionHeader
-          title={t.contracts.title}
-          icon={<IconContract className="h-6 w-6 text-primary" />}
-        />
+        {/* Header - Bloom Elements style */}
+        <BloomSectionHeader title={t.contracts.title} />
 
         {/* Error - Bloom style */}
         {error && (

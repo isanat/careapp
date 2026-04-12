@@ -128,11 +128,10 @@ export default function InterviewsPage() {
   return (
     <AppShell>
       <div className="space-y-6 max-w-4xl">
-        {/* Header - Bloom style */}
+        {/* Header - Bloom Elements style */}
         <BloomSectionHeader
           title="Entrevistas"
-          description="Gerencie suas entrevistas agendadas"
-          icon={<IconVideo className="h-6 w-6 text-primary" />}
+          desc="Gerencie suas entrevistas agendadas"
         />
 
         {error && (

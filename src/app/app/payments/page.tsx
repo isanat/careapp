@@ -142,11 +142,10 @@ export default function PaymentsPage() {
   return (
     <AppShell>
       <div className="space-y-6 max-w-4xl">
-        {/* Header - Bloom style */}
+        {/* Header - Bloom Elements style */}
         <BloomSectionHeader
           title="Meus Ganhos"
-          description="Acompanhe seus ganhos e histórico de pagamentos"
-          icon={<IconWallet className="h-6 w-6 text-primary" />}
+          desc="Acompanhe seus ganhos e histórico de pagamentos"
         />
 
         {/* Summary Cards - Bloom style */}
