@@ -3,10 +3,10 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState, ComponentType } from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
 import {
   IconToken,
   IconContract,
@@ -108,126 +108,145 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-3">
-        {/* Welcome + Status inline */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-foreground">
-            {t.dashboard.welcome}, {firstName}!
-          </h1>
-          <Badge
-            className={session?.user?.status === "ACTIVE"
-              ? "bg-success/10 text-success border-success/20"
-              : "bg-warning/10 text-warning border-warning/20"
-            }
-            variant="outline"
-          >
+      <div className="space-y-6">
+        {/* Welcome + Status inline - Bloom Header */}
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-display font-black text-foreground uppercase">
+              {t.dashboard.welcome}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">{firstName}</p>
+          </div>
+          <BloomBadge variant={session?.user?.status === "ACTIVE" ? "success" : "warning"}>
             {session?.user?.status === "ACTIVE" ? t.dashboard.status.active : t.dashboard.status.pending}
-          </Badge>
+          </BloomBadge>
         </div>
 
-        {/* Stats - 4 columns with enhanced visual */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-surface rounded-xl p-4 border-2 border-primary/20 hover:border-primary/40 transition-colors text-center group">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center mx-auto group-hover:bg-primary/15 transition-colors">
-              <IconContract className="h-5 w-5 text-primary" />
-            </div>
-            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.activeContracts || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1 font-medium">{t.nav.contracts}</p>
-          </div>
-          <div className="bg-surface rounded-xl p-4 border-2 border-secondary/20 hover:border-secondary/40 transition-colors text-center group">
-            <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center mx-auto group-hover:bg-secondary/15 transition-colors">
-              <IconClock className="h-5 w-5 text-secondary" />
-            </div>
-            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.totalHours || 0}h</p>
-            <p className="text-xs text-muted-foreground mt-1 font-medium">Horas</p>
-          </div>
-          <div className="bg-surface rounded-xl p-4 border-2 border-info/20 hover:border-info/40 transition-colors text-center group">
-            <div className="h-9 w-9 rounded-lg bg-info/10 flex items-center justify-center mx-auto group-hover:bg-info/15 transition-colors">
-              <IconStar className="h-5 w-5 text-info" />
-            </div>
-            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.rating?.toFixed(1) || '-'}</p>
-            <p className="text-xs text-muted-foreground mt-1 font-medium">Nota</p>
-          </div>
-          <div className="bg-surface rounded-xl p-4 border-2 border-success/20 hover:border-success/40 transition-colors text-center group">
-            <div className="h-9 w-9 rounded-lg bg-success/10 flex items-center justify-center mx-auto group-hover:bg-success/15 transition-colors">
-              <IconEuro className="h-5 w-5 text-success" />
-            </div>
-            <p className="text-2xl font-bold mt-2 text-foreground">{stats?.totalReviews || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1 font-medium">Reviews</p>
-          </div>
-        </div>
-
-        {/* Quick Actions - horizontal row */}
-        <div className="flex gap-3">
-          {isFamily && (
-            <Link href="/app/search" className="flex-1">
-              <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-primary/30 transition-all flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <IconSearch className="h-5 w-5 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">{t.nav.searchCaregivers}</p>
-                  <p className="text-xs text-muted-foreground">Encontrar</p>
-                </div>
+        {/* Stats - 4 columns Bloom pattern */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                <IconContract className="h-5 w-5 text-primary" />
               </div>
+              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.activeContracts || 0}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">{t.nav.contracts}</p>
+            </div>
+          </BloomCard>
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center mb-3">
+                <IconClock className="h-5 w-5 text-secondary" />
+              </div>
+              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.totalHours || 0}h</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Horas</p>
+            </div>
+          </BloomCard>
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-info/10 flex items-center justify-center mb-3">
+                <IconStar className="h-5 w-5 text-info" />
+              </div>
+              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.rating?.toFixed(1) || '-'}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Nota</p>
+            </div>
+          </BloomCard>
+          <BloomCard interactive>
+            <div className="flex flex-col items-center text-center">
+              <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center mb-3">
+                <IconEuro className="h-5 w-5 text-success" />
+              </div>
+              <p className="text-xl sm:text-2xl font-display font-black text-foreground tracking-tighter">{stats?.totalReviews || 0}</p>
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-2">Reviews</p>
+            </div>
+          </BloomCard>
+        </div>
+
+        {/* Quick Actions - horizontal row Bloom */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {isFamily && (
+            <Link href="/app/search" className="sm:flex-1">
+              <BloomCard interactive className="h-full">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <IconSearch className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">{t.nav.searchCaregivers}</p>
+                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Encontrar</p>
+                  </div>
+                </div>
+              </BloomCard>
             </Link>
           )}
           {isCaregiver && (
-            <Link href="/app/proposals" className="flex-1">
-              <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-secondary/30 transition-all flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-                  <IconInbox className="h-5 w-5 text-secondary" />
+            <Link href="/app/proposals" className="sm:flex-1">
+              <BloomCard interactive className="h-full">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <IconInbox className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">Propostas</p>
+                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Solicitacoes</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">Propostas</p>
-                  <p className="text-xs text-muted-foreground">Solicitacoes</p>
-                </div>
-              </div>
+              </BloomCard>
             </Link>
           )}
-          <Link href="/app/contracts" className="flex-1">
-            <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-accent/30 transition-all flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                <IconContract className="h-5 w-5 text-accent-foreground" />
+          <Link href="/app/contracts" className="sm:flex-1">
+            <BloomCard interactive className="h-full">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <IconContract className="h-6 w-6 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-foreground truncate">{t.contracts.title}</p>
+                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">{t.dashboard.viewAll}</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold truncate">{t.contracts.title}</p>
-                <p className="text-xs text-muted-foreground">{t.dashboard.viewAll}</p>
-              </div>
-            </div>
+            </BloomCard>
           </Link>
         </div>
 
-        {/* Next Steps - compact list */}
+        {/* Next Steps - Bloom style */}
         {pendingSteps.length > 0 && (
-          <div className="bg-warning/5 rounded-xl p-3 border border-warning/20">
-            <div className="flex items-center gap-2 mb-2">
-              <IconAlertCircle className="h-4 w-4 text-warning" />
-              <span className="text-xs font-semibold">{t.dashboard.nextSteps.title}</span>
+          <BloomCard topBar topBarColor="bg-warning">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <IconAlertCircle className="h-5 w-5 text-warning" />
+                <h3 className="text-sm font-display font-black text-foreground uppercase">{t.dashboard.nextSteps.title}</h3>
+              </div>
+              <div className="space-y-2">
+                {pendingSteps.map((step) => (
+                  <Link key={step.key} href={step.href} className="flex items-center gap-3 py-2.5 px-3 hover:bg-muted/50 rounded-lg transition-colors">
+                    <step.icon className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <span className="flex-1 text-sm font-medium text-foreground">{step.label}</span>
+                    <IconChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  </Link>
+                ))}
+              </div>
             </div>
-            {pendingSteps.map((step) => (
-              <Link key={step.key} href={step.href} className="flex items-center gap-2 py-1.5 hover:bg-warning/5 rounded-lg px-1 transition-colors">
-                <step.icon className="h-4 w-4 text-muted-foreground" />
-                <span className="flex-1 text-xs">{step.label}</span>
-                <IconChevronRight className="h-3 w-3 text-muted-foreground" />
-              </Link>
-            ))}
-          </div>
+          </BloomCard>
         )}
 
-        {/* All set - single line */}
+        {/* All set - Bloom style */}
         {pendingSteps.length === 0 && (
-          <div className="bg-success/5 rounded-xl px-3 py-2 border border-success/20 flex items-center gap-2">
-            <IconCheck className="h-4 w-4 text-success" />
-            <span className="text-xs text-success font-medium">{t.dashboard.allSet}</span>
-          </div>
+          <BloomCard topBar topBarColor="bg-success" interactive>
+            <div className="flex items-center gap-3">
+              <IconCheck className="h-6 w-6 text-success flex-shrink-0" />
+              <span className="text-sm font-semibold text-success">{t.dashboard.allSet}</span>
+            </div>
+          </BloomCard>
         )}
 
-        {/* Platform Benefits - optimized 2-col */}
-        <div className="bg-surface rounded-xl p-4 border border-primary/10">
-          <div className="flex items-center gap-2 mb-3">
-            <IconShield className="h-5 w-5 text-primary" />
-            <span className="text-sm font-semibold">Beneficios da Plataforma</span>
+        {/* Platform Benefits - Bloom style */}
+        <BloomCard topBar>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <IconShield className="h-5 w-5 text-primary" />
+            </div>
+            <h2 className="text-lg font-display font-black text-foreground uppercase">Beneficios</h2>
           </div>
           <div className="grid grid-cols-2 gap-2">
             {(isFamily
@@ -250,52 +269,50 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-        </div>
+        </BloomCard>
 
-        {/* Recent Activity - compact list */}
+        {/* Recent Activity - Bloom style */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold">{t.dashboard.recentActivity}</span>
-            <Link href="/app/payments" className="text-xs text-primary font-medium">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-display font-black text-foreground uppercase">{t.dashboard.recentActivity}</h2>
+            <Link href="/app/payments" className="text-[9px] font-display font-bold text-primary uppercase tracking-widest hover:text-primary/80 transition-colors">
               {t.dashboard.viewAll}
             </Link>
           </div>
 
           {recentActivity.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <div key={index} className={`flex items-center justify-between py-3 px-4 bg-surface rounded-lg border-2 transition-colors ${
-                  activity.type === "credit"
-                    ? "border-success/20 hover:border-success/40"
-                    : "border-error/20 hover:border-error/40"
-                }`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-lg flex items-center justify-center font-display font-bold ${
-                      activity.type === "credit" ? "bg-success/10 text-success" : "bg-error/10 text-error"
+                <BloomCard key={index} interactive>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`h-12 w-12 rounded-lg flex items-center justify-center font-display font-bold ${
+                        activity.type === "credit" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+                      }`}>
+                        {activity.type === "credit"
+                          ? <IconArrowUp className="h-5 w-5" />
+                          : <IconArrowDown className="h-5 w-5" />
+                        }
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{activity.description}</p>
+                        <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-0.5">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
+                      </div>
+                    </div>
+                    <span className={`text-sm sm:text-base font-display font-black tracking-tighter flex-shrink-0 ml-4 ${
+                      activity.type === "credit" ? "text-success" : "text-destructive"
                     }`}>
-                      {activity.type === "credit"
-                        ? <IconArrowUp className="h-4 w-4" />
-                        : <IconArrowDown className="h-4 w-4" />
-                      }
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground truncate max-w-[200px]">{activity.description}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{new Date(activity.date).toLocaleDateString('pt-PT')}</p>
-                    </div>
+                      {activity.type === "credit" ? "+" : ""}{activity.amount}€
+                    </span>
                   </div>
-                  <span className={`text-sm font-bold font-display ${
-                    activity.type === "credit" ? "text-success" : "text-error"
-                  }`}>
-                    {activity.type === "credit" ? "+" : ""}{activity.amount}€
-                  </span>
-                </div>
+                </BloomCard>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 bg-surface rounded-xl border-2 border-dashed border-border/30">
-              <IconWallet className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground font-medium">{t.dashboard.noActivity}</p>
-            </div>
+            <BloomEmpty
+              icon={<IconWallet className="h-8 w-8" />}
+              title={t.dashboard.noActivity}
+            />
           )}
         </div>
       </div>

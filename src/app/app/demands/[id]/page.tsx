@@ -9,6 +9,8 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getServiceTypeLabel } from '@/lib/service-types';
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from '@/components/bloom';
+import { IconAlertCircle, IconArrowLeft } from '@/components/icons';
 
 interface Demand {
   id: string;
@@ -138,22 +140,22 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
   if (error && !demand) {
     return (
       <AppShell>
-        <div className="max-w-2xl mx-auto py-8 space-y-4">
-          <div className="bg-surface rounded-2xl border-2 border-destructive/30 p-4">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                <svg className="h-5 w-5 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        <div className="max-w-2xl mx-auto space-y-4">
+          <Link href="/app/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors">
+            <IconArrowLeft className="h-4 w-4" />
+            Voltar
+          </Link>
+          <BloomCard topBar topBarColor="bg-destructive">
+            <div className="flex items-start gap-4">
+              <div className="h-12 w-12 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <IconAlertCircle className="h-6 w-6 text-destructive" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-destructive">{error}</p>
+                <p className="font-semibold text-destructive mb-1">Erro ao carregar demanda</p>
+                <p className="text-sm text-muted-foreground">{error}</p>
               </div>
             </div>
-          </div>
-          <Link href="/app/demands" className="text-primary hover:text-primary/80 font-medium inline-block mt-4">
-            ← Voltar às demandas
-          </Link>
+          </BloomCard>
         </div>
       </AppShell>
     );
@@ -171,149 +173,163 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto pb-8 space-y-5">
-        <div className="flex items-center gap-3">
-          <Link href="/app/demands" className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1">
-            ← Voltar
-          </Link>
-        </div>
+      <div className="max-w-4xl mx-auto pb-8 space-y-6">
+        <Link href="/app/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors">
+          <IconArrowLeft className="h-4 w-4" />
+          Voltar
+        </Link>
 
-        {/* Header Card */}
-        <div className="bg-surface rounded-2xl border-2 border-primary/20">
-          <div className="h-1 -mx-[2px] -mt-[2px] rounded-t-lg bg-primary" />
-          <div className="p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-3xl font-bold text-foreground mb-2">{demand.title}</h1>
-                <p className="text-muted-foreground">
-                  👤 Família em <span className="font-semibold text-foreground">{demand.familyCity}</span> | 📍 {demand.city}
+        {/* Header Card - Bloom style */}
+        <BloomCard topBar>
+          <div className="flex items-start justify-between gap-6">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-3xl sm:text-4xl font-display font-black text-foreground uppercase mb-3">{demand.title}</h1>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">{demand.familyCity}</span> • {demand.city}
                   {demand.postalCode && ` (${demand.postalCode})`}
                 </p>
+                <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
+                  Criada há {demand.metrics.daysActive} dias
+                </p>
               </div>
-              {badge && (
-                <span className={`px-4 py-2 rounded-full font-semibold whitespace-nowrap ${badge.bg} ${badge.text} text-sm flex-shrink-0`}>
-                  {badge.label}
-                </span>
-              )}
             </div>
+            {badge && (
+              <BloomBadge variant={
+                demand.visibilityPackage === 'URGENT' ? 'destructive' :
+                demand.visibilityPackage === 'PREMIUM' ? 'primary' :
+                demand.visibilityPackage === 'BASIC' ? 'success' :
+                'muted'
+              } className="flex-shrink-0">
+                {badge.label.replace('🔴 ', '').replace('⭐ ', '').replace('✓ ', '')}
+              </BloomBadge>
+            )}
           </div>
+        </BloomCard>
+
+        {/* Metrics Cards - Bloom pattern */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <BloomCard interactive>
+            <div className="text-center">
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Visualizações</p>
+              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">{demand.metrics.viewCount}</p>
+            </div>
+          </BloomCard>
+          <BloomCard interactive>
+            <div className="text-center">
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Propostas</p>
+              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">{demand.metrics.proposalCount}</p>
+            </div>
+          </BloomCard>
+          <BloomCard interactive>
+            <div className="text-center">
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Taxa Conversão</p>
+              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">{demand.metrics.conversionRate.toFixed(1)}%</p>
+            </div>
+          </BloomCard>
+          <BloomCard interactive>
+            <div className="text-center">
+              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Taxa Spent</p>
+              <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter">€{demand.metrics.visibilitySpent.toFixed(2)}</p>
+            </div>
+          </BloomCard>
         </div>
 
-        {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="bg-surface rounded-xl border-2 border-border/30 p-4">
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Visualizações</p>
-            <p className="text-2xl font-bold text-foreground">{demand.metrics.viewCount}</p>
-          </div>
-          <div className="bg-surface rounded-xl border-2 border-border/30 p-4">
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Propostas</p>
-            <p className="text-2xl font-bold text-foreground">{demand.metrics.proposalCount}</p>
-          </div>
-          <div className="bg-surface rounded-xl border-2 border-border/30 p-4">
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Taxa Conversão</p>
-            <p className="text-2xl font-bold text-foreground">{demand.metrics.conversionRate.toFixed(1)}%</p>
-          </div>
-          <div className="bg-surface rounded-xl border-2 border-border/30 p-4">
-            <p className="text-xs font-semibold text-muted-foreground mb-2">Criada há</p>
-            <p className="text-2xl font-bold text-foreground">{demand.metrics.daysActive} dias</p>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="space-y-5">
+        {/* Main Content - Bloom Style */}
+        <div className="space-y-6">
           {/* Description */}
-          <div className="bg-surface rounded-2xl border-2 border-border/30 p-6">
-            <h2 className="text-lg font-bold text-foreground mb-3">Descrição Detalhada</h2>
-            <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">{demand.description}</p>
-          </div>
+          <BloomCard topBar>
+            <h2 className="text-lg font-display font-black text-foreground uppercase mb-4">Descrição</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">{demand.description}</p>
+          </BloomCard>
 
           {/* Service Types */}
-          <div className="bg-surface rounded-2xl border-2 border-border/30 p-6">
-            <h3 className="text-lg font-bold text-foreground mb-3">Tipos de Serviço</h3>
+          <BloomCard topBar topBarColor="bg-secondary">
+            <h3 className="text-lg font-display font-black text-foreground uppercase mb-4">Tipos de Serviço</h3>
             <div className="flex flex-wrap gap-2">
               {demand.serviceTypes.map((service, idx) => (
-                <span key={idx} className="bg-secondary/20 text-secondary px-3 py-1.5 rounded-lg text-xs font-medium border border-secondary/30">
+                <BloomBadge key={idx} variant="secondary">
                   {getServiceTypeLabel(service)}
-                </span>
+                </BloomBadge>
               ))}
             </div>
-          </div>
+          </BloomCard>
 
           {/* Requirements and Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Requirements */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">Requisitos</h3>
-              <div className="space-y-3">
+            <BloomCard topBar topBarColor="bg-info">
+              <h3 className="text-lg font-display font-black text-foreground uppercase mb-4">Requisitos</h3>
+              <div className="space-y-4">
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground mb-1">Nível de Experiência</p>
-                  <p className="text-sm text-foreground">{demand.requiredExperienceLevel}</p>
+                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Nível de Experiência</p>
+                  <p className="text-sm font-medium text-foreground">{demand.requiredExperienceLevel}</p>
                 </div>
                 {demand.requiredCertifications.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-2">Certificações</p>
-                    <div className="space-y-1">
+                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Certificações</p>
+                    <div className="space-y-2">
                       {demand.requiredCertifications.map((cert, idx) => (
-                        <div key={idx} className="text-sm text-foreground bg-muted/20 rounded px-2.5 py-1.5">• {cert}</div>
+                        <div key={idx} className="text-sm text-foreground bg-muted/30 rounded-lg px-3 py-2">• {cert}</div>
                       ))}
                     </div>
                   </div>
                 )}
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground mb-1">Tipo de Cuidado</p>
-                  <p className="text-sm text-foreground">{demand.careType}</p>
+                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Tipo de Cuidado</p>
+                  <p className="text-sm font-medium text-foreground">{demand.careType}</p>
                 </div>
               </div>
-            </div>
+            </BloomCard>
 
             {/* Practical Details */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">Detalhes Práticos</h3>
-              <div className="space-y-3">
+            <BloomCard topBar>
+              <h3 className="text-lg font-display font-black text-foreground uppercase mb-4">Detalhes Práticos</h3>
+              <div className="space-y-4">
                 {demand.hoursPerWeek && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Horas/Semana</p>
-                    <p className="text-sm font-medium text-foreground">{demand.hoursPerWeek}h</p>
+                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Horas/Semana</p>
+                    <p className="text-sm font-semibold text-foreground">{demand.hoursPerWeek}h</p>
                   </div>
                 )}
                 {demand.desiredStartDate && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Data de Início</p>
+                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Data de Início</p>
                     <p className="text-sm text-foreground">{new Date(demand.desiredStartDate).toLocaleDateString('pt-PT')}</p>
                   </div>
                 )}
                 {demand.desiredEndDate && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Data de Término</p>
+                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Data de Término</p>
                     <p className="text-sm text-foreground">{new Date(demand.desiredEndDate).toLocaleDateString('pt-PT')}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-xs font-semibold text-muted-foreground mb-1">Endereço</p>
+                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Endereço</p>
                   <p className="text-sm text-foreground">{demand.address || 'Não especificado'}</p>
                 </div>
               </div>
-            </div>
+            </BloomCard>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-surface rounded-2xl border-2 border-destructive/30 p-4">
-              <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                  <svg className="h-5 w-5 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+            <BloomCard topBar topBarColor="bg-destructive">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                  <IconAlertCircle className="h-6 w-6 text-destructive" />
                 </div>
-                <p className="text-sm font-medium text-destructive">{error}</p>
+                <div>
+                  <p className="font-semibold text-destructive mb-1">Erro</p>
+                  <p className="text-sm text-muted-foreground">{error}</p>
+                </div>
               </div>
-            </div>
+            </BloomCard>
           )}
 
-          {/* Proposal Form */}
-          <div className="bg-surface rounded-2xl border-2 border-primary/20 p-6">
-            <div className="h-1 -mx-6 -mt-6 mb-6 rounded-t-lg bg-primary" />
-            <h2 className="text-lg font-bold text-foreground mb-4">Enviar Proposta</h2>
+          {/* Proposal Form - Bloom style */}
+          <BloomCard topBar>
+            <h2 className="text-lg font-display font-black text-foreground uppercase mb-6">Enviar Proposta</h2>
 
             <form onSubmit={handleSendProposal} className="space-y-4">
               <div>
@@ -379,7 +395,7 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
                 </Button>
               </div>
             </form>
-          </div>
+          </BloomCard>
         </div>
       </div>
     </AppShell>

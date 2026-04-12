@@ -5,11 +5,9 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
 import {
   IconVideo,
   IconClock,
@@ -62,15 +60,15 @@ export default function InterviewsPage() {
   const getStatusBadge = (status: Interview["status"]) => {
     switch (status) {
       case "COMPLETED":
-        return <Badge className="bg-green-500">Concluída</Badge>;
+        return <BloomBadge variant="success">Concluída</BloomBadge>;
       case "SCHEDULED":
-        return <Badge className="bg-blue-500">Agendada</Badge>;
+        return <BloomBadge variant="primary">Agendada</BloomBadge>;
       case "CANCELLED":
-        return <Badge variant="destructive">Cancelada</Badge>;
+        return <BloomBadge variant="destructive">Cancelada</BloomBadge>;
       case "NO_SHOW":
-        return <Badge variant="secondary">Não Compareceu</Badge>;
+        return <BloomBadge variant="warning">Não Compareceu</BloomBadge>;
       default:
-        return <Badge>{status}</Badge>;
+        return <BloomBadge>{status}</BloomBadge>;
     }
   };
 
@@ -130,71 +128,64 @@ export default function InterviewsPage() {
   return (
     <AppShell>
       <div className="space-y-6 max-w-4xl">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <IconVideo className="h-6 w-6 text-primary" />
-            Entrevistas
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Gerencie suas entrevistas agendadas
-          </p>
-        </div>
+        {/* Header - Bloom style */}
+        <BloomSectionHeader
+          title="Entrevistas"
+          description="Gerencie suas entrevistas agendadas"
+          icon={<IconVideo className="h-6 w-6 text-primary" />}
+        />
 
         {error && (
-          <Alert variant="destructive">
-            <IconAlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <BloomCard topBar topBarColor="bg-destructive">
+            <div className="flex items-start gap-4">
+              <IconAlertCircle className="h-6 w-6 text-destructive flex-shrink-0" />
+              <p className="text-sm font-medium text-muted-foreground">{error}</p>
+            </div>
+          </BloomCard>
         )}
 
         {/* Upcoming Interviews */}
         {upcomingInterviews.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="text-base font-bold">Próximas Entrevistas</h2>
+          <div className="space-y-4">
+            <h2 className="text-lg font-display font-black text-foreground uppercase">Próximas</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {upcomingInterviews.map((interview) => (
                 <Link key={interview.id} href={`/app/interview/${interview.id}`} className="group">
-                  <div className="bg-surface rounded-xl p-4 border-2 border-primary/20 hover:border-primary/40 transition-all card-interactive h-full">
-                    {/* Top color bar */}
-                    <div className="h-1 -mx-4 -mt-4 mb-4 rounded-t-lg bg-primary" />
-
-                    {/* Status Badge */}
-                    <div className="flex items-start justify-between gap-2 mb-3">
+                  <BloomCard interactive topBar>
+                    {/* Header with Status */}
+                    <div className="flex items-start justify-between gap-3 mb-4">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                        <h3 className="font-display font-black text-foreground truncate uppercase text-sm">
                           {interview.otherPartyRole === "family"
                             ? "Entrevista com Família"
                             : "Entrevista com Cuidador"}
                         </h3>
-                        <p className="text-xs text-muted-foreground mt-1 truncate">{interview.otherPartyName}</p>
+                        <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 truncate">{interview.otherPartyName}</p>
                       </div>
-                      <Badge className="bg-primary/10 text-primary border-0 text-[10px] px-2 py-0.5 h-5 shrink-0 font-semibold">
-                        Agendada
-                      </Badge>
+                      {getStatusBadge(interview.status)}
                     </div>
 
                     {/* Info Grid */}
-                    <div className="grid grid-cols-2 gap-2 py-3 border-y border-border/30 mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <div className="grid grid-cols-2 gap-3 py-4 border-y border-border/30">
+                      <div className="flex items-start gap-3">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <IconCalendar className="h-4 w-4 text-primary" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[11px] text-muted-foreground font-medium">Data/Hora</p>
-                          <p className="text-xs font-semibold text-foreground truncate">
+                          <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Data</p>
+                          <p className="text-xs font-semibold text-foreground truncate mt-1">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="flex items-start gap-3">
+                        <div className="h-9 w-9 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <IconClock className="h-4 w-4 text-secondary" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[11px] text-muted-foreground font-medium">Duração</p>
-                          <p className="text-xs font-semibold text-foreground">
+                          <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Duração</p>
+                          <p className="text-xs font-semibold text-foreground mt-1">
                             {formatTime(interview.durationMinutes)}
                           </p>
                         </div>
@@ -202,11 +193,13 @@ export default function InterviewsPage() {
                     </div>
 
                     {/* Action Button */}
-                    <Button className="w-full h-8 text-xs" size="sm">
-                      <IconVideo className="h-3.5 w-3.5 mr-1.5" />
-                      Entrar na Entrevista
-                    </Button>
-                  </div>
+                    <div className="mt-4">
+                      <Button className="w-full h-10 text-xs font-semibold uppercase">
+                        <IconVideo className="h-4 w-4 mr-2" />
+                        Entrar
+                      </Button>
+                    </div>
+                  </BloomCard>
                 </Link>
               ))}
             </div>
@@ -215,8 +208,8 @@ export default function InterviewsPage() {
 
         {/* Past Interviews */}
         {pastInterviews.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="text-base font-bold">Histórico de Entrevistas</h2>
+          <div className="space-y-4">
+            <h2 className="text-lg font-display font-black text-foreground uppercase">Histórico</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {pastInterviews.map((interview) => {
                 const statusColorMap: Record<string, { border: string; top: string; badge: string }> = {
@@ -300,11 +293,11 @@ export default function InterviewsPage() {
 
         {/* Empty State */}
         {interviews.length === 0 && !isLoading && (
-          <div className="py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
-            <IconVideo className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-            <p className="text-sm font-medium text-foreground">Nenhuma entrevista agendada</p>
-            <p className="text-xs text-muted-foreground mt-1">Suas entrevistas aparecerão aqui quando agendadas</p>
-          </div>
+          <BloomEmpty
+            icon={<IconVideo className="h-8 w-8" />}
+            title="Nenhuma entrevista agendada"
+            description="Suas entrevistas aparecerão aqui quando agendadas"
+          />
         )}
       </div>
     </AppShell>
