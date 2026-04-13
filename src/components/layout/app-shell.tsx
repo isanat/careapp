@@ -66,7 +66,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const { t } = useI18n();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const unreadCount = useUnreadCount();
 
   const isFamily = session?.user?.role === "FAMILY";
@@ -139,9 +140,9 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 variant="ghost"
                 size="icon"
                 className="lg:hidden h-9 w-9"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
-                {sidebarOpen ? <IconX className="h-5 w-5" /> : <IconMenu className="h-5 w-5" />}
+                {mobileMenuOpen ? <IconX className="h-5 w-5" /> : <IconMenu className="h-5 w-5" />}
               </Button>
               <Link href="/app/dashboard" className="flex items-center gap-2">
                 <IconLogo className="h-8 w-8" />
@@ -239,18 +240,17 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
       </header>
 
       <div className="flex-1 flex pb-[3.5rem] lg:pb-0">
-        {/* Sidebar (Desktop) */}
+        {/* Sidebar (Mobile) */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-40 w-60 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0",
-            /* Mobile: solid bg for overlay panel */
-            "bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md lg:bg-transparent lg:dark:bg-transparent",
-            "border-r border-border/30 lg:border-r-0",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full",
-            "top-12 lg:top-0"
+            "fixed inset-y-0 left-0 z-40 w-60 transform transition-transform duration-300 ease-in-out lg:hidden",
+            "bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md",
+            "border-r border-border/30",
+            mobileMenuOpen ? "translate-x-0" : "-translate-x-full",
+            "top-16"
           )}
         >
-          <nav className="p-3 space-y-0.5 mt-2 lg:mt-4">
+          <nav className="p-3 space-y-0.5 mt-2">
             {navItems.map((item) => {
               const active = isActiveRoute(item.href);
               const Icon = item.icon;
@@ -259,7 +259,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={() => setMobileMenuOpen(false)}
                   className={cn(
                     "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                     active
@@ -281,14 +281,77 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
               );
             })}
           </nav>
+        </aside>
 
+        {/* Desktop Sidebar - EvyraSidebar Pattern */}
+        <aside className={cn(
+          "hidden lg:flex flex-col transition-all duration-500",
+          sidebarCollapsed ? "w-20" : "w-72"
+        )}>
+          <div className="flex-1 bg-card rounded-3xl border border-border shadow-soft-md m-4 ml-4 mr-2 flex flex-col overflow-hidden">
+            {/* Collapse Toggle Button */}
+            <div className="flex items-center justify-end px-4 py-3 border-b border-border/20">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              >
+                <IconMenu className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="p-4 space-y-2 overflow-y-auto flex-1">
+              {navItems.map((item) => {
+                const active = isActiveRoute(item.href);
+                const Icon = item.icon;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
+                      active
+                        ? "bg-primary/10 text-primary border border-primary/30"
+                        : "hover:bg-secondary/50 text-foreground"
+                    )}
+                    title={sidebarCollapsed ? item.label : ""}
+                  >
+                    <Icon className="h-5 w-5 flex-shrink-0" />
+
+                    {/* Label with collapse animation */}
+                    <span className={cn(
+                      "text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-500",
+                      sidebarCollapsed
+                        ? "opacity-0 w-0"
+                        : "opacity-100 w-auto"
+                    )}>
+                      {item.label}
+                    </span>
+
+                    {/* Badge with collapse animation */}
+                    {item.href === "/app/chat" && unreadCount > 0 && (
+                      <span className={cn(
+                        "h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white transition-all duration-500",
+                        sidebarCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto ml-auto"
+                      )}>
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
         </aside>
 
         {/* Overlay for mobile sidebar */}
-        {sidebarOpen && (
+        {mobileMenuOpen && (
           <div
             className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden transition-opacity"
-            onClick={() => setSidebarOpen(false)}
+            onClick={() => setMobileMenuOpen(false)}
           />
         )}
 
