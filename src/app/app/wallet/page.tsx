@@ -9,8 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconTrendingUp,
   IconCalendar,
-  IconArrowUpRight,
-  IconArrowDownLeft,
+  IconArrowUp,
+  IconArrowDown,
 } from "@/components/icons";
 
 interface Transaction {
@@ -189,7 +189,7 @@ export default function WalletPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary flex-shrink-0">
                         {transaction.status === "COMPLETED" ? (
-                          <IconArrowDownLeft className="h-6 w-6" />
+                          <IconArrowDown className="h-6 w-6" />
                         ) : (
                           <IconCalendar className="h-6 w-6" />
                         )}

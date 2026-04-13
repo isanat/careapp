@@ -269,7 +269,6 @@ function FamilyDemandsContent() {
                   };
 
                   const config = visibilityConfig[demand.visibilityPackage as keyof typeof visibilityConfig] || { colorClass: 'bg-border/10 text-border', icon: undefined, label: '' };
-                  const VisibilityIcon = config.icon;
 
                   return (
                     <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group">
@@ -283,7 +282,7 @@ function FamilyDemandsContent() {
 
                             {/* Visibility Badge & Location */}
                             <div className="flex flex-wrap gap-2 items-center">
-                              {VisibilityIcon && (
+                              {config.label && (
                                 <span className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border whitespace-nowrap ${config.colorClass}`}>
                                   {config.label}
                                 </span>

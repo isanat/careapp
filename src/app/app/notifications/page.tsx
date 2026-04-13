@@ -126,7 +126,7 @@ export default function NotificationsPage() {
         {!isLoading && notifications.length === 0 && (
           <div className="text-center py-12 max-w-sm mx-auto">
             <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-              <IconBell size={28} className="text-muted-foreground" />
+              <IconBell className="h-7 w-7 text-muted-foreground" />
             </div>
             <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma notificação</h4>
             <p className="text-sm text-muted-foreground">Você receberá notificações sobre contratos e propostas aqui</p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
@@ -218,11 +218,11 @@ function ProposalFlowContent() {
   if (error || !proposal) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 py-8">
-        <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-6 flex items-start gap-4">
+        <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-5 flex items-start gap-4">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-destructive">{error || 'Proposta não encontrada'}</p>
-            <Button asChild className="mt-4 h-10 rounded-lg">
+          <div className="flex-1">
+            <p className="text-sm font-display font-bold text-destructive">{error || 'Proposta não encontrada'}</p>
+            <Button asChild className="mt-4 h-10 rounded-xl text-sm">
               <Link href={`/app/family/demands/${demandId}`}>Voltar para Demanda</Link>
             </Button>
           </div>
@@ -236,96 +236,111 @@ function ProposalFlowContent() {
   const caregiver = proposal.caregiver;
 
   return (
-    <div className="max-w-2xl mx-auto pb-8">
+    <div className="max-w-2xl mx-auto pb-8 space-y-8">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Fluxo de Proposta</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter leading-none">
+            Fluxo de Proposta
+          </h1>
+          <p className="text-base text-muted-foreground font-medium">
             Finalize a proposta do cuidador
           </p>
         </div>
         <Link
           href={`/app/family/demands/${demandId}`}
-          className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors flex-shrink-0 mt-1"
           aria-label="Fechar"
         >
           <IconX className="h-5 w-5" />
         </Link>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-muted-foreground">
-            Passo {step} de {totalSteps}
-          </span>
-          <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
-        </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
+      {/* Progress Stepper */}
+      <div>
+        <div className="flex items-center justify-between max-w-lg mx-auto">
+          {[1, 2, 3, 4, 5].map((stepNum) => (
+            <React.Fragment key={stepNum}>
+              <div className="flex flex-col items-center gap-2">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-display font-bold transition-all ${
+                  stepNum < step
+                    ? 'bg-success text-success-foreground'
+                    : stepNum === step
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'bg-secondary text-muted-foreground border border-border'
+                }`}>
+                  {stepNum < step ? '✓' : stepNum}
+                </div>
+              </div>
+              {stepNum < 5 && (
+                <div className={`flex-1 h-0.5 mx-2 rounded-full transition-all ${stepNum < step ? 'bg-success' : 'bg-border'}`} />
+              )}
+            </React.Fragment>
+          ))}
         </div>
       </div>
 
       {/* Caregiver Info Card */}
-      <Card className="border-border/50 mb-8 overflow-hidden">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-12 w-12">
-              <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                {caregiver.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm">{caregiver.name}</p>
-              <p className="text-xs text-muted-foreground">{caregiver.title}</p>
-              <div className="flex items-center gap-1 mt-0.5">
-                <IconStar className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                <span className="text-xs text-muted-foreground">
-                  {caregiver.averageRating.toFixed(1)} • €{(caregiver.hourlyRateEur / 100).toFixed(2)}/h
-                </span>
-              </div>
+      <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card overflow-hidden">
+        <div className="flex items-center gap-4">
+          <Avatar className="w-16 h-16 rounded-2xl flex-shrink-0">
+            <AvatarFallback className="bg-primary/10 text-primary font-display font-black text-base rounded-2xl">
+              {caregiver.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-lg font-display font-bold text-foreground">{caregiver.name}</p>
+            <p className="text-sm text-muted-foreground mt-0.5">{caregiver.title}</p>
+            <div className="flex items-center gap-1.5 mt-2">
+              <IconStar className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+              <span className="text-sm font-display font-bold text-foreground">
+                {caregiver.averageRating.toFixed(1)}
+              </span>
+              <span className="text-sm text-muted-foreground">•</span>
+              <p className="text-lg font-display font-black text-primary tracking-tighter">
+                €{(caregiver.hourlyRateEur / 100).toFixed(2)}/h
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Error Alert */}
       {submitError && (
-        <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
-          <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{submitError}</p>
+        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+          <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-display font-bold text-destructive">Erro</p>
+            <p className="text-sm text-muted-foreground mt-1">{submitError}</p>
+          </div>
         </div>
       )}
 
       {/* Step 1: Chat Inicial */}
       {step === 1 && (
-        <div className="space-y-6">
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-lg font-bold mb-1">Chat Inicial</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Chat Inicial</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Converse com o cuidador sobre a oportunidade
             </p>
           </div>
 
           {/* Messages Container */}
-          <div className="bg-surface rounded-xl border border-border/50 p-4 space-y-3 h-64 overflow-y-auto">
+          <div className="bg-secondary rounded-3xl border border-border/50 p-5 space-y-4 h-64 overflow-y-auto">
             {/* Proposal Message */}
             <div className="flex gap-3">
-              <Avatar className="h-8 w-8 flex-shrink-0">
-                <AvatarFallback className="bg-secondary/10 text-secondary text-xs font-bold">
+              <Avatar className="h-10 w-10 flex-shrink-0 rounded-2xl">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs font-display font-black rounded-2xl">
                   {caregiver.name[0]}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <p className="text-xs font-semibold text-muted-foreground mb-1">{caregiver.name}</p>
-                <div className="bg-muted rounded-lg p-3">
-                  <p className="text-sm">{proposal.message}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{caregiver.name}</p>
+                <div className="bg-secondary rounded-3xl px-4 py-3 mt-1 border border-border/30">
+                  <p className="text-sm text-foreground">{proposal.message}</p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-2">
                   {new Date(proposal.createdAt).toLocaleDateString('pt-PT')}
                 </p>
               </div>
@@ -334,13 +349,13 @@ function ProposalFlowContent() {
 
           {/* Message Input */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Sua Mensagem</Label>
+            <label className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">Sua Mensagem</label>
             <Textarea
               value={flowState.chatMessage}
               onChange={e => setFlowState(prev => ({ ...prev, chatMessage: e.target.value }))}
               placeholder="Responda ao cuidador com questões ou comentários..."
               rows={3}
-              className="rounded-xl text-sm resize-none"
+              className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm resize-none transition-all"
             />
           </div>
 
@@ -348,7 +363,7 @@ function ProposalFlowContent() {
             onClick={handleSendMessage}
             disabled={!flowState.chatMessage.trim() || flowState.isSubmitting}
             size="lg"
-            className="w-full h-11 rounded-xl font-semibold gap-2"
+            className="w-full h-11 rounded-2xl font-display font-bold gap-2 shadow-glow"
           >
             {flowState.isSubmitting ? (
               <>
@@ -367,61 +382,64 @@ function ProposalFlowContent() {
 
       {/* Step 2: Entrevista Agendada */}
       {step === 2 && (
-        <div className="space-y-6">
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-lg font-bold mb-1">Agendar Entrevista</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Agendar Entrevista</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Combine data e hora para uma chamada de vídeo
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="date" className="text-sm font-medium">
+              <label htmlFor="date" className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
                 Data da Entrevista
-              </Label>
+              </label>
               <Input
                 id="date"
                 type="date"
                 value={flowState.interviewDate}
                 onChange={e => setFlowState(prev => ({ ...prev, interviewDate: e.target.value }))}
-                className="h-11 rounded-xl text-sm"
+                className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary h-11 text-sm transition-all"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="time" className="text-sm font-medium">
+              <label htmlFor="time" className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
                 Hora da Entrevista
-              </Label>
+              </label>
               <Input
                 id="time"
                 type="time"
                 value={flowState.interviewTime}
                 onChange={e => setFlowState(prev => ({ ...prev, interviewTime: e.target.value }))}
-                className="h-11 rounded-xl text-sm"
+                className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary h-11 text-sm transition-all"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes" className="text-sm font-medium">
+              <label htmlFor="notes" className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
                 Notas (opcional)
-              </Label>
+              </label>
               <Textarea
                 id="notes"
                 value={flowState.interviewNotes}
                 onChange={e => setFlowState(prev => ({ ...prev, interviewNotes: e.target.value }))}
                 placeholder="Qualquer informação adicional para o cuidador..."
                 rows={3}
-                className="rounded-xl text-sm resize-none"
+                className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm resize-none transition-all"
               />
             </div>
 
             {/* Info Alert */}
-            <div className="flex gap-3 p-3 bg-info/5 border border-info/20 rounded-lg">
-              <IconInfo className="h-4 w-4 text-info flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-info">
-                Um link de vídeo será gerado automaticamente e compartilhado com o cuidador.
-              </p>
+            <div className="flex items-start gap-4 p-5 bg-info/5 border border-info/20 rounded-2xl">
+              <IconInfo className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-display font-bold text-info">Dica</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Um link de vídeo será gerado automaticamente e compartilhado com o cuidador.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -430,7 +448,7 @@ function ProposalFlowContent() {
               variant="outline"
               onClick={() => setStep(1)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-11 rounded-2xl px-4 border border-border"
               disabled={flowState.isSubmitting}
             >
               <IconArrowLeft className="h-4 w-4" />
@@ -439,7 +457,7 @@ function ProposalFlowContent() {
               onClick={handleScheduleInterview}
               disabled={!flowState.interviewDate || !flowState.interviewTime || flowState.isSubmitting}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+              className="flex-1 h-11 rounded-2xl font-display font-bold gap-2 shadow-glow"
             >
               {flowState.isSubmitting ? (
                 <>
@@ -459,58 +477,62 @@ function ProposalFlowContent() {
 
       {/* Step 3: Revisar Proposta */}
       {step === 3 && (
-        <div className="space-y-6">
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-lg font-bold mb-1">Revisar Termos Propostos</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Revisar Termos Propostos</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Verifique a disponibilidade e taxa horária propostas
             </p>
           </div>
 
           {/* Proposal Summary */}
-          <div className="space-y-3">
-            <Card className="border-border/50 overflow-hidden">
-              <CardContent className="p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Detalhes da Proposta
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Taxa Horária Proposta:</span>
-                    <span className="text-sm font-semibold">
-                      €{(proposal.expectedRate).toFixed(2)}/h
-                    </span>
-                  </div>
-                  <div className="border-t border-border/50 pt-2 mt-2">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      Sobre o Cuidador
-                    </p>
-                    <p className="text-sm line-clamp-4">{proposal.aboutYou}</p>
-                  </div>
+          <div className="space-y-4">
+            <section className="space-y-2">
+              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Detalhes da Proposta
+              </p>
+              <div className="bg-card rounded-3xl p-5 border border-border/50 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Taxa Horária Proposta:</span>
+                  <span className="text-lg font-display font-black text-primary tracking-tighter">
+                    €{(proposal.expectedRate).toFixed(2)}/h
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </section>
 
-            <Card className="border-border/50 overflow-hidden">
-              <CardContent className="p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Mensagem da Proposta
-                </p>
-                <p className="text-sm line-clamp-4">{proposal.message}</p>
-              </CardContent>
-            </Card>
+            <section className="space-y-2">
+              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Sobre o Cuidador
+              </p>
+              <div className="bg-card rounded-3xl p-5 border border-border/50">
+                <p className="text-sm text-foreground line-clamp-4">{proposal.aboutYou}</p>
+              </div>
+            </section>
+
+            <section className="space-y-2">
+              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Mensagem da Proposta
+              </p>
+              <div className="bg-card rounded-3xl p-5 border border-border/50">
+                <p className="text-sm text-foreground line-clamp-4">{proposal.message}</p>
+              </div>
+            </section>
           </div>
 
           {/* Terms Agreement */}
           <div className="space-y-2">
-            <label className="flex items-start gap-3 p-3 bg-surface rounded-xl border border-border/50 cursor-pointer hover:border-primary/30 transition-colors">
-              <input
-                type="checkbox"
-                checked={flowState.agreedTerms}
-                onChange={e => setFlowState(prev => ({ ...prev, agreedTerms: e.target.checked }))}
-                className="mt-1"
-              />
-              <span className="text-sm">
+            <label className="flex items-start gap-3 p-4 bg-secondary rounded-2xl border border-border/50 cursor-pointer hover:border-primary/30 transition-colors group">
+              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                flowState.agreedTerms
+                  ? 'bg-primary border-primary'
+                  : 'border-border group-hover:border-primary'
+              }`}>
+                {flowState.agreedTerms && (
+                  <IconCheck className="h-3 w-3 text-primary-foreground" />
+                )}
+              </div>
+              <span className="text-sm text-foreground font-medium">
                 Concordo em revisar estes termos e prosseguir para a criação do contrato
               </span>
             </label>
@@ -521,7 +543,7 @@ function ProposalFlowContent() {
               variant="outline"
               onClick={() => setStep(2)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-11 rounded-2xl px-4 border border-border"
               disabled={flowState.isSubmitting}
             >
               <IconArrowLeft className="h-4 w-4" />
@@ -530,7 +552,7 @@ function ProposalFlowContent() {
               onClick={handleApproveProposal}
               disabled={!flowState.agreedTerms || flowState.isSubmitting}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+              className="flex-1 h-11 rounded-2xl font-display font-bold gap-2"
             >
               {flowState.isSubmitting ? (
                 <>
@@ -550,34 +572,30 @@ function ProposalFlowContent() {
 
       {/* Step 4: Criar Contrato */}
       {step === 4 && (
-        <div className="space-y-6">
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-lg font-bold mb-1">Criar Contrato</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Criar Contrato</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Agora vamos formalizar o contrato com todos os detalhes
             </p>
           </div>
 
-          <Card className="border-border/50 bg-primary/5 overflow-hidden">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <IconFileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Contrato Pronto</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Os detalhes da demanda e proposta serão usados para preencher automaticamente o contrato.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-start gap-4 p-5 bg-primary/5 border border-primary/20 rounded-2xl">
+            <IconFileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-display font-bold text-foreground">Contrato Pronto</p>
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                Os detalhes da demanda e proposta serão usados para preencher automaticamente o contrato.
+              </p>
+            </div>
+          </div>
 
           <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={() => setStep(3)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-11 rounded-2xl px-4 border border-border"
               disabled={flowState.isSubmitting}
             >
               <IconArrowLeft className="h-4 w-4" />
@@ -586,7 +604,7 @@ function ProposalFlowContent() {
               onClick={handleCreateContract}
               disabled={flowState.isSubmitting}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
+              className="flex-1 h-11 rounded-2xl font-display font-bold gap-2 shadow-glow"
             >
               {flowState.isSubmitting ? (
                 <>
@@ -606,37 +624,35 @@ function ProposalFlowContent() {
 
       {/* Step 5: Confirmação Final */}
       {step === 5 && (
-        <div className="space-y-6">
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div className="text-center">
-            <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-success/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
               <IconCheck className="h-8 w-8 text-success" />
             </div>
-            <h2 className="text-lg font-bold">Tudo Pronto!</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Tudo Pronto!</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               O contrato foi criado com sucesso
             </p>
           </div>
 
-          <Card className="border-border/50 overflow-hidden">
-            <CardContent className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Cuidador:</span>
-                <span className="text-sm font-semibold">{caregiver.name}</span>
-              </div>
-              <div className="border-t border-border/50 pt-3 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Taxa Horária:</span>
-                <span className="text-sm font-semibold">
-                  €{(proposal.expectedRate).toFixed(2)}/h
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-3xl p-5 border border-border/50 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Cuidador:</span>
+              <span className="text-sm font-display font-bold text-foreground">{caregiver.name}</span>
+            </div>
+            <div className="border-t border-border/50 pt-3 flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Taxa Horária:</span>
+              <span className="text-lg font-display font-black text-primary tracking-tighter">
+                €{(proposal.expectedRate).toFixed(2)}/h
+              </span>
+            </div>
+          </div>
 
-          <div className="space-y-2">
+          <div className="flex gap-3">
             <Button
               asChild
               size="lg"
-              className="w-full h-11 rounded-xl font-semibold"
+              className="flex-1 h-11 rounded-2xl font-display font-bold shadow-glow"
             >
               <Link href={`/app/family/demands/${demandId}`}>
                 Voltar para Demanda
@@ -646,7 +662,7 @@ function ProposalFlowContent() {
               asChild
               variant="outline"
               size="lg"
-              className="w-full h-11 rounded-xl font-semibold"
+              className="flex-1 h-11 rounded-2xl font-display font-bold border border-border"
             >
               <Link href="/app/contracts">
                 Ver Contratos

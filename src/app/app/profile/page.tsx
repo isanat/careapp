@@ -465,7 +465,7 @@ export default function ProfilePage() {
         {/* Page Header */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
-            {t.profile.myProfile || "Meu Perfil"}
+            Meu Perfil
           </h1>
           <p className="text-base text-muted-foreground font-medium">
             {isCaregiver
@@ -477,18 +477,18 @@ export default function ProfilePage() {
         {/* Alerts */}
         {error && (
           <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
-            <IconAlertCircle size={20} className="text-destructive shrink-0 mt-0.5" />
+            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-display font-bold text-foreground">{t.profile.error || "Erro"}</p>
+              <p className="text-sm font-display font-bold text-foreground">Erro</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
             </div>
           </div>
         )}
         {success && (
           <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
-            <IconCheckCircle size={20} className="text-success shrink-0 mt-0.5" />
+            <IconCheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-display font-bold text-foreground">{t.profile.success || "Sucesso"}</p>
+              <p className="text-sm font-display font-bold text-foreground">Sucesso</p>
               <p className="text-xs text-muted-foreground mt-1">{success}</p>
             </div>
           </div>
@@ -549,7 +549,7 @@ export default function ProfilePage() {
                 {isSaving ? (
                   <>
                     <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
-                    {t.saving || "Guardando"}
+                    Guardando
                   </>
                 ) : isEditing ? (
                   <>
@@ -559,7 +559,7 @@ export default function ProfilePage() {
                 ) : (
                   <>
                     <IconEdit className="h-4 w-4 mr-2" />
-                    {t.profile.editProfile}
+                    Editar
                   </>
                 )}
               </Button>
@@ -620,7 +620,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.profile.city}</Label>
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Cidade</Label>
                     <Input
                       value={formData.city || ""}
                       onChange={(e) => setFormData({...formData, city: e.target.value})}
@@ -772,7 +772,7 @@ export default function ProfilePage() {
 
             {/* Security Info */}
             <div className="flex items-start gap-4 p-5 bg-info/5 border border-info/20 rounded-2xl">
-              <IconShield size={20} className="text-info shrink-0 mt-0.5" />
+              <IconShield className="h-5 w-5 text-info shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-display font-bold text-foreground">Seguranca dos dados</p>
                 <p className="text-xs text-muted-foreground mt-1">Seus documentos sao armazenados de forma segura e criptografada em conformidade com LGPD.</p>
