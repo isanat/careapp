@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  FAMILIAR
+  CUIDADOR
+  ADMIN
+}
+
+enum LedgerType {
+  CREDIT
+  DEBIT
+}
+
+enum PaymentType {
+  ACTIVATION
+  TOKEN_PURCHASE
+  CONTRACT_PAYMENT
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum ContractStatus {
+  DRAFT
+  PENDING_ACCEPTANCE
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum RedemptionStatus {
+  REQUESTED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id         String   @id @default(cuid())
+  role       Role
+  name       String
+  email      String?  @unique
+  phone      String?
+  createdAt  DateTime @default(now())
+
+  profileFamily    ProfileFamily?
+  profileCaregiver ProfileCaregiver?
+  wallet           Wallet?
+  ledgerEntries    TokenLedger[]
+  payments         Payment[]
+  tipsSent         Tip[]          @relation("TipsSent")
+  tipsReceived     Tip[]          @relation("TipsReceived")
+  redemptions      Redemption[]
+  familyContracts  Contract[]     @relation("FamilyContracts")
+  caregiverContracts Contract[]   @relation("CaregiverContracts")
+}
+
+model ProfileFamily {
+  id               String @id @default(cuid())
+  userId           String @unique
+  city             String
+  elderInfo        String
+  emergencyContact String
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ProfileCaregiver {
+  id                 String  @id @default(cuid())
+  userId             String  @unique
+  city               String
+  radiusKm           Int
+  hourlyRateEur      Int
+  services           String[]
+  availabilityJson   String
+  verificationStatus String
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  address   String
+  type      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model TokenLedger {
+  id          String     @id @default(cuid())
+  userId      String
+  type        LedgerType
+  reason      String
+  amountToken Int
+  amountEur   Int
+  refId       String?
+  txHash      String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Contract {
+  id                String         @id @default(cuid())
+  familyUserId      String
+  caregiverUserId   String
+  status            ContractStatus
+  hoursPerWeek      Int
+  hourlyRateEur     Int
+  tasksJson         String
+  startDate         DateTime
+  endDate           DateTime?
+  totalEurEstimated Int
+  platformFeePct    Int            @default(15)
+  onchainHash       String?
+  onchainTxHash     String?
+  createdAt         DateTime       @default(now())
+
+  familyUser    User @relation("FamilyContracts", fields: [familyUserId], references: [id])
+  caregiverUser User @relation("CaregiverContracts", fields: [caregiverUserId], references: [id])
+  acceptance    ContractAcceptance?
+  tips          Tip[]
+}
+
+model ContractAcceptance {
+  id                    String   @id @default(cuid())
+  contractId            String   @unique
+  acceptedByFamilyAt    DateTime?
+  acceptedByCaregiverAt DateTime?
+
+  contract Contract @relation(fields: [contractId], references: [id])
+}
+
+model Tip {
+  id          String   @id @default(cuid())
+  contractId  String
+  fromUserId  String
+  toUserId    String
+  amountToken Int
+  message     String?
+  createdAt   DateTime @default(now())
+
+  contract Contract @relation(fields: [contractId], references: [id])
+  fromUser User @relation("TipsSent", fields: [fromUserId], references: [id])
+  toUser   User @relation("TipsReceived", fields: [toUserId], references: [id])
+}
+
+model Payment {
+  id                      String        @id @default(cuid())
+  userId                  String
+  provider                String        @default("stripe")
+  type                    PaymentType
+  amountEur               Int
+  status                  PaymentStatus @default(PENDING)
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  createdAt               DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Redemption {
+  id          String           @id @default(cuid())
+  userId      String
+  amountToken Int
+  amountEur   Int
+  status      RedemptionStatus @default(REQUESTED)
+  burnTxHash  String?
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
