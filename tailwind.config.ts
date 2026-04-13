@@ -85,6 +85,15 @@ const config: Config = {
         "4xl": ["2.25rem", { lineHeight: "1.2" }],
         "5xl": ["3rem", { lineHeight: "1.15" }],
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            "--tw-prose-headings": "hsl(var(--foreground))",
+            "--tw-prose-body": "hsl(var(--foreground))",
+            "--tw-prose-links": "hsl(var(--primary))",
+          },
+        },
+      },
       spacing: {
         touch: "2.75rem",
         "touch-lg": "3.5rem",
@@ -117,12 +126,17 @@ const config: Config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fadeIn 0.5s ease-out",
+        "fade-out": "fadeOut 0.3s ease-out",
         "slide-up": "slideUp 0.5s ease-out",
         "slide-right": "slideRight 0.5s ease-out",
         "slide-down": "slideDown 0.3s ease-out",
+        "slide-left": "slideLeft 0.5s ease-out",
         "scale-in": "scaleIn 0.4s ease-out",
+        "scale-out": "scaleOut 0.3s ease-out",
         "pulse-soft": "pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         shimmer: "shimmer 2s linear infinite",
+        "float": "float 3s ease-in-out infinite",
+        "bounce-soft": "bounce-soft 2s ease-in-out infinite",
       },
       keyframes: {
         "accordion-down": {
@@ -160,6 +174,26 @@ const config: Config = {
         shimmer: {
           "0%": { backgroundPosition: "-1000px 0" },
           "100%": { backgroundPosition: "1000px 0" },
+        },
+        fadeOut: {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        slideLeft: {
+          "0%": { opacity: "0", transform: "translateX(10px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        scaleOut: {
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(0.95)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "bounce-soft": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
         },
       },
     },
