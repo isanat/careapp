@@ -289,17 +289,19 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
   return (
     <AppShell>
-      <div className="max-w-2xl mx-auto pb-8 space-y-5">
-        {/* Back + Status Header */}
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" asChild className="rounded-xl -ml-2">
+      <div className="max-w-4xl mx-auto pb-8 space-y-8">
+        {/* Page Header - Title + Back Button */}
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" asChild className="rounded-xl -ml-2 h-10 px-2">
             <Link href="/app/contracts">
-              <IconArrowLeft className="h-4 w-4 mr-1" />
-              Voltar
+              <IconArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-0">
+            {contract?.title || "Contrato de Cuidado"}
+          </h1>
           {statusConfig && (
-            <Badge className={`${statusConfig.bgColor} ${statusConfig.color} border-0 ml-auto`}>
+            <Badge className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 ml-auto ${statusConfig.bgColor} ${statusConfig.color} border border-${statusConfig.color.replace('text-', '')}/30`}>
               {statusConfig.label}
             </Badge>
           )}
@@ -307,134 +309,136 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
         {/* Loading */}
         {isLoading && (
-          <div className="space-y-4">
-            <div className="animate-pulse h-24 bg-muted rounded-2xl" />
-            <div className="animate-pulse h-64 bg-muted rounded-2xl" />
+          <div className="space-y-6">
+            <div className="animate-pulse h-32 bg-secondary rounded-3xl" />
+            <div className="animate-pulse h-64 bg-secondary rounded-3xl" />
           </div>
         )}
 
         {/* Error */}
         {error && !isLoading && (
-          <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-xl">
+          <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
             <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-destructive">{error}</p>
+            <p className="text-sm font-medium text-destructive">{error}</p>
           </div>
         )}
 
         {contract && !isLoading && (
           <>
-            {/* Contract Title Card */}
-            <div className="bg-surface rounded-2xl border-2 border-primary/20 p-5">
-              <div className="h-1 -mx-5 -mt-5 mb-4 rounded-t-lg bg-primary" />
-              <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <IconContract className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-muted-foreground mb-1">
-                    Contrato #{contract.id.slice(-8)}
-                  </p>
-                  <h1 className="text-lg font-bold text-foreground">{contract.title || "Contrato de Cuidado"}</h1>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Criado em {new Date(contract.createdAt).toLocaleDateString("pt-PT")}
-                  </p>
+            {/* Contract Info Card */}
+            <section className="space-y-4">
+              <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Informações do Contrato
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <IconContract className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                      Contrato #{contract.id.slice(-8)}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Criado em {new Date(contract.createdAt).toLocaleDateString("pt-PT")}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Other Party Info */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4 card-interactive">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                {isFamily ? "Cuidador(a)" : "Familia"}
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
-                  {contract.otherParty?.name?.split(" ").map(n => n[0]).join("").slice(0, 2) || "?"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground">{contract.otherParty?.name}</p>
-                  {contract.otherParty?.title && (
-                    <p className="text-sm text-muted-foreground">{contract.otherParty.title}</p>
-                  )}
-                  {contract.otherParty?.city && (
-                    <p className="text-xs text-muted-foreground">{contract.otherParty.city}</p>
-                  )}
-                </div>
-                <div className="flex gap-1.5">
-                  <Button variant="outline" size="sm" asChild className="rounded-lg h-9 w-9 p-0">
-                    <Link href={`/app/chat?userId=${contract.otherParty?.id || ""}`}>
+            <section className="space-y-4">
+              <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                {isFamily ? "Cuidador(a)" : "Família"}
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all">
+                <div className="flex items-start gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-display font-bold text-sm flex-shrink-0">
+                    {contract.otherParty?.name?.split(" ").map(n => n[0]).join("").slice(0, 2) || "?"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-display font-black text-foreground uppercase text-sm">{contract.otherParty?.name}</p>
+                    {contract.otherParty?.title && (
+                      <p className="text-sm text-muted-foreground mt-1">{contract.otherParty.title}</p>
+                    )}
+                    {contract.otherParty?.city && (
+                      <p className="text-xs text-muted-foreground mt-0.5">{contract.otherParty.city}</p>
+                    )}
+                  </div>
+                  <Button variant="outline" size="sm" asChild className="rounded-xl h-9 w-9 p-0 flex-shrink-0">
+                    <Link href={`/app/chat?userId=${contract.otherParty?.id || ""}`} title="Enviar mensagem">
                       <IconChat className="h-4 w-4" />
                     </Link>
                   </Button>
                 </div>
-              </div>
 
-              {/* Elder info (for caregiver view) */}
-              {!isFamily && contract.family && (
-                <div className="mt-3 pt-3 border-t border-border/50 space-y-2.5">
-                  {contract.family.elderName && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-muted-foreground">Idoso(a):</span>
-                      <span className="font-semibold">{contract.family.elderName}</span>
-                    </div>
-                  )}
-
-                  {/* Formatted health data */}
-                  {contract.family.elderNeeds && (() => {
-                    const elderData = parseElderlyData(contract.family.elderNeeds);
-                    const formattedData = formatElderlyData(elderData);
-                    return formattedData.length > 0 ? (
-                      <div className="space-y-1.5 text-sm">
-                        {formattedData.map((item, i) => (
-                          <div key={i}>
-                            <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
-                            <p className="text-sm">{item.value}</p>
-                          </div>
-                        ))}
+                {/* Elder info (for caregiver view) */}
+                {!isFamily && contract.family && (
+                  <div className="pt-5 border-t border-border/50 space-y-3">
+                    {contract.family.elderName && (
+                      <div className="flex justify-between items-start py-3 border-b border-border/50">
+                        <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idoso(a)</span>
+                        <span className="font-display font-black text-foreground text-sm">{contract.family.elderName}</span>
                       </div>
-                    ) : null;
-                  })()}
+                    )}
 
-                  {contract.family.phone && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <IconPhone className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span>{contract.family.phone}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+                    {/* Formatted health data */}
+                    {contract.family.elderNeeds && (() => {
+                      const elderData = parseElderlyData(contract.family.elderNeeds);
+                      const formattedData = formatElderlyData(elderData);
+                      return formattedData.length > 0 ? (
+                        formattedData.map((item, i) => (
+                          <div key={i} className="flex justify-between items-start py-3 border-b border-border/50">
+                            <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{item.label}</span>
+                            <span className="text-sm text-foreground text-right">{item.value}</span>
+                          </div>
+                        ))
+                      ) : null;
+                    })()}
 
-            {/* Service Details - Full description */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 overflow-hidden">
-              {/* Service Types */}
-              {contract.serviceTypes && contract.serviceTypes.length > 0 && contract.serviceTypes[0] !== "" && (
-                <div className="p-4 border-b border-border/30">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    Servicos
-                  </p>
+                    {contract.family.phone && (
+                      <div className="flex items-center gap-3 pt-3">
+                        <IconPhone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">{contract.family.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Service Details Card */}
+            {contract.serviceTypes && contract.serviceTypes.length > 0 && contract.serviceTypes[0] !== "" && (
+              <section className="space-y-4">
+                <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                  Serviços
+                </h4>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
                   <div className="flex flex-wrap gap-2">
                     {contract.serviceTypes.map((service, i) => (
-                      <Badge key={i} variant="secondary" className="rounded-lg text-xs border-0 bg-secondary/20 text-secondary">
+                      <span key={i} className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
                         {getServiceLabel(service)}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
                 </div>
-              )}
+              </section>
+            )}
 
-              {/* Parsed Description Details */}
-              {descriptionParts.length > 0 && (
-                <div className="p-4 border-b border-border/30 space-y-3">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Detalhes do Cuidado
-                  </p>
+            {/* Care Details Card */}
+            {descriptionParts.length > 0 && (
+              <section className="space-y-4">
+                <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                  Detalhes do Cuidado
+                </h4>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                   {descriptionParts.map((part, i) => (
-                    <div key={i}>
+                    <div key={i} className={i !== descriptionParts.length - 1 ? "pb-4 border-b border-border/50" : ""}>
                       {part.label ? (
                         <div>
-                          <span className="text-xs font-semibold text-muted-foreground">{part.label}</span>
-                          <p className="text-sm text-foreground mt-0.5">{part.value}</p>
+                          <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{part.label}</span>
+                          <p className="text-sm text-foreground mt-2">{part.value}</p>
                         </div>
                       ) : (
                         <p className="text-sm text-foreground">{part.value}</p>
@@ -442,225 +446,212 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                     </div>
                   ))}
                 </div>
-              )}
+              </section>
+            )}
 
-              {/* Schedule */}
-              <div className="p-4 border-b border-border/30">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Horario
-                </p>
-                <div className="grid grid-cols-2 gap-3">
+            {/* Schedule Card */}
+            <section className="space-y-4">
+              <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Horário
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                <div className="space-y-4">
                   {contract.hoursPerWeek > 0 && (
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                        <IconClock className="h-4 w-4 text-secondary" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground">Horas/semana</p>
-                        <p className="text-sm font-medium text-foreground">{contract.hoursPerWeek}h</p>
-                      </div>
+                    <div className="flex justify-between items-center py-4 border-b border-border/50">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Horas/semana</span>
+                      <span className="text-lg sm:text-xl font-display font-black tracking-tighter text-foreground">{contract.hoursPerWeek}h</span>
                     </div>
                   )}
                   {contract.totalHours > 0 && (
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                        <IconClock className="h-4 w-4 text-secondary" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground">Total mensal</p>
-                        <p className="text-sm font-medium text-foreground">{contract.totalHours}h</p>
-                      </div>
+                    <div className="flex justify-between items-center py-4 border-b border-border/50">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Total mensal</span>
+                      <span className="text-lg sm:text-xl font-display font-black tracking-tighter text-foreground">{contract.totalHours}h</span>
                     </div>
                   )}
                   {contract.startDate && (
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <IconCalendar className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground">Inicio</p>
-                        <p className="text-sm font-medium text-foreground">{new Date(contract.startDate).toLocaleDateString("pt-PT")}</p>
-                      </div>
+                    <div className="flex justify-between items-center py-4 border-b border-border/50">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Início</span>
+                      <span className="font-medium text-foreground">{new Date(contract.startDate).toLocaleDateString("pt-PT")}</span>
                     </div>
                   )}
                   {contract.endDate && (
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <IconCalendar className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground">Termino</p>
-                        <p className="text-sm font-medium text-foreground">{new Date(contract.endDate).toLocaleDateString("pt-PT")}</p>
-                      </div>
+                    <div className="flex justify-between items-center py-4">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Término</span>
+                      <span className="font-medium text-foreground">{new Date(contract.endDate).toLocaleDateString("pt-PT")}</span>
                     </div>
                   )}
                 </div>
               </div>
+            </section>
 
-              {/* Financial */}
-              <div className="p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Valores
-                </p>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Valor por hora</span>
-                    <span className="font-semibold text-foreground">€{hourlyRate}/h</span>
+            {/* Financial Card */}
+            <section className="space-y-4">
+              <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Valores Financeiros
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-4 border-b border-border/50">
+                    <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Valor por hora</span>
+                    <span className="text-lg sm:text-xl font-display font-black tracking-tighter text-foreground">€{hourlyRate}/h</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Total mensal ({contract.totalHours}h)</span>
-                    <span className="font-bold text-base text-foreground">€{totalEur}</span>
+                  <div className="flex justify-between items-center py-4 border-b border-border/50">
+                    <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Total mensal ({contract.totalHours}h)</span>
+                    <span className="text-lg sm:text-xl font-display font-black tracking-tighter text-foreground">€{totalEur}</span>
                   </div>
                   {!isFamily && (
                     <>
-                      <div className="border-t border-border/30 pt-3 mt-3">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
-                          <span className="text-destructive font-medium">-€{platformFee}</span>
+                      <div className="py-4 border-t-2 border-border/50">
+                        <div className="flex justify-between items-center py-3 border-b border-border/50">
+                          <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Taxa plataforma ({platformFeePercent}%)</span>
+                          <span className="text-base font-display font-black tracking-tighter text-destructive">-€{platformFee}</span>
                         </div>
-                        <div className="flex justify-between text-sm font-semibold mt-2">
-                          <span className="text-foreground">Voce recebe</span>
-                          <span className="text-success">€{caregiverReceives}</span>
+                        <div className="flex justify-between items-center py-4">
+                          <span className="text-sm font-display font-bold text-foreground uppercase tracking-widest">Você recebe</span>
+                          <span className="text-lg sm:text-xl font-display font-black tracking-tighter text-success">€{caregiverReceives}</span>
                         </div>
                       </div>
                     </>
                   )}
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Acceptance Status */}
-            <div className="bg-surface rounded-2xl border-2 border-border/30 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <IconShield className="h-4 w-4 text-primary" />
+            <section className="space-y-4">
+              <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                Status de Aceite
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between py-4 border-b border-border/50">
+                    <span className="text-sm font-display font-bold text-foreground uppercase tracking-widest">Família</span>
+                    {contract.acceptance?.familyAccepted ? (
+                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30 flex items-center gap-1.5">
+                        <IconCheck className="h-3 w-3" /> Aceito
+                      </span>
+                    ) : (
+                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Pendente</span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between py-4">
+                    <span className="text-sm font-display font-bold text-foreground uppercase tracking-widest">Cuidador(a)</span>
+                    {contract.acceptance?.caregiverAccepted ? (
+                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30 flex items-center gap-1.5">
+                        <IconCheck className="h-3 w-3" /> Aceito
+                      </span>
+                    ) : (
+                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Pendente</span>
+                    )}
+                  </div>
                 </div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Status de Aceite
-                </p>
-              </div>
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-                  <span className="text-sm font-medium text-foreground">Familia</span>
-                  {contract.acceptance?.familyAccepted ? (
-                    <Badge className="bg-success/10 text-success border-0 text-xs font-semibold">
-                      <IconCheck className="h-3 w-3 mr-1" /> Aceito
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-warning/10 text-warning border-0 text-xs font-semibold">Pendente</Badge>
-                  )}
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-                  <span className="text-sm font-medium text-foreground">Cuidador(a)</span>
-                  {contract.acceptance?.caregiverAccepted ? (
-                    <Badge className="bg-success/10 text-success border-0 text-xs font-semibold">
-                      <IconCheck className="h-3 w-3 mr-1" /> Aceito
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-warning/10 text-warning border-0 text-xs font-semibold">Pendente</Badge>
-                  )}
-                </div>
-                {contract.acceptance?.familyAcceptedAt && (
-                  <p className="text-xs text-muted-foreground">
-                    Familia aceitou em {new Date(contract.acceptance.familyAcceptedAt).toLocaleString("pt-PT")}
-                  </p>
+                {(contract.acceptance?.familyAcceptedAt || contract.acceptance?.caregiverAcceptedAt) && (
+                  <div className="pt-4 border-t border-border/50 space-y-2">
+                    {contract.acceptance?.familyAcceptedAt && (
+                      <p className="text-xs text-muted-foreground">
+                        Família aceitou em {new Date(contract.acceptance.familyAcceptedAt).toLocaleString("pt-PT")}
+                      </p>
+                    )}
+                    {contract.acceptance?.caregiverAcceptedAt && (
+                      <p className="text-xs text-muted-foreground">
+                        Cuidador aceitou em {new Date(contract.acceptance.caregiverAcceptedAt).toLocaleString("pt-PT")}
+                      </p>
+                    )}
+                  </div>
                 )}
-                {contract.acceptance?.caregiverAcceptedAt && (
-                  <p className="text-xs text-muted-foreground">
-                    Cuidador aceitou em {new Date(contract.acceptance.caregiverAcceptedAt).toLocaleString("pt-PT")}
-                  </p>
-                )}
               </div>
-            </div>
+            </section>
 
             {/* Digital Signature Confirmation */}
             {digitalSignature && (
-              <div className="bg-surface rounded-2xl border-2 border-success/30 p-4">
-                <div className="h-1 -mx-4 -mt-4 mb-4 rounded-t-lg bg-success" />
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
-                    <IconShield className="h-5 w-5 text-success" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">
-                      Assinatura Digital Registrada
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Hash: {digitalSignature.hash.slice(0, 16)}...{digitalSignature.hash.slice(-8)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Data: {new Date(digitalSignature.timestamp).toLocaleString("pt-PT")}
-                    </p>
+              <section className="space-y-4">
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-success/30 shadow-card">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <IconShield className="h-5 w-5 text-success" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-display font-black text-foreground uppercase">Assinatura Digital Registrada</h3>
+                      <div className="mt-4 space-y-2">
+                        <div className="flex justify-between items-start py-3 border-b border-border/50">
+                          <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Hash</span>
+                          <span className="text-sm font-mono text-foreground">{digitalSignature.hash.slice(0, 16)}...{digitalSignature.hash.slice(-8)}</span>
+                        </div>
+                        <div className="flex justify-between items-start py-3">
+                          <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Data</span>
+                          <span className="text-sm text-foreground">{new Date(digitalSignature.timestamp).toLocaleString("pt-PT")}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
             )}
 
             {/* Non-Circumvention Notice */}
             {contract.acceptance?.familyAccepted && contract.acceptance?.caregiverAccepted && (
-              <div className="bg-surface rounded-2xl border-2 border-warning/30 p-4">
-                <div className="h-1 -mx-4 -mt-4 mb-4 rounded-t-lg bg-warning" />
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center flex-shrink-0">
-                    <IconContract className="h-5 w-5 text-warning" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">
-                      Clausula de Nao-Circunvencao Ativa
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      Ambas as partes concordaram em manter a relacao profissional
-                      exclusivamente atraves da plataforma por 24 meses. Todos os pagamentos
-                      e comunicacoes devem ser realizados pela plataforma.
-                    </p>
+              <section className="space-y-4">
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-warning/30 shadow-card">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-warning/10 flex items-center justify-center flex-shrink-0">
+                      <IconContract className="h-5 w-5 text-warning" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-display font-black text-foreground uppercase">Cláusula de Não-Circunvenção Ativa</h3>
+                      <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
+                        Ambas as partes concordaram em manter a relação profissional exclusivamente através da plataforma por 24 meses. Todos os pagamentos e comunicações devem ser realizados pela plataforma.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
             )}
 
             {/* Accept Action */}
             {canAccept && userNeedsToAccept && (
-              <div className="space-y-4">
+              <section className="space-y-6">
                 {/* Main action card */}
-                <div className="bg-surface rounded-2xl border-2 border-primary/30 p-6 space-y-4">
-                  <div className="h-1 -mx-6 -mt-6 mb-4 rounded-t-lg bg-primary" />
-                  <div className="flex items-start gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-primary/30 shadow-card">
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <IconContract className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg text-foreground">Revisar & Aceitar Contrato</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Certifique-se de que todos os detalhes estão corretos antes de confirmar.
-                        Seu aceite sera registrado digitalmente com data, hora e IP.
+                      <h3 className="text-lg font-display font-black text-foreground uppercase">Revisar & Aceitar Contrato</h3>
+                      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                        Certifique-se de que todos os detalhes estão corretos antes de confirmar. Seu aceite será registrado digitalmente com data, hora e IP.
                       </p>
                     </div>
                   </div>
 
                   {/* Summary of key contract details */}
-                  <div className="grid grid-cols-2 gap-3 my-3 p-4 bg-muted/20 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4 p-5 bg-secondary rounded-2xl mb-6 border border-border/50">
                     <div>
-                      <p className="text-xs text-muted-foreground">Valor/Hora</p>
-                      <p className="text-sm font-semibold text-foreground">€{hourlyRate}/h</p>
+                      <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Valor/Hora</p>
+                      <p className="text-lg font-display font-black text-foreground mt-2 tracking-tighter">€{hourlyRate}/h</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Total Mensal</p>
-                      <p className="text-sm font-semibold text-foreground">€{totalEur}</p>
+                      <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Total Mensal</p>
+                      <p className="text-lg font-display font-black text-foreground mt-2 tracking-tighter">€{totalEur}</p>
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Voce Recebe</p>
-                      <p className="text-sm font-semibold text-success">€{caregiverReceives}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Taxa Plataforma</p>
-                      <p className="text-sm font-semibold text-foreground">€{platformFee}</p>
-                    </div>
+                    {!isFamily && (
+                      <>
+                        <div>
+                          <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Você Recebe</p>
+                          <p className="text-lg font-display font-black text-success mt-2 tracking-tighter">€{caregiverReceives}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Taxa Plataforma</p>
+                          <p className="text-lg font-display font-black text-destructive mt-2 tracking-tighter">€{platformFee}</p>
+                        </div>
+                      </>
+                    )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button
                       size="lg"
-                      className="flex-1 h-12 text-base font-semibold rounded-xl"
+                      className="flex-1 h-12 text-base font-semibold rounded-2xl"
                       onClick={() => setShowAcceptDialog(true)}
                       disabled={isAccepting}
                     >
@@ -670,7 +661,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                     <Button
                       size="lg"
                       variant="outline"
-                      className="flex-1 h-12 text-base font-semibold rounded-xl"
+                      className="flex-1 h-12 text-base font-semibold rounded-2xl"
                       asChild
                     >
                       <Link href={`/app/chat?userId=${contract.otherParty?.id || ""}`}>
@@ -685,7 +676,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                 <div className="text-center">
                   <Button
                     variant="ghost"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/5"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/5 rounded-xl"
                     asChild
                   >
                     <Link href="/app/contracts">
@@ -693,7 +684,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                     </Link>
                   </Button>
                 </div>
-              </div>
+              </section>
             )}
 
             {/* Payment Section */}
@@ -703,20 +694,17 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
 
             {/* Weekly Payment Approvals */}
             {contract.status === 'ACTIVE' && contract.weeklyPaymentEnabled && (
-              <div className="bg-surface rounded-2xl border-2 border-border/30 p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                    <IconCalendar className="h-4 w-4 text-secondary" />
-                  </div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Aprovações Semanais
-                  </p>
+              <section className="space-y-4">
+                <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                  Aprovações Semanais
+                </h4>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                  <WeeklyApprovalPanel
+                    contractId={contract.id}
+                    isFamily={isFamily}
+                  />
                 </div>
-                <WeeklyApprovalPanel
-                  contractId={contract.id}
-                  isFamily={isFamily}
-                />
-              </div>
+              </section>
             )}
 
             {/* Active Contract: Payments & Receipts */}
@@ -739,7 +727,7 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
         <Dialog open={showAcceptDialog} onOpenChange={setShowAcceptDialog}>
           <DialogContent className="max-w-md border-2 border-success/20 bg-surface">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-base font-bold">Confirmar Aceite do Contrato</DialogTitle>
+              <DialogTitle className="text-base font-display font-bold uppercase tracking-widest">Confirmar Aceite do Contrato</DialogTitle>
               <DialogDescription className="text-sm mt-2">
                 Ao aceitar, você concorda com todos os termos legais
               </DialogDescription>
@@ -915,114 +903,112 @@ function ActiveContractActions({ contractId }: { contractId: string }) {
   return (
     <>
       {/* Recurring Payment */}
-      <div className="bg-surface rounded-2xl border border-border/50 p-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          <IconClock className="h-3.5 w-3.5 inline mr-1" />
+      <section className="space-y-4">
+        <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
           Pagamento Recorrente
-        </p>
-        {recurringPayment ? (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Status</span>
-              <Badge className={recurringPayment.status === 'ACTIVE' ? 'bg-green-500' : 'bg-gray-500'}>
-                {recurringPayment.status === 'ACTIVE' ? 'Ativo' : recurringPayment.status}
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Valor mensal</span>
-              <span className="font-semibold">{Math.round(recurringPayment.amountCents / 100)}</span>
-            </div>
-            {recurringPayment.nextPaymentAt && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Proximo pagamento</span>
-                <span>{new Date(recurringPayment.nextPaymentAt).toLocaleDateString("pt-PT")}</span>
+        </h4>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          {recurringPayment ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-4 border-b border-border/50">
+                <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Status</span>
+                <Badge className={recurringPayment.status === 'ACTIVE' ? 'bg-success/10 text-success border border-success/30' : 'bg-muted text-muted-foreground border border-border'}>
+                  {recurringPayment.status === 'ACTIVE' ? 'Ativo' : recurringPayment.status}
+                </Badge>
               </div>
-            )}
-            <p className="text-xs text-muted-foreground mt-2">
-              O pagamento e processado automaticamente pela plataforma, garantindo
-              seguranca para ambas as partes.
-            </p>
-          </div>
-        ) : (
-          <div className="text-center space-y-3">
-            <p className="text-sm text-muted-foreground">
-              Configure o pagamento mensal automatico para garantir que o cuidador
-              receba pontualmente e a plataforma possa fornecer protecao continua.
-            </p>
-            <Button
-              onClick={handleSetupRecurring}
-              disabled={isSettingUp}
-              className="w-full h-12 rounded-xl"
-            >
-              {isSettingUp ? (
-                <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+              <div className="flex items-center justify-between py-4 border-b border-border/50">
+                <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Valor mensal</span>
+                <span className="text-lg sm:text-xl font-display font-black tracking-tighter text-foreground">€{Math.round(recurringPayment.amountCents / 100)}</span>
+              </div>
+              {recurringPayment.nextPaymentAt && (
+                <div className="flex items-center justify-between py-4">
+                  <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Próximo pagamento</span>
+                  <span className="font-medium text-foreground">{new Date(recurringPayment.nextPaymentAt).toLocaleDateString("pt-PT")}</span>
+                </div>
+              )}
+              <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
+                O pagamento é processado automaticamente pela plataforma, garantindo segurança para ambas as partes.
+              </p>
+            </div>
+          ) : (
+            <div className="text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Configure o pagamento mensal automático para garantir que o cuidador
+                receba pontualmente e a plataforma possa fornecer proteção contínua.
+              </p>
+              <Button
+                onClick={handleSetupRecurring}
+                disabled={isSettingUp}
+                className="w-full h-12 rounded-2xl font-semibold"
+              >
+                {isSettingUp ? (
+                  <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
                 <IconCalendar className="h-4 w-4 mr-2" />
               )}
               Ativar Pagamento Mensal
             </Button>
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Receipts */}
-      <div className="bg-surface rounded-2xl border border-border/50 p-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-          <IconContract className="h-3.5 w-3.5 inline mr-1" />
+      <section className="space-y-4">
+        <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
           Recibos Fiscais
-        </p>
-
-        {/* Generate receipt */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex-1">
-            <Label className="text-xs text-muted-foreground">Horas trabalhadas este mes</Label>
-            <Input
-              type="number"
-              min={0}
-              max={200}
-              value={hoursWorked || ''}
-              onChange={(e) => setHoursWorked(Number(e.target.value) || 0)}
-              placeholder="0"
-              className="h-10 rounded-lg text-sm"
-            />
+        </h4>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          {/* Generate receipt */}
+          <div className="flex flex-col sm:flex-row items-end gap-3 mb-6 pb-6 border-b border-border/50">
+            <div className="flex-1 w-full">
+              <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Horas trabalhadas este mês</Label>
+              <Input
+                type="number"
+                min={0}
+                max={200}
+                value={hoursWorked || ''}
+                onChange={(e) => setHoursWorked(Number(e.target.value) || 0)}
+                placeholder="0"
+                className="h-11 rounded-2xl text-sm mt-2 bg-secondary border-border"
+              />
+            </div>
+            <Button
+              onClick={handleGenerateReceipt}
+              disabled={isGenerating || hoursWorked <= 0}
+              className="w-full sm:w-auto h-11 rounded-2xl font-semibold"
+            >
+              {isGenerating ? <IconLoader2 className="h-4 w-4 animate-spin mr-2" /> : "Gerar Recibo"}
+            </Button>
           </div>
-          <Button
-            onClick={handleGenerateReceipt}
-            disabled={isGenerating || hoursWorked <= 0}
-            size="sm"
-            className="mt-5 rounded-lg"
-          >
-            {isGenerating ? <IconLoader2 className="h-4 w-4 animate-spin" /> : "Gerar Recibo"}
-          </Button>
-        </div>
 
-        {receipts.length > 0 ? (
-          <div className="space-y-2">
-            {receipts.map(receipt => (
-              <div key={receipt.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                <div>
-                  <p className="text-sm font-medium">{receipt.receiptNumber}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(receipt.periodStart).toLocaleDateString("pt-PT")} -
-                    {" "}{new Date(receipt.periodEnd).toLocaleDateString("pt-PT")}
-                  </p>
+          {receipts.length > 0 ? (
+            <div className="space-y-3">
+              {receipts.map(receipt => (
+                <div key={receipt.id} className="flex items-center justify-between p-4 bg-secondary rounded-2xl border border-border/50">
+                  <div>
+                    <p className="text-sm font-display font-bold text-foreground">{receipt.receiptNumber}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(receipt.periodStart).toLocaleDateString("pt-PT")} — {new Date(receipt.periodEnd).toLocaleDateString("pt-PT")}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-display font-black text-foreground tracking-tighter">€{Math.round(receipt.totalAmountCents / 100)}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{receipt.hoursWorked}h</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold">{Math.round(receipt.totalAmountCents / 100)}</p>
-                  <p className="text-xs text-muted-foreground">{receipt.hoursWorked}h</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-muted-foreground text-center py-3">
-            Nenhum recibo gerado ainda. Gere recibos mensalmente para fins fiscais.
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground text-center py-6">
+              Nenhum recibo gerado ainda. Gere recibos mensalmente para fins fiscais.
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
+            Recibos gerados pela plataforma são válidos para declaração de IRS/Segurança Social.
           </p>
-        )}
-        <p className="text-xs text-muted-foreground mt-3">
-          Recibos gerados pela plataforma sao validos para declaracao de IRS/Seguranca Social.
-        </p>
-      </div>
+        </div>
+      </section>
     </>
   );
 }

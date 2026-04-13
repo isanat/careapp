@@ -221,10 +221,11 @@ function NewDemandContent() {
 
   if (status === 'loading') {
     return (
-      <div className="max-w-lg mx-auto space-y-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-muted rounded-2xl" />
-          <div className="h-64 bg-muted rounded-2xl" />
+      <div className="max-w-2xl mx-auto space-y-6 py-8">
+        <div className="animate-pulse space-y-6">
+          <div className="h-20 bg-secondary rounded-3xl" />
+          <div className="h-12 bg-secondary rounded-3xl" />
+          <div className="h-64 bg-secondary rounded-3xl" />
         </div>
       </div>
     );
@@ -234,275 +235,329 @@ function NewDemandContent() {
   const progress = (step / totalSteps) * 100;
 
   return (
-    <div className="max-w-lg mx-auto pb-8">
+    <div className="max-w-2xl mx-auto pb-8">
       {/* Header Section */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Criar Nova Demanda</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
+            Criar Nova Demanda
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Atraia cuidadores qualificados com uma demanda clara
           </p>
         </div>
         <Link
           href="/app/family/demands"
-          className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+          className="h-10 w-10 rounded-2xl hover:bg-secondary flex items-center justify-center transition-all"
           aria-label="Fechar"
         >
           <IconX className="h-5 w-5" />
         </Link>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-muted-foreground">
+      {/* Progress Stepper */}
+      <div className="mb-8 space-y-4">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
             Passo {step} de {totalSteps}
           </span>
-          <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
+          <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
+        <div className="flex items-center justify-between max-w-lg">
+          {[...Array(totalSteps)].map((_, i) => {
+            const isCompleted = i < step - 1;
+            const isCurrent = i === step - 1;
+            return (
+              <div key={i} className="flex items-center flex-1">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-display font-bold transition-all ${
+                  isCurrent ? 'bg-primary text-primary-foreground shadow-md' : isCompleted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground border border-border'
+                }`}>
+                  {isCompleted ? '✓' : i + 1}
+                </div>
+                {i < totalSteps - 1 && (
+                  <div className={`flex-1 h-0.5 mx-2 rounded-full ${isCompleted ? 'bg-primary' : 'bg-border'}`} />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Error Alert */}
       {error && (
-        <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
-          <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+          <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-display font-bold text-foreground">Erro</p>
+            <p className="text-xs text-destructive mt-1">{error}</p>
+          </div>
         </div>
       )}
 
       {submitError && (
-        <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
-          <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{submitError}</p>
+        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+          <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-display font-bold text-foreground">Erro ao criar demanda</p>
+            <p className="text-xs text-destructive mt-1">{submitError}</p>
+          </div>
         </div>
       )}
 
       {/* Step 1: Informações Básicas */}
       {step === 1 && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-bold mb-1">Informações Básicas</h2>
-            <p className="text-sm text-muted-foreground">
-              Comece com os detalhes principais da sua demanda
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {/* Title */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Título da Demanda</Label>
-              <Input
-                value={formData.title}
-                onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Ex: Cuidadora para idosa em Lisboa"
-                className="h-11 rounded-xl text-sm"
-              />
-              <p className="text-xs text-muted-foreground">
-                {formData.title.length}/100 caracteres
-              </p>
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">
-                Descrição Detalhada (mín. 100 caracteres)
-              </Label>
-              <Textarea
-                value={formData.description}
-                onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Descreva detalhadamente a necessidade, condições, horários, requisitos especiais, etc."
-                rows={5}
-                className="rounded-xl text-sm resize-none"
-              />
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">
-                  {formData.description.length}/100 caracteres mínimos
+        <div className="space-y-8">
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Passo 1: Informações Básicas
+            </h4>
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-display font-black uppercase mb-2 text-foreground">
+                  Informações Básicas
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Comece com os detalhes principais da sua demanda
                 </p>
-                {formData.description.length >= 100 && (
-                  <div className="flex items-center gap-1 text-xs text-success">
-                    <IconCheck className="h-3 w-3" />
-                    OK
+              </div>
+
+              <div className="space-y-6">
+                {/* Title */}
+                <div className="space-y-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Título da Demanda
+                  </label>
+                  <Input
+                    value={formData.title}
+                    onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Ex: Cuidadora para idosa em Lisboa"
+                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formData.title.length}/100 caracteres
+                  </p>
+                </div>
+
+                {/* Description */}
+                <div className="space-y-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Descrição Detalhada (mín. 100 caracteres)
+                  </label>
+                  <Textarea
+                    value={formData.description}
+                    onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Descreva detalhadamente a necessidade, condições, horários, requisitos especiais, etc."
+                    rows={5}
+                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+                  />
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                      {formData.description.length}/100 caracteres mínimos
+                    </p>
+                    {formData.description.length >= 100 && (
+                      <div className="flex items-center gap-1 text-xs text-success font-medium">
+                        <IconCheck className="h-4 w-4" />
+                        OK
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <Button
-            onClick={handleNext}
-            disabled={!formData.title.trim() || formData.description.length < 100}
-            size="lg"
-            className="w-full h-11 rounded-xl font-semibold gap-2"
-          >
-            Continuar
-            <IconArrowRight className="h-4 w-4" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
+            <Button
+              onClick={handleNext}
+              disabled={!formData.title.trim() || formData.description.length < 100}
+              size="lg"
+              className="flex-1 h-11 rounded-2xl font-display font-bold uppercase gap-2"
+            >
+              Continuar
+              <IconArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       )}
 
       {/* Step 2: Detalhes */}
       {step === 2 && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-bold mb-1">Detalhes da Demanda</h2>
-            <p className="text-sm text-muted-foreground">
-              Especifique os tipos de serviço e localização
-            </p>
-          </div>
+        <div className="space-y-8">
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Passo 2: Detalhes da Demanda
+            </h4>
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-8">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-display font-black uppercase mb-2 text-foreground">
+                  Detalhes da Demanda
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Especifique os tipos de serviço e localização
+                </p>
+              </div>
 
-          <div className="space-y-5">
-            {/* Service Types */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Tipos de Serviço</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {SERVICE_TYPES.map(type => (
-                  <button
-                    key={type}
-                    onClick={() => handleServiceTypeChange(type)}
-                    className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border-2 transition-all ${
-                      formData.serviceTypes.includes(type)
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-muted-foreground/50'
-                    }`}
-                  >
-                    <Checkbox
-                      checked={formData.serviceTypes.includes(type)}
-                      onCheckedChange={() => handleServiceTypeChange(type)}
-                      className="cursor-pointer"
+              {/* Service Types */}
+              <div className="space-y-3">
+                <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                  Tipos de Serviço
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {SERVICE_TYPES.map(type => (
+                    <button
+                      key={type}
+                      onClick={() => handleServiceTypeChange(type)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all ${
+                        formData.serviceTypes.includes(type)
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/40 hover:bg-secondary'
+                      }`}
+                    >
+                      <Checkbox
+                        checked={formData.serviceTypes.includes(type)}
+                        onCheckedChange={() => handleServiceTypeChange(type)}
+                        className="cursor-pointer"
+                      />
+                      <span className="text-sm font-medium text-foreground">{SERVICE_LABELS[type]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Location */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary">
+                    <IconMapPin className="h-5 w-5" />
+                  </div>
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Localização
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="city" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                      Localidade
+                    </label>
+                    <Input
+                      id="city"
+                      value={formData.city}
+                      onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
+                      placeholder="Ex: Lisboa, Porto, Covilhã"
+                      className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
-                    <span className="text-xs font-medium">{SERVICE_LABELS[type]}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+                  </div>
 
-            {/* Location */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <IconMapPin className="h-4 w-4 text-primary" />
-                <Label className="text-sm font-medium">Localização</Label>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="city" className="text-xs font-medium text-muted-foreground">
-                  Localidade
-                </Label>
-                <Input
-                  id="city"
-                  value={formData.city}
-                  onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                  placeholder="Ex: Lisboa, Porto, Covilhã"
-                  className="h-10 rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="postal" className="text-xs font-medium text-muted-foreground">
-                  Código Postal (opcional)
-                </Label>
-                <Input
-                  id="postal"
-                  value={formData.postalCode}
-                  onChange={e => setFormData(prev => ({ ...prev, postalCode: e.target.value }))}
-                  placeholder="Ex: 1000-001"
-                  className="h-10 rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address" className="text-xs font-medium text-muted-foreground">
-                  Endereço (opcional)
-                </Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                  placeholder="Endereço detalhado"
-                  className="h-10 rounded-lg text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Budget Section */}
-            <div className="space-y-3 p-4 bg-muted/30 rounded-xl border border-border/50">
-              <p className="text-sm font-semibold">Orçamento</p>
-
-              <div className="grid grid-cols-2 gap-3">
-                {/* Total Budget */}
-                <div className="space-y-2">
-                  <Label htmlFor="budget" className="text-xs font-medium text-muted-foreground">
-                    Orçamento Total (€)
-                  </Label>
-                  <Input
-                    id="budget"
-                    type="number"
-                    value={formData.budgetEurCents ? parseInt(formData.budgetEurCents) / 100 : ''}
-                    onChange={e => {
-                      const value = e.target.value ? parseInt(e.target.value) * 100 : '';
-                      setFormData(prev => ({ ...prev, budgetEurCents: value.toString() }));
-                    }}
-                    placeholder="Ex: 1500"
-                    min="0"
-                    step="50"
-                    className="h-10 rounded-lg text-sm"
-                  />
-                  <p className="text-xs text-muted-foreground">Orçamento total que pode gastar</p>
+                  <div className="space-y-2">
+                    <label htmlFor="postal" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                      Código Postal <span className="text-muted-foreground">(opcional)</span>
+                    </label>
+                    <Input
+                      id="postal"
+                      value={formData.postalCode}
+                      onChange={e => setFormData(prev => ({ ...prev, postalCode: e.target.value }))}
+                      placeholder="Ex: 1000-001"
+                      className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    />
+                  </div>
                 </div>
 
-                {/* Minimum Hourly Rate */}
                 <div className="space-y-2">
-                  <Label htmlFor="hourly" className="text-xs font-medium text-muted-foreground">
-                    Taxa Mín./Hora (€)
-                  </Label>
+                  <label htmlFor="address" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Endereço <span className="text-muted-foreground">(opcional)</span>
+                  </label>
                   <Input
-                    id="hourly"
-                    type="number"
-                    value={formData.minimumHourlyRateEur ? parseInt(formData.minimumHourlyRateEur) / 100 : ''}
-                    onChange={e => {
-                      const value = e.target.value ? parseInt(e.target.value) * 100 : '';
-                      setFormData(prev => ({ ...prev, minimumHourlyRateEur: value.toString() }));
-                    }}
-                    placeholder="Ex: 12"
-                    min="0"
-                    step="1"
-                    className="h-10 rounded-lg text-sm"
+                    id="address"
+                    value={formData.address}
+                    onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                    placeholder="Endereço detalhado"
+                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
-                  <p className="text-xs text-muted-foreground">Mínimo negociável</p>
                 </div>
               </div>
-            </div>
 
-            {/* Experience Level */}
-            <div className="space-y-2">
-              <Label htmlFor="experience" className="text-sm font-medium">
-                Nível de Experiência Requerido
-              </Label>
-              <select
-                id="experience"
-                value={formData.requiredExperienceLevel}
-                onChange={e => setFormData(prev => ({ ...prev, requiredExperienceLevel: e.target.value }))}
-                className="w-full h-10 px-3 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="BEGINNER">Iniciante</option>
-                <option value="INTERMEDIATE">Intermediário</option>
-                <option value="ADVANCED">Avançado</option>
-                <option value="EXPERT">Especialista</option>
-              </select>
-            </div>
-          </div>
+              {/* Budget Section */}
+              <div className="space-y-4 p-5 sm:p-6 bg-secondary rounded-2xl border border-border">
+                <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                  Orçamento
+                </label>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Defina o orçamento total disponível e a taxa mínima por hora que está disposto a pagar
+                </p>
 
-          <div className="flex gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Total Budget */}
+                  <div className="space-y-2">
+                    <label htmlFor="budget" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                      Orçamento Total (€)
+                    </label>
+                    <Input
+                      id="budget"
+                      type="number"
+                      value={formData.budgetEurCents ? parseInt(formData.budgetEurCents) / 100 : ''}
+                      onChange={e => {
+                        const value = e.target.value ? parseInt(e.target.value) * 100 : '';
+                        setFormData(prev => ({ ...prev, budgetEurCents: value.toString() }));
+                      }}
+                      placeholder="Ex: 1500"
+                      min="0"
+                      step="50"
+                      className="w-full bg-card border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Orçamento total que pode gastar</p>
+                  </div>
+
+                  {/* Minimum Hourly Rate */}
+                  <div className="space-y-2">
+                    <label htmlFor="hourly" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                      Taxa Mín./Hora (€)
+                    </label>
+                    <Input
+                      id="hourly"
+                      type="number"
+                      value={formData.minimumHourlyRateEur ? parseInt(formData.minimumHourlyRateEur) / 100 : ''}
+                      onChange={e => {
+                        const value = e.target.value ? parseInt(e.target.value) * 100 : '';
+                        setFormData(prev => ({ ...prev, minimumHourlyRateEur: value.toString() }));
+                      }}
+                      placeholder="Ex: 12"
+                      min="0"
+                      step="1"
+                      className="w-full bg-card border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Mínimo negociável</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Experience Level */}
+              <div className="space-y-2">
+                <label htmlFor="experience" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                  Nível de Experiência Requerido
+                </label>
+                <select
+                  id="experience"
+                  value={formData.requiredExperienceLevel}
+                  onChange={e => setFormData(prev => ({ ...prev, requiredExperienceLevel: e.target.value }))}
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none text-foreground cursor-pointer"
+                >
+                  <option value="BEGINNER">Iniciante</option>
+                  <option value="INTERMEDIATE">Intermediário</option>
+                  <option value="ADVANCED">Avançado</option>
+                  <option value="EXPERT">Especialista</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">▾</div>
+              </div>
+            </div>
+          </section>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
             <Button
               variant="outline"
               onClick={() => setStep(1)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-11 rounded-2xl px-6"
             >
               <IconArrowLeft className="h-4 w-4" />
             </Button>
@@ -510,7 +565,7 @@ function NewDemandContent() {
               onClick={handleNext}
               disabled={formData.serviceTypes.length === 0 || !formData.city.trim()}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+              className="flex-1 h-11 rounded-2xl font-display font-bold uppercase gap-2"
             >
               Continuar
               <IconArrowRight className="h-4 w-4" />
@@ -521,107 +576,124 @@ function NewDemandContent() {
 
       {/* Step 3: Schedule & Frequency */}
       {step === 3 && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-bold mb-1">Agenda e Frequência</h2>
-            <p className="text-sm text-muted-foreground">
-              Defina quando, quanto tempo e que tipo de cuidado precisa
-            </p>
-          </div>
-
-          <div className="space-y-5">
-            {/* Care Type */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Tipo de Cuidado</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { value: 'RECURRING', label: 'Recorrente', desc: 'Cuidado regular' },
-                  { value: 'URGENT', label: 'Urgente', desc: 'Necessidade imediata' },
-                  { value: 'BOTH', label: 'Ambos', desc: 'Regular + Urgente' },
-                ].map(option => (
-                  <button
-                    key={option.value}
-                    onClick={() => setFormData(prev => ({ ...prev, careType: option.value }))}
-                    className={`px-3 py-2.5 rounded-lg border-2 text-sm text-left transition-all ${
-                      formData.careType === option.value
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-muted-foreground/50'
-                    }`}
-                  >
-                    <p className="font-medium">{option.label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{option.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Dates */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <IconCalendar className="h-4 w-4 text-primary" />
-                <Label className="text-sm font-medium">Datas</Label>
+        <div className="space-y-8">
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Passo 3: Agenda e Frequência
+            </h4>
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-8">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-display font-black uppercase mb-2 text-foreground">
+                  Agenda e Frequência
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Defina quando, quanto tempo e que tipo de cuidado precisa
+                </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="startDate" className="text-xs font-medium text-muted-foreground">
-                  Data Desejada de Início
-                </Label>
+              {/* Care Type */}
+              <div className="space-y-3">
+                <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                  Tipo de Cuidado
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {[
+                    { value: 'RECURRING', label: 'Recorrente', desc: 'Cuidado regular' },
+                    { value: 'URGENT', label: 'Urgente', desc: 'Necessidade imediata' },
+                    { value: 'BOTH', label: 'Ambos', desc: 'Regular + Urgente' },
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setFormData(prev => ({ ...prev, careType: option.value }))}
+                      className={`px-4 py-3 rounded-2xl border-2 text-left transition-all ${
+                        formData.careType === option.value
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/40 hover:bg-secondary'
+                      }`}
+                    >
+                      <p className="font-display font-bold text-foreground text-sm uppercase">{option.label}</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{option.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dates */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary">
+                    <IconCalendar className="h-5 w-5" />
+                  </div>
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Datas
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="startDate" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                      Data Desejada de Início
+                    </label>
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={formData.desiredStartDate}
+                      onChange={e => setFormData(prev => ({ ...prev, desiredStartDate: e.target.value }))}
+                      className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="endDate" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                      Data Desejada de Término <span className="text-muted-foreground">(opcional)</span>
+                    </label>
+                    <Input
+                      id="endDate"
+                      type="date"
+                      value={formData.desiredEndDate}
+                      onChange={e => setFormData(prev => ({ ...prev, desiredEndDate: e.target.value }))}
+                      className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Hours per Week */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary">
+                    <IconClock className="h-5 w-5" />
+                  </div>
+                  <label htmlFor="hours" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Horas por Semana
+                  </label>
+                </div>
                 <Input
-                  id="startDate"
-                  type="date"
-                  value={formData.desiredStartDate}
-                  onChange={e => setFormData(prev => ({ ...prev, desiredStartDate: e.target.value }))}
-                  className="h-10 rounded-lg text-sm"
+                  id="hours"
+                  type="number"
+                  value={formData.hoursPerWeek}
+                  onChange={e => setFormData(prev => ({ ...prev, hoursPerWeek: e.target.value }))}
+                  min="0"
+                  placeholder="Ex: 20"
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="endDate" className="text-xs font-medium text-muted-foreground">
-                  Data Desejada de Término (opcional)
-                </Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={formData.desiredEndDate}
-                  onChange={e => setFormData(prev => ({ ...prev, desiredEndDate: e.target.value }))}
-                  className="h-10 rounded-lg text-sm"
-                />
-              </div>
             </div>
+          </section>
 
-            {/* Hours per Week */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <IconClock className="h-4 w-4 text-primary" />
-                <Label htmlFor="hours" className="text-sm font-medium">
-                  Horas por Semana
-                </Label>
-              </div>
-              <Input
-                id="hours"
-                type="number"
-                value={formData.hoursPerWeek}
-                onChange={e => setFormData(prev => ({ ...prev, hoursPerWeek: e.target.value }))}
-                min="0"
-                placeholder="Ex: 20"
-                className="h-10 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
             <Button
               variant="outline"
               onClick={() => setStep(2)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-11 rounded-2xl px-6"
             >
               <IconArrowLeft className="h-4 w-4" />
             </Button>
             <Button
               onClick={handleNext}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+              className="flex-1 h-11 rounded-2xl font-display font-bold uppercase gap-2"
             >
               Continuar
               <IconArrowRight className="h-4 w-4" />
@@ -632,126 +704,126 @@ function NewDemandContent() {
 
       {/* Step 4: Revisão */}
       {step === 4 && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-bold mb-1">Revisar Demanda</h2>
-            <p className="text-sm text-muted-foreground">
-              Verifique todas as informações antes de publicar
-            </p>
-          </div>
-
-          {/* Summary Cards */}
-          <div className="space-y-3">
-            {/* Basic Info */}
-            <Card className="border-border/50 overflow-hidden">
-              <CardContent className="p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                  Informações Básicas
+        <div className="space-y-8">
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Passo 4: Revisar Demanda
+            </h4>
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-display font-black uppercase mb-2 text-foreground">
+                  Revisar Demanda
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Verifique todas as informações antes de publicar
                 </p>
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-sm font-medium">{formData.title}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                      {formData.description}
+              </div>
+
+              {/* Summary Cards */}
+              <div className="space-y-4">
+                {/* Basic Info */}
+                <div className="p-5 bg-secondary rounded-2xl border border-border/50">
+                  <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] mb-3">
+                    Informações Básicas
+                  </p>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm font-display font-bold text-foreground">{formData.title}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-2 leading-relaxed">
+                        {formData.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services & Location */}
+                <div className="p-5 bg-secondary rounded-2xl border border-border/50">
+                  <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] mb-3">
+                    Serviços e Localização
+                  </p>
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      {formData.serviceTypes.map(type => (
+                        <span key={type} className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
+                          {SERVICE_LABELS[type]}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-foreground">
+                      <IconMapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                      <span className="font-medium">
+                        {formData.city}
+                        {formData.postalCode && ` - ${formData.postalCode}`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timeline */}
+                {(formData.desiredStartDate || formData.hoursPerWeek) && (
+                  <div className="p-5 bg-secondary rounded-2xl border border-border/50">
+                    <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] mb-3">
+                      Timeline
                     </p>
+                    <div className="space-y-2 text-sm">
+                      {formData.desiredStartDate && (
+                        <div className="flex items-center gap-2">
+                          <IconCalendar className="h-4 w-4 text-primary flex-shrink-0" />
+                          <span className="text-foreground font-medium">Início: {new Date(formData.desiredStartDate).toLocaleDateString('pt-PT')}</span>
+                        </div>
+                      )}
+                      {formData.hoursPerWeek && (
+                        <div className="flex items-center gap-2">
+                          <IconClock className="h-4 w-4 text-primary flex-shrink-0" />
+                          <span className="text-foreground font-medium">{formData.hoursPerWeek} horas/semana</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                )}
 
-            {/* Services & Location */}
-            <Card className="border-border/50 overflow-hidden">
-              <CardContent className="p-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Serviços e Localização
-                </p>
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-1.5">
-                    {formData.serviceTypes.map(type => (
-                      <Badge
-                        key={type}
-                        variant="secondary"
-                        className="text-[10px] font-medium px-2 py-0.5 h-auto"
-                      >
-                        {SERVICE_LABELS[type]}
-                      </Badge>
-                    ))}
+                {/* Budget */}
+                {(formData.budgetEurCents || formData.minimumHourlyRateEur) && (
+                  <div className="p-5 bg-primary/5 rounded-2xl border border-primary/20">
+                    <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] mb-3">
+                      Orçamento
+                    </p>
+                    <div className="space-y-2 text-sm">
+                      {formData.budgetEurCents && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Orçamento Total:</span>
+                          <span className="font-display font-bold text-foreground">€{(parseInt(formData.budgetEurCents) / 100).toFixed(2)}</span>
+                        </div>
+                      )}
+                      {formData.minimumHourlyRateEur && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground">Taxa Mín./Hora:</span>
+                          <span className="font-display font-bold text-foreground">€{(parseInt(formData.minimumHourlyRateEur) / 100).toFixed(2)}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm mt-2">
-                    <IconMapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span>
-                      {formData.city}
-                      {formData.postalCode && ` - ${formData.postalCode}`}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Timeline */}
-            {(formData.desiredStartDate || formData.hoursPerWeek) && (
-              <Card className="border-border/50 overflow-hidden">
-                <CardContent className="p-4">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    Timeline
-                  </p>
-                  <div className="space-y-1.5 text-sm">
-                    {formData.desiredStartDate && (
-                      <div className="flex items-center gap-2">
-                        <IconCalendar className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span>Início: {new Date(formData.desiredStartDate).toLocaleDateString('pt-PT')}</span>
-                      </div>
-                    )}
-                    {formData.hoursPerWeek && (
-                      <div className="flex items-center gap-2">
-                        <IconClock className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span>{formData.hoursPerWeek} horas/semana</span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Budget */}
-            {(formData.budgetEurCents || formData.minimumHourlyRateEur) && (
-              <Card className="border-primary/20 overflow-hidden bg-primary/5">
-                <CardContent className="p-4">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    Orçamento
-                  </p>
-                  <div className="space-y-2 text-sm">
-                    {formData.budgetEurCents && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Orçamento Total:</span>
-                        <span className="font-semibold">€{(parseInt(formData.budgetEurCents) / 100).toFixed(2)}</span>
-                      </div>
-                    )}
-                    {formData.minimumHourlyRateEur && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">Taxa Mín./Hora:</span>
-                        <span className="font-semibold">€{(parseInt(formData.minimumHourlyRateEur) / 100).toFixed(2)}</span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                )}
+              </div>
+            </div>
+          </section>
 
           {submitError && (
-            <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl">
-              <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-destructive">{submitError}</p>
+            <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+              <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-display font-bold text-foreground">Erro ao revisar</p>
+                <p className="text-xs text-destructive mt-1">{submitError}</p>
+              </div>
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
             <Button
               variant="outline"
               onClick={() => setStep(3)}
               size="lg"
-              className="h-11 rounded-xl px-4"
+              className="h-11 rounded-2xl px-6"
               disabled={loading}
             >
               <IconArrowLeft className="h-4 w-4" />
@@ -759,7 +831,7 @@ function NewDemandContent() {
             <Button
               onClick={() => setStep(5)}
               size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2"
+              className="flex-1 h-11 rounded-2xl font-display font-bold uppercase gap-2"
             >
               Continuar
               <IconArrowRight className="h-4 w-4" />
@@ -770,24 +842,33 @@ function NewDemandContent() {
 
       {/* Step 5: Visibility Package - PREMIUM DESIGN */}
       {step === 5 && (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Premium Header */}
-          <div className="relative">
-            <div className="absolute -top-12 -left-4 -right-4 h-24 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-3xl blur-2xl" />
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Passo 5: Escolher Visibilidade
+            </h4>
             <div className="relative">
-              <div className="mb-2 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                <IconStar className="h-3 w-3 text-primary" />
-                <span className="text-xs font-semibold text-primary">ESCOLHA VISIBILIDADE</span>
+              <div className="absolute -top-12 -left-4 -right-4 h-24 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-3xl blur-2xl" />
+              <div className="relative space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+                  <IconStar className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-display font-bold text-primary uppercase tracking-widest">Escolha Visibilidade</span>
+                </div>
+                <div>
+                  <h2 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
+                    Potencialize sua Demanda
+                  </h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-lg">
+                    Demandas com visibilidade recebem <span className="font-display font-bold text-primary">3x mais propostas</span> em média. Escolha o pacote perfeito para você.
+                  </p>
+                </div>
               </div>
-              <h2 className="text-3xl font-black mb-2">Potencialize sua Demanda</h2>
-              <p className="text-sm text-muted-foreground max-w-lg">
-                Demandas com visibilidade recebem <span className="font-bold text-primary">3x mais propostas</span> em média. Escolha o pacote perfeito para você.
-              </p>
             </div>
-          </div>
+          </section>
 
           {/* Visibility Packages - Premium Grid */}
-          <div className="grid gap-3">
+          <div className="space-y-3">
             {VISIBILITY_PACKAGES.map((pkg, idx) => {
               const Icon = pkg.icon;
               const isSelected = selectedPackage === pkg.value;
@@ -797,59 +878,59 @@ function NewDemandContent() {
                 <button
                   key={pkg.value}
                   onClick={() => setSelectedPackage(pkg.value)}
-                  className={`relative group p-5 rounded-2xl border-2 transition-all duration-300 ${
+                  className={`relative group p-5 sm:p-6 rounded-2xl border-2 transition-all duration-300 ${
                     isSelected
-                      ? 'border-primary bg-primary/8 shadow-lg shadow-primary/20'
-                      : 'border-border hover:border-primary/40 hover:bg-primary/3 hover:shadow-md hover:shadow-primary/10'
+                      ? 'border-primary bg-card shadow-elevated'
+                      : 'border-border bg-card hover:border-primary/30 hover:shadow-elevated'
                   } ${isRecommended && !isSelected ? 'ring-2 ring-primary/20' : ''}`}
                 >
                   {/* Recommended Badge */}
                   {isRecommended && (
-                    <div className="absolute -top-3 left-6 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                      MAIS POPULAR
+                    <div className="absolute -top-3 left-6 bg-primary text-primary-foreground text-[10px] font-display font-bold px-3 py-1.5 rounded-full uppercase tracking-widest">
+                      Mais Popular
                     </div>
                   )}
 
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     {/* Left: Icon + Title + Description */}
                     <div className="flex-1 text-left">
-                      <div className="flex items-center gap-2.5 mb-2">
-                        <div className={`h-10 w-10 rounded-lg flex items-center justify-center transition-all ${
+                      <div className="flex items-start gap-3 mb-2">
+                        <div className={`h-10 w-10 rounded-2xl flex items-center justify-center transition-all flex-shrink-0 ${
                           isSelected
-                            ? 'bg-primary text-white'
-                            : 'bg-primary/10 text-primary group-hover:bg-primary/20'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-secondary text-primary group-hover:bg-primary/10'
                         }`}>
                           <Icon className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="font-bold text-lg">{pkg.label}</p>
-                          <p className="text-xs text-muted-foreground">{pkg.desc}</p>
+                          <p className="font-display font-bold text-lg text-foreground uppercase">{pkg.label}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{pkg.desc}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Right: Price */}
-                    <div className="text-right ml-4">
+                    <div className="text-right flex-shrink-0">
                       {pkg.price === 0 ? (
                         <div className="flex flex-col items-end gap-1">
-                          <p className="text-2xl font-black text-foreground">Grátis</p>
-                          <p className="text-xs text-muted-foreground">1x/mês</p>
+                          <p className="text-2xl font-display font-black text-foreground">Grátis</p>
+                          <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">1x/mês</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-end gap-1">
-                          <p className="text-3xl font-black text-primary">€{pkg.price}</p>
-                          <p className="text-xs text-muted-foreground">{pkg.desc.split('/')[1] || '7 dias'}</p>
+                          <p className="text-3xl font-display font-black text-primary">€{pkg.price}</p>
+                          <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{pkg.desc.split('/')[1] || '7 dias'}</p>
                         </div>
                       )}
                     </div>
 
                     {/* Selection Indicator */}
-                    <div className={`ml-3 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                    <div className={`ml-2 h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
                       isSelected
                         ? 'border-primary bg-primary'
                         : 'border-border group-hover:border-primary/40'
                     }`}>
-                      {isSelected && <IconCheck className="h-4 w-4 text-white" />}
+                      {isSelected && <IconCheck className="h-4 w-4 text-primary-foreground" />}
                     </div>
                   </div>
                 </button>
@@ -858,50 +939,53 @@ function NewDemandContent() {
           </div>
 
           {/* Benefits Comparison - Simple */}
-          <div className="grid grid-cols-2 gap-3 p-4 bg-muted/30 rounded-2xl border border-border/50">
-            <div className="flex items-start gap-2">
-              <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 sm:p-6 bg-secondary rounded-2xl border border-border">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <IconCheck className="h-4 w-4 text-success" />
+              </div>
               <div>
-                <p className="text-xs font-semibold">Visibilidade Destacada</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">Mais visualizações</p>
+                <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Visibilidade Destacada</p>
+                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">Mais visualizações e alcance</p>
               </div>
             </div>
-            <div className="flex items-start gap-2">
-              <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <IconCheck className="h-4 w-4 text-success" />
+              </div>
               <div>
-                <p className="text-xs font-semibold">Mais Propostas</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">3x em média</p>
+                <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Mais Propostas</p>
+                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">3x em média de candidatos</p>
               </div>
             </div>
           </div>
 
           {submitError && (
-            <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-xl">
-              <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-semibold text-destructive">Erro ao criar demanda</p>
-                <p className="text-xs text-destructive/80 mt-1">{submitError}</p>
+            <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+              <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-display font-bold text-foreground">Erro ao criar demanda</p>
+                <p className="text-xs text-destructive mt-1">{submitError}</p>
               </div>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-border/30">
+          <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
             <Button
               variant="outline"
               onClick={() => setStep(4)}
               size="lg"
-              className="h-12 rounded-xl px-6"
+              className="h-11 rounded-2xl px-6"
               disabled={loading}
             >
-              <IconArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
+              <IconArrowLeft className="h-4 w-4" />
             </Button>
             <Button
               onClick={() => handleCreateDemand(selectedPackage)}
               disabled={loading}
               size="lg"
-              className="flex-1 h-12 rounded-xl font-bold gap-2 shadow-lg shadow-primary/30 text-base"
+              className="flex-1 h-11 rounded-2xl font-display font-bold uppercase gap-2 shadow-elevated"
             >
               {loading ? (
                 <>
@@ -915,7 +999,7 @@ function NewDemandContent() {
                 </>
               ) : (
                 <>
-                  Ir para Pagamento (€{VISIBILITY_PACKAGES.find(p => p.value === selectedPackage)?.price})
+                  Ir para Pagamento €{VISIBILITY_PACKAGES.find(p => p.value === selectedPackage)?.price}
                   <IconArrowRight className="h-4 w-4" />
                 </>
               )}

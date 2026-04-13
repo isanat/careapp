@@ -168,22 +168,14 @@ export default function ChatPage() {
       <div className="h-[calc(100vh-8rem)]">
         <div className="grid h-full lg:grid-cols-[320px_1fr] gap-3">
           {/* Conversations List */}
-          <div className={`bg-surface rounded-2xl shadow-card border border-border/50 flex flex-col ${mobileShowChat ? "hidden" : "flex"} lg:flex`}>
-            <div className="p-4 border-b border-border/50">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold">{t.chat.title}</h2>
-                <div className="flex gap-1.5">
-                  <Button variant="ghost" size="icon" onClick={fetchConversations} className="h-8 w-8 rounded-lg">
-                    <IconRefresh className="h-4 w-4" />
-                  </Button>
-                  <Badge variant="secondary" className="rounded-lg">{conversations.length}</Badge>
-                </div>
-              </div>
+          <div className={`bg-card rounded-2xl shadow-card border border-border flex flex-col ${mobileShowChat ? "hidden" : "flex"} lg:flex`}>
+            <div className="p-4 border-b border-border">
+              <h2 className="text-xl sm:text-2xl font-display font-black uppercase mb-4">{t.chat.title}</h2>
               <div className="relative">
-                <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={t.search.placeholder}
-                  className="pl-10 h-9 rounded-xl bg-muted border-0"
+                  className="pl-11 bg-secondary border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -192,54 +184,48 @@ export default function ChatPage() {
 
             <ScrollArea className="flex-1">
               {isLoadingConversations ? (
-                <div className="p-3 space-y-2">
-                  {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-16 w-full rounded-xl" />))}
+                <div className="p-4 space-y-3">
+                  {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-16 bg-secondary rounded-2xl animate-pulse-soft" />))}
                 </div>
               ) : (
-                <div className="p-2 space-y-0.5">
+                <div className="p-3 space-y-2">
                   {conversations
                     .filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase()))
                     .map((conv) => (
                       <button
                         key={conv.id}
                         onClick={() => { setSelectedConversation(conv); setMobileShowChat(true); }}
-                        className={`w-full text-left transition-all rounded-xl p-3 border-2 ${
+                        className={`w-full text-left transition-all duration-300 bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-card ${
                           selectedConversation?.id === conv.id
-                            ? "bg-primary/5 border-primary/40 hover:border-primary/60"
-                            : "border-border/30 hover:border-border/60 hover:bg-muted/30"
+                            ? "bg-primary/10 border-primary/50 shadow-card"
+                            : "hover:shadow-card"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 rounded-lg flex-shrink-0">
-                            <AvatarFallback className="rounded-lg text-sm font-semibold bg-primary/10 text-primary">
+                          <div className="w-12 h-12 rounded-2xl bg-secondary/50 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-display font-bold text-foreground">
                               {conv.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
-                            </AvatarFallback>
-                          </Avatar>
+                            </span>
+                          </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-0.5">
-                              <p className={`text-sm font-semibold truncate ${
-                                selectedConversation?.id === conv.id ? "text-primary" : "text-foreground"
-                              }`}>
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <p className="font-display font-bold text-sm text-foreground truncate">
                                 {conv.participant?.name || "Usuario"}
                               </p>
                               {conv.lastMessage && (
-                                <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
+                                <span className="text-[9px] text-muted-foreground/50 whitespace-nowrap shrink-0">
                                   {new Date(conv.lastMessage.createdAt).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" })}
                                 </span>
                               )}
                             </div>
                             <div className="flex items-center justify-between gap-2">
-                              <p className={`text-xs truncate ${
-                                conv.unreadCount > 0
-                                  ? "font-semibold text-foreground"
-                                  : "text-muted-foreground"
-                              }`}>
+                              <p className="text-xs text-muted-foreground line-clamp-1 leading-relaxed">
                                 {conv.lastMessage?.content || t.chat.noMessages}
                               </p>
                               {conv.unreadCount > 0 && (
-                                <Badge className="h-5 min-w-[20px] px-1.5 flex items-center justify-center text-[10px] font-bold bg-primary text-white rounded-full shrink-0">
+                                <div className="text-[9px] font-display font-bold bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center shrink-0">
                                   {conv.unreadCount}
-                                </Badge>
+                                </div>
                               )}
                             </div>
                           </div>
@@ -248,11 +234,12 @@ export default function ChatPage() {
                     ))}
 
                   {conversations.length === 0 && (
-                    <div className="p-6 text-center text-muted-foreground">
-                      <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-3">
-                        <IconChat className="h-6 w-6" />
+                    <div className="p-8 text-center">
+                      <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
+                        <IconChat className="h-8 w-8 text-muted-foreground" />
                       </div>
-                      <p className="text-sm">{t.chat.noChats}</p>
+                      <h4 className="font-display font-bold text-foreground text-lg mb-2">{t.chat.noChats}</h4>
+                      <p className="text-sm text-muted-foreground">{t.chat.noMessages}</p>
                     </div>
                   )}
                 </div>
@@ -261,11 +248,11 @@ export default function ChatPage() {
           </div>
 
           {/* Chat Area */}
-          <div className={`bg-surface rounded-2xl shadow-card border border-border/50 flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
+          <div className={`bg-card rounded-2xl shadow-card border border-border flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
-                <div className="p-3 border-b border-border/50 flex items-center gap-3">
+                <div className="p-4 border-b border-border flex items-center gap-3">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -274,14 +261,14 @@ export default function ChatPage() {
                   >
                     <IconArrowLeft className="h-4 w-4" />
                   </Button>
-                  <Avatar className="h-9 w-9 rounded-xl">
-                    <AvatarFallback className="rounded-xl text-xs font-semibold bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
+                  <div className="w-12 h-12 rounded-2xl bg-secondary/50 flex items-center justify-center">
+                    <span className="text-sm font-display font-bold text-foreground">
                       {selectedConversation.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
-                    </AvatarFallback>
-                  </Avatar>
+                    </span>
+                  </div>
                   <div>
-                    <p className="text-sm font-semibold">{selectedConversation.participant?.name || "Usuario"}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-display font-bold text-sm text-foreground">{selectedConversation.participant?.name || "Usuario"}</p>
+                    <p className="text-[9px] text-muted-foreground/50">
                       {selectedConversation.participant?.title || selectedConversation.participant?.role}
                     </p>
                   </div>
@@ -290,24 +277,26 @@ export default function ChatPage() {
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4">
                   {isLoadingMessages && isInitialLoad ? (
-                    <div className="space-y-3">
-                      {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-10 w-3/4 rounded-xl" />))}
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-12 w-3/4 bg-secondary rounded-2xl animate-pulse-soft" />))}
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {messages.map((message) => {
                         const isOwn = message.senderId === session?.user?.id;
                         return (
                           <div key={message.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
-                            <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
-                              isOwn
-                                ? "bg-primary text-white rounded-br-md"
-                                : "bg-muted rounded-bl-md"
-                            }`}>
-                              <p className="text-sm leading-relaxed">{message.content}</p>
-                              <p className={`text-[10px] mt-1 ${isOwn ? "text-white/60" : "text-muted-foreground"}`}>
-                                {new Date(message.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
-                              </p>
+                            <div className="max-w-xs">
+                              {!isOwn && (
+                                <p className="text-[9px] text-muted-foreground mb-1 font-medium">{message.senderName}</p>
+                              )}
+                              <div className={`rounded-3xl px-4 py-3 text-sm leading-relaxed ${
+                                isOwn
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-secondary text-foreground"
+                              }`}>
+                                <p>{message.content}</p>
+                              </div>
                             </div>
                           </div>
                         );
@@ -315,8 +304,11 @@ export default function ChatPage() {
 
                       {typingUser && (
                         <div className="flex justify-start">
-                          <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-2.5">
-                            <p className="text-sm text-muted-foreground">{typingUser}...</p>
+                          <div className="max-w-xs">
+                            <p className="text-[9px] text-muted-foreground mb-1 font-medium">{typingUser}</p>
+                            <div className="bg-secondary rounded-3xl px-4 py-3">
+                              <p className="text-sm text-muted-foreground">Typing...</p>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -326,21 +318,21 @@ export default function ChatPage() {
                 </ScrollArea>
 
                 {/* Message Input */}
-                <div className="p-3 border-t border-border/50">
-                  <div className="flex items-center gap-2">
+                <div className="p-4 border-t border-border">
+                  <div className="flex gap-2 items-center bg-card rounded-3xl border border-border p-1.5">
                     <Input
                       ref={inputRef}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={handleKeyPress}
                       placeholder={t.chat.placeholder}
-                      className="flex-1 h-11 rounded-xl bg-muted border-0"
+                      className="flex-1 bg-transparent outline-none text-sm px-4 py-2 text-foreground placeholder:text-muted-foreground border-0"
                     />
                     <Button
                       onClick={handleSend}
                       disabled={!newMessage.trim()}
                       size="icon"
-                      className="h-11 w-11 rounded-xl shrink-0"
+                      className="h-9 w-9 rounded-2xl shrink-0"
                     >
                       <IconSend className="h-4 w-4" />
                     </Button>
@@ -349,11 +341,11 @@ export default function ChatPage() {
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
+                <div className="text-center py-12 max-w-sm mx-auto">
+                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
                     <IconChat className="h-8 w-8 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold mb-1">{t.chat.new}</h3>
+                  <h4 className="font-display font-bold text-foreground text-lg mb-2">{t.chat.new}</h4>
                   <p className="text-sm text-muted-foreground">{t.chat.noChats}</p>
                 </div>
               </div>

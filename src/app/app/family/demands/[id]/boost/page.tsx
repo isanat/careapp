@@ -127,10 +127,10 @@ function BoostContent() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="max-w-lg mx-auto space-y-4 py-8">
+      <div className="max-w-2xl mx-auto space-y-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-muted rounded-2xl" />
-          <div className="h-64 bg-muted rounded-2xl" />
+          <div className="h-20 bg-muted rounded-3xl" />
+          <div className="h-64 bg-muted rounded-3xl" />
         </div>
       </div>
     );
@@ -140,143 +140,198 @@ function BoostContent() {
   const Icon = pkgDetails.icon;
 
   return (
-    <div className="max-w-lg mx-auto pb-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
+    <div className="max-w-2xl mx-auto pb-8">
+      {/* Header with Back Button */}
+      <div className="mb-8 flex items-center gap-4">
         <Link
           href="/app/family/demands"
-          className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
+          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
           aria-label="Voltar"
         >
           <IconArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">Aumentar Visibilidade</h1>
-          <p className="text-sm text-muted-foreground">Checkout seguro com Stripe</p>
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter">
+            Aumentar Visibilidade
+          </h1>
+          <p className="text-base text-muted-foreground font-medium">
+            Checkout seguro com Stripe
+          </p>
         </div>
       </div>
 
       {error && (
-        <div className="flex items-start gap-3 p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl mb-6">
-          <IconAlertCircle className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+          <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
       )}
 
       {demand && (
         <div className="space-y-6">
-          {/* Demand Summary */}
-          <Card className="border-border/50 overflow-hidden">
-            <CardContent className="p-4">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                Demanda
-              </p>
-              <div className="space-y-2">
-                <h2 className="font-semibold text-lg">{demand.title}</h2>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {demand.description}
-                </p>
-                <div className="flex flex-wrap gap-1.5 mt-3">
+          {/* Demand Info Card */}
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Demanda Atual
+            </h4>
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+              <div className="space-y-5">
+                <div>
+                  <h2 className="text-xl font-display font-bold text-foreground mb-2">
+                    {demand.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                    {demand.description}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
                   {demand.serviceTypes.slice(0, 2).map((service, idx) => (
-                    <Badge
+                    <span
                       key={idx}
-                      variant="secondary"
-                      className="text-[10px] font-medium px-2 py-0.5 h-auto"
+                      className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg"
                     >
                       {service.replace(/_/g, ' ')}
-                    </Badge>
+                    </span>
                   ))}
                   {demand.serviceTypes.length > 2 && (
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] font-medium px-2 py-0.5 h-auto"
-                    >
+                    <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
                       +{demand.serviceTypes.length - 2}
-                    </Badge>
+                    </span>
                   )}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          {/* Package Selection */}
-          <Card className="border-primary/20 overflow-hidden bg-primary/5">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold">{pkgDetails.label}</p>
-                  <p className="text-sm text-muted-foreground">{pkgDetails.desc}</p>
-                  <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-2xl font-bold">€{pkgDetails.price}</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({pkgDetails.days} dias)
-                    </span>
-                  </div>
-                </div>
+          {/* Pricing Cards Grid */}
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Pacotes Disponíveis
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {Object.entries(PACKAGE_DETAILS).map(([key, pkg]) => {
+                const isSelected = key === packageType;
+                return (
+                  <Link
+                    key={key}
+                    href={`?package=${key}`}
+                    className={`bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
+                      isSelected
+                        ? 'bg-primary/5 border-primary/30 shadow-elevated'
+                        : 'border-border hover:shadow-elevated hover:border-primary/30'
+                    }`}
+                  >
+                    <div className="space-y-4">
+                      {/* Badge */}
+                      <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
+                        {pkg.label}
+                      </span>
+
+                      {/* Icon */}
+                      <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
+                        <pkg.icon className="h-5 w-5 text-success" />
+                      </div>
+
+                      {/* Price */}
+                      <div>
+                        <div className="text-3xl font-display font-black text-foreground tracking-tighter mb-2">
+                          €{pkg.price}
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {pkg.desc}
+                        </p>
+                      </div>
+
+                      {/* Features List */}
+                      <ul className="space-y-2 pt-3 border-t border-border/50">
+                        <li className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+                            <IconCheck className="h-3 w-3 text-success" />
+                          </div>
+                          <span className="text-sm text-muted-foreground leading-relaxed">
+                            {pkg.days} dias de visibilidade
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+                            <IconCheck className="h-3 w-3 text-success" />
+                          </div>
+                          <span className="text-sm text-muted-foreground leading-relaxed">
+                            Mais visualizações
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+                            <IconCheck className="h-3 w-3 text-success" />
+                          </div>
+                          <span className="text-sm text-muted-foreground leading-relaxed">
+                            Maiores chances
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Summary Box */}
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+              Resumo
+            </h4>
+            <div className="bg-secondary/30 rounded-3xl p-5 sm:p-7 border border-border/50">
+              <div className="flex items-baseline justify-between">
+                <span className="text-base text-muted-foreground font-medium">
+                  Pacote selecionado ({pkgDetails.label}):
+                </span>
+                <span className="text-2xl font-display font-black text-primary tracking-tighter">
+                  €{pkgDetails.price}
+                </span>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          {/* Benefits */}
-          <Card className="border-border/50">
-            <CardContent className="p-4">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Benefícios
-              </p>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2 text-sm">
-                  <IconCheck className="h-4 w-4 text-success" />
-                  <span>Demanda em destaque por {pkgDetails.days} dias</span>
-                </li>
-                <li className="flex items-center gap-2 text-sm">
-                  <IconCheck className="h-4 w-4 text-success" />
-                  <span>Mais visualizações de cuidadores</span>
-                </li>
-                <li className="flex items-center gap-2 text-sm">
-                  <IconCheck className="h-4 w-4 text-success" />
-                  <span>Maiores chances de receber propostas</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Info */}
-          <div className="bg-muted/50 p-4 rounded-xl border border-border/50">
-            <p className="text-xs text-muted-foreground">
-              💳 Pagamento seguro com <strong>Stripe</strong>. Sua demanda será publicada imediatamente após confirmação.
+          {/* Info Banner */}
+          <div className="bg-info/5 p-5 rounded-2xl border border-info/20 flex items-start gap-3">
+            <div className="w-6 h-6 rounded-lg bg-info/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-sm font-display font-bold text-info">i</span>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Pagamento 100% seguro com <strong className="text-foreground">Stripe</strong>. Sua demanda será publicada imediatamente após confirmação.
             </p>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              asChild
-              size="lg"
-              className="h-11 rounded-xl px-4"
-            >
-              <Link href="/app/family/demands">Voltar</Link>
-            </Button>
-            <Button
-              onClick={handleCheckout}
-              disabled={processing}
-              size="lg"
-              className="flex-1 h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-primary/25"
-            >
-              {processing ? (
-                <>
-                  <IconLoader2 className="h-4 w-4 animate-spin" />
-                  Processando...
-                </>
-              ) : (
-                <>
-                  Pagar €{pkgDetails.price}
-                </>
-              )}
-            </Button>
+          {/* Submit Section */}
+          <div className="border-t border-border pt-6 mt-6 space-y-4">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                asChild
+                size="lg"
+                className="rounded-2xl px-6 h-12 font-display font-bold uppercase text-sm tracking-wide"
+              >
+                <Link href="/app/family/demands">Voltar</Link>
+              </Button>
+              <Button
+                onClick={handleCheckout}
+                disabled={processing}
+                size="lg"
+                className="flex-1 rounded-2xl px-6 h-12 font-display font-bold uppercase text-sm tracking-wide gap-2 shadow-lg shadow-primary/25"
+              >
+                {processing ? (
+                  <>
+                    <IconLoader2 className="h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    Pagar €{pkgDetails.price}
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       )}

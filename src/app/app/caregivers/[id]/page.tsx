@@ -5,10 +5,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { AppShell } from "@/components/layout/app-shell";
 import {
@@ -26,6 +24,7 @@ import {
   IconShield,
   IconLock,
   IconChat,
+  IconArrowLeft,
 } from "@/components/icons";
 import { SERVICE_TYPES } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -138,22 +137,23 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
   if (isLoading) {
     return (
       <AppShell>
-        <div className="space-y-6">
-          <Button variant="ghost" asChild>
-            <Link href="/app/search">← Voltar para busca</Link>
+        <div className="space-y-8">
+          <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+            <Link href="/app/search" className="flex items-center gap-2">
+              <IconArrowLeft className="h-4 w-4" />
+              Voltar para busca
+            </Link>
           </Button>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-6 animate-pulse">
-                <div className="h-24 w-24 rounded-full bg-muted" />
-                <div className="flex-1 space-y-3">
-                  <div className="h-8 bg-muted rounded w-48" />
-                  <div className="h-4 bg-muted rounded w-32" />
-                  <div className="h-4 bg-muted rounded w-64" />
-                </div>
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+            <div className="flex flex-col md:flex-row gap-6 animate-pulse">
+              <div className="h-20 w-20 rounded-3xl bg-secondary flex-shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="h-8 bg-secondary rounded-lg w-48" />
+                <div className="h-4 bg-secondary rounded-lg w-32" />
+                <div className="h-4 bg-secondary rounded-lg w-64" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </AppShell>
     );
@@ -162,18 +162,22 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
   if (error || !caregiver) {
     return (
       <AppShell>
-        <div className="space-y-6">
-          <Button variant="ghost" asChild>
-            <Link href="/app/search">← Voltar para busca</Link>
+        <div className="space-y-8">
+          <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+            <Link href="/app/search" className="flex items-center gap-2">
+              <IconArrowLeft className="h-4 w-4" />
+              Voltar para busca
+            </Link>
           </Button>
-          <Card>
-            <CardContent className="pt-6 text-center space-y-4">
-              <p className="text-lg text-destructive">{error || "Cuidador nao encontrado."}</p>
-              <Button asChild>
-                <Link href="/app/search">Voltar para busca</Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center space-y-4">
+            <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto">
+              <IconShield className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <p className="text-lg font-display font-black text-foreground">{error || "Cuidador nao encontrado."}</p>
+            <Button asChild>
+              <Link href="/app/search">Voltar para busca</Link>
+            </Button>
+          </div>
         </div>
       </AppShell>
     );
@@ -194,120 +198,152 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        <Button variant="ghost" asChild>
-          <Link href="/app/search">← Voltar para busca</Link>
+      <div className="space-y-8 max-w-6xl">
+        <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+          <Link href="/app/search" className="flex items-center gap-2">
+            <IconArrowLeft className="h-4 w-4" />
+            Voltar para busca
+          </Link>
         </Button>
 
-        {/* Profile Header */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarFallback className="text-2xl bg-primary/10 text-primary">
-                  {caregiver.name.split(" ").map((n) => n[0]).join("")}
-                </AvatarFallback>
-              </Avatar>
-
-              <div className="flex-1 space-y-3">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-2xl font-bold">{caregiver.name}</h1>
-                  {caregiver.verificationStatus === "VERIFIED" && (
-                    <Badge className="bg-green-500">
-                      <IconCheck className="h-3 w-3 mr-1" />
-                      Verificado
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-muted-foreground">{caregiver.title}</p>
-
-                {/* Trust Badges */}
-                {caregiver.badges.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {caregiver.badges.map(badge => {
-                      const config = BADGE_CONFIG[badge];
-                      if (!config) return null;
-                      return (
-                        <Badge key={badge} className={`${config.color} text-white text-xs`}>
-                          {config.icon === "shield" ? <IconShield className="h-3 w-3 mr-1" /> :
-                           config.icon === "star" ? <IconStar className="h-3 w-3 mr-1" /> :
-                           config.icon === "clock" ? <IconClock className="h-3 w-3 mr-1" /> :
-                           <IconCheck className="h-3 w-3 mr-1" />}
-                          {config.label}
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                )}
-
-                <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1">
-                    <IconStar className="h-5 w-5 text-yellow-500" />
-                    <span className="font-semibold text-lg">{caregiver.averageRating.toFixed(1)}</span>
-                    <span className="text-muted-foreground">
+        {/* Profile Header Section */}
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-start">
+            {/* Avatar & Basic Info */}
+            <div className="flex flex-col items-center md:items-start gap-4">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-2xl font-display font-black text-primary flex-shrink-0">
+                {caregiver.name.split(" ").map((n) => n[0]).join("")}
+              </div>
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl sm:text-3xl font-display font-black uppercase mb-1">
+                  {caregiver.name}
+                </h1>
+                <p className="text-sm text-muted-foreground font-medium">
+                  {caregiver.title}
+                </p>
+                {caregiver.averageRating > 0 && (
+                  <div className="flex items-center gap-1 mt-2 justify-center md:justify-start">
+                    <IconStar className="h-5 w-5 text-primary fill-primary" />
+                    <span className="text-lg font-display font-black text-primary">
+                      {caregiver.averageRating.toFixed(1)}
+                    </span>
+                    <span className="text-xs text-muted-foreground ml-1">
                       ({caregiver.totalReviews} avaliacoes)
                     </span>
                   </div>
-                  {caregiver.city && (
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <IconMapPin className="h-4 w-4" />
-                      <span>{caregiver.city}</span>
-                    </div>
-                  )}
-                  {caregiver.experienceYears > 0 && (
-                    <div className="flex items-center gap-1 text-muted-foreground">
-                      <IconCalendar className="h-4 w-4" />
-                      <span>{caregiver.experienceYears} anos de experiencia</span>
-                    </div>
-                  )}
-                </div>
+                )}
+              </div>
+            </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {caregiver.services.map((service) => (
-                    <Badge key={service} variant="secondary">
-                      {SERVICE_TYPES[service as keyof typeof SERVICE_TYPES] || service}
-                    </Badge>
-                  ))}
+            {/* Trust Badges & Details */}
+            <div className="flex-1 space-y-4">
+              {caregiver.verificationStatus === "VERIFIED" && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-success/10 border border-success/30 rounded-xl w-fit">
+                  <IconCheck className="h-4 w-4 text-success" />
+                  <span className="text-xs font-display font-bold text-success uppercase tracking-widest">
+                    Verificado
+                  </span>
                 </div>
+              )}
+
+              {/* Trust Badges */}
+              {caregiver.badges.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {caregiver.badges.map(badge => {
+                    const config = BADGE_CONFIG[badge];
+                    if (!config) return null;
+                    return (
+                      <div
+                        key={badge}
+                        className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 flex items-center gap-1"
+                      >
+                        {config.icon === "shield" ? <IconShield className="h-3 w-3" /> :
+                         config.icon === "star" ? <IconStar className="h-3 w-3" /> :
+                         config.icon === "clock" ? <IconClock className="h-3 w-3" /> :
+                         <IconCheck className="h-3 w-3" />}
+                        {config.label}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Info Details */}
+              <div className="flex flex-wrap gap-6 pt-2 text-sm">
+                {caregiver.city && (
+                  <div className="flex items-center gap-2">
+                    <IconMapPin className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{caregiver.city}</span>
+                  </div>
+                )}
+                {caregiver.experienceYears > 0 && (
+                  <div className="flex items-center gap-2">
+                    <IconCalendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">{caregiver.experienceYears} anos de experiencia</span>
+                  </div>
+                )}
               </div>
 
-              {/* Price & Actions */}
-              <div className="flex flex-col items-end gap-3">
-                <div className="text-right">
-                  <p className="text-3xl font-bold">€{(caregiver.hourlyRateEur / 100).toFixed(2)}/h</p>
-                  <p className="text-muted-foreground">por hora</p>
+              {/* Services */}
+              {caregiver.services.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {caregiver.services.map((service) => (
+                    <span
+                      key={service}
+                      className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30"
+                    >
+                      {SERVICE_TYPES[service as keyof typeof SERVICE_TYPES] || service}
+                    </span>
+                  ))}
                 </div>
+              )}
+            </div>
 
-                {/* Contact info - only visible with active contract */}
-                {caregiver.hasActiveContract && (caregiver.phone || caregiver.email) && (
-                  <div className="text-right space-y-1 p-3 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 dark:border-green-800">
-                    <p className="text-xs font-medium text-green-700 dark:text-green-400">Contato direto</p>
-                    {caregiver.phone && (
-                      <div className="flex items-center gap-1.5 text-sm">
-                        <IconPhone className="h-3.5 w-3.5 text-green-600" />
-                        <span>{caregiver.phone}</span>
-                      </div>
-                    )}
-                    {caregiver.email && (
-                      <div className="flex items-center gap-1.5 text-sm">
-                        <IconMail className="h-3.5 w-3.5 text-green-600" />
-                        <span>{caregiver.email}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+            {/* Price & Actions */}
+            <div className="flex flex-col items-stretch md:items-end gap-3 md:w-52">
+              <div className="text-center md:text-right">
+                <p className="text-3xl font-display font-black text-foreground">
+                  €{(caregiver.hourlyRateEur / 100).toFixed(2)}/h
+                </p>
+                <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                  por hora
+                </p>
+              </div>
 
-                {/* No active contract - show lock info */}
-                {!caregiver.hasActiveContract && (
-                  <div className="text-right p-3 bg-muted/50 rounded-xl border border-border/50">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <IconLock className="h-3.5 w-3.5" />
-                      <span>Contato disponivel apos contrato</span>
+              {/* Contact Info */}
+              {caregiver.hasActiveContract && (caregiver.phone || caregiver.email) && (
+                <div className="p-3 bg-success/10 border border-success/30 rounded-2xl space-y-1">
+                  <p className="text-[10px] font-display font-bold text-success uppercase tracking-widest">
+                    Contato direto
+                  </p>
+                  {caregiver.phone && (
+                    <div className="flex items-center gap-1.5 text-xs text-foreground">
+                      <IconPhone className="h-3.5 w-3.5" />
+                      <span>{caregiver.phone}</span>
                     </div>
-                  </div>
-                )}
+                  )}
+                  {caregiver.email && (
+                    <div className="flex items-center gap-1.5 text-xs text-foreground">
+                      <IconMail className="h-3.5 w-3.5" />
+                      <span>{caregiver.email}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
-                <Button size="lg" asChild>
+              {/* No Contract Info */}
+              {!caregiver.hasActiveContract && (
+                <div className="p-3 bg-secondary/50 border border-border/50 rounded-2xl flex items-center gap-1.5">
+                  <IconLock className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                  <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    Contato apos contrato
+                  </span>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-2 pt-2">
+                <Button className="w-full" asChild>
                   <Link href={`/app/contracts/new?caregiverId=${caregiver.id}`}>
                     <IconContract className="h-4 w-4 mr-2" />
                     Criar Contrato
@@ -315,253 +351,267 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                 </Button>
                 <Button
                   variant="outline"
-                  size="lg"
+                  className="w-full"
                   onClick={handleSendMessage}
                   disabled={isSendingMessage}
                 >
                   <IconChat className="h-4 w-4 mr-2" />
-                  {isSendingMessage ? "Abrindo chat..." : "Enviar Mensagem"}
+                  {isSendingMessage ? "Abrindo..." : "Mensagem"}
                 </Button>
                 <Button
                   variant="outline"
-                  size="lg"
+                  className="w-full"
                   onClick={() => setIsInterviewDialogOpen(true)}
                 >
                   <IconVideo className="h-4 w-4 mr-2" />
-                  Agendar Entrevista
+                  Entrevista
                 </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Platform Protection Notice */}
-        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4">
-          <div className="flex items-start gap-3">
-            <IconShield className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">
-                Protecao da Plataforma
-              </p>
-              <p className="text-xs text-blue-600 dark:text-blue-500 mt-1 leading-relaxed">
-                Toda comunicacao e feita pelo chat da plataforma. Contratos formalizados
-                incluem protecao juridica, recibos fiscais e historico verificavel para ambas as partes.
-                Dados de contato direto so sao disponibilizados apos contrato ativo.
-              </p>
             </div>
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        {/* Platform Protection Notice */}
+        <div className="flex items-start gap-3 p-5 sm:p-7 bg-info/5 border border-info/20 rounded-2xl">
+          <IconShield className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-display font-bold text-info uppercase tracking-widest">
+              Protecao da Plataforma
+            </p>
+            <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+              Toda comunicacao e feita pelo chat da plataforma. Contratos formalizados
+              incluem protecao juridica, recibos fiscais e historico verificavel para ambas as partes.
+              Dados de contato direto so sao disponibilizados apos contrato ativo.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* About */}
             {caregiver.bio && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sobre</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground whitespace-pre-line">
+              <section className="space-y-4">
+                <h2 className="text-xl font-display font-black uppercase mb-4">
+                  Sobre
+                </h2>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                     {caregiver.bio}
                   </p>
-                </CardContent>
-              </Card>
+                </div>
+              </section>
             )}
 
             {/* Education & Certifications */}
             {(educationList.length > 0 || caregiver.certifications.length > 0) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Formacao e Certificacoes</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              <section className="space-y-4">
+                <h2 className="text-xl font-display font-black uppercase mb-4">
+                  Formacao e Certificacoes
+                </h2>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
                   {educationList.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Formacao Academica</h4>
-                      <ul className="space-y-1">
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-display font-bold text-foreground uppercase tracking-widest">
+                        Formacao Academica
+                      </h4>
+                      <div className="space-y-3">
                         {educationList.map((edu, index) => (
-                          <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <IconCheck className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                            {edu}
-                          </li>
+                          <div
+                            key={index}
+                            className="flex items-start gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
+                          >
+                            <div className="w-6 h-6 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <IconCheck className="h-4 w-4 text-success" />
+                            </div>
+                            <span className="text-sm text-muted-foreground">{edu}</span>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
                   {educationList.length > 0 && caregiver.certifications.length > 0 && (
-                    <Separator />
+                    <div className="border-t border-border/50" />
                   )}
                   {caregiver.certifications.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Certificacoes</h4>
-                      <ul className="space-y-1">
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-display font-bold text-foreground uppercase tracking-widest">
+                        Certificacoes
+                      </h4>
+                      <div className="space-y-3">
                         {caregiver.certifications.map((cert, index) => (
-                          <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <IconCheck className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                            {cert}
-                          </li>
+                          <div
+                            key={index}
+                            className="flex items-start gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
+                          >
+                            <div className="w-6 h-6 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <IconCheck className="h-4 w-4 text-success" />
+                            </div>
+                            <span className="text-sm text-muted-foreground">{cert}</span>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </section>
             )}
 
             {/* Detailed Ratings */}
             {avgSubRatings && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Avaliacoes Detalhadas</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {[
-                      { label: "Pontualidade", value: avgSubRatings.punctuality },
-                      { label: "Profissionalismo", value: avgSubRatings.professionalism },
-                      { label: "Comunicacao", value: avgSubRatings.communication },
-                      { label: "Qualidade", value: avgSubRatings.quality },
-                    ].map(item => (
-                      <div key={item.label} className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">{item.label}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-yellow-500 rounded-full"
-                              style={{ width: `${(item.value / 5) * 100}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium w-8 text-right">{item.value.toFixed(1)}</span>
+              <section className="space-y-4">
+                <h2 className="text-xl font-display font-black uppercase mb-4">
+                  Avaliacoes Detalhadas
+                </h2>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                  {[
+                    { label: "Pontualidade", value: avgSubRatings.punctuality },
+                    { label: "Profissionalismo", value: avgSubRatings.professionalism },
+                    { label: "Comunicacao", value: avgSubRatings.communication },
+                    { label: "Qualidade", value: avgSubRatings.quality },
+                  ].map(item => (
+                    <div key={item.label} className="flex justify-between items-center py-4 border-b border-border/50 last:border-b-0">
+                      <span className="text-sm text-muted-foreground font-medium">{item.label}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="w-32 h-2 bg-secondary rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary rounded-full"
+                            style={{ width: `${(item.value / 5) * 100}%` }}
+                          />
                         </div>
+                        <span className="text-sm font-display font-bold w-12 text-right">{item.value.toFixed(1)}</span>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
 
             {/* Reviews */}
             {caregiver.reviews.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Avaliacoes Recentes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {caregiver.reviews.map((review) => (
-                      <div key={review.id} className="p-4 bg-muted/50 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">{review.reviewerName}</span>
-                            <div className="flex items-center gap-0.5">
-                              {Array.from({ length: Number(review.rating) }).map((_, i) => (
-                                <IconStar key={i} className="h-4 w-4 text-yellow-500 fill-current" />
-                              ))}
-                            </div>
+              <section className="space-y-4">
+                <h2 className="text-xl font-display font-black uppercase mb-4">
+                  Avaliacoes Recentes
+                </h2>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                  {caregiver.reviews.map((review) => (
+                    <div
+                      key={review.id}
+                      className="flex flex-col gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-display font-bold text-foreground">{review.reviewerName}</span>
+                          <div className="flex items-center gap-1">
+                            {Array.from({ length: Number(review.rating) }).map((_, i) => (
+                              <IconStar key={i} className="h-4 w-4 text-primary fill-primary" />
+                            ))}
                           </div>
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(String(review.date)).toLocaleDateString("pt-PT")}
-                          </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">{review.comment}</p>
+                        <span className="text-xs text-muted-foreground font-medium">
+                          {new Date(String(review.date)).toLocaleDateString("pt-PT")}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Availability */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Disponibilidade</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <IconClock className="h-5 w-5 text-primary" />
-                  <span>
+            <section className="space-y-4">
+              <h3 className="text-xl font-display font-black uppercase mb-4">
+                Disponibilidade
+              </h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <IconClock className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="text-sm text-muted-foreground font-medium">
                     {caregiver.availableNow
                       ? "Disponivel agora"
                       : "Indisponivel no momento"}
                   </span>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </section>
 
             {/* Languages */}
             {caregiver.languages.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Idiomas</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {caregiver.languages.map((lang) => (
-                      <Badge key={lang} variant="outline">
-                        {lang}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <section className="space-y-4">
+                <h3 className="text-xl font-display font-black uppercase mb-4">
+                  Idiomas
+                </h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-3">
+                  {caregiver.languages.map((lang) => (
+                    <div key={lang} className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0">
+                      <span className="text-sm font-medium text-foreground">{lang}</span>
+                      <div className="w-4 h-4 rounded-full bg-success/20 border border-success/30" />
+                    </div>
+                  ))}
+                </div>
+              </section>
             )}
 
             {/* Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Estatisticas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-muted/50 rounded-lg col-span-2">
-                    <p className="text-2xl font-bold">{caregiver.totalContracts}</p>
-                    <p className="text-xs text-muted-foreground">Contratos</p>
-                  </div>
-                  <div className="text-center p-3 bg-muted/50 rounded-lg col-span-2">
-                    <p className="text-2xl font-bold">{caregiver.totalReviews}</p>
-                    <p className="text-xs text-muted-foreground">Avaliacoes</p>
-                  </div>
+            <section className="space-y-4">
+              <h3 className="text-xl font-display font-black uppercase mb-4">
+                Estatisticas
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center space-y-2">
+                  <p className="text-3xl font-display font-black text-foreground">
+                    {caregiver.totalContracts}
+                  </p>
+                  <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    Contratos
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center space-y-2">
+                  <p className="text-3xl font-display font-black text-foreground">
+                    {caregiver.totalReviews}
+                  </p>
+                  <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    Avaliacoes
+                  </p>
+                </div>
+              </div>
+            </section>
 
             {/* Why use the platform */}
-            <Card className="border-primary/20 bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <IconShield className="h-4 w-4 text-primary" />
-                  Porque usar a plataforma?
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <IconCheck className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Contratos com validade juridica</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <IconCheck className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Recibos fiscais automaticos</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <IconCheck className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Pagamentos seguros e rastreavies</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <IconCheck className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Historico e avaliacoes verificaveis</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <IconCheck className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Mediacao em caso de disputas</span>
-                  </li>
+            <section className="space-y-4">
+              <div className="bg-primary/10 rounded-3xl p-5 sm:p-7 border border-primary/30 shadow-card space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <IconShield className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-display font-bold text-primary uppercase tracking-widest">
+                    Porque usar a plataforma?
+                  </h3>
+                </div>
+                <ul className="space-y-3 text-xs text-muted-foreground">
+                  {[
+                    "Contratos com validade juridica",
+                    "Recibos fiscais automaticos",
+                    "Pagamentos seguros e rastreavies",
+                    "Historico e avaliacoes verificaveis",
+                    "Mediacao em caso de disputas",
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <div className="w-5 h-5 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <IconCheck className="h-3 w-3 text-success" />
+                      </div>
+                      <span className="leading-relaxed">{item}</span>
+                    </li>
+                  ))}
                 </ul>
-              </CardContent>
-            </Card>
+              </div>
+            </section>
           </div>
         </div>
       </div>

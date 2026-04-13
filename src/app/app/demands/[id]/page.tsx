@@ -173,7 +173,7 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto pb-8 space-y-6">
+      <div className="max-w-4xl mx-auto pb-8 space-y-8">
         <Link href="/app/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors">
           <IconArrowLeft className="h-4 w-4" />
           Voltar
@@ -183,13 +183,13 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
         <BloomCard topBar>
           <div className="flex items-start justify-between gap-6">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl md:text-4xl font-display font-black text-foreground uppercase tracking-tighter mb-3">{demand.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-display font-black text-foreground uppercase tracking-tighter mb-3">{demand.title}</h1>
               <div className="space-y-2">
                 <p className="text-base text-muted-foreground font-medium">
                   <span className="font-bold text-foreground">{demand.familyCity}</span> • {demand.city}
                   {demand.postalCode && ` (${demand.postalCode})`}
                 </p>
-                <p className="text-[10px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
+                <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">
                   Criada há {demand.metrics.daysActive} dias
                 </p>
               </div>
@@ -232,16 +232,16 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Main Content - Bloom Style */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Description */}
           <BloomCard topBar>
-            <h2 className="text-lg font-display font-black text-foreground uppercase tracking-wider mb-6">Descrição</h2>
+            <h2 className="text-2xl sm:text-3xl font-display font-black text-foreground uppercase mb-6">Descrição</h2>
             <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">{demand.description}</p>
           </BloomCard>
 
           {/* Service Types */}
           <BloomCard topBar topBarColor="bg-secondary">
-            <h3 className="text-lg font-display font-black text-foreground uppercase tracking-wider mb-6">Tipos de Serviço</h3>
+            <h2 className="text-2xl sm:text-3xl font-display font-black text-foreground uppercase mb-6">Tipos de Serviço</h2>
             <div className="flex flex-wrap gap-3">
               {demand.serviceTypes.map((service, idx) => (
                 <BloomBadge key={idx} variant="secondary">
@@ -255,54 +255,54 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Requirements */}
             <BloomCard topBar topBarColor="bg-info">
-              <h3 className="text-lg font-display font-black text-foreground uppercase mb-4">Requisitos</h3>
+              <h2 className="text-2xl sm:text-3xl font-display font-black text-foreground uppercase mb-6">Requisitos</h2>
               <div className="space-y-4">
                 <div>
-                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Nível de Experiência</p>
-                  <p className="text-sm font-medium text-foreground">{demand.requiredExperienceLevel}</p>
+                  <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Nível de Experiência</p>
+                  <p className="text-sm font-medium text-muted-foreground">{demand.requiredExperienceLevel}</p>
                 </div>
                 {demand.requiredCertifications.length > 0 && (
                   <div>
-                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-2">Certificações</p>
+                    <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Certificações</p>
                     <div className="space-y-2">
                       {demand.requiredCertifications.map((cert, idx) => (
-                        <div key={idx} className="text-sm text-foreground bg-muted/30 rounded-lg px-3 py-2">• {cert}</div>
+                        <div key={idx} className="text-sm text-foreground bg-secondary/50 rounded-2xl px-3 py-2">• {cert}</div>
                       ))}
                     </div>
                   </div>
                 )}
                 <div>
-                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Tipo de Cuidado</p>
-                  <p className="text-sm font-medium text-foreground">{demand.careType}</p>
+                  <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Tipo de Cuidado</p>
+                  <p className="text-sm font-medium text-muted-foreground">{demand.careType}</p>
                 </div>
               </div>
             </BloomCard>
 
             {/* Practical Details */}
             <BloomCard topBar>
-              <h3 className="text-lg font-display font-black text-foreground uppercase mb-4">Detalhes Práticos</h3>
+              <h2 className="text-2xl sm:text-3xl font-display font-black text-foreground uppercase mb-6">Detalhes Práticos</h2>
               <div className="space-y-4">
                 {demand.hoursPerWeek && (
                   <div>
-                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Horas/Semana</p>
-                    <p className="text-sm font-semibold text-foreground">{demand.hoursPerWeek}h</p>
+                    <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Horas/Semana</p>
+                    <p className="text-sm font-semibold text-muted-foreground">{demand.hoursPerWeek}h</p>
                   </div>
                 )}
                 {demand.desiredStartDate && (
                   <div>
-                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Data de Início</p>
-                    <p className="text-sm text-foreground">{new Date(demand.desiredStartDate).toLocaleDateString('pt-PT')}</p>
+                    <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Data de Início</p>
+                    <p className="text-sm text-muted-foreground">{new Date(demand.desiredStartDate).toLocaleDateString('pt-PT')}</p>
                   </div>
                 )}
                 {demand.desiredEndDate && (
                   <div>
-                    <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Data de Término</p>
-                    <p className="text-sm text-foreground">{new Date(demand.desiredEndDate).toLocaleDateString('pt-PT')}</p>
+                    <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Data de Término</p>
+                    <p className="text-sm text-muted-foreground">{new Date(demand.desiredEndDate).toLocaleDateString('pt-PT')}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mb-1">Endereço</p>
-                  <p className="text-sm text-foreground">{demand.address || 'Não especificado'}</p>
+                  <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Endereço</p>
+                  <p className="text-sm text-muted-foreground">{demand.address || 'Não especificado'}</p>
                 </div>
               </div>
             </BloomCard>
@@ -325,11 +325,11 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Proposal Form - Bloom style */}
           <BloomCard topBar>
-            <h2 className="text-lg font-display font-black text-foreground uppercase mb-6">Enviar Proposta</h2>
+            <h2 className="text-2xl sm:text-3xl font-display font-black text-foreground uppercase mb-6">Enviar Proposta</h2>
 
-            <form onSubmit={handleSendProposal} className="space-y-4">
+            <form onSubmit={handleSendProposal} className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
+                <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-3 block">
                   Sua Mensagem <span className="text-destructive">*</span> (mín. 20 caracteres)
                 </label>
                 <textarea
@@ -337,16 +337,16 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
                   onChange={e => setProposalMessage(e.target.value)}
                   placeholder="Apresente-se brevemente, descreva sua experiência, e por que é a pessoa certa para o trabalho..."
                   rows={5}
-                  className="w-full px-4 py-3 bg-background border-2 border-border/30 rounded-xl focus:border-primary focus:outline-none text-foreground placeholder-muted-foreground text-sm"
+                  className="w-full px-4 py-3 bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none text-foreground placeholder-muted-foreground text-sm font-medium transition-all resize-none"
                 />
-                <div className="text-xs text-muted-foreground mt-2">
+                <div className="text-xs text-muted-foreground mt-2 font-medium">
                   {proposalMessage.length}/20 caracteres mínimos
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-3 block">
                     Taxa Horária Proposta (€/hora)
                   </label>
                   <input
@@ -356,28 +356,28 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
                     min="0"
                     step="0.50"
                     placeholder="Ex: 12.50"
-                    className="w-full px-4 py-3 bg-background border-2 border-border/30 rounded-xl focus:border-primary focus:outline-none text-foreground placeholder-muted-foreground text-sm"
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none text-foreground placeholder-muted-foreground text-sm font-medium transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-3 block">
                     Data de Início Estimada
                   </label>
                   <input
                     type="date"
                     value={estimatedStartDate}
                     onChange={e => setEstimatedStartDate(e.target.value)}
-                    className="w-full px-4 py-3 bg-background border-2 border-border/30 rounded-xl focus:border-primary focus:outline-none text-foreground text-sm"
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none text-foreground text-sm font-medium transition-all"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Button
                   type="submit"
                   disabled={proposing}
-                  className="flex-1 h-12 text-base font-semibold rounded-xl"
+                  className="h-12 text-sm font-semibold rounded-2xl flex-1"
                 >
                   {proposing ? 'Enviando...' : 'Enviar Proposta'}
                 </Button>
@@ -385,7 +385,7 @@ export default function DemandDetailPage({ params }: { params: Promise<{ id: str
                   type="button"
                   variant="outline"
                   onClick={() => router.push('/app/demands')}
-                  className="flex-1 h-12 text-base font-semibold rounded-xl"
+                  className="h-12 text-sm font-semibold rounded-2xl flex-1"
                 >
                   Cancelar
                 </Button>

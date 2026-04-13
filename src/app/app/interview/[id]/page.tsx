@@ -240,7 +240,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
   // Star rating component
   const StarRating = ({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) => (
     <div className="flex items-center justify-between py-2">
-      <span className="text-sm font-medium text-foreground">{label}</span>
+      <span className="text-xs sm:text-sm leading-relaxed text-foreground">{label}</span>
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map(i => (
           <button key={i} onClick={() => onChange(i)} className="p-0.5 touch-manipulation">
@@ -257,8 +257,8 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     return (
       <AppShell>
         <div className="animate-pulse space-y-5 max-w-4xl mx-auto">
-          <div className="h-28 bg-muted rounded-2xl" />
-          <div className="h-[60vh] bg-muted rounded-2xl" />
+          <div className="h-28 bg-muted rounded-3xl" />
+          <div className="h-[60vh] bg-muted rounded-3xl" />
         </div>
       </AppShell>
     );
@@ -268,11 +268,11 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     return (
       <AppShell>
         <div className="text-center py-16 px-6 max-w-md mx-auto">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center ring-4 ring-destructive/20">
-            <IconAlertCircle className="h-10 w-10 text-destructive" />
+          <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
+            <IconAlertCircle className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-bold mb-2">Erro</h2>
-          <p className="text-muted-foreground text-sm mb-6">{error}</p>
+          <h4 className="font-display font-bold text-foreground text-lg mb-2">Erro</h4>
+          <p className="text-sm text-muted-foreground mb-6">{error}</p>
           <Button className="rounded-xl h-12 px-8" onClick={() => router.push("/app/dashboard")}>
             Voltar ao Dashboard
           </Button>
@@ -287,10 +287,10 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
   const getStatusBadge = () => {
     switch (interview.status) {
-      case "SCHEDULED": return <Badge className="bg-warning/10 text-warning border-0">Agendada</Badge>;
-      case "IN_PROGRESS": return <Badge className="bg-success/10 text-success border-0">Em Andamento</Badge>;
-      case "COMPLETED": return <Badge className="bg-primary/10 text-primary border-0">Concluida</Badge>;
-      case "CANCELLED": return <Badge className="bg-destructive/10 text-destructive border-0">Cancelada</Badge>;
+      case "SCHEDULED": return <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Agendada</span>;
+      case "IN_PROGRESS": return <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30">Em Andamento</span>;
+      case "COMPLETED": return <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30">Concluida</span>;
+      case "CANCELLED": return <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-destructive/10 text-destructive border border-destructive/30">Cancelada</span>;
       default: return null;
     }
   };
@@ -301,22 +301,22 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
     <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
       <div className="space-y-6 max-w-4xl mx-auto pb-6">
         {/* Header - Bloom Elements style */}
-        <div className="bg-card rounded-3xl border border-border shadow-card p-8 overflow-hidden">
-          <div className="h-1 -mx-8 -mt-8 mb-6 bg-primary" />
+        <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 overflow-hidden">
+          <div className="h-1 -mx-5 sm:-mx-7 -mt-5 sm:-mt-7 mb-6 bg-primary" />
           <div className="flex items-center justify-between gap-4 mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
                 <IconVideo className="h-5 w-5" />
               </div>
-              <span className="text-sm font-display font-bold text-muted-foreground uppercase tracking-widest">Entrevista em Video</span>
+              <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Entrevista em Video</span>
             </div>
             {getStatusBadge()}
           </div>
-          <h1 className="text-2xl md:text-3xl font-display font-black text-foreground uppercase tracking-tighter">
+          <h1 className="text-xl sm:text-2xl font-display font-black text-foreground uppercase tracking-tighter">
             {isFamily ? "Entrevista com" : "Entrevista da"} {otherPartyName}
           </h1>
           {interview.status === "SCHEDULED" && (
-            <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 mt-4 text-xs sm:text-sm text-muted-foreground">
               <IconClock className="h-4 w-4" />
               <span>
                 {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
@@ -331,10 +331,11 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
         {/* Error - Bloom Elements style */}
         {error && (
-          <div className="bg-card rounded-3xl border border-border shadow-card p-8 border-l-4 border-l-destructive">
-            <div className="flex items-start gap-4">
-              <IconAlertCircle className="h-6 w-6 text-destructive flex-shrink-0" />
-              <p className="text-destructive text-sm font-medium">{error}</p>
+          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-display font-bold text-foreground text-sm">Erro</p>
+              <p className="text-xs text-muted-foreground mt-1">{error}</p>
             </div>
           </div>
         )}
@@ -342,9 +343,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
         {/* ====== SCHEDULED ====== */}
         {interview.status === "SCHEDULED" && (
           <div className="space-y-5">
-            <div className="bg-card rounded-3xl p-8 border border-border shadow-card">
-              <h3 className="font-display font-black text-lg text-foreground mb-6 flex items-center gap-3 uppercase">
-                <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase mb-6 text-foreground flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
                   <IconVideo className="h-5 w-5" />
                 </div>
                 Preparação
@@ -356,30 +357,32 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                   { icon: "\uD83D\uDCDD", text: "Tenha suas perguntas anotadas" },
                   { icon: "\uD83D\uDD12", text: "A entrevista é privada e segura" },
                 ].map((tip, i) => (
-                  <div key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <div key={i} className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
                     <span className="text-lg flex-shrink-0 mt-0.5">{tip.icon}</span>
                     <span>{tip.text}</span>
                   </div>
                 ))}
               </div>
             </div>
-            <Button
-              onClick={handleStartInterview}
-              size="lg"
-              className="w-full h-14 text-base font-display font-bold uppercase tracking-wide"
-            >
-              <IconVideo className="h-5 w-5 mr-2" />
-              Entrar na Sala de Entrevista
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push("/app/interviews")}
-              size="lg"
-              className="w-full h-12"
-            >
-              <IconArrowLeft className="h-4 w-4 mr-2" />
-              Voltar às Entrevistas
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                onClick={handleStartInterview}
+                size="lg"
+                className="flex-1 h-14 text-base font-display font-bold uppercase tracking-wide"
+              >
+                <IconVideo className="h-5 w-5 mr-2" />
+                Entrar na Sala de Entrevista
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/app/interviews")}
+                size="lg"
+                className="flex-1 h-12"
+              >
+                <IconArrowLeft className="h-4 w-4 mr-2" />
+                Voltar às Entrevistas
+              </Button>
+            </div>
           </div>
         )}
 
@@ -395,20 +398,18 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
             {/* Warning when user left meeting - Bloom Elements style */}
             {userLeftMeeting && (
-              <div className="bg-card rounded-3xl p-8 border border-border shadow-card border-l-4 border-l-warning">
-                <div className="flex items-start gap-4">
-                  <IconAlertCircle className="h-6 w-6 text-warning flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-display font-bold text-foreground">Você saiu da reunião</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Para finalizar a entrevista e ir para feedback, clique em "Finalizar" abaixo.
-                    </p>
-                  </div>
+              <div className="flex items-start gap-4 p-5 bg-warning/5 border border-warning/20 rounded-2xl">
+                <IconAlertCircle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-display font-bold text-foreground text-sm">Você saiu da reunião</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Para finalizar a entrevista e ir para feedback, clique em "Finalizar" abaixo.
+                  </p>
                 </div>
               </div>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 variant="outline"
                 size="lg"
@@ -444,27 +445,30 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
         {interview.status === "COMPLETED" && isFamily && !interview.familyCompletedAt && (
           <div className="space-y-6 max-w-lg mx-auto">
             <div className="space-y-2">
-              <h2 className="text-2xl md:text-3xl font-display font-black text-foreground uppercase tracking-tighter">Feedback da Entrevista</h2>
-              <p className="text-base text-muted-foreground font-medium">
+              <h2 className="text-xl sm:text-2xl font-display font-black text-foreground uppercase tracking-tighter mb-6">Feedback da Entrevista</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Avalie a entrevista com {interview.caregiverName}. Este registro protege ambas as partes.
               </p>
             </div>
 
             {/* Section 1: About the interview itself */}
-            <div className="bg-card rounded-3xl p-8 border border-border shadow-card space-y-4">
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.3em]">
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Avaliação da Entrevista
-              </p>
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
               <StarRating label="Comunicação" value={communicationRating} onChange={setCommunicationRating} />
               <StarRating label="Experiência demonstrada" value={experienceRating} onChange={setExperienceRating} />
               <StarRating label="Pontualidade" value={punctualityRating} onChange={setPunctualityRating} />
-            </div>
+              </div>
+            </section>
 
             {/* Section 2: Recommendation */}
-            <div className="bg-card rounded-3xl p-8 border border-border shadow-card space-y-4">
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.3em]">
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Recomendação
-              </p>
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
               <div className="flex gap-3">
                 <button
                   onClick={() => setWouldRecommend(true)}
@@ -485,13 +489,15 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                   <span className="text-sm font-display font-bold">Não recomendo</span>
                 </button>
               </div>
-            </div>
+              </div>
+            </section>
 
             {/* Section 3: Legal acknowledgements */}
-            <div className="bg-card rounded-3xl p-8 border border-border shadow-card space-y-4">
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.3em]">
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Confirmações Importantes
-              </p>
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <Checkbox
@@ -540,57 +546,62 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                   e cuidadores, nao sendo responsavel pela qualidade ou resultado dos servicos prestados.
                 </span>
               </label>
-            </div>
+              </div>
+            </section>
 
             {/* Section 4: Proceed with contract? */}
-            <div className={`rounded-2xl border-2 p-4 transition-all ${
-              proceedWithContract ? "border-primary bg-primary/5" : "border-border"
-            }`}>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Proximo Passo
-              </p>
-              <div className="flex gap-2">
+              </h4>
+              <div className={`rounded-3xl border p-5 sm:p-7 transition-all ${
+                proceedWithContract ? "border-primary bg-primary/5" : "border-border"
+              }`}>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => setProceedWithContract(true)}
-                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                  className={`flex-1 p-4 rounded-2xl border transition-all ${
                     proceedWithContract ? "border-primary bg-primary/10" : "border-border hover:border-primary/30"
                   }`}
                 >
                   <IconContract className={`h-6 w-6 mx-auto mb-1 ${proceedWithContract ? "text-primary" : "text-muted-foreground"}`} />
-                  <span className={`text-sm font-medium block ${proceedWithContract ? "text-primary" : ""}`}>
+                  <span className={`text-sm font-display font-bold block ${proceedWithContract ? "text-primary" : "text-foreground"}`}>
                     Criar Contrato
                   </span>
-                  <span className="text-xs text-muted-foreground">Prosseguir com este cuidador</span>
+                  <span className="text-[9px] text-muted-foreground">Prosseguir com este cuidador</span>
                 </button>
                 <button
                   onClick={() => setProceedWithContract(false)}
-                  className={`flex-1 p-3.5 rounded-xl border-2 text-center transition-all ${
+                  className={`flex-1 p-4 rounded-2xl border transition-all ${
                     !proceedWithContract ? "border-muted-foreground/30 bg-muted/30" : "border-border hover:border-muted-foreground/30"
                   }`}
                 >
                   <IconClock className={`h-6 w-6 mx-auto mb-1 ${!proceedWithContract ? "text-muted-foreground" : "text-muted-foreground/50"}`} />
-                  <span className={`text-sm font-medium block ${!proceedWithContract ? "" : "text-muted-foreground"}`}>
+                  <span className={`text-sm font-display font-bold block ${!proceedWithContract ? "text-foreground" : "text-muted-foreground"}`}>
                     Ainda nao
                   </span>
-                  <span className="text-xs text-muted-foreground">Salvar para depois</span>
+                  <span className="text-[9px] text-muted-foreground">Salvar para depois</span>
                 </button>
               </div>
-            </div>
+              </div>
+            </section>
 
             {/* Notes */}
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium">Observacoes sobre a entrevista (opcional)</Label>
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Observacoes sobre a entrevista (opcional)</h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-2">
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="O que foi discutido, acordos verbais, impressoes gerais..."
                 rows={3}
-                className="rounded-xl text-base resize-none"
+                className="rounded-2xl text-base resize-none"
               />
               <p className="text-xs text-muted-foreground">
                 Estas notas ficam registradas para sua referencia e seguranca.
               </p>
-            </div>
+              </div>
+            </section>
 
             {/* Submit */}
             <Button
@@ -622,24 +633,24 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
         {/* ====== Already Completed (Family) ====== */}
         {interview.familyCompletedAt && isFamily && (
-          <div className="space-y-5 max-w-3xl mx-auto">
+          <div className="space-y-6 max-w-3xl mx-auto">
             {/* Interview Summary */}
-            <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-2xl border border-green-500/20 p-6">
+            <div className="bg-success/5 rounded-3xl border border-success/20 p-5 sm:p-7">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-green-600 mb-1">Entrevista Concluída</h2>
-                  <p className="text-sm text-muted-foreground">Feedback enviado e registrado</p>
+                  <h2 className="text-lg sm:text-xl font-display font-black text-success uppercase mb-2">Entrevista Concluída</h2>
+                  <p className="text-sm leading-relaxed text-muted-foreground">Feedback enviado e registrado</p>
                 </div>
-                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
-                  <IconCheck className="h-8 w-8 text-green-500" />
+                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                  <IconCheck className="h-7 w-7 text-success" />
                 </div>
               </div>
 
               {/* Interview Details */}
-              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-green-500/20">
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-success/20">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Data</p>
-                  <p className="font-semibold text-sm">
+                  <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Data</p>
+                  <p className="text-lg sm:text-xl font-display font-black text-foreground tracking-tighter">
                     {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
                       weekday: "short",
                       day: "2-digit",
@@ -652,18 +663,18 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Duração</p>
-                  <p className="font-semibold text-sm">{interview.durationMinutes} minutos</p>
+                  <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Duração</p>
+                  <p className="text-lg sm:text-xl font-display font-black text-foreground tracking-tighter">{interview.durationMinutes} minutos</p>
                 </div>
               </div>
             </div>
 
             {/* Your Feedback */}
             {interview.questionnaire && (
-              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                    <IconStar className="h-4 w-4 text-blue-500" />
+              <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 space-y-4">
+                <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                    <IconStar className="h-5 w-5 text-info" />
                   </div>
                   Seu Feedback
                 </h3>
@@ -728,10 +739,10 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
             {/* Caregiver Feedback */}
             {interview.caregiverQuestionnaire && (
-              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
-                    <IconStar className="h-4 w-4 text-purple-500" />
+              <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 space-y-4">
+                <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                    <IconStar className="h-5 w-5 text-warning" />
                   </div>
                   Feedback de {interview.caregiverName}
                 </h3>
@@ -786,9 +797,11 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             )}
 
             {/* Next Steps */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-5">
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <IconCheck className="h-5 w-5 text-green-500" />
+            <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7">
+              <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                  <IconCheck className="h-5 w-5 text-success" />
+                </div>
                 Próximos Passos
               </h3>
               {interview.questionnaire?.proceedWithContract ? (
@@ -811,12 +824,12 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
             </div>
 
             {/* Quick actions to contact caregiver */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7">
+              <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4">
                 Contato Direto
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" asChild className="h-12 rounded-xl">
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button variant="outline" asChild className="flex-1 h-12 rounded-xl">
                   <Link href={`/app/chat?userId=${interview.caregiverUserId}`}>
                     <IconChat className="h-4 w-4 mr-2" />
                     Enviar Mensagem
@@ -825,40 +838,45 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
               </div>
             </div>
 
-            <Button
-              variant="outline"
-              className="w-full h-12 rounded-xl"
-              onClick={() => router.push("/app/dashboard")}
-            >
-              Voltar ao Dashboard
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 h-12 rounded-xl"
+                onClick={() => router.push("/app/dashboard")}
+              >
+                Voltar ao Dashboard
+              </Button>
+            </div>
           </div>
         )}
 
         {/* ====== COMPLETED - Caregiver Questionnaire ====== */}
         {interview.status === "COMPLETED" && !isFamily && !interview.caregiverCompletedAt && (
-          <div className="space-y-5 max-w-lg mx-auto">
-            <div>
-              <h2 className="text-lg font-bold">Feedback da Entrevista</h2>
-              <p className="text-sm text-muted-foreground mt-1">
+          <div className="space-y-6 max-w-lg mx-auto">
+            <div className="space-y-2">
+              <h2 className="text-xl sm:text-2xl font-display font-black text-foreground uppercase tracking-tighter mb-6">Feedback da Entrevista</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Avalie a entrevista com a familia {interview.familyName}. Este registo protege ambas as partes.
               </p>
             </div>
 
             {/* Ratings */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-1">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Avaliacao da Familia
-              </p>
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
               <StarRating label="Respeito e cordialidade" value={cgFamilyRating} onChange={setCgFamilyRating} />
               <StarRating label="Clareza nas expectativas" value={cgClarityRating} onChange={setCgClarityRating} />
-            </div>
+              </div>
+            </section>
 
             {/* Legal confirmations */}
-            <div className="bg-surface rounded-2xl border border-border/50 p-4 space-y-3.5">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Confirmacoes Importantes
-              </p>
+              </h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <Checkbox
@@ -895,19 +913,22 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                   e cuidadores, nao sendo responsavel pela qualidade ou resultado dos servicos prestados.
                 </span>
               </label>
-            </div>
+              </div>
+            </section>
 
             {/* Notes */}
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium">Observacoes sobre a entrevista (opcional)</Label>
+            <section className="space-y-4">
+              <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Observacoes sobre a entrevista (opcional)</h4>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-2">
               <Textarea
                 value={cgNotes}
                 onChange={(e) => setCgNotes(e.target.value)}
                 placeholder="Impressoes sobre a familia, o que foi discutido, acordos verbais..."
                 rows={3}
-                className="rounded-xl text-base resize-none"
+                className="rounded-2xl text-base resize-none"
               />
-            </div>
+              </div>
+            </section>
 
             {/* Submit */}
             <Button
@@ -939,28 +960,28 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
         {/* ====== Caregiver - Already submitted questionnaire ====== */}
         {interview.status === "COMPLETED" && !isFamily && interview.caregiverCompletedAt && (
-          <div className="space-y-5 max-w-3xl mx-auto">
+          <div className="space-y-6 max-w-3xl mx-auto">
             {/* Interview Summary */}
-            <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-2xl border border-green-500/20 p-6">
+            <div className="bg-success/5 rounded-3xl border border-success/20 p-5 sm:p-7">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-green-600 mb-1">Entrevista Concluída</h2>
-                  <p className="text-sm text-muted-foreground">
+                  <h2 className="text-lg sm:text-xl font-display font-black text-success uppercase mb-2">Entrevista Concluída</h2>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {interview.familyCompletedAt
                       ? "Ambas as partes enviaram feedback"
                       : "Você enviou feedback, aguardando resposta da família"}
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
-                  <IconCheck className="h-8 w-8 text-green-500" />
+                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                  <IconCheck className="h-7 w-7 text-success" />
                 </div>
               </div>
 
               {/* Interview Details */}
-              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-green-500/20">
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-success/20">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Data</p>
-                  <p className="font-semibold text-sm">
+                  <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Data</p>
+                  <p className="text-lg sm:text-xl font-display font-black text-foreground tracking-tighter">
                     {new Date(interview.scheduledAt).toLocaleDateString("pt-PT", {
                       weekday: "short",
                       day: "2-digit",
@@ -973,18 +994,18 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Duração</p>
-                  <p className="font-semibold text-sm">{interview.durationMinutes} minutos</p>
+                  <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Duração</p>
+                  <p className="text-lg sm:text-xl font-display font-black text-foreground tracking-tighter">{interview.durationMinutes} minutos</p>
                 </div>
               </div>
             </div>
 
             {/* Your Feedback */}
             {interview.caregiverQuestionnaire && (
-              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                    <IconStar className="h-4 w-4 text-blue-500" />
+              <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 space-y-4">
+                <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                    <IconStar className="h-5 w-5 text-info" />
                   </div>
                   Seu Feedback
                 </h3>
@@ -1040,10 +1061,10 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
             {/* Family Feedback */}
             {interview.familyCompletedAt && interview.questionnaire && (
-              <div className="bg-surface rounded-2xl border border-border/50 p-5 space-y-4">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
-                    <IconStar className="h-4 w-4 text-purple-500" />
+              <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 space-y-4">
+                <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
+                    <IconStar className="h-5 w-5 text-warning" />
                   </div>
                   Feedback de {interview.familyName}
                 </h3>
@@ -1108,21 +1129,23 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
             {/* Status Summary */}
             {!interview.familyCompletedAt && (
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5">
-                <p className="text-sm text-amber-700 flex items-center gap-2">
-                  <IconClock className="h-4 w-4" />
+              <div className="bg-warning/5 border border-warning/20 rounded-3xl p-5 sm:p-7">
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <IconClock className="h-4 w-4 text-warning flex-shrink-0" />
                   A família ainda está avaliando a entrevista. Você será notificado quando houver novidades.
                 </p>
               </div>
             )}
 
-            <Button
-              variant="outline"
-              className="w-full h-12 rounded-xl"
-              onClick={() => router.push("/app/dashboard")}
-            >
-              Voltar ao Dashboard
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 h-12 rounded-xl"
+                onClick={() => router.push("/app/dashboard")}
+              >
+                Voltar ao Dashboard
+              </Button>
+            </div>
           </div>
         )}
       </div>

@@ -161,10 +161,16 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
   if (status === 'loading' || loading) {
     return (
       <AppShell>
-        <div className="max-w-3xl mx-auto py-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-12 bg-muted rounded-lg" />
-            <div className="h-96 bg-muted rounded-lg" />
+        <div className="max-w-2xl mx-auto py-12 px-4">
+          <div className="animate-pulse space-y-8">
+            <div className="h-12 bg-secondary rounded-3xl" />
+            <div className="bg-card rounded-3xl p-7 border border-border shadow-card">
+              <div className="space-y-6">
+                <div className="h-10 bg-secondary rounded-2xl" />
+                <div className="h-32 bg-secondary rounded-2xl" />
+                <div className="h-10 bg-secondary rounded-2xl" />
+              </div>
+            </div>
           </div>
         </div>
       </AppShell>
@@ -174,10 +180,13 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
   if (error && !demand) {
     return (
       <AppShell>
-        <div className="max-w-3xl mx-auto py-8">
-          <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-4 flex items-center gap-3">
-            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
-            <p className="text-sm text-destructive font-medium">{error}</p>
+        <div className="max-w-2xl mx-auto py-12 px-4">
+          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-display font-bold text-foreground mb-1">Erro ao carregar</p>
+              <p className="text-xs text-muted-foreground">{error}</p>
+            </div>
           </div>
         </div>
       </AppShell>
@@ -186,46 +195,49 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
 
   return (
     <AppShell>
-      <div className="max-w-3xl mx-auto py-8 space-y-6">
+      <div className="max-w-2xl mx-auto py-12 px-4 space-y-8">
         {/* Header */}
-        <div className="flex items-center gap-4">
+        <div className="space-y-2">
           <Link
             href={`/app/family/demands/${resolvedParams.id}`}
-            className="h-9 w-9 rounded-lg border border-border hover:bg-muted flex items-center justify-center transition-colors"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-4"
           >
             <IconArrowLeft className="h-4 w-4" />
+            <span className="text-xs font-display font-bold uppercase tracking-widest">Voltar</span>
           </Link>
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold text-foreground">Editar Demanda</h1>
-            <p className="text-sm text-muted-foreground">
-              Atualize os detalhes da sua demanda de serviços
-            </p>
-          </div>
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
+            Editar Demanda
+          </h1>
+          <p className="text-base text-muted-foreground font-medium">
+            Atualize os detalhes da sua demanda de serviços
+          </p>
         </div>
 
         {/* Form Card */}
-        <Card className="border-border/40">
-          <CardHeader>
-            <CardTitle>Informações da Demanda</CardTitle>
-            <CardDescription>
-              Edite os campos abaixo para atualizar sua demanda
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Error Alert */}
-              {error && (
-                <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 flex items-center gap-3">
-                  <IconAlertCircle className="h-4 w-4 text-destructive shrink-0" />
-                  <p className="text-sm text-destructive font-medium">{error}</p>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Error Alert */}
+            {error && (
+              <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+                <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-display font-bold text-foreground mb-1">Erro ao atualizar</p>
+                  <p className="text-xs text-muted-foreground">{error}</p>
                 </div>
-              )}
+              </div>
+            )}
+
+            {/* Form Section */}
+            <div className="space-y-6">
+              <h2 className="text-xl sm:text-2xl font-display font-black uppercase">
+                Informações da Demanda
+              </h2>
 
               {/* Title */}
               <div className="space-y-2">
-                <Label htmlFor="title" className="text-sm font-medium">
+                <label htmlFor="title" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
                   Título
-                </Label>
+                </label>
                 <Input
                   id="title"
                   name="title"
@@ -233,15 +245,15 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
                   onChange={handleChange}
                   placeholder="Ex: Cuidador para idoso em casa"
                   disabled={submitting}
-                  className="h-10 rounded-lg"
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
 
               {/* Description */}
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium">
+                <label htmlFor="description" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
                   Descrição
-                </Label>
+                </label>
                 <Textarea
                   id="description"
                   name="description"
@@ -250,53 +262,56 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
                   placeholder="Descreva em detalhes o serviço que precisa..."
                   disabled={submitting}
                   rows={6}
-                  className="rounded-lg resize-none"
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mt-1">
                   {formData.description.length}/Mínimo 100 caracteres
                 </p>
               </div>
 
-              {/* Hours Per Week */}
-              <div className="space-y-2">
-                <Label htmlFor="hoursPerWeek" className="text-sm font-medium">
-                  Horas por Semana
-                </Label>
-                <Input
-                  id="hoursPerWeek"
-                  name="hoursPerWeek"
-                  type="number"
-                  value={formData.hoursPerWeek}
-                  onChange={handleChange}
-                  placeholder="Ex: 20"
-                  disabled={submitting}
-                  min="0"
-                  step="0.5"
-                  className="h-10 rounded-lg"
-                />
-              </div>
+              {/* Field Group - Hours and Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Hours Per Week */}
+                <div className="space-y-2">
+                  <label htmlFor="hoursPerWeek" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Horas por Semana
+                  </label>
+                  <Input
+                    id="hoursPerWeek"
+                    name="hoursPerWeek"
+                    type="number"
+                    value={formData.hoursPerWeek}
+                    onChange={handleChange}
+                    placeholder="Ex: 20"
+                    disabled={submitting}
+                    min="0"
+                    step="0.5"
+                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                </div>
 
-              {/* Desired Start Date */}
-              <div className="space-y-2">
-                <Label htmlFor="desiredStartDate" className="text-sm font-medium">
-                  Data Desejada de Início
-                </Label>
-                <Input
-                  id="desiredStartDate"
-                  name="desiredStartDate"
-                  type="date"
-                  value={formData.desiredStartDate}
-                  onChange={handleChange}
-                  disabled={submitting}
-                  className="h-10 rounded-lg"
-                />
+                {/* Desired Start Date */}
+                <div className="space-y-2">
+                  <label htmlFor="desiredStartDate" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Data de Início
+                  </label>
+                  <Input
+                    id="desiredStartDate"
+                    name="desiredStartDate"
+                    type="date"
+                    value={formData.desiredStartDate}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                </div>
               </div>
 
               {/* Desired End Date */}
               <div className="space-y-2">
-                <Label htmlFor="desiredEndDate" className="text-sm font-medium">
-                  Data Desejada de Término
-                </Label>
+                <label htmlFor="desiredEndDate" className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                  Data de Término
+                </label>
                 <Input
                   id="desiredEndDate"
                   name="desiredEndDate"
@@ -304,39 +319,39 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
                   value={formData.desiredEndDate}
                   onChange={handleChange}
                   disabled={submitting}
-                  className="h-10 rounded-lg"
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 />
               </div>
+            </div>
 
-              {/* Submit Buttons */}
-              <div className="flex items-center gap-3 pt-4">
-                <Link
-                  href={`/app/family/demands/${resolvedParams.id}`}
-                  className="px-4 py-2 text-sm font-medium rounded-lg border border-border hover:bg-muted transition-colors disabled:opacity-50"
-                >
-                  Cancelar
-                </Link>
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="gap-2 rounded-lg"
-                >
-                  {submitting ? (
-                    <>
-                      <IconLoader2 className="h-4 w-4 animate-spin" />
-                      <span>Salvando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <IconCheck className="h-4 w-4" />
-                      <span>Salvar Alterações</span>
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+            {/* Submit Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
+              <Link
+                href={`/app/family/demands/${resolvedParams.id}`}
+                className="flex items-center justify-center px-4 py-3 text-sm font-display font-bold uppercase tracking-widest rounded-2xl border border-border bg-card text-foreground hover:bg-secondary transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </Link>
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="gap-2 rounded-2xl"
+              >
+                {submitting ? (
+                  <>
+                    <IconLoader2 className="h-4 w-4 animate-spin" />
+                    <span>Salvando...</span>
+                  </>
+                ) : (
+                  <>
+                    <IconCheck className="h-4 w-4" />
+                    <span>Salvar Alterações</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </AppShell>
   );
