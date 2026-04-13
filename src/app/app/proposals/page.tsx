@@ -261,66 +261,74 @@ export default function ProposalsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-3">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 sticky top-0 z-10 bg-background border-b">
-          <h1 className="text-lg font-semibold">Propostas</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
+            Propostas
+          </h1>
           <Button variant="ghost" size="sm" onClick={fetchProposals} disabled={isLoading}>
             <IconRefresh className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
 
         {successMessage && (
-          <div className="mx-4 p-2 rounded-lg bg-green-500/10 border border-green-500/20 text-green-600 text-sm flex items-center gap-2">
-            <IconCheck className="h-4 w-4" />
-            {successMessage}
+          <div className="flex items-start gap-3 p-5 bg-success/5 border border-success/20 rounded-2xl">
+            <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
+            <p className="text-sm font-medium text-foreground">{successMessage}</p>
           </div>
         )}
 
         {error && (
-          <div className="mx-4 p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 text-sm flex items-center gap-2">
-            <IconAlertCircle className="h-4 w-4" />
-            {error}
+          <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+            <p className="text-sm font-medium text-foreground">{error}</p>
           </div>
         )}
 
         {isLoading && (
-          <div className="px-4 space-y-2">
+          <div className="space-y-4">
             {[1, 2].map((i) => (
-              <Skeleton key={i} className="h-20 w-full rounded-lg" />
+              <Skeleton key={i} className="h-24 w-full rounded-3xl" />
             ))}
           </div>
         )}
 
         {!isLoading && proposals.length === 0 && (
-          <div className="px-4 py-12 text-center">
-            <IconInbox className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Nenhuma proposta ainda</p>
-            <Button variant="outline" size="sm" asChild className="mt-3">
-              <Link href="/app/profile">Completar perfil</Link>
+          <div className="text-center py-12 max-w-sm mx-auto">
+            <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
+              <IconInbox className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma proposta</h4>
+            <p className="text-sm text-muted-foreground mb-6">Comece a completar o seu perfil para receber propostas</p>
+            <Button size="sm" asChild>
+              <Link href="/app/profile">Completar Perfil</Link>
             </Button>
           </div>
         )}
 
         {!isLoading && proposals.length > 0 && (
-          <Tabs defaultValue="pending" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3 h-10 rounded-lg bg-muted p-1">
-              <TabsTrigger value="pending" className="text-xs font-medium data-[state=active]:shadow-sm">
-                Novas <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px] font-semibold">{pendingProposals.length}</Badge>
+          <Tabs defaultValue="pending" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-secondary rounded-2xl">
+              <TabsTrigger value="pending" className="text-xs font-display font-bold uppercase tracking-widest py-3 data-[state=active]:shadow-sm">
+                Novas <span className="text-[10px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{pendingProposals.length}</span>
               </TabsTrigger>
-              <TabsTrigger value="counter" className="text-xs font-medium data-[state=active]:shadow-sm">
-                Contrapropostas <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px] font-semibold">{counterProposals.length}</Badge>
+              <TabsTrigger value="counter" className="text-xs font-display font-bold uppercase tracking-widest py-3 data-[state=active]:shadow-sm">
+                Contra <span className="text-[10px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{counterProposals.length}</span>
               </TabsTrigger>
-              <TabsTrigger value="accepted" className="text-xs font-medium data-[state=active]:shadow-sm">
-                Aceitas <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px] font-semibold">{acceptedProposals.length}</Badge>
+              <TabsTrigger value="accepted" className="text-xs font-display font-bold uppercase tracking-widest py-3 data-[state=active]:shadow-sm">
+                Aceitas <span className="text-[10px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{acceptedProposals.length}</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pending" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TabsContent value="pending" className="space-y-4">
               {pendingProposals.length === 0 ? (
-                <div className="col-span-full py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
-                  <IconCheck className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-                  <p className="text-muted-foreground font-medium">Nenhuma nova proposta</p>
+                <div className="text-center py-12 max-w-sm mx-auto col-span-full">
+                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
+                    <IconCheck className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma nova proposta</h4>
+                  <p className="text-sm text-muted-foreground">Aguarde novas propostas de famílias interessadas</p>
                 </div>
               ) : (
                 pendingProposals.map((p) => (
@@ -337,11 +345,14 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="counter" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TabsContent value="counter" className="space-y-4">
               {counterProposals.length === 0 ? (
-                <div className="col-span-full py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
-                  <IconEdit className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-                  <p className="text-muted-foreground font-medium">Nenhuma contraproposta enviada</p>
+                <div className="text-center py-12 max-w-sm mx-auto col-span-full">
+                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
+                    <IconEdit className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma contraproposta</h4>
+                  <p className="text-sm text-muted-foreground">Aguarde respostas às contrapropostas enviadas</p>
                 </div>
               ) : (
                 counterProposals.map((p) => (
@@ -350,11 +361,14 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="accepted" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <TabsContent value="accepted" className="space-y-4">
               {acceptedProposals.length === 0 ? (
-                <div className="col-span-full py-12 text-center bg-surface rounded-xl border-2 border-dashed border-border/30">
-                  <IconClock className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-                  <p className="text-muted-foreground font-medium">Nenhuma proposta aceita</p>
+                <div className="text-center py-12 max-w-sm mx-auto col-span-full">
+                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
+                    <IconClock className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma proposta aceita</h4>
+                  <p className="text-sm text-muted-foreground">Propostas aceitas e ativas aparecerão aqui</p>
                 </div>
               ) : (
                 acceptedProposals.map((p) => (
@@ -367,22 +381,28 @@ export default function ProposalsPage() {
 
         {/* Accept Dialog */}
         <Dialog open={acceptDialogOpen} onOpenChange={setAcceptDialogOpen}>
-          <DialogContent className="max-w-sm border-2 border-success/20 bg-surface">
+          <DialogContent className="max-w-sm border border-border bg-card rounded-3xl">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-base font-bold">Aceitar Proposta?</DialogTitle>
-              <DialogDescription className="text-sm mt-2">
+              <DialogTitle className="text-lg font-display font-bold text-foreground">Aceitar Proposta?</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground mt-2">
                 {selectedProposal?.family.name} • €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)} total
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-3 py-4">
-              <div className="p-3 bg-success/5 border border-success/20 rounded-lg text-sm">
-                <div className="flex justify-between mb-2"><span className="text-muted-foreground">Horas/sem:</span><span className="font-semibold">{selectedProposal?.hoursPerWeek}h</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Início:</span><span className="font-semibold">{selectedProposal?.startDate ? new Date(selectedProposal.startDate).toLocaleDateString('pt-PT') : "A definir"}</span></div>
+            <div className="space-y-4 py-4">
+              <div className="p-4 bg-success/5 border border-success/20 rounded-2xl space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Horas/semana:</span>
+                  <span className="font-display font-bold text-foreground">{selectedProposal?.hoursPerWeek}h</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Data de início:</span>
+                  <span className="font-display font-bold text-foreground">{selectedProposal?.startDate ? new Date(selectedProposal.startDate).toLocaleDateString('pt-PT') : "A definir"}</span>
+                </div>
               </div>
             </div>
             <DialogFooter className="gap-2 pt-4 border-t border-border/30">
               <Button variant="outline" size="sm" onClick={() => setAcceptDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" className="bg-success hover:bg-success/90" onClick={confirmAccept} disabled={actionLoading !== null}>
+              <Button size="sm" onClick={confirmAccept} disabled={actionLoading !== null}>
                 {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconCheck className="h-4 w-4 mr-1" /> Aceitar</>}
               </Button>
             </DialogFooter>
@@ -391,13 +411,19 @@ export default function ProposalsPage() {
 
         {/* Reject Dialog */}
         <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-          <DialogContent className="max-w-sm border-2 border-error/20 bg-surface">
+          <DialogContent className="max-w-sm border border-border bg-card rounded-3xl">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-base font-bold">Recusar Proposta</DialogTitle>
-              <DialogDescription className="text-sm mt-2">Insira um motivo (opcional)</DialogDescription>
+              <DialogTitle className="text-lg font-display font-bold text-foreground">Recusar Proposta</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground mt-2">Insira um motivo (opcional)</DialogDescription>
             </DialogHeader>
             <div className="py-4">
-              <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} rows={3} placeholder="Ex: Horário incompatível, orçamento limitado..." className="text-sm rounded-lg" />
+              <Textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                rows={3}
+                placeholder="Ex: Horário incompatível, orçamento limitado..."
+                className="text-sm rounded-2xl border border-border bg-secondary"
+              />
             </div>
             <DialogFooter className="gap-2 pt-4 border-t border-border/30">
               <Button variant="outline" size="sm" onClick={() => setRejectDialogOpen(false)}>Cancelar</Button>
@@ -410,39 +436,47 @@ export default function ProposalsPage() {
 
         {/* Counter-Proposal Dialog */}
         <Dialog open={counterDialogOpen} onOpenChange={setCounterDialogOpen}>
-          <DialogContent className="max-w-md border-2 border-secondary/20 bg-surface">
+          <DialogContent className="max-w-md border border-border bg-card rounded-3xl">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-base font-bold">Contraproposta</DialogTitle>
-              <DialogDescription className="text-sm mt-2">
+              <DialogTitle className="text-lg font-display font-bold text-foreground">Contraproposta</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground mt-2">
                 Proponha novos valores para {selectedProposal?.family.name}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               {/* Current values summary */}
-              <div className="p-3 bg-secondary/5 border border-secondary/20 rounded-lg text-sm">
-                <p className="text-xs font-semibold text-secondary mb-2">Valores atuais</p>
-                <div className="flex justify-between text-sm">
+              <div className="p-4 bg-secondary/5 border border-secondary/20 rounded-2xl text-sm space-y-2">
+                <p className="text-xs font-display font-bold text-secondary uppercase tracking-widest">Valores Atuais</p>
+                <div className="flex justify-between">
                   <span className="text-muted-foreground">Taxa horária:</span>
-                  <span className="font-semibold">€{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}/h</span>
+                  <span className="font-display font-bold text-foreground">€{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}/h</span>
                 </div>
-                <div className="flex justify-between text-sm mt-1.5">
+                <div className="flex justify-between">
                   <span className="text-muted-foreground">Total horas:</span>
-                  <span className="font-semibold">{selectedProposal?.totalHours || 0}h</span>
+                  <span className="font-display font-bold text-foreground">{selectedProposal?.totalHours || 0}h</span>
                 </div>
-                <div className="flex justify-between text-sm mt-1.5">
+                <div className="flex justify-between">
                   <span className="text-muted-foreground">Horas/semana:</span>
-                  <span className="font-semibold">{selectedProposal?.hoursPerWeek || 0}h</span>
+                  <span className="font-display font-bold text-foreground">{selectedProposal?.hoursPerWeek || 0}h</span>
                 </div>
-                <div className="flex justify-between text-sm mt-1.5 font-bold border-t border-secondary/30 pt-1.5">
+                <div className="flex justify-between border-t border-secondary/30 pt-2 font-display font-black">
                   <span className="text-muted-foreground">Total:</span>
-                  <span className="text-secondary">€{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}</span>
+                  <span className="text-foreground">€{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}</span>
                 </div>
               </div>
 
+              {/* Error message if any */}
+              {error && (
+                <div className="flex items-start gap-2 p-3 bg-destructive/5 border border-destructive/20 rounded-2xl">
+                  <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                  <p className="text-xs text-destructive font-medium">{error}</p>
+                </div>
+              )}
+
               {/* Counter values */}
               <div className="space-y-3">
-                <div>
-                  <Label className="text-sm">Nova taxa horaria (€)</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Nova Taxa Horária (€)</Label>
                   <Input
                     type="number"
                     step="0.50"
@@ -450,48 +484,48 @@ export default function ProposalsPage() {
                     value={counterHourlyRate}
                     onChange={(e) => setCounterHourlyRate(e.target.value)}
                     placeholder="Ex: 12.50"
-                    className="mt-1"
+                    className="rounded-2xl border border-border bg-secondary text-sm"
                   />
                 </div>
-                <div>
-                  <Label className="text-sm">Total de horas</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Total de Horas</Label>
                   <Input
                     type="number"
                     min="1"
                     value={counterTotalHours}
                     onChange={(e) => setCounterTotalHours(e.target.value)}
                     placeholder="Ex: 40"
-                    className="mt-1"
+                    className="rounded-2xl border border-border bg-secondary text-sm"
                   />
                 </div>
-                <div>
-                  <Label className="text-sm">Horas por semana</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Horas por Semana</Label>
                   <Input
                     type="number"
                     min="1"
                     value={counterHoursPerWeek}
                     onChange={(e) => setCounterHoursPerWeek(e.target.value)}
                     placeholder="Ex: 20"
-                    className="mt-1"
+                    className="rounded-2xl border border-border bg-secondary text-sm"
                   />
                 </div>
-                <div>
-                  <Label className="text-sm">Mensagem (opcional)</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Mensagem (Opcional)</Label>
                   <Textarea
                     value={counterMessage}
                     onChange={(e) => setCounterMessage(e.target.value)}
                     rows={2}
-                    placeholder="Ex: Proponho um valor ligeiramente superior devido a complexidade dos cuidados..."
-                    className="mt-1 text-sm"
+                    placeholder="Ex: Proponho um valor ligeiramente superior devido à complexidade..."
+                    className="text-sm rounded-2xl border border-border bg-secondary"
                   />
                 </div>
               </div>
 
               {/* Preview new total */}
               {counterHourlyRate && counterTotalHours && (
-                <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg text-sm">
-                  <p className="text-xs font-semibold text-primary mb-1">Novo valor total estimado</p>
-                  <p className="font-bold text-lg text-primary">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl">
+                  <p className="text-xs font-display font-bold text-primary uppercase tracking-widest mb-2">Novo Valor Total Estimado</p>
+                  <p className="font-display font-black text-2xl text-primary">
                     €{(parseFloat(counterHourlyRate) * parseInt(counterTotalHours || "0")).toFixed(2)}
                   </p>
                 </div>
@@ -499,8 +533,8 @@ export default function ProposalsPage() {
             </div>
             <DialogFooter className="gap-2 pt-4 border-t border-border/30">
               <Button variant="outline" size="sm" onClick={() => setCounterDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" className="bg-secondary hover:bg-secondary/90" onClick={confirmCounter} disabled={actionLoading !== null}>
-                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconEdit className="h-4 w-4 mr-1" /> Enviar Contraproposta</>}
+              <Button size="sm" onClick={confirmCounter} disabled={actionLoading !== null}>
+                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconEdit className="h-4 w-4 mr-1" /> Enviar</>}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -520,125 +554,129 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
 }) {
   const totalEur = proposal.totalEurCents ? proposal.totalEurCents / 100 : 0;
 
-  const statusColorMap: Record<string, string> = {
-    PENDING_ACCEPTANCE: "border-amber-200/50 hover:border-amber-300/60",
-    COUNTER_PROPOSED: "border-secondary/30 hover:border-secondary/50",
-    PENDING_PAYMENT: "border-orange-200/50 hover:border-orange-300/60",
-    ACTIVE: "border-success/30 hover:border-success/50",
-    COMPLETED: "border-primary/30 hover:border-primary/50",
-    CANCELLED: "border-error/30 hover:border-error/50",
+  const getStatusBadgeStyle = (status: string) => {
+    const styles: Record<string, string> = {
+      PENDING_ACCEPTANCE: "bg-warning/10 text-warning border-warning/30",
+      COUNTER_PROPOSED: "bg-secondary/10 text-secondary border-secondary/30",
+      PENDING_PAYMENT: "bg-warning/10 text-warning border-warning/30",
+      ACTIVE: "bg-success/10 text-success border-success/30",
+      COMPLETED: "bg-primary/10 text-primary border-primary/30",
+      CANCELLED: "bg-destructive/10 text-destructive border-destructive/30",
+      DRAFT: "bg-muted text-muted-foreground border-border/30",
+    };
+    return styles[status] || styles.DRAFT;
   };
 
-  const borderClass = statusColorMap[proposal.status] || "border-border/40 hover:border-border/60";
-
   return (
-    <div className={`bg-surface rounded-xl p-5 border-2 ${borderClass} transition-all duration-300 card-interactive flex flex-col h-full`}>
-      {/* Top color indicator */}
-      <div className={`h-1 -mx-5 -mt-5 mb-4 rounded-t-lg ${
-        showActions ? "bg-amber-500" :
-        proposal.status === "COUNTER_PROPOSED" ? "bg-secondary" :
-        proposal.status === "PENDING_PAYMENT" ? "bg-orange-500" :
-        proposal.status === "ACTIVE" ? "bg-success" :
-        proposal.status === "COMPLETED" ? "bg-primary" :
-        "bg-border"
-      }`} />
-
-      {/* Header: Family info + Badge */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="h-10 w-10 bg-primary/15 rounded-lg flex items-center justify-center flex-shrink-0">
-            <IconFamily className="h-5 w-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-base font-bold text-foreground truncate">{proposal.family.name}</h3>
-            {proposal.family.city && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                <IconMapPin className="h-3 w-3 shrink-0" />
-                <span className="truncate">{proposal.family.city}</span>
-              </div>
-            )}
-          </div>
+    <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-6 bg-card rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 gap-5">
+      {/* Left side: Family info */}
+      <div className="flex-1 flex items-start gap-4 min-w-0">
+        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <IconFamily className="h-6 w-6 text-primary" />
         </div>
-        <Badge className={`${statusColors[proposal.status]} text-white text-[11px] px-2.5 py-0.5 font-semibold shrink-0`}>
-          {statusLabels[proposal.status]}
-        </Badge>
-      </div>
-
-      {/* Service types */}
-      {proposal.serviceTypes && proposal.serviceTypes.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {proposal.serviceTypes.slice(0, 2).map((s, i) => (
-            <Badge key={i} variant="secondary" className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10">
-              {serviceLabels[s] || s}
-            </Badge>
-          ))}
-          {proposal.serviceTypes.length > 2 && (
-            <Badge variant="secondary" className="text-[10px] font-medium px-2 py-0.5 h-auto bg-secondary/10">
-              +{proposal.serviceTypes.length - 2}
-            </Badge>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-lg font-display font-bold text-foreground truncate">
+            {proposal.family.name}
+          </h4>
+          {proposal.family.city && (
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
+              <IconMapPin className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{proposal.family.city}</span>
+            </div>
+          )}
+          {proposal.serviceTypes && proposal.serviceTypes.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {proposal.serviceTypes.slice(0, 2).map((s, i) => (
+                <span key={i} className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest">
+                  {serviceLabels[s] || s}
+                </span>
+              ))}
+              {proposal.serviceTypes.length > 2 && (
+                <span className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest">
+                  +{proposal.serviceTypes.length - 2}
+                </span>
+              )}
+            </div>
           )}
         </div>
-      )}
-
-      {/* Info Grid */}
-      <div className="grid grid-cols-3 gap-2 py-3 border-y border-border/30 mb-3">
-        <div className="text-center">
-          <p className="text-[11px] text-muted-foreground font-medium">Taxa</p>
-          <p className="text-sm font-bold text-success">€{(proposal.hourlyRateEur / 100).toFixed(0)}/h</p>
-        </div>
-        <div className="text-center">
-          <p className="text-[11px] text-muted-foreground font-medium">Horas</p>
-          <p className="text-sm font-bold text-primary">{proposal.hoursPerWeek}h</p>
-        </div>
-        <div className="text-center">
-          <p className="text-[11px] text-muted-foreground font-medium">Total</p>
-          <p className="text-sm font-bold text-foreground">€{totalEur.toFixed(0)}</p>
-        </div>
       </div>
 
-      {/* Date info */}
-      <div className="text-xs text-muted-foreground mb-3 font-medium">
-        Início: {proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('pt-PT') : "A definir"}
+      {/* Right side: Info + Actions */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 w-full md:w-auto md:text-right">
+        {/* Stats */}
+        <div className="flex gap-6 w-full sm:w-auto">
+          <div>
+            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">Taxa/h</p>
+            <p className="text-lg font-display font-bold text-foreground mt-1">
+              €{(proposal.hourlyRateEur / 100).toFixed(0)}
+            </p>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">Horas</p>
+            <p className="text-lg font-display font-bold text-foreground mt-1">{proposal.hoursPerWeek}h</p>
+          </div>
+          <div>
+            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">Total</p>
+            <p className="text-lg font-display font-bold text-foreground mt-1">€{totalEur.toFixed(0)}</p>
+          </div>
+        </div>
+
+        {/* Date */}
+        <div className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+          {proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('pt-PT') : "A definir"}
+        </div>
+
+        {/* Status Badge */}
+        <span className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border ${getStatusBadgeStyle(proposal.status)} shrink-0`}>
+          {statusLabels[proposal.status]}
+        </span>
+
+        {/* Actions */}
+        {showActions && (
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button
+              size="sm"
+              onClick={onAccept}
+              disabled={isLoading}
+              className="flex items-center justify-center"
+            >
+              {isLoading ? (
+                <IconLoader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <IconCheck className="h-4 w-4 mr-1" />
+                  Aceitar
+                </>
+              )}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onCounter}
+              disabled={isLoading}
+              title="Contraproposta"
+              className="flex items-center justify-center"
+            >
+              <IconEdit className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onReject}
+              disabled={isLoading}
+              className="text-destructive hover:text-destructive hover:bg-destructive/5 flex items-center justify-center"
+            >
+              <IconX className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
+        {!showActions && proposal.status === "COUNTER_PROPOSED" && (
+          <span className="text-[9px] font-display font-bold bg-secondary/10 text-secondary rounded-lg px-2.5 py-1 uppercase tracking-widest border border-secondary/30">
+            Aguard. resposta
+          </span>
+        )}
       </div>
-
-      {/* Actions */}
-      {showActions && (
-        <div className="flex gap-2 mt-auto pt-2">
-          <Button
-            size="sm"
-            variant="default"
-            className="flex-1"
-            onClick={onAccept}
-            disabled={isLoading}
-          >
-            {isLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconCheck className="h-4 w-4 mr-1" /> Aceitar</>}
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onCounter}
-            disabled={isLoading}
-            title="Contraproposta"
-          >
-            <IconEdit className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="text-error hover:text-error"
-            onClick={onReject}
-            disabled={isLoading}
-          >
-            <IconX className="h-4 w-4" />
-          </Button>
-        </div>
-      )}
-
-      {!showActions && proposal.status === "COUNTER_PROPOSED" && (
-        <div className="mt-auto pt-2 text-center">
-          <Badge variant="secondary" className="text-[10px] bg-secondary/15 text-secondary">Aguard. resposta</Badge>
-        </div>
-      )}
     </div>
   );
 }

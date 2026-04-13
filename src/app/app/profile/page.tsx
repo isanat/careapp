@@ -461,425 +461,635 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="space-y-3">
-        {/* Profile Header - compact */}
-        <div className={`rounded-xl px-4 py-3 text-white flex items-center gap-3 ${isFamily ? 'gradient-primary' : 'gradient-secondary'}`}>
-          <div className="relative shrink-0">
-            <Avatar className="h-12 w-12 ring-2 ring-white/20 cursor-pointer" onClick={handlePhotoClick}>
-              {formData.profileImage ? (
-                <AvatarImage src={formData.profileImage} alt={formData.name} />
-              ) : null}
-              <AvatarFallback className="text-sm font-bold bg-white/20 text-white">
-                {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <button
-              className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-white text-primary flex items-center justify-center shadow-sm"
-              onClick={handlePhotoClick}
-              disabled={uploadingPhoto}
-            >
-              {uploadingPhoto ? <IconLoader2 className="h-2.5 w-2.5 animate-spin" /> : <IconCamera className="h-2.5 w-2.5" />}
-            </button>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-base font-bold truncate">{session?.user?.name}</h2>
-            {isCaregiver && formData.title && (
-              <p className="text-xs opacity-80 truncate">{formData.title}{formData.city ? ` - ${formData.city}` : ""}</p>
-            )}
-            <p className="text-[10px] opacity-60">{formData.email}</p>
-          </div>
-          <Button
-            size="sm"
-            variant={isEditing ? "default" : "outline"}
-            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-            disabled={isSaving}
-            className="bg-white/20 hover:bg-white/30 text-white border-0 h-7 text-[10px] px-2"
-          >
-            {isSaving ? <IconLoader2 className="h-3 w-3 animate-spin" /> :
-             isEditing ? <IconCheck className="h-3 w-3 mr-0.5" /> : <IconEdit className="h-3 w-3 mr-0.5" />}
-            {isEditing ? t.save : t.profile.editProfile}
-          </Button>
+      <div className="space-y-8 max-w-4xl">
+        {/* Page Header */}
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
+            {t.profile.myProfile || "Meu Perfil"}
+          </h1>
+          <p className="text-base text-muted-foreground font-medium">
+            {isCaregiver
+              ? "Gerencie suas informações profissionais e preferências"
+              : "Gerencie as informações do seu familiar"}
+          </p>
         </div>
 
         {/* Alerts */}
         {error && (
-          <Alert variant="destructive" className="rounded-xl">
-            <IconAlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+            <IconAlertCircle size={20} className="text-destructive shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-display font-bold text-foreground">{t.profile.error || "Erro"}</p>
+              <p className="text-xs text-muted-foreground mt-1">{error}</p>
+            </div>
+          </div>
         )}
         {success && (
-          <Alert className="rounded-xl border-success/20 bg-success/5">
-            <IconCheck className="h-4 w-4 text-success" />
-            <AlertDescription className="text-success">{success}</AlertDescription>
-          </Alert>
+          <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
+            <IconCheckCircle size={20} className="text-success shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-display font-bold text-foreground">{t.profile.success || "Sucesso"}</p>
+              <p className="text-xs text-muted-foreground mt-1">{success}</p>
+            </div>
+          </div>
         )}
+
+        {/* Profile Header Section */}
+        <section className="space-y-4">
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4 hover:shadow-elevated transition-all">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-5">
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                  <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-secondary/30 bg-secondary flex items-center justify-center cursor-pointer group" onClick={handlePhotoClick}>
+                    {formData.profileImage ? (
+                      <img src={formData.profileImage} alt={formData.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-2xl font-display font-black text-muted-foreground">
+                        {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    className="absolute -bottom-2 -right-2 h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:shadow-lg transition-all group-hover:scale-110"
+                    onClick={handlePhotoClick}
+                    disabled={uploadingPhoto}
+                  >
+                    {uploadingPhoto ? <IconLoader2 className="h-3.5 w-3.5 animate-spin" /> : <IconCamera className="h-3.5 w-3.5" />}
+                  </button>
+                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+                </div>
+
+                {/* Profile Info */}
+                <div className="flex-1 min-w-0 pt-1 space-y-2">
+                  <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">{session?.user?.name}</h2>
+                  {isCaregiver && formData.title && (
+                    <p className="text-sm text-muted-foreground font-medium">{formData.title}{formData.city ? ` • ${formData.city}` : ""}</p>
+                  )}
+                  <div className="space-y-1">
+                    <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Email</p>
+                    <p className="text-sm font-medium text-foreground">{formData.email}</p>
+                  </div>
+                  {formData.phone && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Telefone</p>
+                      <p className="text-sm font-medium text-foreground">{formData.phone}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Edit Button */}
+              <Button
+                onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                disabled={isSaving}
+                className="rounded-2xl px-4 h-10 text-sm font-display font-bold uppercase"
+                variant={isEditing ? "default" : "outline"}
+              >
+                {isSaving ? (
+                  <>
+                    <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                    {t.saving || "Guardando"}
+                  </>
+                ) : isEditing ? (
+                  <>
+                    <IconCheck className="h-4 w-4 mr-2" />
+                    {t.save}
+                  </>
+                ) : (
+                  <>
+                    <IconEdit className="h-4 w-4 mr-2" />
+                    {t.profile.editProfile}
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </section>
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { value: profile?.totalContracts || 0, label: "Contratos", color: "text-primary", bg: "bg-primary/10" },
-              { value: profile?.totalReviews || 0, label: "Avaliações", color: "text-secondary", bg: "bg-secondary/10" },
-              { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", color: "text-amber-600", bg: "bg-amber-100/20", icon: true },
-              { value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", color: "text-success", bg: "bg-success/10" },
+              { value: profile?.totalContracts || 0, label: "Contratos", icon: IconFamily },
+              { value: profile?.totalReviews || 0, label: "Avaliações", icon: IconStar },
+              { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", icon: IconStar },
+              { value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", icon: IconEuro },
             ].map((stat, i) => (
-              <div key={i} className="bg-surface rounded-xl p-4 border-2 border-border/30 text-center">
-                <div className={`h-10 w-10 rounded-lg ${stat.bg} flex items-center justify-center mx-auto mb-2`}>
-                  {stat.icon && <IconStar className="h-4 w-4 fill-amber-500 text-amber-500" />}
+              <div key={i} className="bg-card p-7 rounded-3xl border border-border shadow-card space-y-4 hover:shadow-elevated transition-all group">
+                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <stat.icon className="h-6 w-6 text-primary" />
                 </div>
-                <p className={`text-lg font-bold ${stat.color}`}>{stat.value}</p>
-                <p className="text-xs font-medium text-muted-foreground mt-1">{stat.label}</p>
+                <div>
+                  <div className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+                    {stat.label}
+                  </div>
+                  <div className="text-3xl font-display font-black text-foreground tracking-tighter leading-none mt-1">
+                    {stat.value}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="about">
-          <TabsList className={`w-full h-8 rounded-lg bg-muted p-0.5 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'}`}>
-            <TabsTrigger value="about" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Info</TabsTrigger>
-            <TabsTrigger value="documents" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Docs</TabsTrigger>
-            {isCaregiver && <TabsTrigger value="services" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Servicos</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Idoso</TabsTrigger>}
-            <TabsTrigger value="contact" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Contato</TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-md text-[10px] data-[state=active]:shadow-sm">Config</TabsTrigger>
+        <Tabs defaultValue="about" className="space-y-6">
+          <TabsList className={`w-full h-11 rounded-2xl bg-secondary/50 p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'} gap-1`}>
+            <TabsTrigger value="about" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Info</TabsTrigger>
+            <TabsTrigger value="documents" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Docs</TabsTrigger>
+            {isCaregiver && <TabsTrigger value="services" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Servicos</TabsTrigger>}
+            {isFamily && <TabsTrigger value="elder" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Idoso</TabsTrigger>}
+            <TabsTrigger value="contact" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Contato</TabsTrigger>
+            <TabsTrigger value="settings" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Config</TabsTrigger>
           </TabsList>
 
           {/* Info Tab */}
-          <TabsContent value="about" className="mt-3 space-y-2">
-            <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-2">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-[10px] text-muted-foreground">{t.auth.name}</Label>
-                  <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
-                </div>
-                <div>
-                  <Label className="text-[10px] text-muted-foreground">{t.profile.city}</Label>
-                  <Input value={formData.city || ""} onChange={(e) => setFormData({...formData, city: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Cidade" />
-                </div>
-              </div>
-
-              {isCaregiver && (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Titulo Profissional</Label>
-                      <Input value={formData.title || ""} onChange={(e) => setFormData({...formData, title: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Ex: Enfermeira" />
-                    </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Anos de Experiencia</Label>
-                      <Input type="number" value={formData.experienceYears || 0} onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
-                    </div>
+          <TabsContent value="about" className="space-y-6">
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informações Pessoais</h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.name}</Label>
+                    <Input
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      disabled={!isEditing}
+                      className="mt-2 rounded-2xl"
+                    />
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Bio / Sobre voce</Label>
-                    <Textarea value={formData.bio || ""} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={3} disabled={!isEditing} className="mt-1 text-sm rounded-xl" placeholder="Descreva sua experiencia..." />
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.profile.city}</Label>
+                    <Input
+                      value={formData.city || ""}
+                      onChange={(e) => setFormData({...formData, city: e.target.value})}
+                      disabled={!isEditing}
+                      className="mt-2 rounded-2xl"
+                      placeholder="Cidade"
+                    />
                   </div>
-                </>
-              )}
-            </div>
+                </div>
+
+                {isCaregiver && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Titulo Profissional</Label>
+                        <Input
+                          value={formData.title || ""}
+                          onChange={(e) => setFormData({...formData, title: e.target.value})}
+                          disabled={!isEditing}
+                          className="mt-2 rounded-2xl"
+                          placeholder="Ex: Enfermeira"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Anos de Experiencia</Label>
+                        <Input
+                          type="number"
+                          value={formData.experienceYears || 0}
+                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
+                          disabled={!isEditing}
+                          className="mt-2 rounded-2xl"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Bio / Sobre voce</Label>
+                      <Textarea
+                        value={formData.bio || ""}
+                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                        rows={3}
+                        disabled={!isEditing}
+                        className="mt-2 rounded-2xl"
+                        placeholder="Descreva sua experiencia..."
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
           </TabsContent>
 
           {/* Documents Tab */}
-          <TabsContent value="documents" className="mt-3 space-y-2">
-            <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
-              <div className="flex items-center gap-2 mb-1">
-                <IconFileText className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-semibold">Documentos Pessoais</span>
-              </div>
-
-              <div>
-                <Label className="text-xs text-muted-foreground">NIF</Label>
-                <Input
-                  value={formData.nif || ""}
-                  onChange={(e) => { const val = e.target.value.replace(/\D/g, "").slice(0, 9); setFormData({...formData, nif: val}); }}
-                  disabled={!isEditing}
-                  className={`h-8 mt-0.5 text-xs ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-error" : ""}`}
-                  placeholder="123456789"
-                  maxLength={9}
-                  inputMode="numeric"
-                />
-                {formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) && (
-                  <p className="text-xs text-error mt-1">NIF invalido</p>
-                )}
-                {formData.nif && formData.nif.length === 9 && validateNIF(formData.nif) && (
-                  <p className="text-xs text-success mt-1 flex items-center gap-1"><IconCheck className="h-3 w-3" />NIF valido</p>
-                )}
-              </div>
-
-              <div>
-                <Label className="text-xs text-muted-foreground">Tipo de Documento</Label>
-                <Select value={formData.documentType || ""} onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})} disabled={!isEditing}>
-                  <SelectTrigger className="h-8 mt-0.5 text-xs"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
-                  <SelectContent className="bg-surface border shadow-soft-md z-50">
-                    {DOCUMENT_TYPES.map((doc) => (<SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {formData.documentType && (
+          <TabsContent value="documents" className="space-y-6">
+            {/* Personal Documents Section */}
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Documentos Pessoais</h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                 <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Numero do {DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.label || "Documento"}
-                  </Label>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">NIF</Label>
                   <Input
-                    value={formData.documentNumber || ""}
-                    onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
+                    value={formData.nif || ""}
+                    onChange={(e) => { const val = e.target.value.replace(/\D/g, "").slice(0, 9); setFormData({...formData, nif: val}); }}
                     disabled={!isEditing}
-                    className="h-8 mt-0.5 text-xs"
-                    placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
-                    maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
+                    className={`mt-2 rounded-2xl ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-destructive" : ""}`}
+                    placeholder="123456789"
+                    maxLength={9}
+                    inputMode="numeric"
                   />
+                  {formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) && (
+                    <p className="text-xs text-destructive mt-2 flex items-center gap-1"><IconAlertCircle className="h-3 w-3" />NIF invalido</p>
+                  )}
+                  {formData.nif && formData.nif.length === 9 && validateNIF(formData.nif) && (
+                    <p className="text-xs text-success mt-2 flex items-center gap-1"><IconCheck className="h-3 w-3" />NIF valido</p>
+                  )}
                 </div>
-              )}
-            </div>
+
+                <div>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Tipo de Documento</Label>
+                  <Select value={formData.documentType || ""} onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})} disabled={!isEditing}>
+                    <SelectTrigger className="mt-2 rounded-2xl"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+                    <SelectContent className="bg-card border shadow-card z-50">
+                      {DOCUMENT_TYPES.map((doc) => (<SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.documentType && (
+                  <div>
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      Numero do {DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.label || "Documento"}
+                    </Label>
+                    <Input
+                      value={formData.documentNumber || ""}
+                      onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
+                      disabled={!isEditing}
+                      className="mt-2 rounded-2xl"
+                      placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
+                      maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
+                    />
+                  </div>
+                )}
+              </div>
+            </section>
 
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
-              <div className="bg-surface rounded-xl p-3 border border-border/30">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <IconShield className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold">Antecedentes Criminais</span>
+              <section className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Verificacao de Antecedentes</h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center">
+                        <IconShield className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-display font-bold text-sm">Antecedentes Criminais</p>
+                        <p className="text-xs text-muted-foreground font-medium">Status da verificacao</p>
+                      </div>
+                    </div>
+                    {getBackgroundCheckBadge()}
                   </div>
-                  {getBackgroundCheckBadge()}
+                  <p className="text-sm text-muted-foreground font-medium">Para trabalhar como cuidador, e necessario apresentar o registo criminal.</p>
+                  <Button
+                    variant={formData.backgroundCheckUrl ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => document.getElementById('backgroundCheckInput')?.click()}
+                    disabled={uploadingPhoto}
+                    className="w-full rounded-2xl h-10 font-display font-bold uppercase"
+                  >
+                    {uploadingPhoto ? (
+                      <>
+                        <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <IconUpload className="h-4 w-4 mr-2" />
+                        {formData.backgroundCheckUrl ? "Atualizar Comprovativo" : "Enviar Comprovativo"}
+                      </>
+                    )}
+                  </Button>
+                  <input id="backgroundCheckInput" type="file" accept="image/*,.pdf" className="hidden" onChange={handleBackgroundCheckUpload} />
+                  {formData.backgroundCheckUrl && (
+                    <p className="text-xs text-success flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado com sucesso</p>
+                  )}
                 </div>
-                <p className="text-xs text-muted-foreground mb-3">Para trabalhar como cuidador, e necessario apresentar o registo criminal.</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => document.getElementById('backgroundCheckInput')?.click()}
-                  disabled={uploadingPhoto}
-                  className="w-full rounded-xl"
-                >
-                  {uploadingPhoto ? <IconLoader2 className="h-4 w-4 animate-spin mr-1.5" /> : <IconUpload className="h-4 w-4 mr-1.5" />}
-                  Enviar Comprovativo
-                </Button>
-                <input id="backgroundCheckInput" type="file" accept="image/*,.pdf" className="hidden" onChange={handleBackgroundCheckUpload} />
-                {formData.backgroundCheckUrl && (
-                  <p className="text-xs text-success mt-2 flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado</p>
-                )}
-              </div>
+              </section>
             )}
 
-            <div className="bg-warning/5 border border-warning/20 rounded-xl p-3">
-              <div className="flex gap-2">
-                <IconAlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
-                <div className="text-xs text-muted-foreground">
-                  <p className="font-medium text-foreground mb-0.5">Seguranca dos dados</p>
-                  <p>Seus documentos sao armazenados de forma segura e criptografada.</p>
-                </div>
+            {/* Security Info */}
+            <div className="flex items-start gap-4 p-5 bg-info/5 border border-info/20 rounded-2xl">
+              <IconShield size={20} className="text-info shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-display font-bold text-foreground">Seguranca dos dados</p>
+                <p className="text-xs text-muted-foreground mt-1">Seus documentos sao armazenados de forma segura e criptografada em conformidade com LGPD.</p>
               </div>
             </div>
           </TabsContent>
 
           {/* Services Tab */}
           {isCaregiver && (
-            <TabsContent value="services" className="mt-3 space-y-2">
-              <div className="bg-surface rounded-xl p-3 border border-border/30">
-                <div className="grid grid-cols-2 gap-2">
-                  {SERVICE_TYPES.map((service) => (
-                    <label key={service.id} className={`flex items-center gap-2 p-3 border rounded-xl text-sm cursor-pointer transition-all ${
-                      formData.services?.includes(service.id) ? "border-primary bg-primary/5 shadow-sm" : "hover:border-primary/30"
-                    } ${!isEditing ? "pointer-events-none opacity-80" : ""}`}>
-                      <Checkbox checked={formData.services?.includes(service.id)} onCheckedChange={() => handleServiceToggle(service.id)} disabled={!isEditing} className="h-4 w-4" />
-                      <span className="text-xs">{service.label}</span>
-                    </label>
-                  ))}
-                </div>
+            <TabsContent value="services" className="space-y-6">
+              <section className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Servicos Oferecidos</h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {SERVICE_TYPES.map((service) => (
+                      <label
+                        key={service.id}
+                        className={`flex items-center gap-3 p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all cursor-pointer ${
+                          formData.services?.includes(service.id) ? "border-primary bg-primary/10" : ""
+                        } ${!isEditing ? "pointer-events-none opacity-60" : ""}`}
+                      >
+                        <Checkbox
+                          checked={formData.services?.includes(service.id)}
+                          onCheckedChange={() => handleServiceToggle(service.id)}
+                          disabled={!isEditing}
+                          className="h-5 w-5"
+                        />
+                        <span className="text-sm font-display font-bold text-foreground">{service.label}</span>
+                      </label>
+                    ))}
+                  </div>
 
-                <Separator className="my-4" />
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">{"\u20AC"}/hora</Label>
-                    <div className="relative mt-1">
-                      <IconEuro className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                  <div className="border-t border-border/30 pt-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Taxa Horaria ({"\u20AC"}/hora)</Label>
+                        <div className="relative mt-2">
+                          <IconEuro className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="text"
+                            inputMode="decimal"
+                            value={formData.hourlyRateEur?.toString() || ""}
+                            onChange={(e) => {
+                              const normalized = e.target.value.replace(',', '.');
+                              const value = parseFloat(normalized) || 0;
+                              setFormData({...formData, hourlyRateEur: value});
+                            }}
+                            className="pl-11 rounded-2xl"
+                            disabled={!isEditing}
+                            placeholder="15.50"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idiomas</Label>
+                        <Input
+                          value={formData.languages || ""}
+                          onChange={(e) => setFormData({...formData, languages: e.target.value})}
+                          disabled={!isEditing}
+                          className="mt-2 rounded-2xl"
+                          placeholder="PT, EN, ES..."
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Certificacoes</Label>
                       <Input
-                        type="text"
-                        inputMode="decimal"
-                        value={formData.hourlyRateEur?.toString() || ""}
-                        onChange={(e) => {
-                          // Replace comma with period for parsing
-                          const normalized = e.target.value.replace(',', '.');
-                          const value = parseFloat(normalized) || 0;
-                          setFormData({...formData, hourlyRateEur: value});
-                        }}
-                        className="h-10 pl-8 rounded-xl"
+                        value={formData.certifications || ""}
+                        onChange={(e) => setFormData({...formData, certifications: e.target.value})}
                         disabled={!isEditing}
-                        placeholder="15,50"
+                        className="mt-2 rounded-2xl"
+                        placeholder="Curso de Cuidador, Primeiros Socorros..."
                       />
                     </div>
                   </div>
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Idiomas</Label>
-                    <Input value={formData.languages || ""} onChange={(e) => setFormData({...formData, languages: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="PT, EN..." />
-                  </div>
                 </div>
-                <div className="mt-3">
-                  <Label className="text-xs text-muted-foreground">Certificacoes</Label>
-                  <Input value={formData.certifications || ""} onChange={(e) => setFormData({...formData, certifications: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Curso de Cuidador..." />
-                </div>
-              </div>
+              </section>
             </TabsContent>
           )}
 
           {/* Elder Tab */}
           {isFamily && (
-            <TabsContent value="elder" className="mt-4">
-              <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Nome do Idoso</Label>
-                    <Input value={formData.elderName || ""} onChange={(e) => setFormData({...formData, elderName: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
+            <TabsContent value="elder" className="space-y-6">
+              <section className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informacoes do Familiar</h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Nome do Idoso</Label>
+                      <Input
+                        value={formData.elderName || ""}
+                        onChange={(e) => setFormData({...formData, elderName: e.target.value})}
+                        disabled={!isEditing}
+                        className="mt-2 rounded-2xl"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idade</Label>
+                      <Input
+                        type="number"
+                        value={formData.elderAge || ""}
+                        onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})}
+                        disabled={!isEditing}
+                        className="mt-2 rounded-2xl"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Idade</Label>
-                    <Input type="number" value={formData.elderAge || ""} onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" />
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Necessidades Especificas</Label>
+                    <Textarea
+                      value={formData.elderNeeds || ""}
+                      onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})}
+                      rows={4}
+                      disabled={!isEditing}
+                      className="mt-2 rounded-2xl"
+                      placeholder="Descreva as necessidades especificas de saude e cuidado..."
+                    />
                   </div>
                 </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Necessidades Especificas</Label>
-                  <Textarea value={formData.elderNeeds || ""} onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})} rows={3} disabled={!isEditing} className="mt-1 text-sm rounded-xl" placeholder="Descreva as necessidades..." />
-                </div>
-              </div>
+              </section>
             </TabsContent>
           )}
 
           {/* Contact Tab */}
-          <TabsContent value="contact" className="mt-4">
-            <div className="bg-surface rounded-xl p-3 border border-border/30 space-y-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">{t.auth.email}</Label>
-                <Input type="email" value={formData.email} disabled className="h-8 mt-0.5 text-xs bg-muted" />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Telemovel</Label>
-                <Input
-                  type="tel"
-                  value={formData.phone || ""}
-                  onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
-                  disabled={!isEditing}
-                  className="h-8 mt-0.5 text-xs"
-                  placeholder="+351 912 345 678"
-                  inputMode="tel"
-                />
-              </div>
+          <TabsContent value="contact" className="space-y-6">
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informacoes de Contato</h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <div>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.email}</Label>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    disabled
+                    className="mt-2 rounded-2xl bg-secondary/50 cursor-not-allowed opacity-60"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Telemovel</Label>
+                  <Input
+                    type="tel"
+                    value={formData.phone || ""}
+                    onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
+                    disabled={!isEditing}
+                    className="mt-2 rounded-2xl"
+                    placeholder="+351 912 345 678"
+                    inputMode="tel"
+                  />
+                </div>
 
-              {isFamily && (
-                <>
-                  <Separator />
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Contato de Emergencia</Label>
-                      <Input value={formData.emergencyContactName || ""} onChange={(e) => setFormData({...formData, emergencyContactName: e.target.value})} disabled={!isEditing} className="h-8 mt-0.5 text-xs" placeholder="Nome" />
+                {isFamily && (
+                  <>
+                    <div className="border-t border-border/30 pt-6 space-y-4">
+                      <h4 className="text-sm font-display font-bold uppercase text-foreground">Contato de Emergencia</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Nome</Label>
+                          <Input
+                            value={formData.emergencyContactName || ""}
+                            onChange={(e) => setFormData({...formData, emergencyContactName: e.target.value})}
+                            disabled={!isEditing}
+                            className="mt-2 rounded-2xl"
+                            placeholder="Nome completo"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Telefone</Label>
+                          <Input
+                            type="tel"
+                            value={formData.emergencyContactPhone || ""}
+                            onChange={(e) => setFormData({...formData, emergencyContactPhone: formatPhonePT(e.target.value)})}
+                            disabled={!isEditing}
+                            className="mt-2 rounded-2xl"
+                            placeholder="+351 912 345 678"
+                            inputMode="tel"
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Telefone</Label>
-                      <Input
-                        value={formData.emergencyContactPhone || ""}
-                        onChange={(e) => setFormData({...formData, emergencyContactPhone: formatPhonePT(e.target.value)})}
-                        disabled={!isEditing}
-                        className="h-8 mt-0.5 text-xs"
-                        placeholder="+351 912 345 678"
-                        inputMode="tel"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+                  </>
+                )}
+              </div>
+            </section>
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className="mt-4 space-y-2">
-            {/* Push Notifications */}
-            <div className="bg-surface rounded-xl p-3 border border-border/30">
-              <div className="flex items-center justify-between">
+          <TabsContent value="settings" className="space-y-6">
+            {/* Settings Section */}
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Preferencias e Configuracoes</h3>
+
+              {/* Push Notifications */}
+              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <IconBell className="h-4 w-4 text-primary" />
+                  <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <IconBell className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium">Notificacoes Push</p>
-                    <p className="text-xs text-muted-foreground">Alertas em tempo real</p>
+                    <p className="text-sm font-display font-bold text-foreground">Notificacoes Push</p>
+                    <p className="text-xs text-muted-foreground font-medium">Alertas em tempo real</p>
                   </div>
                 </div>
                 {isPushSupported ? (
                   isPushEnabled ? (
-                    <Badge className="bg-success/10 text-success border-success/20" variant="outline">Ativo</Badge>
+                    <span className="px-3 py-1 text-[10px] font-display font-bold rounded-full uppercase tracking-widest bg-success/10 text-success border border-success/20">Ativo</span>
                   ) : (
-                    <Button size="sm" variant="outline" onClick={handleEnablePush} className="h-8 rounded-lg text-xs" disabled={pushLoading}>
-                      {pushLoading && <IconLoader2 className="h-3 w-3 animate-spin mr-1" />}Ativar
+                    <Button size="sm" variant="default" onClick={handleEnablePush} className="rounded-lg h-9 text-xs font-display font-bold uppercase" disabled={pushLoading}>
+                      {pushLoading && <IconLoader2 className="h-3 w-3 animate-spin mr-2" />}
+                      Ativar
                     </Button>
                   )
                 ) : (
                   <span className="text-xs text-muted-foreground">N/A</span>
                 )}
               </div>
-              {pushError && !isPushEnabled && <p className="text-xs text-error mt-2">{pushError}</p>}
-            </div>
+              {pushError && !isPushEnabled && (
+                <p className="text-xs text-destructive font-medium">{pushError}</p>
+              )}
 
-            {/* Theme */}
-            <div className="bg-surface rounded-xl p-3 border border-border/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-secondary/10 flex items-center justify-center">
-                  <IconShield className="h-4 w-4 text-secondary" />
+              {/* Theme */}
+              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <IconShield className="h-5 w-5 text-primary" />
+                  </div>
+                  <p className="text-sm font-display font-bold text-foreground">Tema</p>
                 </div>
-                <span className="text-sm font-medium">Tema</span>
+                <ThemeToggle />
               </div>
-              <ThemeToggle />
-            </div>
 
-            {/* Language */}
-            <div className="bg-surface rounded-xl p-3 border border-border/30 flex items-center justify-between">
-              <span className="text-sm font-medium">Idioma</span>
-              <LanguageSelector />
-            </div>
-
-            {/* Terms */}
-            <div className="bg-surface rounded-xl p-3 border border-border/30 flex items-center justify-between">
-              <span className="text-sm">Termos / Privacidade</span>
-              <div className="flex gap-1">
-                <Button size="sm" variant="ghost" asChild className="h-7 text-xs px-2"><a href="/termos" target="_blank">Termos</a></Button>
-                <Button size="sm" variant="ghost" asChild className="h-7 text-xs px-2"><a href="/privacidade" target="_blank">Privacidade</a></Button>
+              {/* Language */}
+              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
+                <p className="text-sm font-display font-bold text-foreground">Idioma</p>
+                <LanguageSelector />
               </div>
-            </div>
 
-            <Separator />
+              {/* Legal Links */}
+              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
+                <p className="text-sm font-display font-bold text-foreground">Legal</p>
+                <div className="flex items-center gap-4">
+                  <a href="/termos" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors">
+                    Termos
+                  </a>
+                  <span className="text-border/50">/</span>
+                  <a href="/privacidade" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors">
+                    Privacidade
+                  </a>
+                </div>
+              </div>
+            </section>
 
-            {/* Logout */}
-            <Button variant="outline" className="w-full h-11 rounded-xl" onClick={() => signOut({ callbackUrl: "/" })}>
-              <IconLogout className="h-4 w-4 mr-2" />
-              {t.auth.logout}
-            </Button>
+            {/* Account Actions */}
+            <section className="space-y-3 pt-6 border-t border-border/30 mt-8">
+              {/* Logout */}
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-2xl font-display font-bold uppercase text-sm"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                <IconLogout className="h-4 w-4 mr-2" />
+                {t.auth.logout}
+              </Button>
 
-            {/* Delete Account */}
-            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" className="w-full h-10 text-error hover:text-error hover:bg-error/5 rounded-xl">
-                  <IconTrash className="h-4 w-4 mr-2" />
-                  Apagar conta
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-surface border shadow-soft-lg rounded-2xl">
-                <DialogHeader>
-                  <DialogTitle>Apagar conta?</DialogTitle>
-                  <DialogDescription>Esta acao e irreversivel. Todos os seus dados serao excluidos.</DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} disabled={isDeleting} className="rounded-xl">Cancelar</Button>
-                  <Button variant="destructive" onClick={handleDeleteAccount} disabled={isDeleting} className="rounded-xl">
-                    {isDeleting ? <IconLoader2 className="h-4 w-4 mr-2 animate-spin" /> : <IconTrash className="h-4 w-4 mr-2" />}
-                    Apagar
+              {/* Delete Account */}
+              <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full h-11 text-destructive hover:text-destructive hover:bg-destructive/5 rounded-2xl font-display font-bold uppercase text-sm"
+                  >
+                    <IconTrash className="h-4 w-4 mr-2" />
+                    Apagar conta
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                </DialogTrigger>
+                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-display font-black uppercase tracking-tighter">Apagar conta?</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      Esta acao e irreversivel. Todos os seus dados serao excluidos permanentemente.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="flex gap-3 mt-6">
+                    <Button
+                      variant="outline"
+                      onClick={() => setDeleteDialogOpen(false)}
+                      disabled={isDeleting}
+                      className="rounded-2xl font-display font-bold uppercase"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={handleDeleteAccount}
+                      disabled={isDeleting}
+                      className="rounded-2xl font-display font-bold uppercase"
+                    >
+                      {isDeleting ? (
+                        <>
+                          <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Apagando...
+                        </>
+                      ) : (
+                        <>
+                          <IconTrash className="h-4 w-4 mr-2" />
+                          Apagar permanentemente
+                        </>
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </section>
 
-            <p className="text-center text-xs text-muted-foreground pt-2">{APP_NAME} v1.0.0</p>
+            {/* Footer */}
+            <div className="text-center pt-8">
+              <p className="text-xs text-muted-foreground font-display font-bold uppercase tracking-widest">{APP_NAME} v1.0.0</p>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

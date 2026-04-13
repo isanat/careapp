@@ -273,25 +273,39 @@ function NewContractContent() {
   // Error/loading states
   if (caregiverError) {
     return (
-      <div className="text-center py-16 px-6 max-w-md mx-auto">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center ring-4 ring-destructive/20">
-          <IconAlertCircle className="h-10 w-10 text-destructive" />
+      <div className="space-y-8 max-w-2xl mx-auto pb-8">
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
+            Erro
+          </h1>
+          <p className="text-base text-muted-foreground font-medium">
+            Nao conseguimos carregar o cuidador
+          </p>
         </div>
-        <h2 className="text-xl font-bold mb-2">Erro</h2>
-        <p className="text-muted-foreground text-sm mb-6">{caregiverError}</p>
-        <Button asChild className="rounded-xl h-12 px-8">
-          <Link href="/app/search">Voltar para busca</Link>
-        </Button>
+
+        <div className="text-center space-y-6 py-8">
+          <div className="w-20 h-20 mx-auto rounded-3xl bg-destructive/10 flex items-center justify-center ring-4 ring-destructive/20">
+            <IconAlertCircle className="h-10 w-10 text-destructive" />
+          </div>
+          <p className="text-muted-foreground text-sm max-w-sm mx-auto">{caregiverError}</p>
+          <Button asChild className="rounded-2xl h-12 px-8">
+            <Link href="/app/search">Voltar para busca</Link>
+          </Button>
+        </div>
       </div>
     );
   }
 
   if (caregiverLoading || !caregiver) {
     return (
-      <div className="max-w-lg mx-auto space-y-4 py-8">
+      <div className="space-y-8 max-w-2xl mx-auto pb-8">
+        <div className="space-y-2">
+          <div className="h-10 bg-muted rounded-2xl w-64 animate-pulse" />
+          <div className="h-4 bg-muted rounded w-48 animate-pulse" />
+        </div>
         <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-muted rounded-2xl" />
-          <div className="h-64 bg-muted rounded-2xl" />
+          <div className="h-64 bg-muted rounded-3xl" />
+          <div className="h-40 bg-muted rounded-3xl" />
         </div>
       </div>
     );
@@ -301,29 +315,27 @@ function NewContractContent() {
   const progress = (step / totalSteps) * 100;
 
   return (
-    <div className="max-w-lg mx-auto pb-8">
-      {/* Caregiver Header - compact */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
-          {caregiver.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
-        </div>
-        <div className="min-w-0">
-          <p className="font-semibold text-sm truncate">Contrato com {caregiver.name}</p>
-          <p className="text-xs text-muted-foreground">{caregiver.title}</p>
-        </div>
-        <Badge className="ml-auto flex-shrink-0 text-xs">{caregiver.hourlyRateEur}/h</Badge>
+    <div className="space-y-8 max-w-2xl mx-auto pb-8">
+      {/* Page Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none mb-2">
+          Novo Contrato
+        </h1>
+        <p className="text-base text-muted-foreground font-medium">
+          Com {caregiver.name} • {caregiver.title}
+        </p>
       </div>
 
       {/* Progress Bar */}
       {step <= totalSteps && (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted-foreground">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
               Passo {step} de {totalSteps}
             </span>
             <span className="text-xs text-muted-foreground">{Math.round(progress)}%</span>
           </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
             <div
               className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
@@ -334,29 +346,29 @@ function NewContractContent() {
 
       {/* ====== STEP 1: Care Needs ====== */}
       {step === 1 && (
-        <div className="space-y-5">
-          <div>
-            <h2 className="text-lg font-bold">De que cuidados precisa?</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+        <div className="space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-xl font-display font-black uppercase tracking-tighter leading-none mb-6">De que cuidados precisa?</h2>
+            <p className="text-base text-muted-foreground font-medium">
               Selecione tudo que se aplica. Isto ajuda o cuidador a se preparar.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {CARE_NEEDS.map(need => {
               const selected = selectedNeeds.includes(need.key);
               return (
                 <button
                   key={need.key}
                   onClick={() => toggleNeed(need.key)}
-                  className={`flex items-center gap-2.5 p-3.5 rounded-xl border-2 text-left transition-all ${
+                  className={`flex items-center gap-3 p-5 rounded-2xl border-2 text-left transition-all ${
                     selected
-                      ? "border-primary bg-primary/5 shadow-sm"
-                      : "border-border hover:border-primary/30 hover:bg-muted/50"
+                      ? "border-primary bg-primary/5 shadow-card"
+                      : "border-border hover:border-primary/30 hover:bg-secondary/50"
                   }`}
                 >
-                  <span className="text-xl flex-shrink-0">{need.icon}</span>
-                  <span className={`text-sm font-medium leading-tight ${selected ? "text-primary" : ""}`}>
+                  <span className="text-2xl flex-shrink-0">{need.icon}</span>
+                  <span className={`text-sm font-medium leading-tight ${selected ? "text-primary" : "text-foreground"}`}>
                     {need.label}
                   </span>
                   {selected && <IconCheck className="h-4 w-4 text-primary ml-auto flex-shrink-0" />}
@@ -365,41 +377,47 @@ function NewContractContent() {
             })}
           </div>
 
-          <Button
-            onClick={() => setStep(2)}
-            disabled={selectedNeeds.length === 0}
-            size="lg"
-            className="w-full h-14 text-base font-semibold rounded-xl"
-          >
-            Continuar
-            <IconArrowRight className="h-5 w-5 ml-2" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+            <Button
+              onClick={() => setStep(2)}
+              disabled={selectedNeeds.length === 0}
+              size="lg"
+              className="flex-1 h-12 text-base font-semibold rounded-2xl"
+            >
+              Continuar
+              <IconArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          </div>
         </div>
       )}
 
       {/* ====== STEP 2: About the Elderly ====== */}
       {step === 2 && (
-        <div className="space-y-5">
-          <div>
-            <h2 className="text-lg font-bold">Sobre o idoso(a)</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+        <div className="space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-xl font-display font-black uppercase tracking-tighter leading-none mb-6">Sobre o idoso(a)</h2>
+            <p className="text-base text-muted-foreground font-medium">
               Informacoes basicas para o cuidador conhecer melhor.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="col-span-2 space-y-1.5">
-                <Label className="text-sm font-medium">Nome do idoso(a)</Label>
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-2 space-y-2">
+                <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                  Nome do idoso(a)
+                </label>
                 <Input
                   value={elderName}
                   onChange={e => setElderName(e.target.value)}
                   placeholder="Maria da Silva"
-                  className="h-12 rounded-xl text-base"
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm font-medium">Idade</Label>
+              <div className="space-y-2">
+                <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                  Idade
+                </label>
                 <Input
                   type="number"
                   value={elderAge}
@@ -407,49 +425,55 @@ function NewContractContent() {
                   placeholder="75"
                   min={1}
                   max={120}
-                  className="h-12 rounded-xl text-base text-center"
+                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm text-center outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium">Condicoes ou observacoes importantes</Label>
+            <div className="space-y-2">
+              <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                Condicoes ou observacoes importantes
+              </label>
               <Textarea
                 value={elderConditions}
                 onChange={e => setElderConditions(e.target.value)}
                 placeholder="Ex: Diabetes tipo 2, dificuldade de locomocao, toma medicacao as 8h e 20h..."
                 rows={3}
-                className="rounded-xl text-base resize-none"
+                className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
               />
             </div>
 
-            <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-              <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2.5">
+            <div className="bg-warning/5 border border-warning/20 rounded-2xl p-5 sm:p-7 space-y-4">
+              <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
                 Contato de Emergencia
               </p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-amber-600 dark:text-amber-500">Nome</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Nome
+                  </label>
                   <div className="relative">
-                    <IconUser className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <IconUser className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       value={emergencyName}
                       onChange={e => setEmergencyName(e.target.value)}
                       placeholder="Joao Silva"
-                      className="h-12 rounded-xl text-base pl-9"
+                      className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-amber-600 dark:text-amber-500">Telefone</Label>
+                <div className="space-y-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Telefone
+                  </label>
                   <div className="relative">
-                    <IconPhone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <IconPhone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       value={emergencyPhone}
                       onChange={e => setEmergencyPhone(e.target.value)}
                       placeholder="+351 912 345 678"
                       type="tel"
-                      className="h-12 rounded-xl text-base pl-9"
+                      className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
@@ -457,14 +481,14 @@ function NewContractContent() {
             </div>
           </div>
 
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setStep(1)} size="lg" className="h-14 rounded-xl px-6">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+            <Button variant="outline" onClick={() => setStep(1)} size="lg" className="h-12 rounded-2xl px-6">
               <IconArrowLeft className="h-5 w-5" />
             </Button>
             <Button
               onClick={() => setStep(3)}
               size="lg"
-              className="flex-1 h-14 text-base font-semibold rounded-xl"
+              className="flex-1 h-12 text-base font-semibold rounded-2xl"
             >
               Continuar
               <IconArrowRight className="h-5 w-5 ml-2" />
@@ -475,119 +499,133 @@ function NewContractContent() {
 
       {/* ====== STEP 3: Schedule & Frequency ====== */}
       {step === 3 && (
-        <div className="space-y-5">
-          <div>
-            <h2 className="text-lg font-bold">Horarios e frequencia</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+        <div className="space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-xl font-display font-black uppercase tracking-tighter leading-none mb-6">Horarios e frequencia</h2>
+            <p className="text-base text-muted-foreground font-medium">
               Quando precisa do cuidador?
             </p>
           </div>
 
-          {/* Time of day */}
-          <div className="space-y-2.5">
-            <Label className="text-sm font-medium">Periodos do dia</Label>
-            <div className="grid grid-cols-2 gap-2.5">
-              {SCHEDULE_OPTIONS.map(opt => {
-                const selected = selectedSchedule.includes(opt.key);
-                return (
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+            {/* Time of day */}
+            <div className="space-y-3">
+              <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                Periodos do dia
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {SCHEDULE_OPTIONS.map(opt => {
+                  const selected = selectedSchedule.includes(opt.key);
+                  return (
+                    <button
+                      key={opt.key}
+                      onClick={() => toggleSchedule(opt.key)}
+                      className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                        selected
+                          ? "border-primary bg-primary/5 shadow-card"
+                          : "border-border hover:border-primary/30 hover:bg-secondary/50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{opt.icon}</span>
+                        <span className={`text-sm font-medium ${selected ? "text-primary" : "text-foreground"}`}>{opt.label}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2 ml-8">{opt.desc}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Frequency */}
+            <div className="space-y-3 pt-2">
+              <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                Frequencia
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {FREQUENCY_OPTIONS.map(opt => (
                   <button
                     key={opt.key}
-                    onClick={() => toggleSchedule(opt.key)}
-                    className={`p-3.5 rounded-xl border-2 text-left transition-all ${
-                      selected
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/30"
+                    onClick={() => setFrequency(opt.key)}
+                    className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                      frequency === opt.key
+                        ? "border-primary bg-primary/5 shadow-card"
+                        : "border-border hover:border-primary/30 hover:bg-secondary/50"
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{opt.icon}</span>
-                      <span className={`text-sm font-medium ${selected ? "text-primary" : ""}`}>{opt.label}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5 ml-7">{opt.desc}</p>
+                    <span className={`text-sm font-medium ${frequency === opt.key ? "text-primary" : "text-foreground"}`}>
+                      {opt.label}
+                    </span>
+                    {opt.hours > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1">~{opt.hours}h/semana</p>
+                    )}
                   </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Frequency */}
-          <div className="space-y-2.5">
-            <Label className="text-sm font-medium">Frequencia</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {FREQUENCY_OPTIONS.map(opt => (
-                <button
-                  key={opt.key}
-                  onClick={() => setFrequency(opt.key)}
-                  className={`p-3 rounded-xl border-2 text-left transition-all ${
-                    frequency === opt.key
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/30"
-                  }`}
-                >
-                  <span className={`text-sm font-medium ${frequency === opt.key ? "text-primary" : ""}`}>
-                    {opt.label}
-                  </span>
-                  {opt.hours > 0 && (
-                    <p className="text-xs text-muted-foreground">~{opt.hours}h/semana</p>
-                  )}
-                </button>
-              ))}
-            </div>
-            {frequency === "custom" && (
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Horas por semana</Label>
-                <Input
-                  type="number"
-                  value={customHours}
-                  onChange={e => setCustomHours(Number(e.target.value) || 1)}
-                  min={1}
-                  max={60}
-                  className="h-12 rounded-xl text-base"
-                />
+                ))}
               </div>
-            )}
-          </div>
-
-          {/* Dates - larger, clearer */}
-          <div className="space-y-2.5">
-            <Label className="text-sm font-medium">Periodo do contrato</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Inicio</Label>
-                <div className="relative">
-                  <IconCalendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              {frequency === "custom" && (
+                <div className="space-y-2 pt-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Horas por semana
+                  </label>
                   <Input
-                    type="date"
-                    value={startDate}
-                    onChange={e => setStartDate(e.target.value)}
-                    className="h-12 rounded-xl text-base pl-9 [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                    type="number"
+                    value={customHours}
+                    onChange={e => setCustomHours(Number(e.target.value) || 1)}
+                    min={1}
+                    max={60}
+                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Termino (opcional)</Label>
-                <div className="relative">
-                  <IconCalendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                  <Input
-                    type="date"
-                    value={endDate}
-                    onChange={e => setEndDate(e.target.value)}
-                    className="h-12 rounded-xl text-base pl-9 [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                  />
+              )}
+            </div>
+
+            {/* Dates */}
+            <div className="space-y-3 pt-2">
+              <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                Periodo do contrato
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Inicio
+                  </label>
+                  <div className="relative">
+                    <IconCalendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Input
+                      type="date"
+                      value={startDate}
+                      onChange={e => setStartDate(e.target.value)}
+                      className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+                    Termino (opcional)
+                  </label>
+                  <div className="relative">
+                    <IconCalendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Input
+                      type="date"
+                      value={endDate}
+                      onChange={e => setEndDate(e.target.value)}
+                      className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setStep(2)} size="lg" className="h-14 rounded-xl px-6">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+            <Button variant="outline" onClick={() => setStep(2)} size="lg" className="h-12 rounded-2xl px-6">
               <IconArrowLeft className="h-5 w-5" />
             </Button>
             <Button
               onClick={() => setStep(4)}
               disabled={!frequency || selectedSchedule.length === 0}
               size="lg"
-              className="flex-1 h-14 text-base font-semibold rounded-xl"
+              className="flex-1 h-12 text-base font-semibold rounded-2xl"
             >
               Revisar Contrato
               <IconArrowRight className="h-5 w-5 ml-2" />
@@ -598,24 +636,24 @@ function NewContractContent() {
 
       {/* ====== STEP 4: Review & Confirm ====== */}
       {step === 4 && (
-        <div className="space-y-5">
-          <div>
-            <h2 className="text-lg font-bold">Revisar e confirmar</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+        <div className="space-y-8">
+          <div className="space-y-2">
+            <h2 className="text-xl font-display font-black uppercase tracking-tighter leading-none mb-6">Revisar e confirmar</h2>
+            <p className="text-base text-muted-foreground font-medium">
               Verifique os detalhes. Voce pode editar o valor por hora.
             </p>
           </div>
 
           {/* Care summary */}
-          <div className="bg-surface rounded-2xl border border-border/50 overflow-hidden">
+          <div className="bg-card rounded-3xl border border-border shadow-card overflow-hidden divide-y divide-border">
             {/* Needs */}
-            <div className="p-4 border-b border-border/50">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Cuidados</p>
-              <div className="flex flex-wrap gap-1.5">
+            <div className="p-5 sm:p-7">
+              <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-3">Cuidados</p>
+              <div className="flex flex-wrap gap-2">
                 {selectedNeeds.map(key => {
                   const need = CARE_NEEDS.find(n => n.key === key);
                   return need ? (
-                    <span key={key} className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary/10 text-primary rounded-lg text-xs font-medium">
+                    <span key={key} className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-lg text-xs font-medium">
                       {need.icon} {need.label}
                     </span>
                   ) : null;
@@ -625,24 +663,24 @@ function NewContractContent() {
 
             {/* Elder info */}
             {elderName && (
-              <div className="p-4 border-b border-border/50">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Idoso(a)</p>
-                <p className="text-sm font-medium">{elderName}{elderAge ? `, ${elderAge} anos` : ""}</p>
-                {elderConditions && <p className="text-xs text-muted-foreground mt-1">{elderConditions}</p>}
+              <div className="p-5 sm:p-7">
+                <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2">Idoso(a)</p>
+                <p className="text-sm font-medium text-foreground">{elderName}{elderAge ? `, ${elderAge} anos` : ""}</p>
+                {elderConditions && <p className="text-xs text-muted-foreground mt-2">{elderConditions}</p>}
               </div>
             )}
 
             {/* Schedule */}
-            <div className="p-4 border-b border-border/50">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">Horario</p>
-              <div className="space-y-2">
-                <div className="bg-muted/50 rounded-lg p-2.5">
-                  <p className="text-xs font-medium text-muted-foreground mb-1.5">Periodos:</p>
-                  <div className="space-y-1">
+            <div className="p-5 sm:p-7">
+              <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4">Horario</p>
+              <div className="space-y-3">
+                <div className="bg-secondary rounded-2xl p-4 space-y-2">
+                  <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Periodos:</p>
+                  <div className="space-y-1.5">
                     {selectedSchedule.map(k => {
                       const opt = SCHEDULE_OPTIONS.find(s => s.key === k);
                       return opt ? (
-                        <div key={k} className="text-sm">
+                        <div key={k} className="text-sm text-foreground">
                           <span className="font-medium">{opt.label}</span>
                           <span className="text-muted-foreground ml-2">({opt.desc})</span>
                         </div>
@@ -651,8 +689,8 @@ function NewContractContent() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1">Frequencia:</p>
-                  <p className="text-sm font-medium">
+                  <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-1">Frequencia:</p>
+                  <p className="text-sm font-medium text-foreground">
                     {FREQUENCY_OPTIONS.find(f => f.key === frequency)?.label}
                     {" "}
                     <span className="text-muted-foreground">({hoursPerWeek}h/semana)</span>
@@ -660,8 +698,8 @@ function NewContractContent() {
                 </div>
                 {startDate && (
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Periodo:</p>
-                    <p className="text-sm">
+                    <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-1">Periodo:</p>
+                    <p className="text-sm text-foreground font-medium">
                       {new Date(startDate + "T00:00:00").toLocaleDateString("pt-PT")}
                       {endDate ? ` até ${new Date(endDate + "T00:00:00").toLocaleDateString("pt-PT")}` : ""}
                     </p>
@@ -671,67 +709,65 @@ function NewContractContent() {
             </div>
 
             {/* Financial - editable hourly rate */}
-            <div className="p-4">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Valores</p>
-              <div className="space-y-2.5">
+            <div className="p-5 sm:p-7">
+              <p className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4">Valores</p>
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Valor por hora</span>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => setHourlyRate(Math.max(5, hourlyRate - 1))}
-                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm hover:bg-muted"
+                      className="w-9 h-9 rounded-2xl border border-border flex items-center justify-center text-sm hover:bg-secondary transition-colors"
                     >
                       -
                     </button>
-                    <span className="w-16 text-center font-bold text-base">€{hourlyRate.toFixed(2)}</span>
+                    <span className="w-20 text-center font-display font-black text-base text-foreground">€{hourlyRate.toFixed(2)}</span>
                     <button
                       onClick={() => setHourlyRate(Math.min(100, hourlyRate + 1))}
-                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-sm hover:bg-muted"
+                      className="w-9 h-9 rounded-2xl border border-border flex items-center justify-center text-sm hover:bg-secondary transition-colors"
                     >
                       +
                     </button>
                   </div>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-sm text-foreground font-medium">
                   <span className="text-muted-foreground">Horas/semana</span>
-                  <span className="font-medium">{hoursPerWeek}h</span>
+                  <span>{hoursPerWeek}h</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Total do período ({totalHours.toFixed(1)}h)</span>
-                  <span className="font-bold text-base">€{totalEur.toFixed(2)}</span>
+                <div className="flex justify-between text-sm font-display font-bold text-foreground pt-3 border-t border-secondary">
+                  <span>Total do período ({totalHours.toFixed(1)}h)</span>
+                  <span>€{totalEur.toFixed(2)}</span>
                 </div>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-border/50 space-y-1.5">
-                {!isFamily && (
-                  <>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Taxa plataforma ({platformFeePercent}%)</span>
-                      <span className="text-red-500">-€{platformFee.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Taxa de contrato</span>
-                      <span className="text-red-500">-€{contractFee.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm font-semibold">
-                      <span>Cuidador recebe</span>
-                      <span className="text-green-600">€{caregiverReceives.toFixed(2)}</span>
-                    </div>
-                  </>
-                )}
-              </div>
+              {!isFamily && (
+                <div className="pt-4 space-y-2 border-t border-secondary">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Taxa plataforma ({platformFeePercent}%)</span>
+                    <span className="text-destructive">-€{platformFee.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Taxa de contrato</span>
+                    <span className="text-destructive">-€{contractFee.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-display font-bold text-foreground pt-2 border-t border-secondary">
+                    <span>Cuidador recebe</span>
+                    <span className="text-success">€{caregiverReceives.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Contract fee notice - only show to caregivers */}
           {!isFamily && (
-            <div className="flex items-start gap-3 p-3.5 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-              <IconInfo className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-blue-700 dark:text-blue-400">
+            <div className="flex items-start gap-3 p-5 sm:p-7 bg-info/5 border border-info/20 rounded-2xl">
+              <IconInfo className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
+              <div className="text-sm space-y-1">
+                <p className="font-display font-bold text-foreground">
                   Taxa de contrato de €{(CONTRACT_FEE_EUR_CENTS / 100).toFixed(2)}
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-500 mt-0.5">
+                <p className="text-xs text-muted-foreground">
                   Esta taxa sera deduzida do valor que o cuidador recebe apos aceitar o contrato.
                 </p>
               </div>
@@ -739,34 +775,36 @@ function NewContractContent() {
           )}
 
           {/* Additional notes */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Observacoes adicionais (opcional)</Label>
+          <div className="space-y-2">
+            <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block">
+              Observacoes adicionais (opcional)
+            </label>
             <Textarea
               value={additionalNotes}
               onChange={e => setAdditionalNotes(e.target.value)}
               placeholder="Algo mais que o cuidador precise saber..."
               rows={2}
-              className="rounded-xl text-base resize-none"
+              className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Error */}
           {submitError && (
-            <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-xl">
+            <div className="flex items-start gap-3 p-5 sm:p-7 bg-destructive/5 border border-destructive/20 rounded-2xl">
               <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-destructive">{submitError}</p>
+              <p className="text-sm text-destructive font-medium">{submitError}</p>
             </div>
           )}
 
           {/* Terms */}
-          <div className="flex items-start gap-3 p-3.5 bg-muted/50 rounded-xl">
+          <div className="flex items-start gap-3 p-5 sm:p-7 bg-secondary border border-border rounded-2xl">
             <Checkbox
               id="terms"
               checked={agreedTerms}
               onCheckedChange={(checked) => setAgreedTerms(checked === true)}
               className="mt-0.5"
             />
-            <Label htmlFor="terms" className="text-xs leading-relaxed cursor-pointer">
+            <Label htmlFor="terms" className="text-xs text-foreground leading-relaxed cursor-pointer font-medium">
               Li e concordo com os{" "}
               <Link href="/termos" className="text-primary underline">Termos de Uso</Link>{" "}
               e{" "}
@@ -775,15 +813,15 @@ function NewContractContent() {
             </Label>
           </div>
 
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setStep(3)} size="lg" className="h-14 rounded-xl px-6">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+            <Button variant="outline" onClick={() => setStep(3)} size="lg" className="h-12 rounded-2xl px-6">
               <IconArrowLeft className="h-5 w-5" />
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !agreedTerms}
               size="lg"
-              className="flex-1 h-14 text-base font-semibold rounded-xl shadow-lg shadow-primary/25"
+              className="flex-1 h-12 text-base font-semibold rounded-2xl shadow-lg shadow-primary/25"
             >
               {isSubmitting ? (
                 <>
@@ -803,37 +841,41 @@ function NewContractContent() {
 
       {/* ====== STEP 5: Success ====== */}
       {step === 5 && (
-        <div className="text-center py-8">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/10 flex items-center justify-center ring-4 ring-green-500/20">
-            <IconCheck className="h-10 w-10 text-green-500" />
+        <div className="text-center py-8 space-y-6">
+          <div className="w-20 h-20 mx-auto rounded-3xl bg-success/10 flex items-center justify-center ring-4 ring-success/20">
+            <IconCheck className="h-10 w-10 text-success" />
           </div>
 
-          <h2 className="text-xl font-bold mb-2">Contrato Criado!</h2>
-          <p className="text-muted-foreground text-sm mb-6">
-            O contrato foi enviado para <span className="font-medium text-foreground">{caregiver.name}</span>.
-            Sera notificado(a) quando aceitar.
-          </p>
+          <div className="space-y-2">
+            <h2 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none text-foreground">
+              Contrato Criado!
+            </h2>
+            <p className="text-base text-muted-foreground font-medium">
+              O contrato foi enviado para <span className="font-display font-black text-foreground">{caregiver.name}</span>.
+              Sera notificado(a) quando aceitar.
+            </p>
+          </div>
 
-          <div className="bg-surface rounded-xl border border-border/50 p-4 text-left mb-6 space-y-2">
-            <div className="flex items-center gap-2">
-              <IconContract className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Contrato #{contractId}</span>
+          <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 text-left space-y-3">
+            <div className="flex items-center gap-3">
+              <IconContract className="h-5 w-5 text-primary flex-shrink-0" />
+              <span className="text-sm font-display font-bold text-foreground">Contrato #{contractId}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <IconClock className="h-4 w-4 text-amber-500" />
-              <span className="text-sm text-muted-foreground">Aguardando aceite do cuidador</span>
+            <div className="flex items-center gap-3">
+              <IconClock className="h-5 w-5 text-warning flex-shrink-0" />
+              <span className="text-sm text-muted-foreground font-medium">Aguardando aceite do cuidador</span>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground pt-2 border-t border-border">
               O cuidador recebe uma notificacao e pode aceitar ou propor alteracoes.
               Apos aceite de ambas as partes, o contrato e ativado.
             </p>
           </div>
 
-          <div className="flex gap-3">
-            <Button variant="outline" asChild className="flex-1 h-12 rounded-xl">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button variant="outline" asChild className="flex-1 h-12 rounded-2xl">
               <Link href="/app/contracts">Ver Contratos</Link>
             </Button>
-            <Button asChild className="flex-1 h-12 rounded-xl">
+            <Button asChild className="flex-1 h-12 rounded-2xl">
               <Link href="/app/dashboard">Dashboard</Link>
             </Button>
           </div>
@@ -845,11 +887,14 @@ function NewContractContent() {
 
 function LoadingFallback() {
   return (
-    <div className="max-w-lg mx-auto py-8">
-      <div className="animate-pulse space-y-4">
-        <div className="h-12 bg-muted rounded-2xl" />
+    <div className="space-y-8 max-w-2xl mx-auto pb-8">
+      <div className="animate-pulse space-y-2">
+        <div className="h-10 bg-muted rounded-2xl w-64" />
         <div className="h-4 bg-muted rounded w-48" />
-        <div className="h-64 bg-muted rounded-2xl" />
+      </div>
+      <div className="animate-pulse space-y-4">
+        <div className="h-64 bg-muted rounded-3xl" />
+        <div className="h-40 bg-muted rounded-3xl" />
       </div>
     </div>
   );

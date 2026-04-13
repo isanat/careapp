@@ -107,9 +107,9 @@ export default function VerifyPage() {
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="animate-pulse space-y-6 max-w-2xl">
-          <div className="h-32 bg-muted rounded-lg" />
-          <div className="h-64 bg-muted rounded-lg" />
+        <div className="animate-pulse space-y-8 max-w-2xl">
+          <div className="h-20 bg-muted rounded-3xl" />
+          <div className="h-64 bg-muted rounded-3xl" />
         </div>
       </AppShell>
     );
@@ -119,77 +119,77 @@ export default function VerifyPage() {
   if (isFamily) {
     return (
       <AppShell>
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-8 max-w-2xl">
           {/* Header */}
-          <div>
-            <h1 className="text-2xl font-bold">Score de Confiança</h1>
-            <p className="text-muted-foreground">Aumente sua confiabilidade entre cuidadores</p>
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">Score de Confiança</h1>
+            <p className="text-base text-muted-foreground font-medium">Aumente sua confiabilidade entre cuidadores</p>
           </div>
 
           {/* Trust Score Card */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="text-5xl font-bold text-primary mb-2">0</div>
-                <p className="text-muted-foreground mb-4">Contratos completados</p>
-                <Badge variant="outline" className="mb-4">Novo Membro</Badge>
-                <p className="text-sm text-muted-foreground max-w-xs">
-                  Complete contratos com cuidadores para construir seu score de confiança
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="text-5xl font-display font-black text-primary mb-2">0</div>
+              <p className="text-sm text-muted-foreground font-medium">Contratos completados</p>
+              <span className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary mt-4 mb-4">Novo Membro</span>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                Complete contratos com cuidadores para construir seu score de confiança
+              </p>
+            </div>
+          </div>
 
           {/* Payment Badge */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <IconCreditCard className="h-5 w-5" />
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+            <div className="space-y-4">
+              <h3 className="text-lg sm:text-xl font-display font-bold uppercase flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-success/10 flex items-center justify-center">
+                  <IconCreditCard className="h-5 w-5 text-success" />
+                </div>
                 Pagamento Verificado
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
+              </h3>
+              <div className="flex items-center justify-between p-4 bg-secondary rounded-2xl border border-border/50">
                 <div>
-                  <p className="text-sm font-medium">Status: <span className="text-green-600">Verificado</span></p>
+                  <p className="text-sm font-display font-bold text-foreground">Status: <span className="text-success">Verificado</span></p>
                   <p className="text-xs text-muted-foreground mt-1">Seu método de pagamento foi verificado com sucesso</p>
                 </div>
-                <IconCheck className="h-6 w-6 text-green-500" />
+                <IconCheck className="h-6 w-6 text-success shrink-0" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Trust Building Tips */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Como aumentar sua confiabilidade</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <IconCheck className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Complete contratos com sucesso</p>
-                    <p className="text-xs text-muted-foreground">Cada contato completado aumenta seu score</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <IconStar className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Receba avaliações positivas</p>
-                    <p className="text-xs text-muted-foreground">Cuidadores avaliam sua comunicação e profissionalismo</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <IconTrendingUp className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">Mantenha um histórico limpo</p>
-                    <p className="text-xs text-muted-foreground">Sem atrasos em pagamentos ou cancelamentos</p>
-                  </div>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+            <h3 className="text-lg sm:text-xl font-display font-bold uppercase mb-5">Como aumentar sua confiabilidade</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <IconCheck className="h-5 w-5 text-success" />
+                </div>
+                <div>
+                  <p className="text-sm font-display font-bold text-foreground">Complete contratos com sucesso</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Cada contato completado aumenta seu score</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-warning/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <IconStar className="h-5 w-5 text-warning" />
+                </div>
+                <div>
+                  <p className="text-sm font-display font-bold text-foreground">Receba avaliações positivas</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Cuidadores avaliam sua comunicação e profissionalismo</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-info/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <IconTrendingUp className="h-5 w-5 text-info" />
+                </div>
+                <div>
+                  <p className="text-sm font-display font-bold text-foreground">Mantenha um histórico limpo</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Sem atrasos em pagamentos ou cancelamentos</p>
+                </div>
+              </li>
+            </ul>
+          </div>
 
           <Button onClick={() => router.push("/app/panel")} className="w-full">
             Ir para Dashboard
@@ -228,140 +228,130 @@ export default function VerifyPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-2xl">
+      <div className="space-y-8 max-w-2xl">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold">{t.kyc.title}</h1>
-          <p className="text-muted-foreground">{t.kyc.description}</p>
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">{t.kyc.title}</h1>
+          <p className="text-base text-muted-foreground font-medium">{t.kyc.description}</p>
         </div>
 
         {/* Status Card */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center text-center">
-              {getStatusIcon()}
-              <div className="mt-4 mb-2">{getStatusBadge()}</div>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          <div className="flex flex-col items-center text-center space-y-4">
+            {getStatusIcon()}
+            <div>{getStatusBadge()}</div>
 
-              {kycStatus?.verification_status === "VERIFIED" && (
-                <>
-                  <h2 className="text-xl font-semibold text-green-600 mt-2">
-                    {t.kyc.verifiedTitle}
-                  </h2>
-                  <p className="text-muted-foreground mt-1">{t.kyc.verifiedDesc}</p>
-                  {kycStatus.completed_at && (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {t.kyc.completedAt}: {new Date(kycStatus.completed_at).toLocaleDateString()}
-                    </p>
-                  )}
-                </>
-              )}
+            {kycStatus?.verification_status === "VERIFIED" && (
+              <>
+                <h2 className="text-lg sm:text-xl font-display font-bold uppercase text-success mt-2">
+                  {t.kyc.verifiedTitle}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">{t.kyc.verifiedDesc}</p>
+                {kycStatus.completed_at && (
+                  <p className="text-xs text-muted-foreground font-display font-bold uppercase tracking-widest mt-2">
+                    {t.kyc.completedAt}: {new Date(kycStatus.completed_at).toLocaleDateString()}
+                  </p>
+                )}
+              </>
+            )}
 
-              {kycStatus?.verification_status === "PENDING" && (
-                <>
-                  <h2 className="text-xl font-semibold text-yellow-600 mt-2">
-                    {t.kyc.inProgress}
-                  </h2>
-                  <p className="text-muted-foreground mt-1">{t.kyc.inProgressDesc}</p>
-                  {kycStatus.session_id && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {t.kyc.sessionId}: {kycStatus.session_id.slice(0, 8)}...
-                    </p>
-                  )}
-                </>
-              )}
+            {kycStatus?.verification_status === "PENDING" && (
+              <>
+                <h2 className="text-lg sm:text-xl font-display font-bold uppercase text-warning mt-2">
+                  {t.kyc.inProgress}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">{t.kyc.inProgressDesc}</p>
+                {kycStatus.session_id && (
+                  <p className="text-xs text-muted-foreground font-display font-bold uppercase tracking-widest mt-2">
+                    {t.kyc.sessionId}: {kycStatus.session_id.slice(0, 8)}...
+                  </p>
+                )}
+              </>
+            )}
 
-              {kycStatus?.verification_status === "REJECTED" && (
-                <>
-                  <h2 className="text-xl font-semibold text-destructive mt-2">
-                    {t.kyc.rejectedTitle}
-                  </h2>
-                  <p className="text-muted-foreground mt-1">{t.kyc.rejectedDesc}</p>
-                  <Button
-                    className="mt-4"
-                    onClick={startVerification}
-                    disabled={isStarting}
-                  >
-                    {isStarting ? t.kyc.processing : t.kyc.startNewVerification}
-                  </Button>
-                </>
-              )}
-
-              {kycStatus?.verification_status === "UNVERIFIED" && (
+            {kycStatus?.verification_status === "REJECTED" && (
+              <>
+                <h2 className="text-lg sm:text-xl font-display font-bold uppercase text-destructive mt-2">
+                  {t.kyc.rejectedTitle}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">{t.kyc.rejectedDesc}</p>
                 <Button
                   className="mt-4"
                   onClick={startVerification}
                   disabled={isStarting}
                 >
-                  {isStarting ? (
-                    <>
-                      <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                      {t.kyc.processing}
-                    </>
-                  ) : (
-                    <>
-                      <IconShield className="h-4 w-4 mr-2" />
-                      {t.kyc.startVerification}
-                    </>
-                  )}
+                  {isStarting ? t.kyc.processing : t.kyc.startNewVerification}
                 </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+              </>
+            )}
+
+            {kycStatus?.verification_status === "UNVERIFIED" && (
+              <Button
+                className="mt-4"
+                onClick={startVerification}
+                disabled={isStarting}
+              >
+                {isStarting ? (
+                  <>
+                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {t.kyc.processing}
+                  </>
+                ) : (
+                  <>
+                    <IconShield className="h-4 w-4 mr-2" />
+                    {t.kyc.startVerification}
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
 
         {error && (
-          <Card className="border-destructive/20 bg-destructive/5">
-            <CardContent className="pt-4">
-              <p className="text-destructive text-sm">{error}</p>
-            </CardContent>
-          </Card>
+          <div className="bg-destructive/5 border border-destructive/20 rounded-3xl p-5 sm:p-7">
+            <p className="text-destructive text-sm">{error}</p>
+          </div>
         )}
 
         {/* Benefits */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t.kyc.benefits.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3">
-              {[1, 2, 3, 4].map((i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <IconCheck className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
-                  <span className="text-sm">{t.kyc.benefits[`item${i}` as keyof typeof t.kyc.benefits]}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          <h3 className="text-lg sm:text-xl font-display font-bold uppercase mb-5">{t.kyc.benefits.title}</h3>
+          <ul className="space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <li key={i} className="flex items-start gap-4">
+                <div className="w-9 h-9 rounded-2xl bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <IconCheck className="h-4 w-4 text-success" />
+                </div>
+                <span className="text-sm text-foreground">{t.kyc.benefits[`item${i}` as keyof typeof t.kyc.benefits]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {/* Requirements */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t.kyc.requirements.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <IconId className="h-5 w-5 text-primary" />
-                </div>
-                <span className="text-sm">{t.kyc.requirements.item1}</span>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          <h3 className="text-lg sm:text-xl font-display font-bold uppercase mb-5">{t.kyc.requirements.title}</h3>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                <IconId className="h-5 w-5 text-primary" />
               </div>
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <IconCamera className="h-5 w-5 text-primary" />
-                </div>
-                <span className="text-sm">{t.kyc.requirements.item2}</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <IconSun className="h-5 w-5 text-primary" />
-                </div>
-                <span className="text-sm">{t.kyc.requirements.item3}</span>
-              </div>
+              <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item1}</span>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                <IconCamera className="h-5 w-5 text-primary" />
+              </div>
+              <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item2}</span>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                <IconSun className="h-5 w-5 text-primary" />
+              </div>
+              <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item3}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </AppShell>
   );

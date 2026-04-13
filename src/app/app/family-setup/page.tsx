@@ -9,9 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -294,103 +292,129 @@ function FamilySetupContent() {
   if (status === "loading") {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <Card className="w-full max-w-2xl">
-          <CardContent className="py-12 text-center">
-            <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-            <p className="mt-4 text-muted-foreground">Carregando...</p>
-          </CardContent>
-        </Card>
+        <div className="w-full max-w-2xl bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center space-y-6 py-12">
+          <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-sm text-muted-foreground font-medium">Carregando...</p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-primary/5 to-background px-4 py-8">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+      <div className="max-w-2xl mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 mb-4">
+        <div className="text-center space-y-4">
+          <Link href="/" className="inline-flex items-center justify-center gap-2">
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
-          <h1 className="text-2xl font-bold">Configure o Cuidado</h1>
-          <p className="text-muted-foreground">
-            Familia - {APP_NAME}
-          </p>
-        </div>
-
-        {/* Progress */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
-                s === step
-                  ? "bg-primary text-primary-foreground"
-                  : s < step
-                  ? "bg-green-500 text-white"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {s < step ? <IconCheck className="h-5 w-5" /> : s}
-            </div>
-          ))}
-        </div>
-
-        {/* Step Labels */}
-        <div className="grid grid-cols-3 text-center text-sm mb-8">
-          <div>
-            <p className={step >= 1 ? "text-foreground font-medium" : "text-muted-foreground"}>
-              Dados do Idoso
-            </p>
-          </div>
-          <div>
-            <p className={step >= 2 ? "text-foreground font-medium" : "text-muted-foreground"}>
-              Necessidades
-            </p>
-          </div>
-          <div>
-            <p className={step >= 3 ? "text-foreground font-medium" : "text-muted-foreground"}>
-              Emergencia
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
+              Configure o Cuidado
+            </h1>
+            <p className="text-sm text-muted-foreground font-medium">
+              Familia - {APP_NAME}
             </p>
           </div>
         </div>
 
-        <Card>
-          <CardContent className="pt-6 space-y-6">
-            {error && (
-              <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
-                <IconAlert className="h-4 w-4 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            {/* Step 1: Dados do Idoso */}
-            {step === 1 && (
-              <>
-                <div className="text-center mb-6">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                    <IconUser className="h-6 w-6 text-primary" />
-                  </div>
-                  <h2 className="text-lg font-semibold">Dados do Idoso</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Informacoes sobre a pessoa que recebera os cuidados
-                  </p>
+        {/* Progress Indicator */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between max-w-2xl mx-auto">
+            {[1, 2, 3].map((s) => (
+              <div key={s} className="flex-1 flex items-center">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-sm transition-all ${
+                    s < step
+                      ? "bg-success text-success-foreground shadow-md"
+                      : s === step
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "bg-secondary text-muted-foreground border border-border"
+                  }`}
+                >
+                  {s < step ? <IconCheck className="h-5 w-5" /> : s}
                 </div>
+                {s < 3 && (
+                  <div
+                    className={`flex-1 h-0.5 rounded-full mx-2 transition-all ${
+                      s < step ? "bg-success" : "bg-border"
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
 
+          {/* Step Labels */}
+          <div className="grid grid-cols-3 text-center gap-4 px-4">
+            <div>
+              <p className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
+                step >= 1 ? "text-foreground" : "text-muted-foreground"
+              }`}>
+                Dados do Idoso
+              </p>
+            </div>
+            <div>
+              <p className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
+                step >= 2 ? "text-foreground" : "text-muted-foreground"
+              }`}>
+                Necessidades
+              </p>
+            </div>
+            <div>
+              <p className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
+                step >= 3 ? "text-foreground" : "text-muted-foreground"
+              }`}>
+                Emergencia
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Form Container */}
+        <div className="space-y-8">
+          {error && (
+            <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+              <IconAlert className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-display font-bold text-foreground text-sm">Erro</p>
+                <p className="text-xs text-muted-foreground mt-1">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Step 1: Dados do Idoso */}
+          {step === 1 && (
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-8">
+              <section className="space-y-4">
+                <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                  Dados do Idoso
+                </h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  Informacoes sobre a pessoa que recebera os cuidados
+                </p>
+              </section>
+
+              <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="elderName">Nome do Idoso *</Label>
+                  <Label htmlFor="elderName" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Nome do Idoso *
+                  </Label>
                   <Input
                     id="elderName"
                     name="elderName"
                     placeholder="Nome completo"
                     value={formData.elderName}
                     onChange={handleInputChange}
+                    className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="elderAge">Idade</Label>
+                    <Label htmlFor="elderAge" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Idade
+                    </Label>
                     <Input
                       id="elderAge"
                       name="elderAge"
@@ -400,15 +424,18 @@ function FamilySetupContent() {
                       placeholder="Ex: 78"
                       value={formData.elderAge}
                       onChange={handleInputChange}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="mobilityLevel">Nivel de Mobilidade</Label>
+                    <Label htmlFor="mobilityLevel" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Nivel de Mobilidade
+                    </Label>
                     <Select
                       value={formData.mobilityLevel}
                       onValueChange={(v) => setFormData((p) => ({ ...p, mobilityLevel: v }))}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
@@ -423,25 +450,29 @@ function FamilySetupContent() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label>Condições Médicas</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Selecione todas as condições que se aplicam
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Condições Médicas
+                    </Label>
+                    <p className="text-xs text-muted-foreground mt-2 mb-4">
+                      Selecione todas as condições que se aplicam
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {MEDICAL_CONDITIONS.map((condition) => (
                       <label
                         key={condition.id}
-                        className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                        className={`flex items-center gap-3 p-3 border rounded-2xl text-sm cursor-pointer transition-all ${
                           formData.medicalConditions.includes(condition.id)
                             ? "border-primary bg-primary/5"
-                            : "hover:border-primary/30"
+                            : "border-border hover:border-primary/30"
                         }`}
                       >
                         <Checkbox
                           checked={formData.medicalConditions.includes(condition.id)}
                           onCheckedChange={() => handleMedicalConditionToggle(condition.id)}
                         />
-                        <span>{condition.label}</span>
+                        <span className="text-sm text-foreground">{condition.label}</span>
                       </label>
                     ))}
                   </div>
@@ -451,30 +482,35 @@ function FamilySetupContent() {
                       value={formData.medicalConditionsNotes}
                       onChange={(e) => setFormData({...formData, medicalConditionsNotes: e.target.value})}
                       rows={2}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
                     />
                   )}
                 </div>
 
                 <div className="space-y-4">
-                  <Label>Restrições Alimentares</Label>
-                  <p className="text-xs text-muted-foreground">
-                    Selecione todas as restrições alimentares
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Restrições Alimentares
+                    </Label>
+                    <p className="text-xs text-muted-foreground mt-2 mb-4">
+                      Selecione todas as restrições alimentares
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {DIETARY_RESTRICTIONS.map((restriction) => (
                       <label
                         key={restriction.id}
-                        className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
+                        className={`flex items-center gap-3 p-3 border rounded-2xl text-sm cursor-pointer transition-all ${
                           formData.dietaryRestrictions.includes(restriction.id)
                             ? "border-primary bg-primary/5"
-                            : "hover:border-primary/30"
+                            : "border-border hover:border-primary/30"
                         }`}
                       >
                         <Checkbox
                           checked={formData.dietaryRestrictions.includes(restriction.id)}
                           onCheckedChange={() => handleDietaryRestrictionToggle(restriction.id)}
                         />
-                        <span>{restriction.label}</span>
+                        <span className="text-sm text-foreground">{restriction.label}</span>
                       </label>
                     ))}
                   </div>
@@ -484,172 +520,189 @@ function FamilySetupContent() {
                       value={formData.dietaryRestrictionsNotes}
                       onChange={(e) => setFormData({...formData, dietaryRestrictionsNotes: e.target.value})}
                       rows={2}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
                     />
                   )}
                 </div>
-              </>
-            )}
+              </div>
+            </div>
+          )}
 
-            {/* Step 2: Necessidades de Cuidado */}
-            {step === 2 && (
-              <>
-                <div className="text-center mb-6">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                    <IconHeart className="h-6 w-6 text-primary" />
-                  </div>
-                  <h2 className="text-lg font-semibold">Necessidades de Cuidado</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Que tipos de cuidado a sua familia precisa?
-                  </p>
-                </div>
+          {/* Step 2: Necessidades de Cuidado */}
+          {step === 2 && (
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-8">
+              <section className="space-y-4">
+                <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                  Necessidades de Cuidado
+                </h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  Que tipos de cuidado a sua familia precisa?
+                </p>
+              </section>
 
+              <div className="space-y-6">
                 <div className="space-y-4">
-                  <Label>Tipos de Servico Necessarios *</Label>
-                  <div className="grid gap-3">
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Tipos de Servico Necessarios *
+                  </Label>
+                  <div className="space-y-3">
                     {SERVICE_TYPE_OPTIONS.map((service) => (
                       <label
                         key={service.id}
-                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                        className={`flex items-center gap-3 p-4 border rounded-2xl cursor-pointer transition-all ${
                           formData.servicesNeeded.includes(service.id)
                             ? "border-primary bg-primary/5"
-                            : "hover:border-primary/50"
+                            : "border-border hover:border-primary/30"
                         }`}
                       >
                         <Checkbox
                           checked={formData.servicesNeeded.includes(service.id)}
                           onCheckedChange={() => handleServiceToggle(service.id)}
                         />
-                        <span className="text-sm font-medium">{service.label}</span>
+                        <span className="text-sm font-medium text-foreground">{service.label}</span>
                       </label>
                     ))}
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-4">
-                  <Label>Horário Preferido</Label>
-
-                  <div>
-                    <Label className="text-sm text-muted-foreground mb-3 block">Dias da Semana</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {SCHEDULE_DAYS.map((day) => (
-                        <label
-                          key={day.id}
-                          className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
-                            formData.preferredScheduleDays.includes(day.id)
-                              ? "border-primary bg-primary/5"
-                              : "hover:border-primary/30"
-                          }`}
-                        >
-                          <Checkbox
-                            checked={formData.preferredScheduleDays.includes(day.id)}
-                            onCheckedChange={() => handleScheduleDayToggle(day.id)}
-                          />
-                          <span>{day.label}</span>
-                        </label>
-                      ))}
+                <div className="border-t border-border pt-6">
+                  <h5 className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-6">
+                    Horário Preferido
+                  </h5>
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Dias da Semana
+                      </Label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {SCHEDULE_DAYS.map((day) => (
+                          <label
+                            key={day.id}
+                            className={`flex items-center gap-3 p-3 border rounded-2xl text-sm cursor-pointer transition-all ${
+                              formData.preferredScheduleDays.includes(day.id)
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/30"
+                            }`}
+                          >
+                            <Checkbox
+                              checked={formData.preferredScheduleDays.includes(day.id)}
+                              onCheckedChange={() => handleScheduleDayToggle(day.id)}
+                            />
+                            <span className="text-sm text-foreground">{day.label}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <Label className="text-sm text-muted-foreground mb-3 block">Horários</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {SCHEDULE_TIMES.map((time) => (
-                        <label
-                          key={time.id}
-                          className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
-                            formData.preferredScheduleTimes.includes(time.id)
-                              ? "border-primary bg-primary/5"
-                              : "hover:border-primary/30"
-                          }`}
-                        >
-                          <Checkbox
-                            checked={formData.preferredScheduleTimes.includes(time.id)}
-                            onCheckedChange={() => handleScheduleTimeToggle(time.id)}
-                          />
-                          <span>{time.label}</span>
-                        </label>
-                      ))}
+                    <div className="space-y-3">
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Horários
+                      </Label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {SCHEDULE_TIMES.map((time) => (
+                          <label
+                            key={time.id}
+                            className={`flex items-center gap-3 p-3 border rounded-2xl text-sm cursor-pointer transition-all ${
+                              formData.preferredScheduleTimes.includes(time.id)
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/30"
+                            }`}
+                          >
+                            <Checkbox
+                              checked={formData.preferredScheduleTimes.includes(time.id)}
+                              onCheckedChange={() => handleScheduleTimeToggle(time.id)}
+                            />
+                            <span className="text-sm text-foreground">{time.label}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <Label className="text-sm text-muted-foreground mb-3 block">Tipo de Cuidado</Label>
-                    <div className="space-y-2">
-                      {SCHEDULE_DURATION.map((duration) => (
-                        <label
-                          key={duration.id}
-                          className={`flex items-center gap-2 p-2 border rounded-lg text-sm cursor-pointer transition-all ${
-                            formData.preferredScheduleDuration.includes(duration.id)
-                              ? "border-primary bg-primary/5"
-                              : "hover:border-primary/30"
-                          }`}
-                        >
-                          <Checkbox
-                            checked={formData.preferredScheduleDuration.includes(duration.id)}
-                            onCheckedChange={() => handleScheduleDurationToggle(duration.id)}
-                          />
-                          <span>{duration.label}</span>
-                        </label>
-                      ))}
+                    <div className="space-y-3">
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Tipo de Cuidado
+                      </Label>
+                      <div className="space-y-3">
+                        {SCHEDULE_DURATION.map((duration) => (
+                          <label
+                            key={duration.id}
+                            className={`flex items-center gap-3 p-3 border rounded-2xl text-sm cursor-pointer transition-all ${
+                              formData.preferredScheduleDuration.includes(duration.id)
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/30"
+                            }`}
+                          >
+                            <Checkbox
+                              checked={formData.preferredScheduleDuration.includes(duration.id)}
+                              onCheckedChange={() => handleScheduleDurationToggle(duration.id)}
+                            />
+                            <span className="text-sm text-foreground">{duration.label}</span>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-4">
-                  <Label>Idiomas Preferidos</Label>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                <div className="border-t border-border pt-6">
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4 block">
+                    Idiomas Preferidos
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {LANGUAGE_OPTIONS.map((lang) => (
                       <label
                         key={lang.id}
-                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                        className={`flex items-center gap-3 p-3 border rounded-2xl cursor-pointer transition-all ${
                           formData.preferredLanguages.includes(lang.id)
                             ? "border-primary bg-primary/5"
-                            : "hover:border-primary/50"
+                            : "border-border hover:border-primary/30"
                         }`}
                       >
                         <Checkbox
                           checked={formData.preferredLanguages.includes(lang.id)}
                           onCheckedChange={() => handleLanguageToggle(lang.id)}
                         />
-                        <span className="text-sm">{lang.label}</span>
+                        <span className="text-sm text-foreground">{lang.label}</span>
                       </label>
                     ))}
                   </div>
                 </div>
-              </>
-            )}
+              </div>
+            </div>
+          )}
 
-            {/* Step 3: Contato de Emergencia */}
-            {step === 3 && (
-              <>
-                <div className="text-center mb-6">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                    <IconPhone className="h-6 w-6 text-primary" />
-                  </div>
-                  <h2 className="text-lg font-semibold">Contato de Emergencia</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Informacoes de contato para situacoes de emergencia
-                  </p>
-                </div>
+          {/* Step 3: Contato de Emergencia */}
+          {step === 3 && (
+            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-8">
+              <section className="space-y-4">
+                <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
+                  Contato de Emergencia
+                </h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  Informacoes de contato para situacoes de emergencia
+                </p>
+              </section>
 
+              <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContactName">Nome do Contato *</Label>
+                  <Label htmlFor="emergencyContactName" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Nome do Contato *
+                  </Label>
                   <Input
                     id="emergencyContactName"
                     name="emergencyContactName"
                     placeholder="Nome completo do contato de emergencia"
                     value={formData.emergencyContactName}
                     onChange={handleInputChange}
+                    className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactPhone">Telefone *</Label>
+                    <Label htmlFor="emergencyContactPhone" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Telefone *
+                    </Label>
                     <Input
                       id="emergencyContactPhone"
                       name="emergencyContactPhone"
@@ -657,117 +710,138 @@ function FamilySetupContent() {
                       placeholder="+351 912 345 678"
                       value={formData.emergencyContactPhone}
                       onChange={handleInputChange}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactRelationship">Parentesco</Label>
+                    <Label htmlFor="emergencyContactRelationship" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Parentesco
+                    </Label>
                     <Input
                       id="emergencyContactRelationship"
                       name="emergencyContactRelationship"
                       placeholder="Ex: Filho(a), Esposo(a)..."
                       value={formData.emergencyContactRelationship}
                       onChange={handleInputChange}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
 
-                <Separator />
+                <div className="border-t border-border pt-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="city" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Endereco / Cidade
+                    </Label>
+                    <Input
+                      id="city"
+                      name="city"
+                      placeholder="Ex: Lisboa, Porto, Coimbra..."
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="city">Endereco / Cidade</Label>
-                  <Input
-                    id="city"
-                    name="city"
-                    placeholder="Ex: Lisboa, Porto, Coimbra..."
-                    value={formData.city}
-                    onChange={handleInputChange}
-                  />
+                  <div className="space-y-2 mt-6">
+                    <Label htmlFor="additionalNotes" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                      Notas Adicionais
+                    </Label>
+                    <Textarea
+                      id="additionalNotes"
+                      name="additionalNotes"
+                      placeholder="Qualquer informacao adicional relevante para o cuidador..."
+                      value={formData.additionalNotes}
+                      onChange={handleInputChange}
+                      rows={3}
+                      className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="additionalNotes">Notas Adicionais</Label>
-                  <Textarea
-                    id="additionalNotes"
-                    name="additionalNotes"
-                    placeholder="Qualquer informacao adicional relevante para o cuidador..."
-                    value={formData.additionalNotes}
-                    onChange={handleInputChange}
-                    rows={3}
-                  />
-                </div>
-
-                <Separator />
 
                 {/* Summary */}
-                <div className="bg-muted/50 p-4 rounded-lg space-y-3">
-                  <h3 className="font-medium">Resumo</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Idoso:</span>
-                      <span className="font-medium">
+                <div className="border-t border-border pt-6">
+                  <h4 className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4">
+                    Resumo
+                  </h4>
+                  <div className="bg-secondary rounded-2xl p-5 space-y-3 border border-border/50">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idoso</span>
+                      <span className="text-sm font-display font-bold text-foreground">
                         {formData.elderName}{formData.elderAge ? `, ${formData.elderAge} anos` : ""}
                       </span>
                     </div>
                     {formData.mobilityLevel && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Mobilidade:</span>
-                        <span className="font-medium">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Mobilidade</span>
+                        <span className="text-sm font-display font-bold text-foreground">
                           {MOBILITY_LEVELS.find((l) => l.value === formData.mobilityLevel)?.label}
                         </span>
                       </div>
                     )}
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Servicos:</span>
-                      <span className="font-medium">{formData.servicesNeeded.length} selecionados</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Servicos</span>
+                      <span className="text-sm font-display font-bold text-foreground">{formData.servicesNeeded.length} selecionados</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Emergencia:</span>
-                      <span className="font-medium">{formData.emergencyContactName || "-"}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Emergencia</span>
+                      <span className="text-sm font-display font-bold text-foreground">{formData.emergencyContactName || "-"}</span>
                     </div>
                   </div>
                 </div>
-              </>
-            )}
+              </div>
 
-            {/* Navigation */}
-            <div className="flex gap-3 pt-4">
-              {step > 1 && (
-                <Button variant="outline" onClick={() => { setError(""); setStep(step - 1); }} className="flex-1">
-                  <IconArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar
-                </Button>
-              )}
-              {step < 3 ? (
-                <Button onClick={handleNext} className="flex-1">
-                  Continuar
-                  <IconArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              ) : (
-                <Button onClick={handleSubmit} disabled={isLoading} className="flex-1">
-                  {isLoading ? (
-                    <>
-                      <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                      A guardar...
-                    </>
-                  ) : (
-                    <>
-                      Completar Registo
-                      <IconArrowRight className="h-4 w-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              )}
+              {/* Navigation */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
+                {step > 1 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => { setError(""); setStep(step - 1); }}
+                    className="flex-1 rounded-2xl"
+                  >
+                    <IconArrowLeft className="h-4 w-4 mr-2" />
+                    Voltar
+                  </Button>
+                )}
+                {step < 3 ? (
+                  <Button
+                    onClick={handleNext}
+                    className="flex-1 rounded-2xl"
+                  >
+                    Continuar
+                    <IconArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className="flex-1 rounded-2xl"
+                  >
+                    {isLoading ? (
+                      <>
+                        <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
+                        A guardar...
+                      </>
+                    ) : (
+                      <>
+                        Completar Registo
+                        <IconArrowRight className="h-4 w-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          )}
 
-        {/* Help text */}
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          Precisa de ajuda?{" "}
-          <Link href="/ajuda" className="text-primary hover:underline">
-            Fale connosco
-          </Link>
-        </p>
+          {/* Help text */}
+          <p className="text-center text-xs text-muted-foreground">
+            Precisa de ajuda?{" "}
+            <Link href="/ajuda" className="text-primary hover:underline">
+              Fale connosco
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   );
@@ -777,11 +851,9 @@ export default function FamilySetupPage() {
   return (
     <Suspense fallback={
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <Card className="w-full max-w-2xl">
-          <CardContent className="py-12 text-center">
-            <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          </CardContent>
-        </Card>
+        <div className="w-full max-w-2xl bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center py-12">
+          <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+        </div>
       </main>
     }>
       <FamilySetupContent />
