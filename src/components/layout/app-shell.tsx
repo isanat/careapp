@@ -294,8 +294,9 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 transition-all duration-500"
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                title={sidebarCollapsed ? "Expandir" : "Recolher"}
               >
                 <IconMenu className="h-4 w-4" />
               </Button>
@@ -315,11 +316,15 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                       "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
                       active
                         ? "bg-primary/10 text-primary border border-primary/30"
-                        : "hover:bg-secondary/50 text-foreground"
+                        : "text-foreground hover:bg-secondary/50"
                     )}
                     title={sidebarCollapsed ? item.label : ""}
                   >
-                    <Icon className="h-5 w-5 flex-shrink-0" />
+                    {/* Icon - Always visible */}
+                    <Icon className={cn(
+                      "h-5 w-5 flex-shrink-0 transition-all duration-300",
+                      active ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                    )} />
 
                     {/* Label with collapse animation */}
                     <span className={cn(
@@ -334,8 +339,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                     {/* Badge with collapse animation */}
                     {item.href === "/app/chat" && unreadCount > 0 && (
                       <span className={cn(
-                        "h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white transition-all duration-500",
-                        sidebarCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto ml-auto"
+                        "h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white flex-shrink-0 transition-all duration-500",
+                        sidebarCollapsed ? "opacity-0 w-0 ml-0" : "opacity-100 w-auto ml-auto"
                       )}>
                         {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
