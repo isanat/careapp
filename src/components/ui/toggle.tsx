@@ -34,4 +34,34 @@ const Toggle = React.forwardRef<
 
 Toggle.displayName = TogglePrimitive.Root.displayName;
 
-export { Toggle, toggleVariants };
+// Switch/Toggle Switch Component (Bloom style)
+import * as SwitchPrimitive from "@radix-ui/react-switch";
+
+const ToggleSwitch = React.forwardRef<
+  React.ElementRef<typeof SwitchPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <SwitchPrimitive.Root
+    ref={ref}
+    className={cn(
+      "peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent",
+      "transition-all duration-200 ease-out",
+      "bg-border data-[state=checked]:bg-primary",
+      "focus:outline-none focus:ring-2 focus:ring-primary/20",
+      "disabled:cursor-not-allowed disabled:opacity-60",
+      className
+    )}
+    {...props}
+  >
+    <SwitchPrimitive.Thumb
+      className={cn(
+        "pointer-events-none block h-5 w-5 rounded-full bg-card shadow-sm",
+        "transition-all duration-200 ease-out",
+        "data-[state=checked]:translate-x-5",
+      )}
+    />
+  </SwitchPrimitive.Root>
+));
+ToggleSwitch.displayName = SwitchPrimitive.Root.displayName;
+
+export { Toggle, toggleVariants, ToggleSwitch };
