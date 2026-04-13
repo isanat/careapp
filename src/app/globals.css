@@ -4,96 +4,136 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 28% 10%;
+    /* Background & Text - Modern Light Mode */
+    --background: 210 20% 98%;      /* #F7F9FB */
+    --foreground: 210 16% 12%;      /* #1A1F2E */
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 28% 10%;
+    /* Card Styling */
+    --card: 210 18% 95%;            /* #EBEBF0 */
+    --card-foreground: 210 16% 12%; /* #1A1F2E */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 10%;
+    --popover: 210 18% 95%;         /* #EBEBF0 */
+    --popover-foreground: 210 16% 12%; /* #1A1F2E */
 
-    --primary: 221 83% 53%;
+    /* PRIMARY - Vibrant Purple (#6B3FFF) */
+    --primary: 270 92% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 215 28% 17%;
+    /* SECONDARY - Vibrant Cyan (#00CCFF) */
+    --secondary: 180 80% 50%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    /* MUTED - Modern Gray */
+    --muted: 210 14% 84%;           /* #CACFD8 */
+    --muted-foreground: 210 10% 45%; /* #6B7280 */
 
-    --accent: 210 20% 96%;
-    --accent-foreground: 215 28% 17%;
+    /* ACCENT - Vibrant Cyan */
+    --accent: 180 80% 50%;          /* #00CCFF */
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84% 60%;
+    /* DESTRUCTIVE - Alert Red (#FF0000) */
+    --destructive: 0 80% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 160 84% 39%;
-    --success-foreground: 0 0% 100%;
+    /* SUCCESS - Fresh Green (#00FF00) */
+    --success: 120 80% 50%;
+    --success-foreground: 0 0% 0%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    /* WARNING - Warm Amber (#FFDD00) */
+    --warning: 45 92% 50%;
+    --warning-foreground: 0 0% 0%;
 
-    --info: 199 89% 48%;
+    /* INFO - Sky Blue (#00BFFF) */
+    --info: 200 80% 50%;
     --info-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    /* BORDERS & INPUTS */
+    --border: 210 14% 84%;          /* #CACFD8 */
+    --input: 210 18% 95%;           /* #EBEBF0 */
+    --ring: 270 92% 55%;            /* Primary purple */
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 215 16% 47%;
-    --sidebar-primary: 221 83% 53%;
+    /* SIDEBAR */
+    --sidebar-background: 210 18% 95%;    /* #EBEBF0 */
+    --sidebar-foreground: 210 16% 12%;    /* #1A1F2E */
+    --sidebar-primary: 270 92% 55%;       /* #6B3FFF */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 221 83% 96%;
-    --sidebar-accent-foreground: 221 83% 53%;
-    --sidebar-border: 214 32% 94%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 270 100% 88%;       /* #D4ADFF - Light purple */
+    --sidebar-accent-foreground: 270 88% 48%;
+    --sidebar-border: 210 14% 84%;        /* #CACFD8 */
+    --sidebar-ring: 270 92% 55%;          /* #6B3FFF */
 
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
 
-    --shadow-card: 0 1px 3px 0 hsl(215 28% 10% / 0.04), 0 1px 2px -1px hsl(215 28% 10% / 0.04);
-    --shadow-elevated: 0 10px 40px -10px hsl(221 83% 53% / 0.12), 0 4px 16px -4px hsl(215 28% 10% / 0.06);
-    --shadow-glow: 0 0 30px -5px hsl(221 83% 53% / 0.25);
+    /* SHADOWS with vibrant primary color */
+    --shadow-card: 0 1px 3px 0 hsl(270 92% 55% / 0.05), 0 1px 2px -1px hsl(270 92% 55% / 0.04);
+    --shadow-elevated: 0 10px 40px -10px hsl(270 92% 55% / 0.15), 0 4px 16px -4px hsl(270 92% 55% / 0.08);
+    --shadow-glow: 0 0 30px -5px hsl(270 92% 55% / 0.35);
+    --shadow-soft: 0 2px 8px -2px hsl(270 92% 55% / 0.06);
+    --shadow-soft-md: 0 4px 16px -4px hsl(270 92% 55% / 0.1);
+    --shadow-soft-lg: 0 8px 24px -4px hsl(270 92% 55% / 0.12);
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 221 83% 53%;
+    /* Dark Mode - Deep backgrounds with vibrant accents */
+    --background: 210 20% 12%;      /* #191F2E */
+    --foreground: 210 20% 98%;      /* #F7F9FB */
+
+    /* Card Styling - Dark */
+    --card: 210 18% 18%;            /* #252E3F */
+    --card-foreground: 210 20% 98%; /* #F7F9FB */
+
+    --popover: 210 18% 18%;         /* #252E3F */
+    --popover-foreground: 210 20% 98%; /* #F7F9FB */
+
+    /* PRIMARY - Vibrant Purple (brighter for dark mode) */
+    --primary: 270 95% 68%;         /* #8B5FFF - Lighter purple for contrast */
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 14%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --success: 160 84% 30%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 40%;
-    --warning-foreground: 0 0% 100%;
-    --info: 199 89% 38%;
-    --info-foreground: 0 0% 100%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 221 83% 53%;
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 215 20% 65%;
-    --sidebar-primary: 221 83% 53%;
+
+    /* SECONDARY - Vibrant Cyan */
+    --secondary: 180 85% 55%;       /* #4DDEFF - Brighter cyan for dark mode */
+    --secondary-foreground: 0 0% 0%;
+
+    /* MUTED - Dark Gray */
+    --muted: 210 16% 35%;           /* #505E75 */
+    --muted-foreground: 210 14% 84%; /* #CACFD8 */
+
+    /* ACCENT - Vibrant Cyan */
+    --accent: 180 85% 55%;          /* #4DDEFF */
+    --accent-foreground: 0 0% 0%;
+
+    /* DESTRUCTIVE - Alert Red (adjusted for dark) */
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* SUCCESS - Fresh Green (adjusted for dark) */
+    --success: 120 85% 55%;
+    --success-foreground: 0 0% 0%;
+
+    /* WARNING - Warm Amber (adjusted for dark) */
+    --warning: 45 95% 55%;
+    --warning-foreground: 0 0% 0%;
+
+    /* INFO - Sky Blue */
+    --info: 200 85% 55%;
+    --info-foreground: 0 0% 0%;
+
+    /* BORDERS & INPUTS - Dark */
+    --border: 210 18% 28%;          /* #3D4D63 */
+    --input: 210 18% 18%;           /* #252E3F */
+    --ring: 270 95% 68%;            /* #8B5FFF */
+
+    /* SIDEBAR - Dark Mode */
+    --sidebar-background: 210 18% 18%;    /* #252E3F */
+    --sidebar-foreground: 210 14% 84%;    /* #CACFD8 */
+    --sidebar-primary: 270 95% 68%;       /* #8B5FFF */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 14%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 14%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-accent: 270 100% 80%;       /* #B380FF */
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 210 18% 28%;        /* #3D4D63 */
+    --sidebar-ring: 270 95% 68%;          /* #8B5FFF */
   }
 }
 
