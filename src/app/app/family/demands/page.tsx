@@ -180,13 +180,13 @@ function FamilyDemandsContent() {
       {/* Tabs Section */}
       <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full space-y-6">
         <TabsList className="w-full grid grid-cols-3 h-11 rounded-2xl bg-muted/50 p-1 border border-border/30">
-          <TabsTrigger value="ACTIVE" className="rounded-xl text-xs font-display font-bold uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
+          <TabsTrigger value="ACTIVE" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
             Ativas ({demands.filter(d => d.status === 'ACTIVE').length})
           </TabsTrigger>
-          <TabsTrigger value="CLOSED" className="rounded-xl text-xs font-display font-bold uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
+          <TabsTrigger value="CLOSED" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
             Fechadas ({demands.filter(d => d.status === 'CLOSED').length})
           </TabsTrigger>
-          <TabsTrigger value="PAUSED" className="rounded-xl text-xs font-display font-bold uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
+          <TabsTrigger value="PAUSED" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
             Pausadas ({demands.filter(d => d.status === 'PAUSED').length})
           </TabsTrigger>
         </TabsList>
@@ -219,11 +219,11 @@ function FamilyDemandsContent() {
 
                 return (
                   <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group">
-                    <BloomCard variant="interactive" className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                    <BloomCard variant="interactive" className="p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
                       {/* Left: Title, Description, Badge */}
                       <div className="flex-1 space-y-3 min-w-0">
                         <div className="space-y-2">
-                          <h3 className="text-lg font-display font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                          <h3 className="text-lg font-display font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                             {demand.title}
                           </h3>
 
@@ -253,20 +253,20 @@ function FamilyDemandsContent() {
                         <div className="flex justify-between gap-4 md:justify-end md:w-full">
                           <div className="flex flex-col items-center gap-1">
                             <IconEye className="h-4 w-4 text-secondary" />
-                            <p className="text-sm font-display font-bold text-foreground">{demand.metrics.viewCount}</p>
-                            <p className="text-[9px] text-muted-foreground font-display font-bold uppercase tracking-widest">Vistas</p>
+                            <p className="text-sm font-display font-black text-foreground">{demand.metrics.viewCount}</p>
+                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Vistas</p>
                           </div>
 
                           <div className="flex flex-col items-center gap-1">
                             <IconMessageSquare className="h-4 w-4 text-accent" />
-                            <p className="text-sm font-display font-bold text-foreground">{demand.metrics.proposalCount}</p>
-                            <p className="text-[9px] text-muted-foreground font-display font-bold uppercase tracking-widest">Propostas</p>
+                            <p className="text-sm font-display font-black text-foreground">{demand.metrics.proposalCount}</p>
+                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Propostas</p>
                           </div>
 
                           <div className="flex flex-col items-center gap-1">
                             <IconEuro className="h-4 w-4 text-primary" />
-                            <p className="text-sm font-display font-bold text-foreground">€{demand.metrics.visibilitySpent}</p>
-                            <p className="text-[9px] text-muted-foreground font-display font-bold uppercase tracking-widest">Investido</p>
+                            <p className="text-sm font-display font-black text-foreground">€{demand.metrics.visibilitySpent}</p>
+                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Investido</p>
                           </div>
                         </div>
 
