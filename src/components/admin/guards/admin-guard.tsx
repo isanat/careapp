@@ -43,7 +43,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
   if (status === "loading" || isAdmin === null) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <IconLoader2 className="h-8 w-8 animate-spin text-cyan-600" />
+        <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -51,13 +51,13 @@ export function AdminGuard({ children }: AdminGuardProps) {
   if (!isAdmin) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-red-600">Acesso Negado</h1>
-        <p className="text-slate-500">
+        <h1 className="text-2xl font-bold text-destructive">Acesso Negado</h1>
+        <p className="text-muted-foreground">
           Não tem permissão para aceder a esta área.
         </p>
         <a
           href="/app/dashboard"
-          className="text-cyan-600 hover:text-cyan-700 underline"
+          className="text-primary hover:text-primary underline"
         >
           Voltar ao Dashboard
         </a>

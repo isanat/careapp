@@ -180,7 +180,7 @@ export default function AdminAnalyticsPage() {
                   return (
                     <div
                       key={i}
-                      className="flex-1 bg-cyan-500 rounded-t"
+                      className="flex-1 bg-primary rounded-t"
                       style={{ height: `${Math.max(height, 5)}%` }}
                       title={`${formatCurrency(item.revenue)}`}
                     />
@@ -207,7 +207,7 @@ export default function AdminAnalyticsPage() {
                   return (
                     <div
                       key={i}
-                      className="flex-1 bg-green-500 rounded-t"
+                      className="flex-1 bg-success rounded-t"
                       style={{ height: `${Math.max(height, 5)}%` }}
                       title={`${item.users} utilizadores`}
                   />
@@ -292,7 +292,7 @@ export default function AdminAnalyticsPage() {
                     <span className="text-sm font-medium w-6">{i + 1}.</span>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{item.name}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-muted-foreground">
                         ⭐ {item.rating.toFixed(1)} • {item.contracts} contratos
                       </p>
                     </div>

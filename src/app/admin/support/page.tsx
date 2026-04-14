@@ -232,7 +232,7 @@ export default function AdminSupportPage() {
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Buscar por assunto, nome ou email..."
                 value={searchTerm}

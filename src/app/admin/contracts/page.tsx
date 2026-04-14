@@ -169,7 +169,7 @@ export default function AdminContractsPage() {
         <div>
           <p className="font-medium">{c.title}</p>
           {c.status === 'DISPUTED' && (
-            <Badge variant="destructive" className="mt-1 text-xs">
+            <Badge variant="destructive" className="mt-1 text-xs bg-destructive text-destructive-foreground">
               <IconAlertCircle className="h-3 w-3 mr-1" />
               Em disputa
             </Badge>
@@ -335,7 +335,7 @@ export default function AdminContractsPage() {
             <tab.icon className="h-4 w-4" />
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
-              <Badge variant="destructive" className="ml-1">
+              <Badge variant="destructive" className="ml-1 bg-destructive text-destructive-foreground">
                 {tab.count}
               </Badge>
             )}

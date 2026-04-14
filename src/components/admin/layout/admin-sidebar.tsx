@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
-  IconLogo,
+  IconHome,
   IconLayoutDashboard,
   IconUsers,
   IconHeartHandshake,
@@ -77,9 +77,9 @@ function NavContent({ collapsed, onClose, pathname, userName, userEmail, badges,
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b px-4">
         <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <IconLogo className="h-8 w-8 text-cyan-600" />
+          <IconHome className="h-8 w-8 text-primary" />
           {!collapsed && (
-            <span className="font-bold text-lg text-slate-900 dark:text-white">
+            <span className="font-display font-black text-lg text-foreground">
               Admin
             </span>
           )}
@@ -284,9 +284,9 @@ export function AdminSidebar({ open, collapsed, onClose, onToggleCollapse }: Adm
           {/* Logo with collapse button */}
           <div className="flex h-16 items-center justify-between border-b px-4">
             <Link href="/admin/dashboard" className="flex items-center gap-2">
-              <IconLogo className="h-8 w-8 text-cyan-600" />
+              <IconHome className="h-8 w-8 text-primary" />
               {!collapsed && (
-                <span className="font-bold text-lg text-slate-900 dark:text-white">
+                <span className="font-display font-black text-lg text-foreground">
                   Admin
                 </span>
               )}

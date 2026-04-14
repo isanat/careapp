@@ -169,11 +169,11 @@ export default function AdminSettingsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "healthy":
-        return "bg-green-500";
+        return "bg-success";
       case "degraded":
-        return "bg-amber-500";
+        return "bg-warning";
       default:
-        return "bg-red-500";
+        return "bg-destructive";
     }
   };
 
@@ -221,7 +221,7 @@ export default function AdminSettingsPage() {
                   <div className="space-y-2">
                     <Label>Taxa de Ativação (EUR)</Label>
                     <div className="flex items-center gap-2">
-                      <IconCreditCard className="h-4 w-4 text-slate-400" />
+                      <IconCreditCard className="h-4 w-4 text-muted-foreground" />
                       <Input
                         type="number"
                         value={settings.activationCostEurCents / 100}
@@ -233,7 +233,7 @@ export default function AdminSettingsPage() {
                         }
                       />
                     </div>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Valor pago pela família ao ativar a conta
                     </p>
                   </div>
@@ -241,7 +241,7 @@ export default function AdminSettingsPage() {
                   <div className="space-y-2">
                     <Label>Taxa de Contrato (EUR)</Label>
                     <div className="flex items-center gap-2">
-                      <IconCreditCard className="h-4 w-4 text-slate-400" />
+                      <IconCreditCard className="h-4 w-4 text-muted-foreground" />
                       <Input
                         type="number"
                         value={settings.contractFeeEurCents / 100}
@@ -253,7 +253,7 @@ export default function AdminSettingsPage() {
                         }
                       />
                     </div>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Valor pago por cada contrato criado
                     </p>
                   </div>
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
                   <div className="space-y-2">
                     <Label>Taxa da Plataforma (%)</Label>
                     <div className="flex items-center gap-2">
-                      <IconPercentage className="h-4 w-4 text-slate-400" />
+                      <IconPercentage className="h-4 w-4 text-muted-foreground" />
                       <Input
                         type="number"
                         value={settings.platformFeePercent}
@@ -273,7 +273,7 @@ export default function AdminSettingsPage() {
                         }
                       />
                     </div>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Porcentagem sobre o valor do contrato (cuidador recebe 90%)
                     </p>
                   </div>
@@ -310,7 +310,7 @@ export default function AdminSettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label>Modo de Manutenção</Label>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-muted-foreground">
                     Apenas administradores podem aceder
                   </p>
                 </div>
@@ -324,12 +324,12 @@ export default function AdminSettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-amber-200 bg-amber-50 dark:border-amber-800">
+          <Card className="border-warning/30 bg-warning/10">
             <CardContent className="flex items-start gap-4 p-4">
-              <IconAlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
+              <IconAlertTriangle className="h-5 w-5 text-warning mt-0.5" />
               <div>
-                <p className="font-medium text-amber-700">Atenção</p>
-                <p className="text-sm text-amber-600">
+                <p className="font-medium text-warning">Atenção</p>
+                <p className="text-sm text-warning/90">
                   Alterações nas taxas afetam apenas novos contratos. Contratos existentes
                   mantêm as taxas originais.
                 </p>
@@ -361,7 +361,7 @@ export default function AdminSettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Habilitar Verificação KYC</Label>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted-foreground">
                         Permite que cuidadores verifiquem sua identidade
                       </p>
                     </div>
@@ -400,7 +400,7 @@ export default function AdminSettingsPage() {
                       }
                       placeholder="sk_live_..."
                     />
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Chave de API do provedor KYC
                     </p>
                   </div>
@@ -442,7 +442,7 @@ export default function AdminSettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Habilitar Easypay</Label>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted-foreground">
                         Ativa processamento de pagamentos via Easypay
                       </p>
                     </div>
@@ -493,7 +493,7 @@ export default function AdminSettingsPage() {
                       }
                       placeholder="API Key da Easypay"
                     />
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Encontrada no painel da Easypay
                     </p>
                   </div>
@@ -534,7 +534,7 @@ export default function AdminSettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label>Habilitar Videochamadas</Label>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted-foreground">
                         Permite reuniões por vídeo entre famílias e cuidadores
                       </p>
                     </div>
@@ -573,7 +573,7 @@ export default function AdminSettingsPage() {
                       }
                       placeholder="API Key do provedor"
                     />
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Chave de API para criar salas de vídeo
                     </p>
                   </div>
@@ -623,7 +623,7 @@ export default function AdminSettingsPage() {
                     />
                     <div>
                       <p className="font-medium">{integration.name}</p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted-foreground">
                         {integration.lastWebhook
                           ? `Último webhook: ${new Date(
                               integration.lastWebhook
@@ -648,7 +648,7 @@ export default function AdminSettingsPage() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               Configure as integrações acima para ver o status aqui.
             </p>
           )}

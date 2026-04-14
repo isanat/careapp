@@ -23,10 +23,10 @@ export function PageHeader({
   return (
     <div className={cn("mb-6 space-y-2", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center gap-1 text-sm text-slate-500">
+        <nav className="flex items-center gap-1 text-sm text-muted-foreground">
           <Link
             href="/admin/dashboard"
-            className="hover:text-slate-700 dark:hover:text-slate-200"
+            className="hover:text-foreground"
           >
             <IconHome className="h-4 w-4" />
           </Link>
@@ -36,12 +36,12 @@ export function PageHeader({
               {crumb.href ? (
                 <Link
                   href={crumb.href}
-                  className="hover:text-slate-700 dark:hover:text-slate-200"
+                  className="hover:text-foreground"
                 >
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-slate-900 dark:text-white">{crumb.label}</span>
+                <span className="text-foreground">{crumb.label}</span>
               )}
             </div>
           ))}
@@ -49,11 +49,11 @@ export function PageHeader({
       )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-foreground">
             {title}
           </h1>
           {description && (
-            <p className="text-slate-500 dark:text-slate-400">{description}</p>
+            <p className="text-muted-foreground">{description}</p>
           )}
         </div>
         {actions && <div className="flex items-center gap-2">{actions}</div>}

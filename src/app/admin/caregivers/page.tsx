@@ -254,7 +254,7 @@ export default function AdminCaregiversPage() {
             <div className="flex items-center gap-2">
               <p className="font-medium">{c.name}</p>
               {c.featured === 1 && (
-                <Badge variant="default" className="bg-amber-500 text-xs">
+                <Badge variant="default" className="bg-warning text-xs">
                   <IconStar className="h-3 w-3 mr-1" />
                   Destaque
                 </Badge>
@@ -285,7 +285,7 @@ export default function AdminCaregiversPage() {
       header: "Avaliação",
       render: (c) => (
         <div className="flex items-center gap-1">
-          <IconStar className="h-4 w-4 text-amber-500 fill-amber-500" />
+          <IconStar className="h-4 w-4 text-warning fill-warning" />
           <span className="font-medium">{c.averageRating?.toFixed(1) || "-"}</span>
           <span className="text-xs text-muted-foreground">({c.totalReviews || 0})</span>
         </div>
@@ -309,7 +309,7 @@ export default function AdminCaregiversPage() {
               <Button
                 size="sm"
                 variant="default"
-                className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700"
+                className="h-8 w-8 p-0 bg-success hover:bg-success/90"
                 onClick={() => handleVerify(c.id, 'verify')}
                 disabled={actionLoading === c.id}
                 title="Aprovar KYC"
@@ -341,7 +341,7 @@ export default function AdminCaregiversPage() {
             title={c.featured === 1 ? "Remover destaque" : "Destacar cuidador"}
           >
             {c.featured === 1 ? (
-              <IconStarOff className="h-4 w-4 text-amber-500" />
+              <IconStarOff className="h-4 w-4 text-warning" />
             ) : (
               <IconStar className="h-4 w-4" />
             )}

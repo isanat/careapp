@@ -59,7 +59,7 @@ export function DataTable<T>({
 
   if (loading) {
     return (
-      <div className={cn("rounded-lg border bg-white dark:bg-slate-800", className)}>
+      <div className={cn("rounded-3xl border border-border bg-card", className)}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -86,7 +86,7 @@ export function DataTable<T>({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="rounded-lg border bg-white dark:bg-slate-800">
+      <div className="rounded-3xl border border-border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
@@ -105,7 +105,7 @@ export function DataTable<T>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-32 text-center text-slate-500"
+                  className="h-32 text-center text-muted-foreground"
                 >
                   {emptyMessage}
                 </TableCell>
@@ -114,7 +114,7 @@ export function DataTable<T>({
               data.map((row, index) => (
                 <TableRow
                   key={keyExtractor(row)}
-                  className={cn(onRowClick && "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50")}
+                  className={cn(onRowClick && "cursor-pointer hover:bg-secondary/50")}
                   onClick={() => onRowClick?.(row)}
                 >
                   {columns.map((col) => (
@@ -133,7 +133,7 @@ export function DataTable<T>({
 
       {pagination && pagination.total > pagination.pageSize && (
         <div className="flex items-center justify-between px-2">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             Mostrando {(pagination.page - 1) * pagination.pageSize + 1} a{" "}
             {Math.min(pagination.page * pagination.pageSize, pagination.total)} de{" "}
             {pagination.total} resultados

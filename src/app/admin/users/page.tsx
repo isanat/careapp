@@ -140,9 +140,9 @@ function AdminFamiliesContent() {
 
   const getRoleBadge = (role: User["role"]) => {
     const variants: Record<User["role"], string> = {
-      FAMILY: "bg-blue-100 text-blue-700",
-      CAREGIVER: "bg-green-100 text-green-700",
-      ADMIN: "bg-purple-100 text-purple-700",
+      FAMILY: "bg-primary/10 text-primary",
+      CAREGIVER: "bg-success/10 text-success",
+      ADMIN: "bg-primary/10 text-primary",
     };
     const labels: Record<User["role"], string> = {
       FAMILY: "Família",
@@ -163,13 +163,13 @@ function AdminFamiliesContent() {
       render: (user) => (
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-cyan-100 text-cyan-700 text-xs">
+            <AvatarFallback className="bg-primary/10 text-primary text-xs">
               {user.name?.charAt(0) || "U"}
             </AvatarFallback>
           </Avatar>
           <div>
             <p className="font-medium">{user.name}</p>
-            <p className="text-xs text-slate-500">{user.email}</p>
+            <p className="text-xs text-muted-foreground">{user.email}</p>
           </div>
         </div>
       ),
@@ -217,7 +217,7 @@ function AdminFamiliesContent() {
       key: "createdAt",
       header: "Criado",
       render: (user) => (
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-muted-foreground">
           {new Date(user.createdAt).toLocaleDateString("pt-PT")}
         </span>
       ),
@@ -243,7 +243,7 @@ function AdminFamiliesContent() {
             {user.status === "ACTIVE" ? (
               <DropdownMenuItem
                 onClick={() => handleSuspend(user.id)}
-                className="text-red-600"
+                className="text-destructive"
               >
                 <IconUserOff className="mr-2 h-4 w-4" /> Suspender
               </DropdownMenuItem>
@@ -270,7 +270,7 @@ function AdminFamiliesContent() {
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Buscar por nome ou email..."
                 value={search}
