@@ -57,9 +57,9 @@ export function ConfirmDialog({
   };
 
   const iconMap = {
-    danger: <IconAlertTriangle className="h-6 w-6 text-red-500" />,
-    warning: <IconAlertTriangle className="h-6 w-6 text-amber-500" />,
-    info: <IconInfo className="h-6 w-6 text-blue-500" />,
+    danger: <IconAlertTriangle className="h-6 w-6 text-destructive" />,
+    warning: <IconAlertTriangle className="h-6 w-6 text-warning" />,
+    info: <IconInfo className="h-6 w-6 text-primary" />,
   };
 
   const buttonVariant = variant === "danger" ? "destructive" : "default";

@@ -28,16 +28,16 @@ export function StatsCard({
   loading = false,
 }: StatsCardProps) {
   const variantStyles = {
-    default: "bg-white dark:bg-slate-800",
-    success: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
-    warning: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800",
-    danger: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800",
+    default: "bg-card border border-border",
+    success: "bg-success/5 border border-success/30",
+    warning: "bg-warning/5 border border-warning/30",
+    danger: "bg-destructive/5 border border-destructive/30",
   };
 
   const trendStyles = {
-    up: "text-green-600 dark:text-green-400",
-    down: "text-red-600 dark:text-red-400",
-    neutral: "text-slate-500 dark:text-slate-400",
+    up: "text-success",
+    down: "text-destructive",
+    neutral: "text-muted-foreground",
   };
 
   if (loading) {
@@ -62,10 +62,10 @@ export function StatsCard({
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            <p className="text-sm font-medium text-muted-foreground">
               {title}
             </p>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">
+            <p className="text-2xl font-bold text-foreground">
               {value}
             </p>
             {change && (
@@ -76,13 +76,13 @@ export function StatsCard({
               </div>
             )}
             {description && (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 {description}
               </p>
             )}
           </div>
           {icon && (
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               {icon}
             </div>
           )}
