@@ -128,7 +128,7 @@ export default function PaymentsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-10 max-w-4xl">
+      <div className="space-y-10 max-w-6xl">
         {/* Header */}
         <BloomSectionHeader
           title="Finanças & Pagamentos"
@@ -165,16 +165,16 @@ export default function PaymentsPage() {
               borderColor="primary"
             />
             <BloomCard>
-              <div className="space-y-3">
+            <div className="space-y-4">
                 {walletData.recentPayments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-5 bg-secondary/40 rounded-2xl border border-border/50 hover:bg-secondary/60 transition-all">
+                  <div key={payment.id} className="flex items-center justify-between p-6 bg-secondary/30 rounded-3xl border border-border/60 hover:bg-secondary/50 transition-all">
                     <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 bg-card rounded-xl flex items-center justify-center text-primary shadow-sm border border-border">
+                      <div className="w-12 h-12 bg-card rounded-2xl flex items-center justify-center text-primary shadow-sm border border-border">
                         <IconCalendar className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="font-display font-bold text-foreground text-sm">{payment.description || "Pagamento de Serviço"}</p>
-                        <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">
+                        <p className="font-display font-black text-foreground text-base uppercase tracking-tight">{payment.description || "Pagamento de Serviço"}</p>
+                        <p className="text-xs font-medium text-muted-foreground mt-1">
                           {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
                             day: "2-digit",
                             month: "2-digit",
@@ -184,13 +184,13 @@ export default function PaymentsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-6">
-                      <div className="text-right">
-                        <p className="text-lg font-display font-black text-foreground">
+                      <div className="text-right min-w-[120px]">
+                        <p className="text-2xl font-display font-black text-foreground leading-none">
                           {(payment.amount / 100).toFixed(2)}€
                         </p>
                         <BloomBadge
                           variant={payment.status === "COMPLETED" ? "success" : "warning"}
-                          className="text-[9px] mt-1"
+                          className="text-[10px] mt-1"
                         >
                           {payment.status === "COMPLETED" ? "Libertado" : "Pendente"}
                         </BloomBadge>

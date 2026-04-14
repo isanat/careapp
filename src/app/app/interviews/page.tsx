@@ -85,7 +85,7 @@ export default function InterviewsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-4xl">
+      <div className="space-y-8 max-w-6xl">
         {/* Header */}
         <BloomSectionHeader
           title="Entrevistas"
@@ -104,7 +104,7 @@ export default function InterviewsPage() {
         {/* Upcoming Interviews */}
         {upcomingInterviews.length > 0 && (
           <section className="space-y-4">
-            <BloomSectionDivider title="Próximas" borderColor="primary" />
+            <BloomSectionDivider title="Próximas Entrevistas" borderColor="primary" />
             <div className="grid grid-cols-1 gap-4">
               {upcomingInterviews.map((interview) => (
                 <Link key={interview.id} href={`/app/interview/${interview.id}`}>
@@ -116,7 +116,7 @@ export default function InterviewsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-3 flex-wrap">
-                            <h4 className="text-lg font-display font-black text-foreground uppercase">
+                            <h4 className="text-lg font-display font-black text-foreground uppercase tracking-tight">
                               {interview.otherPartyRole === "family" ? "Entrevista com Família" : "Entrevista com Cuidador"}
                             </h4>
                             <BloomBadge variant="primary">Agendada</BloomBadge>
@@ -127,12 +127,12 @@ export default function InterviewsPage() {
                       <div className="flex items-center gap-8">
                         <div className="text-right">
                           <p className="text-[10px] font-display font-bold text-muted-foreground/50 uppercase tracking-widest">Data</p>
-                          <p className="text-lg font-display font-black text-foreground tracking-tighter">
+                          <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
-                          <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">{formatTime(interview.durationMinutes)}</p>
+                          <p className="text-xs font-medium text-muted-foreground mt-1">{formatTime(interview.durationMinutes)}</p>
                         </div>
-                        <Button variant="dark" size="sm">
+                        <Button variant="default" size="sm">
                           <IconVideo className="h-4 w-4 mr-1.5" />
                           Entrar
                         </Button>
@@ -160,7 +160,7 @@ export default function InterviewsPage() {
                         </div>
                         <div>
                           <div className="flex items-center gap-3 flex-wrap">
-                            <h4 className="text-lg font-display font-black text-foreground uppercase">
+                            <h4 className="text-lg font-display font-black text-foreground uppercase tracking-tight">
                               {interview.otherPartyRole === "family" ? "Entrevista com Família" : "Entrevista com Cuidador"}
                             </h4>
                             <BloomBadge variant={
@@ -179,10 +179,10 @@ export default function InterviewsPage() {
                       <div className="flex items-center gap-8">
                         <div className="text-right">
                           <p className="text-[10px] font-display font-bold text-muted-foreground/50 uppercase tracking-widest">Data</p>
-                          <p className="text-lg font-display font-black text-foreground tracking-tighter">
+                          <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
-                          <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">{formatTime(interview.durationMinutes)}</p>
+                          <p className="text-xs font-medium text-muted-foreground mt-1">{formatTime(interview.durationMinutes)}</p>
                         </div>
                         <Button variant="outline" size="sm">
                           Ver Detalhes

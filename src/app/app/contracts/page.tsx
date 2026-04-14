@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
 import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
@@ -47,6 +46,7 @@ interface Contract {
 export default function ContractsPage() {
   const { data: session, status } = useSession();
   const { t } = useI18n();
+  const [activeTab, setActiveTab] = useState<"all" | "active" | "pending" | "completed">("all");
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +82,7 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-4xl">
+      <div className="space-y-6 max-w-6xl">
         {/* Header - Bloom Elements style */}
         <BloomSectionHeader title={t.contracts.title} />
 
@@ -109,38 +109,61 @@ export default function ContractsPage() {
 
         {/* Tabs */}
         {!isLoading && !error && (
-          <Tabs defaultValue="active">
-            <TabsList className="w-full grid grid-cols-3 h-9 rounded-lg bg-muted p-0.5">
-              <TabsTrigger value="active" className="rounded-md text-xs data-[state=active]:shadow-sm">
-                {t.contracts.active} ({activeContracts.length})
-              </TabsTrigger>
-              <TabsTrigger value="pending" className="rounded-md text-xs data-[state=active]:shadow-sm">
-                {t.contracts.pending} ({pendingContracts.length})
-              </TabsTrigger>
-              <TabsTrigger value="completed" className="rounded-md text-xs data-[state=active]:shadow-sm">
-                {t.contracts.completed} ({completedContracts.length})
-              </TabsTrigger>
-            </TabsList>
+          <div className="space-y-5">
+            <div className="border-b border-border/60">
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { key: "all", label: `Todos (${contracts.length})` },
+                  { key: "active", label: `${t.contracts.active} (${activeContracts.length})` },
+                  { key: "pending", label: `${t.contracts.pending} (${pendingContracts.length})` },
+                  { key: "completed", label: `${t.contracts.completed} (${completedContracts.length})` },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key as typeof activeTab)}
+                    className={`h-11 text-sm font-display font-bold tracking-wide border-b-2 transition-colors ${
+                      activeTab === tab.key
+                        ? "border-primary text-foreground"
+                        : "border-transparent text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            {["active", "pending", "completed"].map((tab) => {
-              const items = tab === "active" ? activeContracts : tab === "pending" ? pendingContracts : completedContracts;
-              const EmptyIcon = tab === "active" ? IconContract : tab === "pending" ? IconClock : IconCheck;
+            {(() => {
+              const items =
+                activeTab === "all"
+                  ? contracts
+                  : activeTab === "active"
+                  ? activeContracts
+                  : activeTab === "pending"
+                  ? pendingContracts
+                  : completedContracts;
+
+              const EmptyIcon =
+                activeTab === "active"
+                  ? IconContract
+                  : activeTab === "pending"
+                  ? IconClock
+                  : activeTab === "completed"
+                  ? IconCheck
+                  : IconContract;
 
               return (
-                <TabsContent key={tab} value={tab} className="mt-3 space-y-1.5">
+                <div className="space-y-4">
                   {items.map((contract) => (
                     <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
                   ))}
                   {items.length === 0 && (
-                    <BloomEmpty
-                      icon={<EmptyIcon className="h-6 w-6" />}
-                      title={t.contracts.noContracts}
-                    />
+                    <BloomEmpty icon={<EmptyIcon className="h-6 w-6" />} title={t.contracts.noContracts} />
                   )}
-                </TabsContent>
+                </div>
               );
-            })}
-          </Tabs>
+            })()}
+          </div>
         )}
       </div>
     </AppShell>
@@ -164,14 +187,14 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <div className="bg-card p-8 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+      <div className="bg-card p-7 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
         {/* Header with status badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-black text-foreground truncate uppercase text-sm group-hover:text-primary transition-colors">
+            <h3 className="font-display font-black text-foreground truncate uppercase text-[1.12rem] group-hover:text-primary transition-colors">
               {contract.title || t.contracts.title}
             </h3>
-            <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 truncate">{contract.description && contract.description.slice(0, 60)}</p>
+            <p className="text-sm font-medium text-muted-foreground mt-1 truncate">{contract.description && contract.description.slice(0, 80)}</p>
           </div>
           <BloomBadge variant={statusVariantMap[contract.status] || "muted"}>
             {statusLabel}
@@ -179,15 +202,15 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
         </div>
 
         {/* Info grid */}
-        <div className="grid grid-cols-2 gap-3 py-4 border-y border-border/30">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 py-4 border-y border-border/30">
           {/* Other Party */}
           <div className="flex items-start gap-3">
             <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-muted-foreground">
               <IconUser className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Cuidador</p>
-              <p className="text-xs font-semibold text-foreground truncate mt-1">{contract.otherParty?.name || t.none}</p>
+              <p className="text-[10px] font-display font-bold text-muted-foreground/70 uppercase tracking-widest">Cuidador</p>
+              <p className="text-sm font-semibold text-foreground truncate mt-1">{contract.otherParty?.name || t.none}</p>
             </div>
           </div>
 
@@ -197,8 +220,8 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
               <IconClock className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">Duração</p>
-              <p className="text-xs font-semibold text-foreground mt-1">{contract.hoursPerWeek}h/semana</p>
+              <p className="text-[10px] font-display font-bold text-muted-foreground/70 uppercase tracking-widest">Duração</p>
+              <p className="text-sm font-semibold text-foreground mt-1">{contract.hoursPerWeek}h/semana</p>
             </div>
           </div>
         </div>
