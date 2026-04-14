@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty, BloomStatBlock } from "@/components/bloom";
+import { BloomCard, BloomBadge, BloomSectionDivider, BloomEmpty, BloomStatBlock } from "@/components/bloom";
 import {
   IconToken,
   IconContract,
@@ -77,7 +77,6 @@ export default function DashboardPage() {
 
   const isFamily = session?.user?.role === "FAMILY";
   const isCaregiver = session?.user?.role === "CAREGIVER";
-  // Only FAMILY users need to pay for activation - CAREGIVER registration is FREE
   const needsPayment = session?.user?.status === "PENDING" && isFamily;
   const needsKYC = userStatus?.verificationStatus !== "VERIFIED";
   const needsProfile = !userStatus?.profileComplete;
@@ -109,7 +108,7 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="space-y-6">
-        {/* Welcome + Status inline - Bloom Elements Header */}
+        {/* Welcome + Status inline */}
         <div className="flex items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
@@ -122,7 +121,7 @@ export default function DashboardPage() {
           </BloomBadge>
         </div>
 
-        {/* Stats - 4 columns Bloom Elements StatBlock pattern */}
+        {/* Stats - 4 columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           <BloomStatBlock
             label={t.nav.contracts}
@@ -150,11 +149,11 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Quick Actions - horizontal row Bloom Elements pattern */}
+        {/* Quick Actions */}
         <div className="flex flex-col sm:flex-row gap-5">
           {isFamily && (
             <Link href="/app/search" className="sm:flex-1">
-              <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
+              <BloomCard variant="interactive" className="h-full">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
                     <IconSearch className="h-5 w-5" />
@@ -164,12 +163,12 @@ export default function DashboardPage() {
                     <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Encontrar</p>
                   </div>
                 </div>
-              </div>
+              </BloomCard>
             </Link>
           )}
           {isCaregiver && (
             <Link href="/app/proposals" className="sm:flex-1">
-              <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
+              <BloomCard variant="interactive" className="h-full">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-secondary group-hover:scale-110 transition-transform flex-shrink-0">
                     <IconInbox className="h-5 w-5" />
@@ -179,11 +178,11 @@ export default function DashboardPage() {
                     <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Solicitações</p>
                   </div>
                 </div>
-              </div>
+              </BloomCard>
             </Link>
           )}
           <Link href="/app/contracts" className="sm:flex-1">
-            <div className="bg-card p-6 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all group cursor-pointer h-full">
+            <BloomCard variant="interactive" className="h-full">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
                   <IconContract className="h-5 w-5" />
@@ -193,14 +192,14 @@ export default function DashboardPage() {
                   <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{t.dashboard.viewAll}</p>
                 </div>
               </div>
-            </div>
+            </BloomCard>
           </Link>
         </div>
 
-        {/* Next Steps - Bloom Elements style */}
+        {/* Next Steps */}
         {pendingSteps.length > 0 && (
-          <BloomCard>
-            <div className="space-y-3 border-l-4 border-warning pl-4">
+          <BloomCard variant="warning">
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <IconAlertCircle className="h-5 w-5 text-warning" />
                 <h3 className="text-sm font-display font-black text-foreground uppercase">{t.dashboard.nextSteps.title}</h3>
@@ -218,54 +217,59 @@ export default function DashboardPage() {
           </BloomCard>
         )}
 
-        {/* All set - Bloom Elements style */}
+        {/* All set */}
         {pendingSteps.length === 0 && (
-          <BloomCard>
-            <div className="flex items-center gap-3 border-l-4 border-success pl-4">
+          <BloomCard variant="success">
+            <div className="flex items-center gap-3">
               <IconCheck className="h-6 w-6 text-success flex-shrink-0" />
               <span className="text-sm font-display font-bold text-success uppercase">{t.dashboard.allSet}</span>
             </div>
           </BloomCard>
         )}
 
-        {/* Platform Benefits - Bloom Elements style */}
-        <BloomCard>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary">
-              <IconShield className="h-5 w-5" />
+        {/* Platform Benefits */}
+        <div className="space-y-4">
+          <BloomSectionDivider
+            title="Benefícios"
+            borderColor="primary"
+          />
+          <BloomCard>
+            <div className="grid grid-cols-2 gap-3">
+              {(isFamily
+                ? [
+                    { title: "Cuidadores Verificados", sub: "KYC e antecedentes" },
+                    { title: "Contratos Jurídicos", sub: "Assinatura digital" },
+                    { title: "Pagamento Seguro", sub: "Proteção financeira" },
+                    { title: "Recibos Fiscais", sub: "Válidos para IRS" },
+                  ]
+                : [
+                    { title: "Pagamento Garantido", sub: "Receba pontualmente" },
+                    { title: "Perfil Verificado", sub: "Mais famílias confiam" },
+                    { title: "Reputação Pública", sub: "Avaliações verificáveis" },
+                    { title: "Proteção Jurídica", sub: "Contrato formal" },
+                  ]
+              ).map((item, i) => (
+                <BloomCard key={i} variant="default" className="hover:bg-secondary/50 transition-colors">
+                  <div className="flex items-start gap-3">
+                    <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-display font-bold text-foreground">{item.title}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{item.sub}</p>
+                    </div>
+                  </div>
+                </BloomCard>
+              ))}
             </div>
-            <h2 className="text-xl font-display font-black text-foreground uppercase">Benefícios</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {(isFamily
-              ? [
-                  { title: "Cuidadores Verificados", sub: "KYC e antecedentes" },
-                  { title: "Contratos Jurídicos", sub: "Assinatura digital" },
-                  { title: "Pagamento Seguro", sub: "Proteção financeira" },
-                  { title: "Recibos Fiscais", sub: "Válidos para IRS" },
-                ]
-              : [
-                  { title: "Pagamento Garantido", sub: "Receba pontualmente" },
-                  { title: "Perfil Verificado", sub: "Mais famílias confiam" },
-                  { title: "Reputação Pública", sub: "Avaliações verificáveis" },
-                  { title: "Proteção Jurídica", sub: "Contrato formal" },
-                ]
-            ).map((item, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 bg-secondary/30 rounded-2xl border border-border/50 hover:bg-secondary/50 transition-colors">
-                <IconCheck className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-display font-bold text-foreground">{item.title}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </BloomCard>
+          </BloomCard>
+        </div>
 
-        {/* Recent Activity - Bloom Elements style */}
+        {/* Recent Activity */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-display font-black text-foreground uppercase">{t.dashboard.recentActivity}</h2>
+            <BloomSectionDivider
+              title={t.dashboard.recentActivity}
+              borderColor="primary"
+            />
             <Link href="/app/payments" className="text-[10px] font-display font-bold text-primary uppercase tracking-widest hover:text-primary/80 transition-colors">
               {t.dashboard.viewAll}
             </Link>
@@ -274,7 +278,7 @@ export default function DashboardPage() {
           {recentActivity.length > 0 ? (
             <div className="space-y-3">
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <div key={index} className="bg-card p-5 rounded-3xl border border-border shadow-card hover:shadow-elevated transition-all">
+                <BloomCard key={index} variant="interactive">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${
@@ -296,7 +300,7 @@ export default function DashboardPage() {
                       {activity.type === "credit" ? "+" : ""}{activity.amount}€
                     </span>
                   </div>
-                </div>
+                </BloomCard>
               ))}
             </div>
           ) : (
