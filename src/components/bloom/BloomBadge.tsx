@@ -7,13 +7,13 @@ interface BloomBadgeProps {
 }
 
 const variantClasses: Record<string, string> = {
-  primary: 'bg-primary/10 text-primary',
-  success: 'bg-success/10 text-success',
-  warning: 'bg-warning/10 text-warning',
-  destructive: 'bg-destructive/10 text-destructive',
-  muted: 'bg-muted text-muted-foreground',
-  secondary: 'bg-secondary/10 text-secondary',
-  info: 'bg-info/10 text-info',
+  primary: 'bg-primary/10 text-primary border border-primary/30',
+  success: 'bg-success/10 text-success border border-success/30',
+  warning: 'bg-warning/10 text-warning border border-warning/30',
+  destructive: 'bg-destructive/10 text-destructive border border-destructive/30',
+  muted: 'bg-muted text-muted-foreground border border-border',
+  secondary: 'bg-secondary/10 text-secondary border border-secondary/30',
+  info: 'bg-info/10 text-info border border-info/30',
 };
 
 /**

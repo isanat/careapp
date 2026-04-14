@@ -4,37 +4,29 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-bold uppercase tracking-widest rounded-2xl transition-all duration-300 active:scale-[0.97] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-bold tracking-wide uppercase ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.97]",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground hover:shadow-elevated hover:bg-primary/90",
-        dark: "bg-foreground text-background hover:shadow-elevated hover:bg-foreground/90",
-        premium:
-          "bg-gradient-to-r from-primary to-info text-primary-foreground hover:shadow-elevated",
-        secondary:
-          "bg-secondary text-foreground hover:bg-secondary/80",
-        outline:
-          "border-2 border-primary text-primary hover:bg-primary/10",
-        ghost:
-          "hover:bg-accent text-foreground",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-glow",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md",
+        outline: "border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline !tracking-normal !font-medium !normal-case",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:shadow-elevated hover:bg-destructive/90",
-        success:
-          "bg-success text-success-foreground hover:shadow-elevated hover:bg-success/90",
-        warning:
-          "bg-warning text-warning-foreground hover:shadow-elevated hover:bg-warning/90",
+        success: "bg-success text-success-foreground hover:bg-success/90 shadow-md",
+        warning: "bg-warning text-warning-foreground hover:bg-warning/90 shadow-md",
+        premium: "bg-gradient-to-r from-primary to-info text-primary-foreground shadow-lg hover:shadow-glow",
+        dark: "bg-foreground text-background hover:bg-foreground/90 shadow-md",
       },
       size: {
-        sm: "h-9 px-3 text-xs",
-        default: "h-12 px-6 text-sm",
-        lg: "h-14 px-8 text-base",
-        xl: "h-16 px-10 text-lg",
-        "icon-sm": "h-8 w-8 [&_svg]:size-3.5",
-        icon: "h-10 w-10 [&_svg]:size-4",
-        "icon-lg": "h-12 w-12 [&_svg]:size-5",
+        default: "h-11 px-6 py-2 text-xs rounded-2xl",
+        sm: "h-9 px-4 text-[10px] rounded-xl",
+        lg: "h-14 px-10 text-xs rounded-2xl",
+        xl: "h-16 px-12 text-sm rounded-3xl",
+        icon: "h-11 w-11 rounded-2xl",
+        "icon-sm": "h-9 w-9 rounded-xl",
+        "icon-lg": "h-14 w-14 rounded-2xl",
       },
     },
     defaultVariants: {
