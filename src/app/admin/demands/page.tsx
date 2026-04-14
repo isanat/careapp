@@ -152,7 +152,7 @@ export default function AdminDemandsPage() {
       />
 
       {error && (
-        <div className="rounded-lg bg-red-50 p-4 text-red-700">
+        <div className="rounded-lg bg-destructive/10 p-4 text-destructive">
           {error}
         </div>
       )}
@@ -324,7 +324,7 @@ export default function AdminDemandsPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Ativas</span>
-                  <span className="font-semibold text-green-600">{data.kpis.activeDemands}</span>
+                  <span className="font-semibold text-success">{data.kpis.activeDemands}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Fechadas</span>

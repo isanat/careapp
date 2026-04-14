@@ -96,22 +96,22 @@ export default function AdminNotificationsPage() {
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case "CRITICAL":
-        return <IconAlertCircle className="h-5 w-5 text-red-500" />;
+        return <IconAlertCircle className="h-5 w-5 text-destructive" />;
       case "WARNING":
-        return <IconAlertTriangle className="h-5 w-5 text-amber-500" />;
+        return <IconAlertTriangle className="h-5 w-5 text-warning" />;
       default:
-        return <IconInfo className="h-5 w-5 text-blue-500" />;
+        return <IconInfo className="h-5 w-5 text-primary" />;
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "CRITICAL":
-        return "border-l-red-500 bg-red-50 dark:bg-red-900/10";
+        return "border-l-destructive bg-destructive/10";
       case "WARNING":
-        return "border-l-amber-500 bg-amber-50 dark:bg-amber-900/10";
+        return "border-l-warning bg-warning/10";
       default:
-        return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10";
+        return "border-l-primary bg-primary/10";
     }
   };
 
@@ -146,36 +146,36 @@ export default function AdminNotificationsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <IconBell className="h-6 w-6 text-blue-600" />
+            <div className="p-3 bg-primary/20 rounded-full">
+              <IconBell className="h-6 w-6 text-primary" />
             </div>
             <div>
               <p className="text-2xl font-bold">{notifications.length}</p>
-              <p className="text-sm text-slate-500">Total</p>
+              <p className="text-sm text-muted-foreground">Total</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="p-3 bg-amber-100 rounded-full">
-              <IconAlertTriangle className="h-6 w-6 text-amber-600" />
+            <div className="p-3 bg-warning/20 rounded-full">
+              <IconAlertTriangle className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">{unreadCount}</p>
-              <p className="text-sm text-slate-500">Não Lidas</p>
+              <p className="text-sm text-muted-foreground">Não Lidas</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="p-3 bg-red-100 rounded-full">
-              <IconAlertCircle className="h-6 w-6 text-red-600" />
+            <div className="p-3 bg-destructive/20 rounded-full">
+              <IconAlertCircle className="h-6 w-6 text-destructive" />
             </div>
             <div>
               <p className="text-2xl font-bold">
                 {notifications.filter(n => n.severity === "CRITICAL").length}
               </p>
-              <p className="text-sm text-slate-500">Críticas</p>
+              <p className="text-sm text-muted-foreground">Críticas</p>
             </div>
           </CardContent>
         </Card>
@@ -193,7 +193,7 @@ export default function AdminNotificationsPage() {
           <TabsTrigger value="unread">
             Não Lidas
             {unreadCount > 0 && (
-              <Badge className="ml-2 bg-amber-500">{unreadCount}</Badge>
+              <Badge className="ml-2 bg-warning">{unreadCount}</Badge>
             )}
           </TabsTrigger>
         </TabsList>
@@ -232,10 +232,10 @@ export default function AdminNotificationsPage() {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground">
                       {notification.message}
                     </p>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       {format(new Date(notification.createdAt), "dd 'de' MMMM, HH:mm", {
                         locale: pt,
                       })}

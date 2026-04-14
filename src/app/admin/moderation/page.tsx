@@ -178,7 +178,7 @@ export default function AdminModerationPage() {
             </div>
           ) : items.length === 0 ? (
             <Card>
-              <CardContent className="py-12 text-center text-slate-500">
+              <CardContent className="py-12 text-center text-muted-foreground">
                 <IconShield className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Nenhum item para moderar</p>
               </CardContent>
@@ -189,7 +189,7 @@ export default function AdminModerationPage() {
                 <Card key={item.id}>
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-2 bg-slate-100 rounded-lg">
+                      <div className="p-2 bg-muted rounded-lg">
                         {getTypeIcon(item.type)}
                       </div>
                       <div className="flex-1">
@@ -198,10 +198,10 @@ export default function AdminModerationPage() {
                           <Badge
                             className={
                               item.status === "PENDING"
-                                ? "bg-amber-500"
+                                ? "bg-warning text-warning"
                                 : item.status === "APPROVED"
-                                ? "bg-green-500"
-                                : "bg-red-500"
+                                ? "bg-success text-success"
+                                : "bg-destructive text-destructive"
                             }
                           >
                             {item.status}
@@ -209,21 +209,21 @@ export default function AdminModerationPage() {
                         </div>
 
                         <p className="text-sm font-medium mb-1">{item.reason}</p>
-                        <p className="text-sm text-slate-600 mb-3">{item.content}</p>
+                        <p className="text-sm text-muted-foreground mb-3">{item.content}</p>
 
                         {item.type === "review" && item.reviewRating && (
                           <div className="flex items-center gap-2 mb-2 text-sm">
                             <span className="flex items-center gap-1">
-                              <IconStar className="h-4 w-4 text-amber-500" />
+                              <IconStar className="h-4 w-4 text-warning/80" />
                               {item.reviewRating}/5
                             </span>
-                            <span className="text-slate-400">
+                            <span className="text-muted-foreground">
                               De: {item.reviewFrom} → Para: {item.reviewTo}
                             </span>
                           </div>
                         )}
 
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-muted-foreground">
                           {format(new Date(item.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}
                           {item.reportedBy && ` • Reportado por: ${item.reportedBy}`}
                         </p>
