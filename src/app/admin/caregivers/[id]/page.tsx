@@ -306,7 +306,7 @@ export default function AdminCaregiverDetailPage() {
       header: "Nota",
       render: (r) => (
         <div className="flex items-center gap-1">
-          <IconStar className="h-4 w-4 text-amber-500 fill-amber-500" />
+          <IconStar className="h-4 w-4 text-warning fill-warning" />
           <span>{r.rating}</span>
         </div>
       ),
@@ -511,7 +511,7 @@ export default function AdminCaregiverDetailPage() {
                   <p className="text-sm font-medium">Ações</p>
                   <div className="flex gap-2">
                     <Button
-                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      className="flex-1 bg-success hover:bg-success/90"
                       onClick={() => handleVerify('verify')}
                       disabled={actionLoading}
                     >

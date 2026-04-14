@@ -14,7 +14,7 @@ export default function AdminRootPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <IconLoader2 className="h-8 w-8 animate-spin text-cyan-600" />
+      <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
     </div>
   );
 }

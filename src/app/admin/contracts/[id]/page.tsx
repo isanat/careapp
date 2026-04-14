@@ -456,7 +456,7 @@ function AdminContractDetailContent() {
 
                 <div className="flex justify-between items-center font-medium text-lg">
                   <span>Valor Líquido (Cuidador)</span>
-                  <span className="text-green-600">{formatCurrency(contract.caregiverAmountCents)}</span>
+                  <span className="text-success">{formatCurrency(contract.caregiverAmountCents)}</span>
                 </div>
 
                 {escrow && (
@@ -704,7 +704,7 @@ function AdminContractDetailContent() {
                       <p className="font-medium">{review.fromUserName} → {review.toUserName}</p>
                       <div className="flex items-center gap-1">
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i} className={i < review.rating ? "text-amber-500" : "text-muted"}>
+                          <span key={i} className={i < review.rating ? "text-warning" : "text-muted"}>
                             ★
                           </span>
                         ))}

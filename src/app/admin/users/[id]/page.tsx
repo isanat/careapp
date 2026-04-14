@@ -129,7 +129,7 @@ export default function AdminUserDetailPage() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-slate-500">Utilizador não encontrado</p>
+        <p className="text-muted-foreground">Utilizador não encontrado</p>
         <Button variant="link" onClick={() => router.push("/admin/users")}>
           Voltar para lista
         </Button>
@@ -174,20 +174,20 @@ export default function AdminUserDetailPage() {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center text-center">
               <Avatar className="h-20 w-20">
-                <AvatarFallback className="bg-cyan-100 text-cyan-700 text-2xl">
+                <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                   {user.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
               <h2 className="mt-4 text-xl font-bold">{user.name}</h2>
-              <p className="text-sm text-slate-500">{user.email}</p>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
               <div className="mt-2 flex gap-2">
                 <Badge
                   className={
                     user.role === "FAMILY"
-                      ? "bg-blue-100 text-blue-700"
+                      ? "bg-primary/10 text-primary"
                       : user.role === "CAREGIVER"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-purple-100 text-purple-700"
+                      ? "bg-success/10 text-success"
+                      : "bg-primary/10 text-primary"
                   }
                 >
                   {user.role === "FAMILY"
@@ -209,24 +209,24 @@ export default function AdminUserDetailPage() {
             </div>
 
             <div className="mt-6 space-y-3 text-sm">
-              <div className="flex items-center gap-2 text-slate-600">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <IconMail className="h-4 w-4" />
                 <span>{user.email}</span>
               </div>
               {user.phone && (
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <IconPhone className="h-4 w-4" />
                   <span>{user.phone}</span>
                 </div>
               )}
-              <div className="flex items-center gap-2 text-slate-600">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <IconCalendar className="h-4 w-4" />
                 <span>
                   Membro desde {new Date(user.createdAt).toLocaleDateString("pt-PT")}
                 </span>
               </div>
               {user.lastLoginAt && (
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <IconActivity className="h-4 w-4" />
                   <span>
                     Último acesso:{" "}
@@ -238,7 +238,7 @@ export default function AdminUserDetailPage() {
 
             <div className="mt-6 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">KYC</span>
+                <span className="text-muted-foreground">KYC</span>
                 <StatusBadge
                   status={
                     user.verificationStatus === "VERIFIED"
@@ -268,12 +268,12 @@ export default function AdminUserDetailPage() {
                 <Card>
                   <CardContent className="pt-6">
                     <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-cyan-100 p-2">
-                        <IconFileText className="h-5 w-5 text-cyan-600" />
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <IconFileText className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold">{user.contractsCount}</p>
-                        <p className="text-sm text-slate-500">Contratos</p>
+                        <p className="text-sm text-muted-foreground">Contratos</p>
                       </div>
                     </div>
                   </CardContent>
@@ -281,14 +281,14 @@ export default function AdminUserDetailPage() {
                 <Card>
                   <CardContent className="pt-6">
                     <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-amber-100 p-2">
-                        <IconCreditCard className="h-5 w-5 text-amber-600" />
+                      <div className="rounded-full bg-warning/10 p-2">
+                        <IconCreditCard className="h-5 w-5 text-warning" />
                       </div>
                       <div>
                         <p className="text-2xl font-bold">
                           €{(user.totalSpent / 100).toFixed(2)}
                         </p>
-                        <p className="text-sm text-slate-500">Total gasto</p>
+                        <p className="text-sm text-muted-foreground">Total gasto</p>
                       </div>
                     </div>
                   </CardContent>
@@ -304,7 +304,7 @@ export default function AdminUserDetailPage() {
                   <CardContent className="space-y-2 text-sm">
                     {user.profileFamily.elderName && (
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Idoso</span>
+                        <span className="text-muted-foreground">Idoso</span>
                         <span>
                           {user.profileFamily.elderName}
                           {user.profileFamily.elderAge &&
@@ -314,13 +314,13 @@ export default function AdminUserDetailPage() {
                     )}
                     {user.profileFamily.city && (
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Cidade</span>
+                        <span className="text-muted-foreground">Cidade</span>
                         <span>{user.profileFamily.city}</span>
                       </div>
                     )}
                     {user.profileFamily.elderNeeds && (
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Necessidades</span>
+                        <span className="text-muted-foreground">Necessidades</span>
                         <span className="max-w-xs text-right">
                           {user.profileFamily.elderNeeds}
                         </span>
@@ -338,31 +338,31 @@ export default function AdminUserDetailPage() {
                   <CardContent className="space-y-2 text-sm">
                     {user.profileCaregiver.title && (
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Título</span>
+                        <span className="text-muted-foreground">Título</span>
                         <span>{user.profileCaregiver.title}</span>
                       </div>
                     )}
                     {user.profileCaregiver.city && (
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Cidade</span>
+                        <span className="text-muted-foreground">Cidade</span>
                         <span>{user.profileCaregiver.city}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Contratos</span>
+                      <span className="text-muted-foreground">Contratos</span>
                       <span>{user.profileCaregiver.totalContracts}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Avaliação</span>
+                      <span className="text-muted-foreground">Avaliação</span>
                       <span className="flex items-center gap-1">
-                        <IconStar className="h-4 w-4 text-amber-500" />
+                        <IconStar className="h-4 w-4 text-warning" />
                         {user.profileCaregiver.averageRating.toFixed(1)} (
                         {user.profileCaregiver.totalReviews} reviews)
                       </span>
                     </div>
                     {user.profileCaregiver.bio && (
                       <div className="pt-2">
-                        <span className="text-slate-500">Bio</span>
+                        <span className="text-muted-foreground">Bio</span>
                         <p className="mt-1">{user.profileCaregiver.bio}</p>
                       </div>
                     )}
@@ -381,13 +381,13 @@ export default function AdminUserDetailPage() {
                     <>
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
-                          <p className="text-sm text-slate-500">Saldo</p>
+                          <p className="text-sm text-muted-foreground">Saldo</p>
                           <p className="text-2xl font-bold">
                             €{(user.wallet.balanceEurCents / 100).toFixed(2)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-slate-500">Endereço</p>
+                          <p className="text-sm text-muted-foreground">Endereço</p>
                           <p className="font-mono text-xs break-all">
                             {user.wallet.address}
                           </p>
@@ -395,7 +395,7 @@ export default function AdminUserDetailPage() {
                       </div>
                     </>
                   ) : (
-                    <p className="text-slate-500">Carteira não encontrada</p>
+                    <p className="text-muted-foreground">Carteira não encontrada</p>
                   )}
                 </CardContent>
               </Card>
@@ -404,7 +404,7 @@ export default function AdminUserDetailPage() {
             <TabsContent value="contracts" className="mt-4">
               <Card>
                 <CardContent className="pt-6">
-                  <p className="text-center text-slate-500">
+                  <p className="text-center text-muted-foreground">
                     {user.contractsCount} contrato(s) encontrado(s)
                   </p>
                 </CardContent>

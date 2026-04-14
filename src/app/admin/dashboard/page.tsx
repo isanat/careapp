@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
       />
 
       {error && (
-        <div className="rounded-lg bg-red-50 p-4 text-red-700">
+        <div className="rounded-lg bg-destructive/5 p-4 text-destructive">
           {error}
         </div>
       )}
@@ -137,9 +137,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Alerts Section */}
-      <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20">
+      <Card className="border-warning/30 bg-warning/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+          <CardTitle className="flex items-center gap-2 text-warning">
             <IconAlertTriangle className="h-5 w-5" />
             Alertas Pendentes
           </CardTitle>
@@ -148,31 +148,31 @@ export default function AdminDashboardPage() {
           <div className="grid gap-3 md:grid-cols-4">
             <Link
               href="/admin/caregivers?status=pending"
-              className="flex items-center justify-between rounded-lg border border-amber-200 bg-white p-3 dark:border-amber-800 dark:bg-slate-800"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
             >
               <span className="text-sm">KYC Pendente</span>
-              <Badge className="bg-amber-500">{stats?.alerts.pendingKyc || 0}</Badge>
+              <Badge className="bg-warning">{stats?.alerts.pendingKyc || 0}</Badge>
             </Link>
             <Link
               href="/admin/contracts?status=disputed"
-              className="flex items-center justify-between rounded-lg border border-amber-200 bg-white p-3 dark:border-amber-800 dark:bg-slate-800"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
             >
               <span className="text-sm">Disputas</span>
-              <Badge className="bg-red-500">{stats?.alerts.pendingDisputes || 0}</Badge>
+              <Badge className="bg-destructive">{stats?.alerts.pendingDisputes || 0}</Badge>
             </Link>
             <Link
               href="/admin/payments?status=refund"
-              className="flex items-center justify-between rounded-lg border border-amber-200 bg-white p-3 dark:border-amber-800 dark:bg-slate-800"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
             >
               <span className="text-sm">Reembolsos</span>
-              <Badge className="bg-amber-500">{stats?.alerts.pendingRefunds || 0}</Badge>
+              <Badge className="bg-warning">{stats?.alerts.pendingRefunds || 0}</Badge>
             </Link>
             <Link
               href="/admin/moderation"
-              className="flex items-center justify-between rounded-lg border border-amber-200 bg-white p-3 dark:border-amber-800 dark:bg-slate-800"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
             >
               <span className="text-sm">Conteúdo Sinalizado</span>
-              <Badge className="bg-amber-500">{stats?.alerts.flaggedContent || 0}</Badge>
+              <Badge className="bg-warning">{stats?.alerts.flaggedContent || 0}</Badge>
             </Link>
           </div>
         </CardContent>
@@ -242,13 +242,13 @@ export default function AdminDashboardPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Banco de Dados</span>
-                <Badge className={stats?.health.database === "healthy" ? "bg-green-500" : "bg-red-500"}>
+                <Badge className={stats?.health.database === "healthy" ? "bg-success" : "bg-destructive"}>
                   {stats?.health.database === "healthy" ? "OK" : "Erro"}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Stripe</span>
-                <Badge className={stats?.health.stripe === "healthy" ? "bg-green-500" : "bg-red-500"}>
+                <Badge className={stats?.health.stripe === "healthy" ? "bg-success" : "bg-destructive"}>
                   {stats?.health.stripe === "healthy" ? "OK" : "Erro"}
                 </Badge>
               </div>

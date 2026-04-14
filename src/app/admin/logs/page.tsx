@@ -80,21 +80,21 @@ export default function AdminLogsPage() {
   const getActionColor = (action: string) => {
     switch (action) {
       case "CREATE":
-        return "bg-green-100 text-green-700";
+        return "bg-success/10 text-success";
       case "UPDATE":
-        return "bg-blue-100 text-blue-700";
+        return "bg-primary/10 text-primary";
       case "DELETE":
-        return "bg-red-100 text-red-700";
+        return "bg-destructive/10 text-destructive";
       case "SUSPEND":
-        return "bg-amber-100 text-amber-700";
+        return "bg-warning/10 text-warning";
       case "ACTIVATE":
-        return "bg-green-100 text-green-700";
+        return "bg-success/10 text-success";
       case "VERIFY_KYC":
-        return "bg-cyan-100 text-cyan-700";
+        return "bg-primary/10 text-primary";
       case "REFUND":
-        return "bg-orange-100 text-orange-700";
+        return "bg-warning/10 text-warning";
       default:
-        return "bg-slate-100 text-slate-700";
+        return "bg-muted text-muted-foreground";
     }
   };
 
