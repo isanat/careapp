@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader, BloomEmpty } from "@/components/bloom-custom";
+import { BloomSectionHeader, BloomEmpty, BloomCard } from "@/components/bloom-custom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconTrendingUp,
@@ -120,20 +120,16 @@ export default function WalletPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-4xl">
+      <div className="space-y-6 max-w-4xl">
         {/* Page Header */}
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
-            Minha Carteira
-          </h1>
-          <p className="text-base text-muted-foreground font-medium">
-            Saldo de conta e histórico de transações
-          </p>
-        </div>
+        <BloomSectionHeader
+          title="Minha Carteira"
+          description="Saldo de conta e histórico de transações"
+        />
 
         {/* Balance Hero Card */}
         {walletData && (
-          <div className="bg-gradient-to-br from-primary to-primary/80 rounded-3xl p-7 sm:p-10 text-primary-foreground shadow-elevated">
+          <BloomCard variant="gradient" className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-7 sm:p-10">
             <div className="space-y-6">
               {/* Main Balance */}
               <div>
@@ -147,7 +143,7 @@ export default function WalletPage() {
 
               {/* Balance Breakdown */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-2xl p-4">
+                <div className="bg-white/10 rounded-2xl p-5">
                   <p className="text-[9px] font-display font-bold uppercase tracking-widest opacity-75 mb-2">
                     Total de Ganhos
                   </p>
@@ -155,7 +151,7 @@ export default function WalletPage() {
                     €{(walletData.totalEarnings / 100).toFixed(2)}
                   </p>
                 </div>
-                <div className="bg-white/10 rounded-2xl p-4">
+                <div className="bg-white/10 rounded-2xl p-5">
                   <p className="text-[9px] font-display font-bold uppercase tracking-widest opacity-75 mb-2">
                     Pendente (Escrow)
                   </p>
@@ -165,16 +161,14 @@ export default function WalletPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </BloomCard>
         )}
 
         {/* Transaction List */}
         {walletData && walletData.recentTransactions.length > 0 && (
           <section className="space-y-4">
-            <h2 className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest mb-4">
-              Histórico de Transações
-            </h2>
-            <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+            <BloomSectionHeader title="Histórico de Transações" />
+            <BloomCard className="rounded-3xl p-5 sm:p-7">
               <div className="space-y-0">
                 {walletData.recentTransactions.map((transaction, idx) => (
                   <div
@@ -232,7 +226,7 @@ export default function WalletPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </BloomCard>
           </section>
         )}
 
