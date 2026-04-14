@@ -57,7 +57,7 @@ export function AdminHeader({ onMenuClick, sidebarCollapsed }: AdminHeaderProps)
   });
 
   return (
-    <header className="sticky top-0 z-20 border-b bg-white dark:bg-slate-800">
+    <header className="sticky top-0 z-20 border-b border-border bg-card">
       <div className="flex h-16 items-center justify-between px-4">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -74,21 +74,21 @@ export function AdminHeader({ onMenuClick, sidebarCollapsed }: AdminHeaderProps)
           <nav className="hidden md:flex items-center gap-1 text-sm">
             <Link
               href="/admin/dashboard"
-              className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              className="text-muted-foreground hover:text-foreground"
             >
               <IconHome className="h-4 w-4" />
             </Link>
             {breadcrumbs.map((crumb, index) => (
               <div key={crumb.href} className="flex items-center gap-1">
-                <IconChevronRight className="h-4 w-4 text-slate-400" />
+                <IconChevronRight className="h-4 w-4 text-muted-foreground/50" />
                 {index === breadcrumbs.length - 1 ? (
-                  <span className="font-medium text-slate-900 dark:text-white">
+                  <span className="font-medium text-foreground">
                     {crumb.label}
                   </span>
                 ) : (
                   <Link
                     href={crumb.href}
-                    className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                    className="text-muted-foreground hover:text-foreground"
                   >
                     {crumb.label}
                   </Link>
@@ -117,7 +117,7 @@ export function AdminHeader({ onMenuClick, sidebarCollapsed }: AdminHeaderProps)
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 text-cyan-700">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                   {session?.user?.name?.charAt(0) || "A"}
                 </div>
                 <span className="hidden font-medium md:inline-block">
@@ -129,7 +129,7 @@ export function AdminHeader({ onMenuClick, sidebarCollapsed }: AdminHeaderProps)
               <DropdownMenuLabel>
                 <div>
                   <p className="font-medium">{session?.user?.name}</p>
-                  <p className="text-xs text-slate-500">{session?.user?.email}</p>
+                  <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
