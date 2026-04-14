@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomSectionDivider, BloomEmpty, BloomStatBlock } from "@/components/bloom";
+import { BloomCard, BloomBadge, BloomSectionDivider, BloomEmpty, BloomStatBlock } from "@/components/bloom-custom";
 import {
   IconToken,
   IconContract,

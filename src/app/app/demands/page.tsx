@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
-import { BloomSectionHeader, BloomEmpty, BloomCard } from '@/components/bloom';
+import { BloomSectionHeader, BloomEmpty, BloomCard } from '@/components/bloom-custom';
 import { useToast } from "@/hooks/use-toast";
 import { getServiceTypeLabel } from '@/lib/service-types';
 import { Textarea } from '@/components/ui/textarea';

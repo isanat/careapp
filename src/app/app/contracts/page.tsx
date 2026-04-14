@@ -7,7 +7,7 @@ import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom";
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty } from "@/components/bloom-custom";
 import {
   IconContract,
   IconPlus,

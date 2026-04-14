@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader } from "@/components/bloom";
+import { BloomSectionHeader } from "@/components/bloom-custom";
 import {
   IconContract,
   IconFamily,

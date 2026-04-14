@@ -9,7 +9,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { DemandActionsDropdown } from '@/components/demands/demand-actions-dropdown';
-import { BloomCard, BloomBadge, BloomStatBlock, BloomSectionDivider, BloomEmpty } from '@/components/bloom';
+import { BloomCard, BloomBadge, BloomStatBlock, BloomSectionDivider, BloomEmpty } from '@/components/bloom-custom';
 import {
   IconPlus,
   IconMapPin,
