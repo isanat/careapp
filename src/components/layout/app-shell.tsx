@@ -141,7 +141,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
       {/* Main Content with Responsive Padding */}
       <main className={cn(
         "transition-all duration-500 min-h-screen",
-        sidebarOpen ? "pl-72" : "pl-20"
+        sidebarOpen ? "lg:pl-72" : "lg:pl-20"
       )}>
         {/* Bloom Elements: Sticky Glassmorphic Header */}
         <EvyraHeader sidebarOpen={sidebarOpen} />
@@ -154,8 +154,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         {/* Mobile Bottom Navigation (Evyra specific) */}
         <nav className={cn(
           "fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-t border-border safe-area-inset-bottom lg:hidden",
-          hideBottomNav && "hidden",
-          sidebarOpen ? "pl-72" : "pl-20"
+          hideBottomNav && "hidden"
         )}>
           <div className="flex items-center justify-around h-[3.5rem] px-1">
             {mobileNavItems.map((item) => {
