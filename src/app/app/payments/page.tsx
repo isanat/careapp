@@ -164,17 +164,17 @@ export default function PaymentsPage() {
               title="Histórico de Ganhos"
               borderColor="primary"
             />
-            <BloomCard>
+            <BloomCard className="p-5 sm:p-7">
             <div className="space-y-4">
                 {walletData.recentPayments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-6 bg-secondary/30 rounded-3xl border border-border/60 hover:bg-secondary/50 transition-all">
+                  <div key={payment.id} className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl border border-border/60 hover:bg-secondary/50 transition-all">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-card rounded-2xl flex items-center justify-center text-primary shadow-sm border border-border">
                         <IconCalendar className="h-4 w-4" />
                       </div>
                       <div>
                         <p className="font-display font-black text-foreground text-base uppercase tracking-tight">{payment.description || "Pagamento de Serviço"}</p>
-                        <p className="text-xs font-medium text-muted-foreground mt-1">
+                        <p className="text-xs font-display font-black text-muted-foreground mt-1">
                           {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
                             day: "2-digit",
                             month: "2-digit",
