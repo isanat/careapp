@@ -2,20 +2,17 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
+import { BloomCard, BloomBadge, BloomEmpty } from "@/components/bloom";
 import {
   IconChat,
   IconSend,
   IconSearch,
-  IconRefresh,
   IconArrowLeft
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
@@ -82,7 +79,6 @@ export default function ChatPage() {
   }, []);
 
   const fetchMessages = useCallback(async (chatRoomId: string, isInitial = false) => {
-    // Only show loading state on initial load, not during polling
     if (isInitial) {
       setIsLoadingMessages(true);
     }
@@ -104,15 +100,11 @@ export default function ChatPage() {
     }
   }, []);
 
-
-  // Set up polling for messages (HTTP polling - works on Vercel)
   useEffect(() => {
     if (!selectedConversation) return;
 
-    // Fetch immediately with loading state
     fetchMessages(selectedConversation.id, true);
 
-    // Poll every 3 seconds (without loading state to prevent flickering)
     pollingIntervalRef.current = setInterval(() => {
       fetchMessages(selectedConversation.id, false);
     }, 3000);
@@ -150,7 +142,6 @@ export default function ChatPage() {
         }),
       });
 
-      // Fetch messages immediately to show the new message
       fetchMessages(selectedConversation.id);
     } catch (error) {
       console.error('Error saving message:', error);
@@ -160,7 +151,10 @@ export default function ChatPage() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   return (
@@ -185,7 +179,7 @@ export default function ChatPage() {
             <ScrollArea className="flex-1">
               {isLoadingConversations ? (
                 <div className="p-4 space-y-3">
-                  {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-16 bg-secondary rounded-2xl animate-pulse-soft" />))}
+                  {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-16 bg-secondary rounded-2xl" />))}
                 </div>
               ) : (
                 <div className="p-3 space-y-2">
@@ -194,53 +188,55 @@ export default function ChatPage() {
                     .map((conv) => (
                       <button
                         key={conv.id}
-                        onClick={() => { setSelectedConversation(conv); setMobileShowChat(true); }}
-                        className={`w-full text-left transition-all duration-300 bg-card rounded-2xl p-4 border border-border shadow-sm hover:shadow-card ${
-                          selectedConversation?.id === conv.id
-                            ? "bg-primary/10 border-primary/50 shadow-card"
-                            : "hover:shadow-card"
-                        }`}
+                        onClick={() => {
+                          setSelectedConversation(conv);
+                          setMobileShowChat(true);
+                        }}
+                        className="w-full"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-secondary/50 flex items-center justify-center flex-shrink-0">
-                            <span className="text-sm font-display font-bold text-foreground">
-                              {conv.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
-                            </span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-1">
-                              <p className="font-display font-bold text-sm text-foreground truncate">
-                                {conv.participant?.name || "Usuario"}
-                              </p>
-                              {conv.lastMessage && (
-                                <span className="text-[9px] text-muted-foreground/50 whitespace-nowrap shrink-0">
-                                  {new Date(conv.lastMessage.createdAt).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" })}
-                                </span>
-                              )}
+                        <BloomCard
+                          variant={selectedConversation?.id === conv.id ? "interactive" : "default"}
+                          className={selectedConversation?.id === conv.id ? "bg-primary/10 border-primary/50" : ""}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-secondary/50 flex items-center justify-center flex-shrink-0">
+                              <span className="text-sm font-display font-bold text-foreground">
+                                {conv.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
+                              </span>
                             </div>
-                            <div className="flex items-center justify-between gap-2">
-                              <p className="text-xs text-muted-foreground line-clamp-1 leading-relaxed">
-                                {conv.lastMessage?.content || t.chat.noMessages}
-                              </p>
-                              {conv.unreadCount > 0 && (
-                                <div className="text-[9px] font-display font-bold bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center shrink-0">
-                                  {conv.unreadCount}
-                                </div>
-                              )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2 mb-1">
+                                <p className="font-display font-bold text-sm text-foreground truncate">
+                                  {conv.participant?.name || "Usuario"}
+                                </p>
+                                {conv.lastMessage && (
+                                  <span className="text-[9px] text-muted-foreground/50 whitespace-nowrap shrink-0">
+                                    {new Date(conv.lastMessage.createdAt).toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" })}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center justify-between gap-2">
+                                <p className="text-xs text-muted-foreground line-clamp-1 leading-relaxed">
+                                  {conv.lastMessage?.content || t.chat.noMessages}
+                                </p>
+                                {conv.unreadCount > 0 && (
+                                  <BloomBadge variant="primary" className="shrink-0">
+                                    {conv.unreadCount}
+                                  </BloomBadge>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </BloomCard>
                       </button>
                     ))}
 
                   {conversations.length === 0 && (
-                    <div className="p-8 text-center">
-                      <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-                        <IconChat className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                      <h4 className="font-display font-bold text-foreground text-lg mb-2">{t.chat.noChats}</h4>
-                      <p className="text-sm text-muted-foreground">{t.chat.noMessages}</p>
-                    </div>
+                    <BloomEmpty
+                      icon={<IconChat className="h-8 w-8" />}
+                      title={t.chat.noChats}
+                      description={t.chat.noMessages}
+                    />
                   )}
                 </div>
               )}
@@ -278,7 +274,7 @@ export default function ChatPage() {
                 <ScrollArea className="flex-1 p-4">
                   {isLoadingMessages && isInitialLoad ? (
                     <div className="space-y-4">
-                      {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-12 w-3/4 bg-secondary rounded-2xl animate-pulse-soft" />))}
+                      {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-12 w-3/4 bg-secondary rounded-2xl" />))}
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -341,13 +337,11 @@ export default function ChatPage() {
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center">
-                <div className="text-center py-12 max-w-sm mx-auto">
-                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-                    <IconChat className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h4 className="font-display font-bold text-foreground text-lg mb-2">{t.chat.new}</h4>
-                  <p className="text-sm text-muted-foreground">{t.chat.noChats}</p>
-                </div>
+                <BloomEmpty
+                  icon={<IconChat className="h-8 w-8" />}
+                  title={t.chat.new}
+                  description={t.chat.noChats}
+                />
               </div>
             )}
           </div>

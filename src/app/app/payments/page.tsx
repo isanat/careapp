@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader, BloomStatBlock, BloomEmpty } from "@/components/bloom";
+import { BloomSectionHeader, BloomStatBlock, BloomEmpty, BloomCard, BloomBadge, BloomSectionDivider } from "@/components/bloom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconEuro,
@@ -157,16 +157,17 @@ export default function PaymentsPage() {
           />
         </div>
 
-        {/* Recent Payments - DocCard with list items */}
+        {/* Recent Payments - Bloom Elements Pattern */}
         {walletData && walletData.recentPayments.length > 0 && (
           <section className="space-y-4">
-            <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
-              Histórico de Ganhos
-            </h4>
-            <div className="bg-card p-8 rounded-3xl border border-border shadow-card">
+            <BloomSectionDivider
+              title="Histórico de Ganhos"
+              borderColor="primary"
+            />
+            <BloomCard>
               <div className="space-y-3">
                 {walletData.recentPayments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-5 bg-secondary rounded-2xl border border-border/50">
+                  <div key={payment.id} className="flex items-center justify-between p-5 bg-secondary/40 rounded-2xl border border-border/50 hover:bg-secondary/60 transition-all">
                     <div className="flex items-center gap-4">
                       <div className="w-11 h-11 bg-card rounded-xl flex items-center justify-center text-primary shadow-sm border border-border">
                         <IconCalendar className="h-4 w-4" />
@@ -187,20 +188,21 @@ export default function PaymentsPage() {
                         <p className="text-lg font-display font-black text-foreground">
                           {(payment.amount / 100).toFixed(2)}€
                         </p>
-                        <p className={`text-[9px] font-display font-bold uppercase ${
-                          payment.status === "COMPLETED" ? "text-success" : "text-warning"
-                        }`}>
+                        <BloomBadge
+                          variant={payment.status === "COMPLETED" ? "success" : "warning"}
+                          className="text-[9px] mt-1"
+                        >
                           {payment.status === "COMPLETED" ? "Libertado" : "Pendente"}
-                        </p>
+                        </BloomBadge>
                       </div>
-                      <button className="p-2.5 bg-card border border-border text-muted-foreground hover:text-primary rounded-xl transition-all shadow-sm">
+                      <button className="p-2.5 bg-card border border-border text-muted-foreground hover:text-primary hover:bg-secondary rounded-xl transition-all shadow-sm">
                         <IconChevronRight className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </BloomCard>
           </section>
         )}
 
@@ -213,11 +215,16 @@ export default function PaymentsPage() {
           />
         )}
 
-        {/* Error */}
+        {/* Error - Bloom Alert Pattern */}
         {error && (
-          <div className="flex items-center gap-4 p-5 bg-destructive/10 rounded-2xl border border-destructive/20">
-            <p className="text-sm font-medium text-destructive">{error}</p>
-          </div>
+          <BloomCard variant="error">
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-2 h-2 bg-destructive rounded-full" />
+              </div>
+              <p className="text-sm font-medium text-destructive">{error}</p>
+            </div>
+          </BloomCard>
         )}
       </div>
     </AppShell>
