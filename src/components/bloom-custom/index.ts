@@ -15,6 +15,7 @@
 export { BloomCard } from "./BloomCard";
 export { BloomBadge } from "./BloomBadge";
 export { BloomSectionDivider } from "./BloomSectionDivider";
+export { BloomDialog } from "./BloomDialog";
 
 // Componentes customizados específicos do careapp
 export { BloomEmpty } from "./BloomEmpty";
