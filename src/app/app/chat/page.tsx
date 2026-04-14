@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomEmpty } from "@/components/bloom-custom";
+import { BloomCard, BloomBadge, BloomEmpty, BloomSectionHeader } from "@/components/bloom-custom";
 import {
   IconChat,
   IconSend,
@@ -165,10 +165,10 @@ export default function ChatPage() {
       <div className="h-[calc(100vh-7rem)]">
         <div className="grid h-full lg:grid-cols-[380px_1fr] gap-0">
           {/* Conversations List */}
-          <div className={`bg-card border border-border/70 rounded-l-3xl rounded-r-none flex flex-col ${mobileShowChat ? "hidden" : "flex"} lg:flex`}>
-            <div className="p-5 border-b border-border/70">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tight">{t.chat.title}</h2>
+          <div className={`bg-card border border-border rounded-l-3xl rounded-r-none flex flex-col ${mobileShowChat ? "hidden" : "flex"} lg:flex`}>
+            <div className="p-5 sm:p-7 border-b border-border space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">{t.chat.title}</h2>
                 <div className="h-6 min-w-6 px-2 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                   {conversations.filter((c) => c.unreadCount > 0).length}
                 </div>
@@ -177,7 +177,7 @@ export default function ChatPage() {
                 <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={t.search.placeholder}
-                  className="pl-11 bg-background border-border/70 rounded-2xl h-11 text-sm placeholder:text-muted-foreground/70"
+                  className="pl-11 bg-secondary border-border rounded-2xl h-11 text-sm placeholder:text-muted-foreground/70"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -186,11 +186,11 @@ export default function ChatPage() {
 
             <ScrollArea className="flex-1">
               {isLoadingConversations ? (
-                <div className="p-4 space-y-3">
+                <div className="p-5 sm:p-7 space-y-4">
                   {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-16 bg-secondary rounded-2xl" />))}
                 </div>
               ) : (
-                <div className="p-0">
+                <div className="p-5 sm:p-7 space-y-3">
                   {conversations
                     .filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase()))
                     .map((conv) => (
@@ -203,8 +203,10 @@ export default function ChatPage() {
                         className="w-full"
                       >
                         <div
-                          className={`px-5 py-4 border-b border-border/40 transition-colors text-left ${
-                            selectedConversation?.id === conv.id ? "bg-primary/10" : "hover:bg-muted/30"
+                          className={`px-4 py-3.5 rounded-2xl border transition-all duration-300 text-left ${
+                            selectedConversation?.id === conv.id
+                              ? "bg-primary/10 border-primary/30 shadow-sm"
+                              : "bg-card border-border hover:bg-muted/50 hover:border-border/70"
                           }`}
                         >
                           <div className="flex items-center gap-3.5">
@@ -253,11 +255,11 @@ export default function ChatPage() {
           </div>
 
           {/* Chat Area */}
-          <div className={`bg-card border border-border/70 border-l-0 rounded-r-3xl rounded-l-none flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
+          <div className={`bg-card border border-border border-l-0 rounded-r-3xl rounded-l-none flex flex-col ${!mobileShowChat ? "hidden lg:flex" : "flex"}`}>
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
-                <div className="p-5 border-b border-border/70 flex items-center gap-3">
+                <div className="p-5 sm:p-7 border-b border-border flex items-center justify-between gap-4">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -280,13 +282,13 @@ export default function ChatPage() {
                 </div>
 
                 {/* Messages */}
-                <ScrollArea className="flex-1 px-6 py-5">
+                <ScrollArea className="flex-1 px-5 sm:px-7 py-5 sm:py-7">
                   {isLoadingMessages && isInitialLoad ? (
                     <div className="space-y-4">
                       {[1, 2, 3].map((i) => (<Skeleton key={i} className="h-12 w-3/4 bg-secondary rounded-2xl" />))}
                     </div>
                   ) : (
-                    <div className="space-y-5">
+                    <div className="space-y-4">
                       {messages.map((message) => {
                         const isOwn = message.senderId === session?.user?.id;
                         return (
@@ -326,8 +328,8 @@ export default function ChatPage() {
                 </ScrollArea>
 
                 {/* Message Input */}
-                <div className="p-5 border-t border-border/70">
-                  <div className="flex gap-2 items-center bg-secondary/30 rounded-3xl border border-border/70 pl-3 pr-2 py-2">
+                <div className="p-5 sm:p-7 border-t border-border">
+                  <div className="flex gap-2 items-center bg-secondary rounded-2xl border border-border pl-4 pr-2 py-2.5">
                     <button className="h-8 w-8 rounded-xl hover:bg-muted/40 flex items-center justify-center text-muted-foreground">
                       <Paperclip className="h-4 w-4" />
                     </button>
