@@ -133,7 +133,7 @@ export default function WalletPage() {
             <div className="space-y-6">
               {/* Main Balance */}
               <div>
-                <p className="text-xs font-display font-bold uppercase tracking-widest opacity-80 mb-3">
+                <p className="text-xs font-display font-black uppercase tracking-widest opacity-80 mb-3">
                   Saldo Disponível
                 </p>
                 <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter">
@@ -144,7 +144,7 @@ export default function WalletPage() {
               {/* Balance Breakdown */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/10 rounded-2xl p-5">
-                  <p className="text-[9px] font-display font-bold uppercase tracking-widest opacity-75 mb-2">
+                  <p className="text-[9px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
                     Total de Ganhos
                   </p>
                   <p className="text-lg font-display font-black tracking-tighter">
@@ -152,7 +152,7 @@ export default function WalletPage() {
                   </p>
                 </div>
                 <div className="bg-white/10 rounded-2xl p-5">
-                  <p className="text-[9px] font-display font-bold uppercase tracking-widest opacity-75 mb-2">
+                  <p className="text-[9px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
                     Pendente (Escrow)
                   </p>
                   <p className="text-lg font-display font-black tracking-tighter">
@@ -192,7 +192,7 @@ export default function WalletPage() {
                         <p className="text-sm font-medium text-foreground">
                           {transaction.description || "Pagamento de Serviço"}
                         </p>
-                        <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest">
+                        <p className="text-[9px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">
                           {new Date(transaction.createdAt).toLocaleDateString("pt-PT", {
                             day: "2-digit",
                             month: "2-digit",
@@ -214,7 +214,7 @@ export default function WalletPage() {
                         +€{(transaction.amount / 100).toFixed(2)}
                       </p>
                       <p
-                        className={`text-[9px] font-display font-bold uppercase tracking-widest ${
+                        className={`text-[9px] font-display font-black uppercase tracking-widest ${
                           transaction.status === "COMPLETED"
                             ? "text-success/70"
                             : "text-warning/70"
