@@ -175,8 +175,8 @@ export default function AdminDemandsPage() {
 
       {/* Loading State */}
       {loading && (
-        <div className="rounded-lg border border-gray-200 p-8 text-center">
-          <p className="text-sm text-gray-600">Carregando métricas...</p>
+        <div className="rounded-lg border border-border p-8 text-center">
+          <p className="text-sm text-muted-foreground">Carregando métricas...</p>
         </div>
       )}
 
@@ -228,7 +228,7 @@ export default function AdminDemandsPage() {
             <div className="space-y-4">
               {data.dailyRevenueData.map((point, idx) => (
                 <div key={idx} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{point.date}</span>
+                  <span className="text-sm text-muted-foreground">{point.date}</span>
                   <div className="flex items-center gap-4">
                     <div
                       className="h-2 bg-primary rounded-full"
@@ -236,7 +236,7 @@ export default function AdminDemandsPage() {
                         width: `${(point.revenueCents / Math.max(...data.dailyRevenueData.map(d => d.revenueCents || 1)) * 200) || 2}px`,
                       }}
                     />
-                    <span className="text-sm font-medium text-gray-900 w-20 text-right">
+                    <span className="text-sm font-medium text-foreground w-20 text-right">
                       €{point.revenueEur}
                     </span>
                   </div>
@@ -261,15 +261,15 @@ export default function AdminDemandsPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Visualizações</span>
+                  <span className="text-sm text-muted-foreground">Visualizações</span>
                   <span className="font-semibold">{data.kpis.totalViews}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Propostas Enviadas</span>
+                  <span className="text-sm text-muted-foreground">Propostas Enviadas</span>
                   <span className="font-semibold">{data.kpis.totalProposals}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Propostas Aceitas</span>
+                  <span className="text-sm text-muted-foreground">Propostas Aceitas</span>
                   <span className="font-semibold">{data.kpis.acceptedProposals}</span>
                 </div>
                 <div className="border-t pt-4 flex justify-between items-center">
@@ -304,7 +304,7 @@ export default function AdminDemandsPage() {
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">{pkg.count}</div>
-                      <div className="text-xs text-gray-600">€{pkg.revenueEur.toFixed(2)}</div>
+                      <div className="text-xs text-muted-foreground">€{pkg.revenueEur.toFixed(2)}</div>
                     </div>
                   </div>
                 ))}
@@ -323,15 +323,15 @@ export default function AdminDemandsPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Ativas</span>
+                  <span className="text-sm text-muted-foreground">Ativas</span>
                   <span className="font-semibold text-success">{data.kpis.activeDemands}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Fechadas</span>
+                  <span className="text-sm text-muted-foreground">Fechadas</span>
                   <span className="font-semibold">{data.kpis.closedDemands}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Pausadas</span>
+                  <span className="text-sm text-muted-foreground">Pausadas</span>
                   <span className="font-semibold">{data.kpis.pausedDemands}</span>
                 </div>
               </div>
@@ -349,15 +349,15 @@ export default function AdminDemandsPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Views/Demanda</span>
+                  <span className="text-sm text-muted-foreground">Views/Demanda</span>
                   <span className="font-semibold">{data.kpis.avgViewsPerDemand}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Propostas/Demanda</span>
+                  <span className="text-sm text-muted-foreground">Propostas/Demanda</span>
                   <span className="font-semibold">{data.kpis.avgProposalsPerDemand}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Compras Pendentes</span>
+                  <span className="text-sm text-muted-foreground">Compras Pendentes</span>
                   <span className="font-semibold">{data.kpis.pendingPurchases}</span>
                 </div>
               </div>
