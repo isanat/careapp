@@ -111,7 +111,7 @@ export default function DashboardPage() {
         {/* Welcome + Status inline */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tight leading-none">
               {t.dashboard.welcome}
             </h1>
             <p className="text-base text-muted-foreground font-medium mt-2">{firstName}</p>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
             label="Horas"
             value={`${stats?.totalHours || 0}h`}
             icon={<IconClock className="h-6 w-6" />}
-            colorClass="text-secondary"
+            colorClass="text-warning"
           />
           <BloomStatBlock
             label="Nota"
@@ -160,7 +160,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-bold text-foreground text-sm">{t.nav.searchCaregivers}</p>
-                    <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Encontrar</p>
+                    <p className="text-[11px] font-medium text-muted-foreground mt-0.5">Encontrar profissional ideal</p>
                   </div>
                 </div>
               </BloomCard>
@@ -175,7 +175,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-bold text-foreground text-sm">Propostas</p>
-                    <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">Solicitações</p>
+                    <p className="text-[11px] font-medium text-muted-foreground mt-0.5">Solicitações recebidas</p>
                   </div>
                 </div>
               </BloomCard>
@@ -189,7 +189,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-display font-bold text-foreground text-sm">{t.contracts.title}</p>
-                  <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{t.dashboard.viewAll}</p>
+                  <p className="text-[11px] font-medium text-muted-foreground mt-0.5">{t.dashboard.viewAll}</p>
                 </div>
               </div>
             </BloomCard>
@@ -202,7 +202,7 @@ export default function DashboardPage() {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <IconAlertCircle className="h-5 w-5 text-warning" />
-                <h3 className="text-sm font-display font-black text-foreground uppercase">{t.dashboard.nextSteps.title}</h3>
+                <h3 className="text-sm font-display font-black text-foreground">{t.dashboard.nextSteps.title}</h3>
               </div>
               <div className="space-y-2">
                 {pendingSteps.map((step) => (
@@ -222,7 +222,7 @@ export default function DashboardPage() {
           <BloomCard variant="success">
             <div className="flex items-center gap-3">
               <IconCheck className="h-6 w-6 text-success flex-shrink-0" />
-              <span className="text-sm font-display font-bold text-success uppercase">{t.dashboard.allSet}</span>
+              <span className="text-sm font-display font-bold text-success">{t.dashboard.allSet}</span>
             </div>
           </BloomCard>
         )}
