@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 
 interface EvyraHeaderProps {
   sidebarOpen: boolean;
@@ -37,7 +38,7 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
       <div className="flex items-center gap-6 flex-1">
         <div className="relative w-full max-w-md hidden md:block">
           <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
+          <Input
             className="w-full bg-background border border-input rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-body text-foreground placeholder:text-muted-foreground/80 shadow-card"
             placeholder="Pesquisar..."
           />

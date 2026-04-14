@@ -14,6 +14,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   IconMapPin,
   IconClock,
   IconEye,
@@ -233,22 +240,23 @@ function DemandsContent() {
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Tipo de Serviço</label>
-            <select
-              value={selectedService}
-              onChange={e => setSelectedService(e.target.value)}
-              className="w-full h-11 px-4 bg-secondary rounded-xl border border-border/50 text-sm text-foreground focus:outline-none focus:border-primary/40 transition-colors"
-            >
-              <option value="">Todos os serviços</option>
-              <option value="PERSONAL_CARE">Cuidados Pessoais</option>
-              <option value="MEDICATION">Medicação</option>
-              <option value="MOBILITY">Mobilidade</option>
-              <option value="COMPANIONSHIP">Companhia</option>
-              <option value="MEAL_PREPARATION">Refeições</option>
-              <option value="LIGHT_HOUSEWORK">Tarefas Domésticas</option>
-              <option value="TRANSPORTATION">Transporte</option>
-              <option value="COGNITIVE_SUPPORT">Estimulação Cognitiva</option>
-              <option value="NIGHT_CARE">Cuidados Noturnos</option>
-            </select>
+            <Select value={selectedService || "ALL"} onValueChange={(value) => setSelectedService(value === "ALL" ? "" : value)}>
+              <SelectTrigger className="h-11 rounded-xl bg-secondary border-border/50">
+                <SelectValue placeholder="Todos os serviços" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Todos os serviços</SelectItem>
+                <SelectItem value="PERSONAL_CARE">Cuidados Pessoais</SelectItem>
+                <SelectItem value="MEDICATION">Medicação</SelectItem>
+                <SelectItem value="MOBILITY">Mobilidade</SelectItem>
+                <SelectItem value="COMPANIONSHIP">Companhia</SelectItem>
+                <SelectItem value="MEAL_PREPARATION">Refeições</SelectItem>
+                <SelectItem value="LIGHT_HOUSEWORK">Tarefas Domésticas</SelectItem>
+                <SelectItem value="TRANSPORTATION">Transporte</SelectItem>
+                <SelectItem value="COGNITIVE_SUPPORT">Estimulação Cognitiva</SelectItem>
+                <SelectItem value="NIGHT_CARE">Cuidados Noturnos</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </BloomCard>

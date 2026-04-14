@@ -101,7 +101,6 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
 
   // Detect user role from session
   const isFamily = session?.user?.role === 'FAMILY';
-  const isCaregiver = session?.user?.role === 'CAREGIVER';
   const isAdmin = session?.user?.role === 'ADMIN';
 
   // Dynamic nav items based on user role
@@ -110,12 +109,12 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
       return {
         main: [
           { id: 'dashboard', href: '/app/dashboard', icon: IconHome, label: 'Dashboard' },
-          { id: 'demands', href: '/app/demands', icon: IconFileText, label: 'Demandas', count: '5' },
+          { id: 'demands', href: '/app/demands', icon: IconFileText, label: 'Demandas' },
           { id: 'payments', href: '/app/admin/payments', icon: IconWallet, label: 'Pagamentos' },
         ],
         operations: [
           { id: 'contracts', href: '/app/contracts', icon: IconContract, label: 'Contratos' },
-          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens', count: '3' },
+          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens' },
         ],
       };
     }
@@ -124,7 +123,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
       return {
         main: [
           { id: 'dashboard', href: '/app/dashboard', icon: IconHome, label: 'Dashboard' },
-          { id: 'demands', href: '/app/family/demands', icon: IconFileText, label: 'Demandas', count: '2' },
+          { id: 'demands', href: '/app/family/demands', icon: IconFileText, label: 'Demandas' },
           { id: 'search', href: '/app/search', icon: IconSearch, label: 'Encontrar Cuidador' },
         ],
         operations: [
@@ -133,7 +132,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
           { id: 'payments', href: '/app/payments', icon: IconWallet, label: 'Pagamentos' },
         ],
         support: [
-          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens', count: '5' },
+          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens' },
           { id: 'notifications', href: '/app/notifications', icon: IconBell, label: 'Notificações' },
         ],
       };
@@ -143,8 +142,8 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
     return {
       main: [
         { id: 'dashboard', href: '/app/dashboard', icon: IconHome, label: 'Dashboard' },
-        { id: 'demands', href: '/app/demands', icon: IconSearch, label: 'Demandas', count: '8' },
-        { id: 'proposals', href: '/app/proposals', icon: IconInbox, label: 'Propostas', count: '3' },
+        { id: 'demands', href: '/app/demands', icon: IconSearch, label: 'Demandas' },
+        { id: 'proposals', href: '/app/proposals', icon: IconInbox, label: 'Propostas' },
       ],
       operations: [
         { id: 'interviews', href: '/app/interviews', icon: IconVideo, label: 'Entrevistas' },
@@ -152,7 +151,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
         { id: 'payments', href: '/app/payments', icon: IconWallet, label: 'Pagamentos' },
       ],
       support: [
-        { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens', count: '5' },
+          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens' },
         { id: 'notifications', href: '/app/notifications', icon: IconBell, label: 'Notificações' },
       ],
     };
