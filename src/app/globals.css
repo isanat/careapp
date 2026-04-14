@@ -55,13 +55,13 @@
     --radius: 0.75rem;
 
     /* SIDEBAR */
-    --sidebar-background: 0 0% 100%;      /* #FFFFFF - Pure white */
-    --sidebar-foreground: 215 28% 10%;    /* #1A1F2E */
+    --sidebar-background: 0 0% 100%;      /* #FFFFFF */
+    --sidebar-foreground: 215 16% 47%;    /* #6B7280 */
     --sidebar-primary: 221 83% 53%;       /* #3B82F6 */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;        /* #F3F4F6 - Light gray */
-    --sidebar-accent-foreground: 215 28% 17%;
-    --sidebar-border: 214 32% 91%;        /* #DDDFE5 */
+    --sidebar-accent: 221 83% 96%;        /* soft blue accent */
+    --sidebar-accent-foreground: 221 83% 53%;
+    --sidebar-border: 214 32% 94%;
     --sidebar-ring: 221 83% 53%;          /* #3B82F6 */
 
     --font-display: 'Space Grotesk', sans-serif;
@@ -77,63 +77,55 @@
   }
 
   .dark {
-    /* Dark Mode - Deep backgrounds with consistent blue accents */
-    --background: 210 20% 12%;      /* #191F2E */
-    --foreground: 210 20% 98%;      /* #F7F9FB */
+    /* Dark Mode - Bloom Elements parity */
+    --background: 222 47% 6%;       /* #090D1A */
+    --foreground: 210 40% 98%;      /* #F8FAFC */
 
     /* Card Styling - Dark */
-    --card: 210 18% 18%;            /* #252E3F */
-    --card-foreground: 210 20% 98%; /* #F7F9FB */
+    --card: 222 47% 8%;             /* #0D1222 */
+    --card-foreground: 210 40% 98%; /* #F8FAFC */
 
-    --popover: 210 18% 18%;         /* #252E3F */
-    --popover-foreground: 210 20% 98%; /* #F7F9FB */
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
 
     /* PRIMARY - Blue (same as light mode for consistency) */
     --primary: 221 83% 53%;         /* #3B82F6 */
     --primary-foreground: 0 0% 100%;
 
-    /* SECONDARY - Light gray adjusted for dark mode visibility */
-    --secondary: 210 20% 96%;       /* #F3F4F6 */
-    --secondary-foreground: 215 28% 17%;
+    --secondary: 217 33% 14%;
+    --secondary-foreground: 210 40% 98%;
 
-    /* MUTED - Dark Gray */
-    --muted: 210 16% 35%;           /* #505E75 */
-    --muted-foreground: 210 20% 96%; /* #F3F4F6 */
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 65%;
 
-    /* ACCENT - Light Gray */
-    --accent: 210 20% 96%;          /* #F3F4F6 */
-    --accent-foreground: 215 28% 17%;
+    --accent: 217 33% 14%;
+    --accent-foreground: 210 40% 98%;
 
-    /* DESTRUCTIVE - Red (consistent across modes) */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
 
-    /* SUCCESS - Green (consistent across modes) */
-    --success: 160 84% 39%;
+    --success: 160 84% 30%;
     --success-foreground: 0 0% 100%;
 
-    /* WARNING - Amber (consistent across modes) */
-    --warning: 38 92% 50%;
+    --warning: 38 92% 40%;
     --warning-foreground: 0 0% 100%;
 
-    /* INFO - Cyan (consistent across modes) */
-    --info: 199 89% 48%;
+    --info: 199 89% 38%;
     --info-foreground: 0 0% 100%;
 
-    /* BORDERS & INPUTS - Dark */
-    --border: 210 18% 28%;          /* #3D4D63 */
-    --input: 210 18% 18%;           /* #252E3F */
-    --ring: 221 83% 53%;            /* #3B82F6 */
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 221 83% 53%;
 
     /* SIDEBAR - Dark Mode */
-    --sidebar-background: 210 18% 18%;    /* #252E3F */
-    --sidebar-foreground: 210 20% 96%;    /* #F3F4F6 */
-    --sidebar-primary: 221 83% 53%;       /* #3B82F6 */
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 215 20% 65%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;        /* #F3F4F6 */
-    --sidebar-accent-foreground: 215 28% 17%;
-    --sidebar-border: 210 18% 28%;        /* #3D4D63 */
-    --sidebar-ring: 221 83% 53%;          /* #3B82F6 */
+    --sidebar-accent: 217 33% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 14%;
+    --sidebar-ring: 221 83% 53%;
   }
 }
 
