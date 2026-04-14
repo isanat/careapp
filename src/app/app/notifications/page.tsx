@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
 import {
+  BloomSectionHeader,
+  BloomCard,
+  BloomEmpty,
+} from "@/components/bloom-custom";
+import {
   IconBell,
   IconCheck,
   IconContract,
@@ -17,6 +22,7 @@ import {
   IconStar,
   IconAlertCircle,
 } from "@/components/icons";
+
 interface Notification {
   id: string;
   type: string;
@@ -94,19 +100,13 @@ export default function NotificationsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div className="space-y-6 max-w-4xl">
         {/* Page Header */}
         <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-display font-black text-foreground uppercase mb-2">
-              Notificações
-            </h1>
-            {unreadCount > 0 && (
-              <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">
-                {unreadCount} nova{unreadCount !== 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
+          <BloomSectionHeader
+            title="Notificações"
+            description={unreadCount > 0 ? `${unreadCount} nova${unreadCount !== 1 ? "s" : ""}` : "Você receberá notificações sobre contratos e propostas"}
+          />
           {unreadCount > 0 && (
             <Button size="sm" onClick={markAllAsRead} className="h-10 text-xs">
               <IconCheck className="h-4 w-4 mr-1" />
@@ -116,7 +116,7 @@ export default function NotificationsPage() {
         </div>
 
         {isLoading && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[1, 2, 3, 4].map((i) => (
               <Skeleton key={i} className="h-20 rounded-3xl" />
             ))}
@@ -124,17 +124,15 @@ export default function NotificationsPage() {
         )}
 
         {!isLoading && notifications.length === 0 && (
-          <div className="text-center py-12 max-w-sm mx-auto">
-            <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-              <IconBell className="h-7 w-7 text-muted-foreground" />
-            </div>
-            <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma notificação</h4>
-            <p className="text-sm text-muted-foreground">Você receberá notificações sobre contratos e propostas aqui</p>
-          </div>
+          <BloomEmpty
+            icon={<IconBell className="h-8 w-8" />}
+            title="Nenhuma notificação"
+            description="Você receberá notificações sobre contratos e propostas aqui"
+          />
         )}
 
         {!isLoading && notifications.length > 0 && (
-          <div className="grid grid-cols-1 gap-3 sm:gap-4">
+          <div className="space-y-4">
             {notifications.map((notification) => {
               const Icon = typeIcons[notification.type] || IconBell;
               const isUnread = !notification.isRead;
@@ -142,56 +140,53 @@ export default function NotificationsPage() {
               // Determine notification type color scheme
               const getColorScheme = (type: string) => {
                 if (type.includes("approved") || type.includes("received") || type.includes("accepted") || type.includes("completed")) {
-                  return { bg: "bg-success/5", border: "border-success/20", icon: "text-success" };
+                  return { bg: "bg-success/10", icon: "text-success" };
                 }
                 if (type.includes("rejected")) {
-                  return { bg: "bg-destructive/5", border: "border-destructive/20", icon: "text-destructive" };
+                  return { bg: "bg-destructive/10", icon: "text-destructive" };
                 }
-                return { bg: "bg-primary/5", border: "border-primary/20", icon: "text-primary" };
+                return { bg: "bg-primary/10", icon: "text-primary" };
               };
 
               const colorScheme = getColorScheme(notification.type);
 
               return (
-                <div
+                <BloomCard
                   key={notification.id}
-                  className={`bg-card rounded-3xl p-5 sm:p-7 border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 cursor-pointer group ${
-                    isUnread ? colorScheme.border : "border-border"
-                  }`}
+                  variant={isUnread ? "interactive" : "default"}
+                  className="cursor-pointer group flex items-start gap-4 p-5 sm:p-7"
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <div className="flex items-start gap-4">
-                    {/* Icon Container */}
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorScheme.bg}`}>
-                      <Icon className={`w-6 h-6 ${colorScheme.icon}`} />
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="space-y-1">
-                        <p className={`font-display font-bold text-foreground text-sm ${isUnread ? "opacity-100" : "opacity-75"}`}>
-                          {notification.title}
-                        </p>
-                        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                          {notification.message}
-                        </p>
-                        <span className="text-[9px] text-muted-foreground/50 uppercase tracking-widest inline-block">
-                          {new Date(notification.createdAt).toLocaleDateString("pt-PT", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Unread Indicator */}
-                    {isUnread && (
-                      <div className="h-2.5 w-2.5 bg-primary rounded-full shrink-0 mt-1.5 flex-shrink-0" />
-                    )}
+                  {/* Icon Container */}
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorScheme.bg} group-hover:scale-105 transition-transform duration-500`}>
+                    <Icon className={`w-6 h-6 ${colorScheme.icon}`} />
                   </div>
-                </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="space-y-1.5">
+                      <p className={`font-display font-bold text-foreground text-sm ${isUnread ? "opacity-100" : "opacity-75"}`}>
+                        {notification.title}
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                        {notification.message}
+                      </p>
+                      <span className="text-[9px] text-muted-foreground/50 uppercase tracking-widest inline-block">
+                        {new Date(notification.createdAt).toLocaleDateString("pt-PT", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Unread Indicator */}
+                  {isUnread && (
+                    <div className="h-3 w-3 bg-primary rounded-full shrink-0 mt-1 flex-shrink-0 animate-pulse" />
+                  )}
+                </BloomCard>
               );
             })}
           </div>

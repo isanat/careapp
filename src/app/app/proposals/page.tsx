@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +20,11 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader } from "@/components/bloom-custom";
+import {
+  BloomSectionHeader,
+  BloomCard,
+  BloomEmpty,
+} from "@/components/bloom-custom";
 import {
   IconContract,
   IconFamily,
@@ -37,6 +40,13 @@ import {
   IconEdit,
 } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
+import {
+  STATUS_LABELS,
+  SERVICE_TYPE_LABELS,
+  getStatusBadgeVariant,
+  getStatusLabel,
+  getServiceTypeLabel,
+} from "@/lib/status-constants";
 
 interface Proposal {
   id: string;
@@ -60,41 +70,6 @@ interface Proposal {
     elderNeeds?: string;
   };
 }
-
-const statusColors: Record<string, string> = {
-  DRAFT: "bg-gray-500",
-  PENDING_ACCEPTANCE: "bg-yellow-500",
-  PENDING_PAYMENT: "bg-orange-500",
-  ACTIVE: "bg-green-500",
-  COMPLETED: "bg-blue-500",
-  CANCELLED: "bg-red-500",
-  COUNTER_PROPOSED: "bg-purple-500",
-};
-
-const statusLabels: Record<string, string> = {
-  DRAFT: "Rascunho",
-  PENDING_ACCEPTANCE: "Aguardando",
-  PENDING_PAYMENT: "Aguard. Pagamento",
-  ACTIVE: "Ativo",
-  COMPLETED: "Concluido",
-  CANCELLED: "Cancelado",
-  COUNTER_PROPOSED: "Contraproposta",
-};
-
-const serviceLabels: Record<string, string> = {
-  PERSONAL_CARE: "Cuidados Pessoais",
-  MEDICATION: "Medicacao",
-  MOBILITY: "Mobilidade",
-  COMPANIONSHIP: "Companhia",
-  MEAL_PREPARATION: "Refeicoes",
-  LIGHT_HOUSEWORK: "Domesticas",
-  TRANSPORTATION: "Transporte",
-  COGNITIVE_SUPPORT: "Cognitiva",
-  NIGHT_CARE: "Noturno",
-  PALLIATIVE_CARE: "Paliativos",
-  PHYSIOTHERAPY: "Fisioterapia",
-  NURSING_CARE: "Enfermagem",
-};
 
 export default function ProposalsPage() {
   const { data: session, status } = useSession();
@@ -294,16 +269,16 @@ export default function ProposalsPage() {
         )}
 
         {!isLoading && proposals.length === 0 && (
-          <div className="text-center py-12 max-w-sm mx-auto">
-            <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-              <IconInbox className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma proposta</h4>
-            <p className="text-sm text-muted-foreground mb-6">Comece a completar o seu perfil para receber propostas</p>
-            <Button size="sm" asChild>
-              <Link href="/app/profile">Completar Perfil</Link>
-            </Button>
-          </div>
+          <BloomEmpty
+            icon={<IconInbox className="h-8 w-8" />}
+            title="Nenhuma proposta"
+            description="Comece a completar o seu perfil para receber propostas"
+            action={
+              <Button size="sm" asChild>
+                <Link href="/app/profile">Completar Perfil</Link>
+              </Button>
+            }
+          />
         )}
 
         {!isLoading && proposals.length > 0 && (
@@ -322,13 +297,11 @@ export default function ProposalsPage() {
 
             <TabsContent value="pending" className="space-y-4">
               {pendingProposals.length === 0 ? (
-                <div className="text-center py-12 max-w-sm mx-auto col-span-full">
-                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-                    <IconCheck className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma nova proposta</h4>
-                  <p className="text-sm text-muted-foreground">Aguarde novas propostas de famílias interessadas</p>
-                </div>
+                <BloomEmpty
+                  icon={<IconCheck className="h-8 w-8" />}
+                  title="Nenhuma nova proposta"
+                  description="Aguarde novas propostas de famílias interessadas"
+                />
               ) : (
                 pendingProposals.map((p) => (
                   <ProposalCard
@@ -346,13 +319,11 @@ export default function ProposalsPage() {
 
             <TabsContent value="counter" className="space-y-4">
               {counterProposals.length === 0 ? (
-                <div className="text-center py-12 max-w-sm mx-auto col-span-full">
-                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-                    <IconEdit className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma contraproposta</h4>
-                  <p className="text-sm text-muted-foreground">Aguarde respostas às contrapropostas enviadas</p>
-                </div>
+                <BloomEmpty
+                  icon={<IconEdit className="h-8 w-8" />}
+                  title="Nenhuma contraproposta"
+                  description="Aguarde respostas às contrapropostas enviadas"
+                />
               ) : (
                 counterProposals.map((p) => (
                   <ProposalCard key={p.id} proposal={p} isLoading={false} showActions={false} />
@@ -362,13 +333,11 @@ export default function ProposalsPage() {
 
             <TabsContent value="accepted" className="space-y-4">
               {acceptedProposals.length === 0 ? (
-                <div className="text-center py-12 max-w-sm mx-auto col-span-full">
-                  <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
-                    <IconClock className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma proposta aceita</h4>
-                  <p className="text-sm text-muted-foreground">Propostas aceitas e ativas aparecerão aqui</p>
-                </div>
+                <BloomEmpty
+                  icon={<IconClock className="h-8 w-8" />}
+                  title="Nenhuma proposta aceita"
+                  description="Propostas aceitas e ativas aparecerão aqui"
+                />
               ) : (
                 acceptedProposals.map((p) => (
                   <ProposalCard key={p.id} proposal={p} isLoading={false} showActions={false} />
@@ -553,24 +522,11 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
 }) {
   const totalEur = proposal.totalEurCents ? proposal.totalEurCents / 100 : 0;
 
-  const getStatusBadgeStyle = (status: string) => {
-    const styles: Record<string, string> = {
-      PENDING_ACCEPTANCE: "bg-warning/10 text-warning border-warning/30",
-      COUNTER_PROPOSED: "bg-secondary/10 text-secondary border-secondary/30",
-      PENDING_PAYMENT: "bg-warning/10 text-warning border-warning/30",
-      ACTIVE: "bg-success/10 text-success border-success/30",
-      COMPLETED: "bg-primary/10 text-primary border-primary/30",
-      CANCELLED: "bg-destructive/10 text-destructive border-destructive/30",
-      DRAFT: "bg-muted text-muted-foreground border-border/30",
-    };
-    return styles[status] || styles.DRAFT;
-  };
-
   return (
-    <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-6 bg-card rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 gap-5">
+    <BloomCard variant="interactive" className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-5 sm:p-7">
       {/* Left side: Family info */}
       <div className="flex-1 flex items-start gap-4 min-w-0">
-        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
           <IconFamily className="h-6 w-6 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
@@ -587,7 +543,7 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
             <div className="flex flex-wrap gap-1.5 mt-2">
               {proposal.serviceTypes.slice(0, 2).map((s, i) => (
                 <span key={i} className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest">
-                  {serviceLabels[s] || s}
+                  {getServiceTypeLabel(s)}
                 </span>
               ))}
               {proposal.serviceTypes.length > 2 && (
@@ -626,8 +582,8 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
         </div>
 
         {/* Status Badge */}
-        <span className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border ${getStatusBadgeStyle(proposal.status)} shrink-0`}>
-          {statusLabels[proposal.status]}
+        <span className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border shrink-0 ${getStatusBadgeVariant(proposal.status)}`}>
+          {getStatusLabel(proposal.status)}
         </span>
 
         {/* Actions */}
@@ -676,6 +632,6 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
           </span>
         )}
       </div>
-    </div>
+    </BloomCard>
   );
 }

@@ -110,12 +110,10 @@ function FamilyDemandsContent() {
   if (error) {
     return (
       <div className="max-w-7xl mx-auto space-y-4">
-        <BloomCard variant="error">
-          <div className="flex items-center gap-3">
-            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
-            <p className="text-sm text-destructive font-medium">{error}</p>
-          </div>
-        </BloomCard>
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border-2 border-destructive/30 bg-destructive/5 flex items-center gap-3 shadow-card">
+          <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
+          <p className="text-sm text-destructive font-medium">{error}</p>
+        </div>
       </div>
     );
   }

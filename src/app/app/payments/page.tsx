@@ -217,14 +217,12 @@ export default function PaymentsPage() {
 
         {/* Error - Bloom Alert Pattern */}
         {error && (
-          <BloomCard variant="error">
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
-                <div className="w-2 h-2 bg-destructive rounded-full" />
-              </div>
-              <p className="text-sm font-medium text-destructive">{error}</p>
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border-2 border-destructive/30 bg-destructive/5 flex items-center gap-3 shadow-card">
+            <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-2 h-2 bg-destructive rounded-full" />
             </div>
-          </BloomCard>
+            <p className="text-sm font-medium text-destructive">{error}</p>
+          </div>
         )}
       </div>
     </AppShell>
