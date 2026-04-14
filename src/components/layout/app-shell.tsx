@@ -36,6 +36,8 @@ import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/ui/language-selector";
+import { EvyraHeader } from "@/components/layout/EvyraHeader";
+import { EvyraSidebar } from "@/components/layout/EvyraSidebar";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -67,7 +69,8 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const router = useRouter();
   const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [currentView, setCurrentView] = useState("dashboard");
   const unreadCount = useUnreadCount();
 
   const isFamily = session?.user?.role === "FAMILY";
@@ -129,129 +132,36 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
     pathname === href || (href !== "/app/dashboard" && pathname.startsWith(href));
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Header - Bloom Elements Glassmorphic */}
-      <header className="sticky top-0 z-50 h-16 bg-card/80 backdrop-blur-md border-b border-border shadow-sm safe-area-inset-top">
-        <div className="px-4 lg:px-6 mx-auto max-w-7xl">
-          <div className="flex h-16 items-center justify-between">
-            {/* Left: Logo & Mobile Menu */}
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden h-9 w-9"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <IconX className="h-5 w-5" /> : <IconMenu className="h-5 w-5" />}
-              </Button>
-              <Link href="/app/dashboard" className="flex items-center gap-2">
-                <IconLogo className="h-8 w-8" />
-                <span className="font-bold text-lg hidden sm:inline text-foreground">
-                  {APP_NAME}
-                </span>
-              </Link>
-            </div>
+    <div className="min-h-screen bg-background text-foreground font-body">
+      {/* Bloom Elements: Fixed Sidebar + Main with Header */}
+      <EvyraSidebar
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        isOpen={sidebarOpen}
+        setIsOpen={setSidebarOpen}
+      />
 
-            {/* Right: Actions */}
-            <div className="flex items-center gap-1.5">
-              {/* Theme & Language (Desktop) */}
-              <div className="hidden md:flex items-center gap-1">
-                <ThemeToggle />
-                <LanguageSelector />
-              </div>
+      {/* Main Content with Responsive Padding */}
+      <main className={cn(
+        "transition-all duration-500 min-h-screen",
+        sidebarOpen ? "pl-72" : "pl-20"
+      )}>
+        {/* Bloom Elements: Sticky Glassmorphic Header */}
+        <EvyraHeader sidebarOpen={sidebarOpen} />
 
-              {/* Notifications */}
-              <Link href="/app/notifications">
-                <Button variant="ghost" size="icon" className="relative h-9 w-9">
-                  <IconBell className="h-5 w-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </Button>
-              </Link>
-
-              {/* User Menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-1.5 h-9 px-2">
-                    <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-info text-white text-sm font-semibold">
-                        {session?.user?.name?.charAt(0) || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <IconChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden sm:block" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52 bg-surface border shadow-soft-md">
-                  <div className="px-3 py-2 border-b">
-                    <p className="text-sm font-medium">{session?.user?.name}</p>
-                    <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
-                    <Badge variant="outline" className="mt-1 text-[10px]">
-                      {isFamily ? t.auth.family : t.auth.caregiver}
-                    </Badge>
-                  </div>
-                  <DropdownMenuItem asChild>
-                    <Link href="/app/dashboard" className="flex items-center">
-                      <IconHome className="mr-2 h-4 w-4" />
-                      {t.nav.dashboard}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/app/profile" className="flex items-center">
-                      <IconUser className="mr-2 h-4 w-4" />
-                      {t.nav.profile}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/app/payments" className="flex items-center">
-                      <IconWallet className="mr-2 h-4 w-4" />
-                      {t.nav.wallet}
-                    </Link>
-                  </DropdownMenuItem>
-
-                  {/* Theme & Language in mobile dropdown */}
-                  <div className="md:hidden">
-                    <DropdownMenuSeparator />
-                    <div className="flex items-center justify-between px-2 py-1.5">
-                      <span className="text-sm">{t.theme.light}/{t.theme.dark}</span>
-                      <ThemeToggle />
-                    </div>
-                    <div className="flex items-center justify-between px-2 py-1.5">
-                      <span className="text-sm">{t.language.select}</span>
-                      <LanguageSelector />
-                    </div>
-                  </div>
-
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="text-error focus:text-error"
-                  >
-                    <IconLogout className="mr-2 h-4 w-4" />
-                    {t.auth.logout}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+        {/* Content Area */}
+        <div className="p-6 md:p-10 max-w-7xl mx-auto">
+          {children}
         </div>
-      </header>
 
-      <div className="flex-1 flex pb-[3.5rem] lg:pb-0">
-        {/* Sidebar (Mobile) */}
-        <aside
-          className={cn(
-            "fixed inset-y-0 left-0 z-40 w-60 transform transition-transform duration-300 ease-in-out lg:hidden",
-            "bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md",
-            "border-r border-border/30",
-            mobileMenuOpen ? "translate-x-0" : "-translate-x-full",
-            "top-16"
-          )}
-        >
-          <nav className="p-3 space-y-0.5 mt-2">
-            {navItems.map((item) => {
+        {/* Mobile Bottom Navigation (Evyra specific) */}
+        <nav className={cn(
+          "fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-t border-border safe-area-inset-bottom lg:hidden",
+          hideBottomNav && "hidden",
+          sidebarOpen ? "pl-72" : "pl-20"
+        )}>
+          <div className="flex items-center justify-around h-[3.5rem] px-1">
+            {mobileNavItems.map((item) => {
               const active = isActiveRoute(item.href);
               const Icon = item.icon;
 
@@ -259,153 +169,36 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    "flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-w-[56px] rounded-2xl transition-all duration-200",
                     active
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      ? "text-primary"
+                      : "text-muted-foreground active:scale-95"
                   )}
                 >
-                  <Icon className={cn(
-                    "h-5 w-5 flex-shrink-0 transition-colors duration-200",
-                    active ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary"
-                  )} />
-                  <span className="text-sm font-display font-bold tracking-tight">{item.label}</span>
-                  {item.href === "/app/chat" && unreadCount > 0 && !active && (
-                    <span className="ml-auto h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white">
-                      {unreadCount}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-
-        {/* Desktop Sidebar - EvyraSidebar Pattern */}
-        <aside className={cn(
-          "hidden lg:flex flex-col transition-all duration-500",
-          sidebarCollapsed ? "w-20" : "w-72"
-        )}>
-          <div className="flex-1 bg-card rounded-3xl border border-border shadow-soft-md m-4 ml-4 mr-2 flex flex-col overflow-hidden">
-            {/* Collapse Toggle Button */}
-            <div className="flex items-center justify-end px-4 py-3 border-b border-border/20">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 transition-all duration-500"
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                title={sidebarCollapsed ? "Expandir" : "Recolher"}
-              >
-                <IconMenu className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Navigation */}
-            <nav className="p-4 space-y-2 overflow-y-auto flex-1">
-              {navItems.map((item) => {
-                const active = isActiveRoute(item.href);
-                const Icon = item.icon;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
-                      active
-                        ? "bg-primary/10 text-primary border border-primary/30"
-                        : "text-foreground hover:bg-secondary/50"
-                    )}
-                    title={sidebarCollapsed ? item.label : ""}
-                  >
-                    {/* Icon - Always visible */}
-                    <Icon className={cn(
-                      "h-5 w-5 flex-shrink-0 transition-all duration-300",
-                      active ? "text-primary" : "text-muted-foreground group-hover:text-primary"
-                    )} />
-
-                    {/* Label with collapse animation */}
-                    <span className={cn(
-                      "text-sm font-medium whitespace-nowrap overflow-hidden transition-all duration-500",
-                      sidebarCollapsed
-                        ? "opacity-0 w-0"
-                        : "opacity-100 w-auto"
-                    )}>
-                      {item.label}
-                    </span>
-
-                    {/* Badge with collapse animation */}
+                  <div className={cn(
+                    "relative flex items-center justify-center h-7 w-7 rounded-full transition-all duration-200",
+                    active && "bg-primary/15"
+                  )}>
+                    <Icon className={cn("h-5 w-5", active && "text-primary")} />
                     {item.href === "/app/chat" && unreadCount > 0 && (
-                      <span className={cn(
-                        "h-5 min-w-[20px] px-1.5 flex items-center justify-center rounded-full bg-warning text-[10px] font-bold text-white flex-shrink-0 transition-all duration-500",
-                        sidebarCollapsed ? "opacity-0 w-0 ml-0" : "opacity-100 w-auto ml-auto"
-                      )}>
+                      <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white">
                         {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
                     )}
-                  </Link>
-                );
-              })}
-            </nav>
+                  </div>
+                  <span className={cn(
+                    "text-[11px] font-medium leading-tight",
+                    active ? "text-primary font-semibold" : "text-muted-foreground"
+                  )}>
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
-        </aside>
-
-        {/* Overlay for mobile sidebar */}
-        {mobileMenuOpen && (
-          <div
-            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden transition-opacity"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
-
-        {/* Main Content */}
-        <main className="flex-1 w-full max-w-7xl mx-auto px-3 lg:px-6 py-3 lg:py-5">
-          {children}
-        </main>
-      </div>
-
-      {/* Mobile Bottom Navigation */}
-      <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-white/85 dark:bg-[#0B1120]/85 backdrop-blur-md border-t border-border/30 safe-area-inset-bottom lg:hidden", hideBottomNav && "hidden")}>
-        <div className="flex items-center justify-around h-[3.5rem] px-1">
-          {mobileNavItems.map((item) => {
-            const active = isActiveRoute(item.href);
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 py-1.5 px-2 min-w-[56px] rounded-2xl transition-all duration-200",
-                  active
-                    ? "text-accent"
-                    : "text-muted-foreground active:scale-95"
-                )}
-              >
-                <div className={cn(
-                  "relative flex items-center justify-center h-7 w-7 rounded-full transition-all duration-200",
-                  active && "bg-accent/15"
-                )}>
-                  <Icon className={cn("h-5 w-5", active && "text-accent")} />
-                  {item.href === "/app/chat" && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-warning text-[9px] font-bold text-white">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </div>
-                <span className={cn(
-                  "text-[11px] font-medium leading-tight",
-                  active ? "text-accent font-semibold" : "text-muted-foreground"
-                )}>
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+        </nav>
+      </main>
     </div>
   );
 }
