@@ -31,14 +31,14 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
 
   return (
     <header className={cn(
-      "h-16 border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40 px-6 md:px-8 flex items-center justify-between"
+      "h-16 border-b border-border bg-card/90 backdrop-blur-xl sticky top-0 z-40 px-6 md:px-8 flex items-center justify-between"
     )}>
       {/* Left: Search */}
       <div className="flex items-center gap-6 flex-1">
         <div className="relative w-full max-w-md hidden md:block">
           <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
-            className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-2.5 text-xs font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body text-foreground placeholder:text-muted-foreground"
+            className="w-full bg-background border border-input rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-body text-foreground placeholder:text-muted-foreground/80 shadow-card"
             placeholder="Pesquisar..."
           />
         </div>
@@ -49,7 +49,7 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
         {/* Theme Toggle */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors"
+          className="p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors border border-transparent hover:border-border"
           title={`Mudar para ${theme === 'dark' ? 'claro' : 'escuro'}`}
         >
           {theme === 'dark' ? (
@@ -60,7 +60,7 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
         </button>
 
         {/* Notifications */}
-        <button className="relative p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors">
+        <button className="relative p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors border border-transparent hover:border-border">
           <IconBell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full" />
