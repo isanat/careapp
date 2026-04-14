@@ -1,35 +1,107 @@
 'use client';
 
-import React from 'react';
-import { Search, Activity } from 'lucide-react';
+import React, { useState } from 'react';
+import { useTheme } from 'next-themes';
+import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
+import {
+  IconSearch,
+  IconBell,
+  IconSun,
+  IconMoon,
+  IconUser,
+} from '@/components/icons';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface EvyraHeaderProps {
   sidebarOpen: boolean;
 }
 
 export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
+  const { theme, setTheme } = useTheme();
+  const { data: session } = useSession();
+  const [unreadCount] = useState(3); // TODO: Replace with actual unread count from API
+
   return (
     <header className={cn(
-      "h-16 border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40 px-8 flex items-center justify-between"
+      "h-16 border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40 px-6 md:px-8 flex items-center justify-between"
     )}>
+      {/* Left: Search */}
       <div className="flex items-center gap-6 flex-1">
         <div className="relative w-full max-w-md hidden md:block">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
-            className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body text-foreground placeholder:text-muted-foreground"
-            placeholder="Pesquisar por especialidade ou localização..."
+            className="w-full bg-secondary border border-border rounded-2xl pl-11 pr-4 py-2.5 text-xs font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body text-foreground placeholder:text-muted-foreground"
+            placeholder="Pesquisar..."
           />
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <button className="p-2.5 text-muted-foreground hover:bg-accent rounded-xl relative transition-colors">
-          <Activity size={20} />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full border-2 border-card" />
+
+      {/* Right: Actions */}
+      <div className="flex items-center gap-2">
+        {/* Theme Toggle */}
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors"
+          title={`Mudar para ${theme === 'dark' ? 'claro' : 'escuro'}`}
+        >
+          {theme === 'dark' ? (
+            <IconSun className="h-5 w-5" />
+          ) : (
+            <IconMoon className="h-5 w-5" />
+          )}
         </button>
-        <div className="w-10 h-10 bg-secondary rounded-xl border-2 border-card shadow-card overflow-hidden ring-2 ring-secondary cursor-pointer">
-          <img src="https://i.pravatar.cc/100?u=company" alt="User" className="w-full h-full object-cover" />
-        </div>
+
+        {/* Notifications */}
+        <button className="relative p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors">
+          <IconBell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full" />
+          )}
+        </button>
+
+        {/* User Avatar Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-1 hover:bg-accent rounded-xl transition-colors">
+              <Avatar className="h-10 w-10 ring-2 ring-secondary">
+                <AvatarFallback>
+                  {session?.user?.name?.split(' ')[0][0] || 'U'}
+                </AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-display font-bold text-foreground">
+                {session?.user?.name || 'Usuário'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {session?.user?.email}
+              </p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <a href="/app/profile" className="cursor-pointer flex items-center gap-2">
+                <IconUser className="h-4 w-4" />
+                Perfil
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <a href="/api/auth/signout" className="cursor-pointer text-destructive">
+                Sair
+              </a>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
