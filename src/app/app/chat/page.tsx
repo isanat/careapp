@@ -169,7 +169,7 @@ export default function ChatPage() {
             <div className="p-5 sm:p-7 border-b border-border space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">{t.chat.title}</h2>
-                <div className="h-6 min-w-6 px-2 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
+                <div className="h-6 min-w-6 px-2 rounded-full bg-primary text-primary-foreground text-xs font-black flex items-center justify-center">
                   {conversations.filter((c) => c.unreadCount > 0).length}
                 </div>
               </div>
@@ -211,13 +211,13 @@ export default function ChatPage() {
                         >
                           <div className="flex items-center gap-3.5">
                             <div className="w-12 h-12 rounded-2xl bg-secondary/40 border border-border/50 flex items-center justify-center flex-shrink-0">
-                              <span className="text-sm font-display font-bold text-foreground/90">
+                              <span className="text-sm font-display font-black text-foreground/90">
                                 {conv.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
                               </span>
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-2 mb-0.5">
-                                <p className="font-display font-bold text-[1rem] text-foreground truncate">
+                                <p className="font-display font-black text-[1rem] text-foreground truncate">
                                   {conv.participant?.name || "Usuario"}
                                 </p>
                                 {conv.lastMessage && (
@@ -269,12 +269,12 @@ export default function ChatPage() {
                     <IconArrowLeft className="h-4 w-4" />
                   </Button>
                   <div className="w-12 h-12 rounded-2xl bg-secondary/40 border border-border/50 flex items-center justify-center">
-                    <span className="text-sm font-display font-bold text-foreground">
+                    <span className="text-sm font-display font-black text-foreground">
                       {selectedConversation.participant?.name?.split(" ").map((n) => n[0]).join("") || "?"}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-display font-bold text-lg text-foreground truncate">{selectedConversation.participant?.name || "Usuario"}</p>
+                    <p className="font-display font-black text-lg text-foreground truncate">{selectedConversation.participant?.name || "Usuario"}</p>
                     <p className="text-[11px] tracking-[0.25em] text-success uppercase">Online</p>
                   </div>
                   <Button variant="ghost" size="icon-sm" className="rounded-xl"><IconPhone className="h-4 w-4" /></Button>
@@ -295,7 +295,7 @@ export default function ChatPage() {
                           <div key={message.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
                             <div className="max-w-[72%]">
                               {!isOwn && (
-                                <p className="text-[10px] text-muted-foreground/70 mb-1 font-medium">{message.senderName}</p>
+                                <p className="text-[10px] text-muted-foreground/70 mb-1 font-display font-black">{message.senderName}</p>
                               )}
                               <div className={`rounded-[2rem] px-5 py-3.5 text-[1rem] leading-relaxed border ${
                                 isOwn
