@@ -121,7 +121,7 @@ export default function ContractsPage() {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key as typeof activeTab)}
-                    className={`h-11 text-sm font-display font-bold tracking-wide border-b-2 transition-colors ${
+                    className={`h-11 text-sm font-display font-black tracking-wide border-b-2 transition-colors ${
                       activeTab === tab.key
                         ? "border-primary text-foreground"
                         : "border-transparent text-muted-foreground hover:text-foreground"
@@ -187,7 +187,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <div className="bg-card p-7 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+      <BloomCard variant="interactive" className="p-5 sm:p-7">
         {/* Header with status badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
@@ -202,25 +202,25 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
         </div>
 
         {/* Info grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 py-4 border-y border-border/30">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 py-4 border-y border-border/30">
           {/* Other Party */}
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3 hover:bg-primary/5 p-3 rounded-2xl transition-colors">
             <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-muted-foreground">
               <IconUser className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-display font-bold text-muted-foreground/70 uppercase tracking-widest">Cuidador</p>
+              <p className="text-[10px] font-display font-black text-muted-foreground/70 uppercase tracking-widest">Cuidador</p>
               <p className="text-sm font-semibold text-foreground truncate mt-1">{contract.otherParty?.name || t.none}</p>
             </div>
           </div>
 
           {/* Duration */}
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3 hover:bg-primary/5 p-3 rounded-2xl transition-colors">
             <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-primary">
               <IconClock className="h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-display font-bold text-muted-foreground/70 uppercase tracking-widest">Duração</p>
+              <p className="text-[10px] font-display font-black text-muted-foreground/70 uppercase tracking-widest">Duração</p>
               <p className="text-sm font-semibold text-foreground mt-1">{contract.hoursPerWeek}h/semana</p>
             </div>
           </div>
@@ -228,7 +228,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
         {/* Footer: Date & Rate */}
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
-          <div className="flex items-center gap-2 text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[9px] font-display font-black text-muted-foreground/60 uppercase tracking-widest">
             <IconCalendar className="h-4 w-4" />
             {contract.startDate && (
               <span>{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
@@ -240,7 +240,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
             <span className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">/h</span>
           </div>
         </div>
-      </div>
+      </BloomCard>
     </Link>
   );
 }

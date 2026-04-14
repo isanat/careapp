@@ -203,7 +203,7 @@ function DemandsContent() {
           title="Marketplace de Demandas"
           desc="Explore oportunidades de trabalho disponíveis e envie suas propostas."
         />
-        <span className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
+        <span className="px-3 py-1 text-[10px] font-display font-black rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
           {demands.length} vagas
         </span>
       </div>
@@ -217,19 +217,19 @@ function DemandsContent() {
       )}
 
       {/* Filters */}
-      <BloomCard className="p-8">
+      <BloomCard className="p-5 sm:p-7">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center text-primary shadow-sm border border-border">
             <IconFilter className="h-5 w-5" />
           </div>
           <div>
-            <p className="font-display font-bold text-foreground text-sm uppercase">Filtros</p>
+            <p className="font-display font-black text-foreground text-sm uppercase">Filtros</p>
             <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">Refine sua busca de oportunidades</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Localidade</label>
+            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Localidade</label>
             <Input
               type="text"
               value={searchCity}
@@ -239,7 +239,7 @@ function DemandsContent() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Tipo de Serviço</label>
+            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Tipo de Serviço</label>
             <Select value={selectedService || "ALL"} onValueChange={(value) => setSelectedService(value === "ALL" ? "" : value)}>
               <SelectTrigger className="h-11 rounded-xl bg-secondary border-border/50">
                 <SelectValue placeholder="Todos os serviços" />
@@ -283,7 +283,7 @@ function DemandsContent() {
               : null;
 
             return (
-              <BloomCard key={demand.id} variant="interactive" className="p-7 cursor-pointer group flex flex-col h-full">
+              <BloomCard key={demand.id} variant="interactive" className="p-5 sm:p-7 cursor-pointer group flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3 mb-5">
                   <div className="flex-1 min-w-0">
@@ -359,12 +359,12 @@ function DemandsContent() {
       {wizard.demandId && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
           <div className="bg-card rounded-3xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-elevated border border-border">
-            <div className="p-8 space-y-6">
+            <div className="p-5 sm:p-7 space-y-6">
               {/* Header */}
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-display font-black text-foreground uppercase tracking-tighter">Sua Proposta</h2>
-                  <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mt-1">Passo {wizard.step} de 3</p>
+                  <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mt-1">Passo {wizard.step} de 3</p>
                 </div>
                 <button
                   onClick={handleCloseProposalWizard}
@@ -388,11 +388,11 @@ function DemandsContent() {
               {wizard.step === 1 && (
                 <div className="space-y-5">
                   <div>
-                    <h3 className="font-display font-bold text-foreground uppercase text-sm">Quem você é?</h3>
+                    <h3 className="font-display font-black text-foreground uppercase text-sm">Quem você é?</h3>
                     <p className="text-xs text-muted-foreground mt-1">Compartilhe informações sobre sua experiência e qualificações</p>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Sobre você</label>
+                    <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Sobre você</label>
                     <Textarea
                       value={wizard.aboutYou}
                       onChange={e => setWizard(prev => ({ ...prev, aboutYou: e.target.value }))}
@@ -417,12 +417,12 @@ function DemandsContent() {
               {wizard.step === 2 && (
                 <div className="space-y-5">
                   <div>
-                    <h3 className="font-display font-bold text-foreground uppercase text-sm">Sua proposta</h3>
+                    <h3 className="font-display font-black text-foreground uppercase text-sm">Sua proposta</h3>
                     <p className="text-xs text-muted-foreground mt-1">Por que você é ideal para esta demanda?</p>
                   </div>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Mensagem para a família</label>
+                      <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Mensagem para a família</label>
                       <Textarea
                         value={wizard.message}
                         onChange={e => setWizard(prev => ({ ...prev, message: e.target.value }))}
@@ -432,7 +432,7 @@ function DemandsContent() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Taxa por hora (€)</label>
+                      <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Taxa por hora (€)</label>
                       <Input
                         type="number"
                         value={wizard.expectedRate}
@@ -464,20 +464,20 @@ function DemandsContent() {
               {wizard.step === 3 && (
                 <div className="space-y-5">
                   <div>
-                    <h3 className="font-display font-bold text-foreground uppercase text-sm">Revisar proposta</h3>
+                    <h3 className="font-display font-black text-foreground uppercase text-sm">Revisar proposta</h3>
                     <p className="text-xs text-muted-foreground mt-1">Verifique suas informações antes de enviar</p>
                   </div>
                   <div className="space-y-3 bg-secondary rounded-2xl border border-border/50 p-5">
                     <div className="border-b border-border/50 pb-3">
-                      <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Sobre você</p>
+                      <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Sobre você</p>
                       <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
                     </div>
                     <div className="border-b border-border/50 pb-3">
-                      <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Mensagem</p>
+                      <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Mensagem</p>
                       <p className="text-sm line-clamp-3">{wizard.message}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-1">Taxa horária</p>
+                      <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Taxa horária</p>
                       <p className="text-2xl font-display font-black text-foreground tracking-tighter">€{parseFloat(wizard.expectedRate || '0').toFixed(2)}/h</p>
                     </div>
                   </div>

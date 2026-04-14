@@ -106,7 +106,7 @@ export default function InterviewsPage() {
             <div className="grid grid-cols-1 gap-4">
               {upcomingInterviews.map((interview) => (
                 <Link key={interview.id} href={`/app/interview/${interview.id}`}>
-                  <BloomCard variant="interactive">
+                  <BloomCard variant="interactive" className="p-5 sm:p-7">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
                       <div className="flex items-center gap-5">
                         <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary shrink-0 text-primary">
@@ -124,7 +124,7 @@ export default function InterviewsPage() {
                       </div>
                       <div className="flex items-center gap-8">
                         <div className="text-right">
-                          <p className="text-[10px] font-display font-bold text-muted-foreground/50 uppercase tracking-widest">Data</p>
+                          <p className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">Data</p>
                           <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
@@ -150,7 +150,7 @@ export default function InterviewsPage() {
             <div className="grid grid-cols-1 gap-4">
               {pastInterviews.map((interview) => (
                 <Link key={interview.id} href={`/app/interview/${interview.id}`}>
-                  <BloomCard variant="interactive">
+                  <BloomCard variant="interactive" className="p-5 sm:p-7">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
                       <div className="flex items-center gap-5">
                         <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary shrink-0 text-muted-foreground">
@@ -176,7 +176,7 @@ export default function InterviewsPage() {
                       </div>
                       <div className="flex items-center gap-8">
                         <div className="text-right">
-                          <p className="text-[10px] font-display font-bold text-muted-foreground/50 uppercase tracking-widest">Data</p>
+                          <p className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">Data</p>
                           <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
