@@ -24,6 +24,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.1.1",
+    "@isanat/bloom-elements": "file:../bloom-elements",
     "@jitsi/react-sdk": "^1.4.4",
     "@libsql/client": "^0.17.0",
     "@mdxeditor/editor": "^3.39.1",

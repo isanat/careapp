@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomCard, BloomBadge, BloomEmpty } from "@/components/bloom";
+import { BloomCard, BloomBadge, BloomEmpty } from "@/components/bloom-custom";
 import {
   IconChat,
   IconSend,
@@ -229,7 +229,7 @@ export default function ChatPage() {
                                   {conv.lastMessage?.content || t.chat.noMessages}
                                 </p>
                                 {conv.unreadCount > 0 && (
-                                  <BloomBadge variant="primary" className="shrink-0 min-w-5 h-5 flex items-center justify-center rounded-full text-[11px]">
+                                  <BloomBadge variant="default" className="shrink-0 min-w-5 h-5 flex items-center justify-center rounded-full text-[11px]">
                                     {conv.unreadCount}
                                   </BloomBadge>
                                 )}

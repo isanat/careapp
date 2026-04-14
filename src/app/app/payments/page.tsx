@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader, BloomStatBlock, BloomEmpty, BloomCard, BloomBadge, BloomSectionDivider } from "@/components/bloom";
+import { BloomSectionHeader, BloomStatBlock, BloomEmpty, BloomCard, BloomBadge, BloomSectionDivider } from "@/components/bloom-custom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconEuro,

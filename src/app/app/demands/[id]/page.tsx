@@ -9,7 +9,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { getServiceTypeLabel } from '@/lib/service-types';
-import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty, BloomStatBlock } from '@/components/bloom';
+import { BloomCard, BloomBadge, BloomSectionHeader, BloomEmpty, BloomStatBlock } from '@/components/bloom-custom';
 import { IconAlertCircle, IconArrowLeft } from '@/components/icons';
 
 interface Demand {
