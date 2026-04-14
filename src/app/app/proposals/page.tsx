@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { AppShell } from "@/components/layout/app-shell";
+import { BloomSectionHeader } from "@/components/bloom";
 import {
   IconContract,
   IconFamily,
@@ -261,12 +262,10 @@ export default function ProposalsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-6xl">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
-            Propostas
-          </h1>
+          <BloomSectionHeader title="Propostas" desc="Gerencie propostas recebidas e negociações com famílias." />
           <Button variant="ghost" size="sm" onClick={fetchProposals} disabled={isLoading}>
             <IconRefresh className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </Button>
@@ -309,15 +308,15 @@ export default function ProposalsPage() {
 
         {!isLoading && proposals.length > 0 && (
           <Tabs defaultValue="pending" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-secondary rounded-2xl">
-              <TabsTrigger value="pending" className="text-xs font-display font-bold uppercase tracking-widest py-3 data-[state=active]:shadow-sm">
-                Novas <span className="text-[10px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{pendingProposals.length}</span>
+            <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b border-border/60 rounded-none">
+              <TabsTrigger value="pending" className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground">
+                Novas <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{pendingProposals.length}</span>
               </TabsTrigger>
-              <TabsTrigger value="counter" className="text-xs font-display font-bold uppercase tracking-widest py-3 data-[state=active]:shadow-sm">
-                Contra <span className="text-[10px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{counterProposals.length}</span>
+              <TabsTrigger value="counter" className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground">
+                Contra <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{counterProposals.length}</span>
               </TabsTrigger>
-              <TabsTrigger value="accepted" className="text-xs font-display font-bold uppercase tracking-widest py-3 data-[state=active]:shadow-sm">
-                Aceitas <span className="text-[10px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{acceptedProposals.length}</span>
+              <TabsTrigger value="accepted" className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground">
+                Aceitas <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{acceptedProposals.length}</span>
               </TabsTrigger>
             </TabsList>
 

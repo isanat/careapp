@@ -54,21 +54,21 @@ const SidebarLink = ({
   <Link
     href={href}
     className={cn(
-      "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group",
+      "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group border border-transparent",
       active
-        ? "bg-primary text-primary-foreground shadow-md"
-        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+        ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-accent shadow-sm"
+        : "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
     )}
   >
     <div className="flex items-center gap-3">
       <Icon className={cn(
         "h-5 w-5",
-        active ? "text-primary-foreground" : variant === 'danger' ? "text-destructive" : "text-muted-foreground group-hover:text-primary transition-colors"
+        active ? "text-sidebar-accent-foreground" : variant === 'danger' ? "text-destructive" : "text-sidebar-foreground group-hover:text-sidebar-primary transition-colors"
       )} />
       {isOpen && (
         <span className={cn(
           "text-sm font-display font-bold tracking-tight",
-          active ? "text-primary-foreground" : variant === 'danger' ? "text-destructive" : "text-foreground"
+          active ? "text-sidebar-accent-foreground" : variant === 'danger' ? "text-destructive" : "text-foreground"
         )}>
           {label}
         </span>
@@ -77,7 +77,7 @@ const SidebarLink = ({
     {isOpen && count && (
       <span className={cn(
         "px-2 py-0.5 rounded-lg text-[10px] font-bold font-display",
-        active ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary/10 text-primary"
+        active ? "bg-primary/15 text-primary" : "bg-primary/10 text-primary"
       )}>
         {count}
       </span>
@@ -88,7 +88,7 @@ const SidebarLink = ({
 const SectionLabel = ({ label, isOpen }: { label: string; isOpen: boolean }) => (
   <div className="pt-6 pb-2 px-3">
     {isOpen ? (
-      <p className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-[0.3em]">{label}</p>
+      <p className="text-[10px] font-display font-black text-sidebar-foreground/60 uppercase tracking-[0.3em]">{label}</p>
     ) : (
       <div className="h-px bg-border mx-auto w-8" />
     )}
@@ -101,7 +101,6 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
 
   // Detect user role from session
   const isFamily = session?.user?.role === 'FAMILY';
-  const isCaregiver = session?.user?.role === 'CAREGIVER';
   const isAdmin = session?.user?.role === 'ADMIN';
 
   // Dynamic nav items based on user role
@@ -110,12 +109,12 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
       return {
         main: [
           { id: 'dashboard', href: '/app/dashboard', icon: IconHome, label: 'Dashboard' },
-          { id: 'demands', href: '/app/demands', icon: IconFileText, label: 'Demandas', count: '5' },
+          { id: 'demands', href: '/app/demands', icon: IconFileText, label: 'Demandas' },
           { id: 'payments', href: '/app/admin/payments', icon: IconWallet, label: 'Pagamentos' },
         ],
         operations: [
           { id: 'contracts', href: '/app/contracts', icon: IconContract, label: 'Contratos' },
-          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens', count: '3' },
+          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens' },
         ],
       };
     }
@@ -124,7 +123,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
       return {
         main: [
           { id: 'dashboard', href: '/app/dashboard', icon: IconHome, label: 'Dashboard' },
-          { id: 'demands', href: '/app/family/demands', icon: IconFileText, label: 'Demandas', count: '2' },
+          { id: 'demands', href: '/app/family/demands', icon: IconFileText, label: 'Demandas' },
           { id: 'search', href: '/app/search', icon: IconSearch, label: 'Encontrar Cuidador' },
         ],
         operations: [
@@ -133,7 +132,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
           { id: 'payments', href: '/app/payments', icon: IconWallet, label: 'Pagamentos' },
         ],
         support: [
-          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens', count: '5' },
+          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens' },
           { id: 'notifications', href: '/app/notifications', icon: IconBell, label: 'Notificações' },
         ],
       };
@@ -143,8 +142,8 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
     return {
       main: [
         { id: 'dashboard', href: '/app/dashboard', icon: IconHome, label: 'Dashboard' },
-        { id: 'demands', href: '/app/demands', icon: IconSearch, label: 'Demandas', count: '8' },
-        { id: 'proposals', href: '/app/proposals', icon: IconInbox, label: 'Propostas', count: '3' },
+        { id: 'demands', href: '/app/demands', icon: IconSearch, label: 'Demandas' },
+        { id: 'proposals', href: '/app/proposals', icon: IconInbox, label: 'Propostas' },
       ],
       operations: [
         { id: 'interviews', href: '/app/interviews', icon: IconVideo, label: 'Entrevistas' },
@@ -152,7 +151,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
         { id: 'payments', href: '/app/payments', icon: IconWallet, label: 'Pagamentos' },
       ],
       support: [
-        { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens', count: '5' },
+          { id: 'messages', href: '/app/chat', icon: IconMessageSquare, label: 'Mensagens' },
         { id: 'notifications', href: '/app/notifications', icon: IconBell, label: 'Notificações' },
       ],
     };
@@ -167,7 +166,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
 
   return (
     <aside className={cn(
-      "fixed top-0 left-0 h-full bg-card border-r border-border z-50 transition-all duration-500 ease-in-out flex flex-col",
+      "fixed top-0 left-0 h-full bg-sidebar border-r border-sidebar-border z-50 transition-all duration-500 ease-in-out flex flex-col",
       isOpen ? 'w-72' : 'w-20'
     )}>
       <div className="flex flex-col h-full p-4">
@@ -185,7 +184,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
               <IconHome className="h-5 w-5 text-primary-foreground" />
             </div>
           )}
-          <button onClick={() => setIsOpen(!isOpen)} className="p-2 hover:bg-accent rounded-xl transition-colors text-muted-foreground lg:hidden">
+          <button onClick={() => setIsOpen(!isOpen)} className="p-2 hover:bg-sidebar-accent rounded-xl transition-colors text-sidebar-foreground lg:hidden">
             <IconMenu className="h-5 w-5" />
           </button>
         </div>
