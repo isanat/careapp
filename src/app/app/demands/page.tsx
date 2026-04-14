@@ -7,12 +7,19 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
-import { BloomSectionHeader, BloomEmpty } from '@/components/bloom';
+import { BloomSectionHeader, BloomEmpty, BloomCard } from '@/components/bloom';
 import { useToast } from "@/hooks/use-toast";
 import { getServiceTypeLabel } from '@/lib/service-types';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   IconMapPin,
   IconClock,
@@ -210,7 +217,7 @@ function DemandsContent() {
       )}
 
       {/* Filters */}
-      <div className="bg-card p-8 rounded-3xl border border-border shadow-card">
+      <BloomCard className="p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center text-primary shadow-sm border border-border">
             <IconFilter className="h-5 w-5" />
@@ -223,35 +230,36 @@ function DemandsContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Localidade</label>
-            <input
+            <Input
               type="text"
               value={searchCity}
               onChange={e => setSearchCity(e.target.value)}
               placeholder="Ex: Lisboa, Porto, Covilhã..."
-              className="w-full h-11 px-4 bg-secondary rounded-xl border border-border/50 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 transition-colors"
+              className="bg-secondary border-border/50"
             />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">Tipo de Serviço</label>
-            <select
-              value={selectedService}
-              onChange={e => setSelectedService(e.target.value)}
-              className="w-full h-11 px-4 bg-secondary rounded-xl border border-border/50 text-sm text-foreground focus:outline-none focus:border-primary/40 transition-colors"
-            >
-              <option value="">Todos os serviços</option>
-              <option value="PERSONAL_CARE">Cuidados Pessoais</option>
-              <option value="MEDICATION">Medicação</option>
-              <option value="MOBILITY">Mobilidade</option>
-              <option value="COMPANIONSHIP">Companhia</option>
-              <option value="MEAL_PREPARATION">Refeições</option>
-              <option value="LIGHT_HOUSEWORK">Tarefas Domésticas</option>
-              <option value="TRANSPORTATION">Transporte</option>
-              <option value="COGNITIVE_SUPPORT">Estimulação Cognitiva</option>
-              <option value="NIGHT_CARE">Cuidados Noturnos</option>
-            </select>
+            <Select value={selectedService || "ALL"} onValueChange={(value) => setSelectedService(value === "ALL" ? "" : value)}>
+              <SelectTrigger className="h-11 rounded-xl bg-secondary border-border/50">
+                <SelectValue placeholder="Todos os serviços" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Todos os serviços</SelectItem>
+                <SelectItem value="PERSONAL_CARE">Cuidados Pessoais</SelectItem>
+                <SelectItem value="MEDICATION">Medicação</SelectItem>
+                <SelectItem value="MOBILITY">Mobilidade</SelectItem>
+                <SelectItem value="COMPANIONSHIP">Companhia</SelectItem>
+                <SelectItem value="MEAL_PREPARATION">Refeições</SelectItem>
+                <SelectItem value="LIGHT_HOUSEWORK">Tarefas Domésticas</SelectItem>
+                <SelectItem value="TRANSPORTATION">Transporte</SelectItem>
+                <SelectItem value="COGNITIVE_SUPPORT">Estimulação Cognitiva</SelectItem>
+                <SelectItem value="NIGHT_CARE">Cuidados Noturnos</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </div>
+      </BloomCard>
 
       {/* Demands Grid */}
       {demands.length === 0 ? (
@@ -275,20 +283,20 @@ function DemandsContent() {
               : null;
 
             return (
-              <div key={demand.id} className="bg-card rounded-3xl p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group flex flex-col h-full">
+              <BloomCard key={demand.id} variant="interactive" className="p-7 cursor-pointer group flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3 mb-5">
                   <div className="flex-1 min-w-0">
                     <Link href={`/app/demands/${demand.id}`}>
-                      <h3 className="text-base font-display font-black text-foreground group-hover:text-primary transition-colors truncate uppercase">{demand.title}</h3>
+                      <h3 className="text-base font-display font-black text-foreground group-hover:text-primary transition-colors truncate">{demand.title}</h3>
                     </Link>
                     <div className="flex items-center gap-1 mt-1">
                       <IconMapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest truncate">{demand.city}{demand.postalCode && ` (${demand.postalCode})`}</span>
+                      <span className="text-[11px] font-medium text-muted-foreground truncate">{demand.city}{demand.postalCode && ` (${demand.postalCode})`}</span>
                     </div>
                   </div>
                   {visibilityBadge && (
-                    <span className={`px-3 py-1 text-[9px] font-display font-bold rounded-lg uppercase tracking-widest shrink-0 ${visibilityBadge.classes}`}>
+                    <span className={`px-3 py-1 text-[10px] font-semibold rounded-lg shrink-0 ${visibilityBadge.classes}`}>
                       {visibilityBadge.label}
                     </span>
                   )}
@@ -299,12 +307,12 @@ function DemandsContent() {
                   <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-2">{demand.description}</p>
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {demand.serviceTypes.slice(0, 3).map((service, idx) => (
-                      <span key={idx} className="text-[9px] font-display font-bold text-muted-foreground border border-border px-2 py-0.5 rounded-lg uppercase tracking-widest">
+                      <span key={idx} className="text-[10px] font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-lg">
                         {getServiceTypeLabel(service)}
                       </span>
                     ))}
                     {demand.serviceTypes.length > 3 && (
-                      <span className="text-[9px] font-display font-bold text-muted-foreground border border-border px-2 py-0.5 rounded-lg uppercase tracking-widest">
+                      <span className="text-[10px] font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-lg">
                         +{demand.serviceTypes.length - 3}
                       </span>
                     )}
@@ -317,16 +325,16 @@ function DemandsContent() {
                     {demand.hoursPerWeek && (
                       <div className="flex items-center gap-1.5">
                         <IconClock className="h-3.5 w-3.5 text-primary" />
-                        <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{demand.hoursPerWeek}h/sem</span>
+                        <span className="text-[11px] font-medium text-muted-foreground">{demand.hoursPerWeek}h/sem</span>
                       </div>
                     )}
                     <div className="flex items-center gap-1.5">
                       <IconEye className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{demand.viewCount}</span>
+                      <span className="text-[11px] font-medium text-muted-foreground">{demand.viewCount}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <IconMessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">{demand.proposalCount}</span>
+                      <span className="text-[11px] font-medium text-muted-foreground">{demand.proposalCount}</span>
                     </div>
                   </div>
                   <Button
@@ -341,7 +349,7 @@ function DemandsContent() {
                     <IconChevronRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </div>
-              </div>
+              </BloomCard>
             );
           })}
         </div>

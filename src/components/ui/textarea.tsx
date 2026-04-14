@@ -2,53 +2,20 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  error?: boolean;
-  label?: string;
-  hint?: string;
-  resizable?: "none" | "vertical" | "both";
-}
+export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, error, label, hint, resizable = "vertical", ...props }, ref) => {
-    const textareaId = React.useId();
-
-    return (
-      <div className="w-full">
-        {label && (
-          <label
-            htmlFor={textareaId}
-            className="text-xs font-display font-bold uppercase tracking-widest mb-2 block text-foreground"
-          >
-            {label}
-          </label>
-        )}
-        <textarea
-          id={textareaId}
-          className={cn(
-            "w-full min-h-[120px] bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium",
-            "placeholder:text-muted-foreground",
-            "transition-all duration-200 ease-out",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-            "hover:border-primary/40",
-            "disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-muted",
-            resizable === "none" && "resize-none",
-            resizable === "vertical" && "resize-vertical",
-            resizable === "both" && "resize",
-            error && "border-2 border-destructive bg-destructive/5 focus:ring-destructive/20 focus:border-destructive",
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-        {hint && !error && (
-          <p className="text-xs text-muted-foreground mt-2">{hint}</p>
-        )}
-      </div>
-    );
-  }
-);
-
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ className, ...props }, ref) => {
+  return (
+    <textarea
+      className={cn(
+        "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        className,
+      )}
+      ref={ref}
+      {...props}
+    />
+  );
+});
 Textarea.displayName = "Textarea";
 
 export { Textarea };
