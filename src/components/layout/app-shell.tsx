@@ -70,7 +70,6 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
   const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [currentView, setCurrentView] = useState("dashboard");
   const unreadCount = useUnreadCount();
 
   const isFamily = session?.user?.role === "FAMILY";
@@ -135,8 +134,6 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
     <div className="min-h-screen bg-background text-foreground font-body">
       {/* Bloom Elements: Fixed Sidebar + Main with Header */}
       <EvyraSidebar
-        currentView={currentView}
-        setCurrentView={setCurrentView}
         isOpen={sidebarOpen}
         setIsOpen={setSidebarOpen}
       />

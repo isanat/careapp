@@ -1,38 +1,47 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
-  Menu, Briefcase, Search, FileText, MessageSquare, Users, Wallet,
-  BookOpen, Settings, LogOut
+  Menu, Briefcase, Home, FileText, MessageSquare, Video, Wallet,
+  Settings, LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EvyraSidebarProps {
-  currentView: string;
-  setCurrentView: (view: string) => void;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
 
+interface NavItem {
+  id: string;
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  count?: string;
+  variant?: 'default' | 'danger';
+}
+
 const SidebarLink = ({
+  href,
   icon: Icon,
   label,
   active,
-  onClick,
   isOpen,
   count,
   variant = 'default'
 }: {
+  href: string;
   icon: React.ElementType;
   label: string;
   active?: boolean;
-  onClick?: () => void;
   isOpen: boolean;
   count?: string;
   variant?: 'default' | 'danger';
 }) => (
-  <button
-    onClick={onClick}
+  <Link
+    href={href}
     className={cn(
       "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group",
       active
@@ -61,7 +70,7 @@ const SidebarLink = ({
         {count}
       </span>
     )}
-  </button>
+  </Link>
 );
 
 const SectionLabel = ({ label, isOpen }: { label: string; isOpen: boolean }) => (
@@ -74,22 +83,31 @@ const SectionLabel = ({ label, isOpen }: { label: string; isOpen: boolean }) => 
   </div>
 );
 
-const navItems = {
-  main: [
-    { id: 'dashboard', icon: Search, label: 'Dashboard' },
-    { id: 'demands', icon: FileText, label: 'Demandas', count: '2' },
-    { id: 'messages', icon: MessageSquare, label: 'Mensagens', count: '5' },
-  ],
-  operations: [
-    { id: 'interviews', icon: Users, label: 'Entrevistas' },
-    { id: 'payments', icon: Wallet, label: 'Pagamentos' },
-  ],
-  support: [
-    { id: 'help', icon: BookOpen, label: 'Centro de Ajuda' },
-  ],
-};
+export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen }) => {
+  const pathname = usePathname();
 
-export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ currentView, setCurrentView, isOpen, setIsOpen }) => {
+  // Detect if it's a family or caregiver user based on URL pattern
+  const isFamilyRoute = pathname.includes('/family/');
+
+  const navItems: Record<string, NavItem[]> = {
+    main: [
+      { id: 'dashboard', href: '/app/dashboard', icon: Home, label: 'Dashboard' },
+      isFamilyRoute
+        ? { id: 'demands', href: '/app/family/demands', icon: FileText, label: 'Demandas', count: '2' }
+        : { id: 'demands', href: '/app/demands', icon: FileText, label: 'Demandas', count: '2' },
+      { id: 'messages', href: '/app/chat', icon: MessageSquare, label: 'Mensagens', count: '5' },
+    ],
+    operations: [
+      { id: 'interviews', href: '/app/interviews', icon: Video, label: 'Entrevistas' },
+      { id: 'payments', href: '/app/payments', icon: Wallet, label: 'Pagamentos' },
+    ],
+  };
+
+  // Check if pathname matches or starts with href
+  const isActive = (href: string) => {
+    return pathname === href || pathname.startsWith(href + '/');
+  };
+
   return (
     <aside className={cn(
       "fixed top-0 left-0 h-full bg-card border-r border-border z-50 transition-all duration-500 ease-in-out flex flex-col",
@@ -121,10 +139,10 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ currentView, setCurr
           {navItems.main.map(item => (
             <SidebarLink
               key={item.id}
+              href={item.href}
               icon={item.icon}
               label={item.label}
-              active={currentView === item.id}
-              onClick={() => setCurrentView(item.id)}
+              active={isActive(item.href)}
               isOpen={isOpen}
               count={item.count}
             />
@@ -135,23 +153,10 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ currentView, setCurr
           {navItems.operations.map(item => (
             <SidebarLink
               key={item.id}
+              href={item.href}
               icon={item.icon}
               label={item.label}
-              active={currentView === item.id}
-              onClick={() => setCurrentView(item.id)}
-              isOpen={isOpen}
-            />
-          ))}
-
-          {/* Support */}
-          <SectionLabel label="Suporte" isOpen={isOpen} />
-          {navItems.support.map(item => (
-            <SidebarLink
-              key={item.id}
-              icon={item.icon}
-              label={item.label}
-              active={currentView === item.id}
-              onClick={() => setCurrentView(item.id)}
+              active={isActive(item.href)}
               isOpen={isOpen}
             />
           ))}
@@ -159,8 +164,20 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ currentView, setCurr
 
         {/* Bottom */}
         <div className="pt-4 border-t border-border space-y-1">
-          <SidebarLink icon={Settings} label="Definições" active={false} isOpen={isOpen} />
-          <SidebarLink icon={LogOut} label="Sair" active={false} isOpen={isOpen} variant="danger" />
+          <Link
+            href="/app/profile"
+            className={cn(
+              "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200",
+              isActive('/app/profile')
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <Settings size={18} />
+              {isOpen && <span className="text-sm font-display font-bold tracking-tight">Definições</span>}
+            </div>
+          </Link>
         </div>
       </div>
     </aside>
