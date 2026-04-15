@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -97,8 +99,18 @@ export default function AdminAnalyticsPage() {
     a.click();
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
       <PageHeader
         title="Analytics"
         description="Métricas e relatórios da plataforma"
@@ -128,7 +140,7 @@ export default function AdminAnalyticsPage() {
       />
 
       {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total de Usuários"
           value={data?.kpis.totalUsers || 0}
@@ -160,16 +172,14 @@ export default function AdminAnalyticsPage() {
           icon={<IconCoin className="h-5 w-5" />}
           loading={loading}
         />
-      </div>
+      </motion.div>
 
       {/* Charts Row */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
         {/* Revenue Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Receita ao Longo do Tempo</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard variant="gradient">
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Receita ao Longo do Tempo</h3>
             {loading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
@@ -188,15 +198,13 @@ export default function AdminAnalyticsPage() {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
 
         {/* Users Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Crescimento de Usuários</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard variant="success">
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Crescimento de Usuários</h3>
             {loading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
@@ -215,18 +223,16 @@ export default function AdminAnalyticsPage() {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </BloomCard>
+      </motion.div>
 
       {/* Bottom Row */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
         {/* Contracts by Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Contratos por Status</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Contratos por Status</h3>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -238,20 +244,18 @@ export default function AdminAnalyticsPage() {
                 {data?.contractsByStatus?.map((item) => (
                   <div key={item.status} className="flex items-center justify-between">
                     <span className="text-sm">{item.status}</span>
-                    <Badge>{item.count}</Badge>
+                    <BloomBadge>{item.count}</BloomBadge>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
 
         {/* Top Cities */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top Cidades</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Top Cidades</h3>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -265,20 +269,18 @@ export default function AdminAnalyticsPage() {
                     <span className="text-sm">
                       {i + 1}. {item.city}
                     </span>
-                    <Badge variant="outline">{item.count}</Badge>
+                    <BloomBadge variant="outline">{item.count}</BloomBadge>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
 
         {/* Top Caregivers */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top Cuidadores</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Top Cuidadores</h3>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -303,9 +305,9 @@ export default function AdminAnalyticsPage() {
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+        </BloomCard>
+      </motion.div>
+    </motion.div>
   );
 }

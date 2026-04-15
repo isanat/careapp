@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
-import { Card, CardContent } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -122,8 +124,18 @@ export default function AdminLogsPage() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
       <PageHeader
         title="Logs de Auditoria"
         description="Histórico de todas as ações administrativas"
@@ -136,44 +148,46 @@ export default function AdminLogsPage() {
       />
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4 md:flex-row">
-            <Select value={actionFilter} onValueChange={setActionFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Ação" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as Ações</SelectItem>
-                <SelectItem value="CREATE">Criar</SelectItem>
-                <SelectItem value="UPDATE">Atualizar</SelectItem>
-                <SelectItem value="DELETE">Excluir</SelectItem>
-                <SelectItem value="SUSPEND">Suspender</SelectItem>
-                <SelectItem value="ACTIVATE">Ativar</SelectItem>
-                <SelectItem value="VERIFY_KYC">Verificar KYC</SelectItem>
-                <SelectItem value="REFUND">Reembolsar</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={entityFilter} onValueChange={setEntityFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Entidade" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as Entidades</SelectItem>
-                <SelectItem value="USER">Usuário</SelectItem>
-                <SelectItem value="CONTRACT">Contrato</SelectItem>
-                <SelectItem value="PAYMENT">Pagamento</SelectItem>
-                <SelectItem value="TOKEN">Token</SelectItem>
-                <SelectItem value="CAREGIVER">Cuidador</SelectItem>
-              </SelectContent>
-            </Select>
+      <motion.div variants={itemVariants}>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <div className="flex flex-col gap-4 md:flex-row">
+              <Select value={actionFilter} onValueChange={setActionFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Ação" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as Ações</SelectItem>
+                  <SelectItem value="CREATE">Criar</SelectItem>
+                  <SelectItem value="UPDATE">Atualizar</SelectItem>
+                  <SelectItem value="DELETE">Excluir</SelectItem>
+                  <SelectItem value="SUSPEND">Suspender</SelectItem>
+                  <SelectItem value="ACTIVATE">Ativar</SelectItem>
+                  <SelectItem value="VERIFY_KYC">Verificar KYC</SelectItem>
+                  <SelectItem value="REFUND">Reembolsar</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={entityFilter} onValueChange={setEntityFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Entidade" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as Entidades</SelectItem>
+                  <SelectItem value="USER">Usuário</SelectItem>
+                  <SelectItem value="CONTRACT">Contrato</SelectItem>
+                  <SelectItem value="PAYMENT">Pagamento</SelectItem>
+                  <SelectItem value="TOKEN">Token</SelectItem>
+                  <SelectItem value="CAREGIVER">Cuidador</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </BloomCard>
+      </motion.div>
 
       {/* Logs Table */}
-      <Card>
-        <CardContent className="p-0">
+      <motion.div variants={itemVariants}>
+        <BloomCard>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-slate-50 dark:bg-slate-800">
@@ -217,9 +231,9 @@ export default function AdminLogsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge className={getActionColor(log.action)}>
+                        <BloomBadge className={getActionColor(log.action)}>
                           {log.action}
-                        </Badge>
+                        </BloomBadge>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -242,11 +256,11 @@ export default function AdminLogsPage() {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </BloomCard>
+      </motion.div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex items-center justify-between">
         <p className="text-sm text-slate-500">
           Mostrando {logs.length} de {total} logs
         </p>
@@ -268,7 +282,7 @@ export default function AdminLogsPage() {
             Próximo
           </Button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

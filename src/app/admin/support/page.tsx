@@ -1,8 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -175,8 +179,18 @@ export default function AdminSupportPage() {
       ticket.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
       <PageHeader
         title="Suporte"
         description="Gerenciar tickets de suporte"
@@ -189,7 +203,7 @@ export default function AdminSupportPage() {
       />
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <StatsCard
           title="Total"
           value={stats.total}
@@ -225,11 +239,12 @@ export default function AdminSupportPage() {
           loading={loading}
           className="border-warning/20"
         />
-      </div>
+      </motion.div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
+      <motion.div variants={itemVariants}>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -265,18 +280,20 @@ export default function AdminSupportPage() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+          </div>
+        </BloomCard>
+      </motion.div>
 
       {/* Tickets List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Tickets de Suporte</CardTitle>
-          <CardDescription>
-            {filteredTickets.length} ticket(s) encontrado(s)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
+      <motion.div variants={itemVariants}>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold">Tickets de Suporte</h3>
+              <p className="text-sm text-muted-foreground">
+                {filteredTickets.length} ticket(s) encontrado(s)
+              </p>
+            </div>
           {loading ? (
             <div className="p-4 space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -351,8 +368,9 @@ export default function AdminSupportPage() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+          </div>
+        </BloomCard>
+      </motion.div>
 
       {/* Ticket Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -470,6 +488,6 @@ export default function AdminSupportPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }

@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -113,8 +115,18 @@ export default function AdminModerationPage() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
   return (
-    <div className="space-y-6">
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
       <PageHeader
         title="Moderação"
         description="Modere conteúdo e resolva denúncias"
@@ -127,7 +139,7 @@ export default function AdminModerationPage() {
       />
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3">
         <StatsCard
           title="Pendentes"
           value={stats.pending}
@@ -147,29 +159,30 @@ export default function AdminModerationPage() {
           icon={<IconX className="h-5 w-5" />}
           loading={loading}
         />
-      </div>
+      </motion.div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="all">
-            Todos
-          </TabsTrigger>
-          <TabsTrigger value="review">
-            <IconStar className="h-4 w-4 mr-2" />
-            Reviews
-          </TabsTrigger>
-          <TabsTrigger value="chat">
-            <IconMessageSquare className="h-4 w-4 mr-2" />
-            Chat
-          </TabsTrigger>
-          <TabsTrigger value="report">
-            <IconFlag className="h-4 w-4 mr-2" />
-            Denúncias
-          </TabsTrigger>
-        </TabsList>
+      <motion.div variants={itemVariants}>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="all">
+              Todos
+            </TabsTrigger>
+            <TabsTrigger value="review">
+              <IconStar className="h-4 w-4 mr-2" />
+              Reviews
+            </TabsTrigger>
+            <TabsTrigger value="chat">
+              <IconMessageSquare className="h-4 w-4 mr-2" />
+              Chat
+            </TabsTrigger>
+            <TabsTrigger value="report">
+              <IconFlag className="h-4 w-4 mr-2" />
+              Denúncias
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value={activeTab} className="mt-6">
+          <TabsContent value={activeTab} className="mt-6">
           {loading ? (
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -177,25 +190,25 @@ export default function AdminModerationPage() {
               ))}
             </div>
           ) : items.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center text-muted-foreground">
+            <BloomCard>
+              <div className="py-12 text-center text-muted-foreground p-5 sm:p-6 md:p-7">
                 <IconShield className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Nenhum item para moderar</p>
-              </CardContent>
-            </Card>
+              </div>
+            </BloomCard>
           ) : (
             <div className="space-y-4">
               {items.map((item) => (
-                <Card key={item.id}>
-                  <CardContent className="p-6">
+                <BloomCard key={item.id} variant="interactive">
+                  <div className="p-5 sm:p-6 md:p-7">
                     <div className="flex items-start gap-4">
                       <div className="p-2 bg-muted rounded-lg">
                         {getTypeIcon(item.type)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline">{item.type}</Badge>
-                          <Badge
+                          <BloomBadge variant="outline">{item.type}</BloomBadge>
+                          <BloomBadge
                             className={
                               item.status === "PENDING"
                                 ? "bg-warning text-warning"
@@ -205,7 +218,7 @@ export default function AdminModerationPage() {
                             }
                           >
                             {item.status}
-                          </Badge>
+                          </BloomBadge>
                         </div>
 
                         <p className="text-sm font-medium mb-1">{item.reason}</p>
@@ -250,13 +263,14 @@ export default function AdminModerationPage() {
                         </div>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </BloomCard>
               ))}
             </div>
           )}
-        </TabsContent>
-      </Tabs>
-    </div>
+          </TabsContent>
+        </Tabs>
+      </motion.div>
+    </motion.div>
   );
 }

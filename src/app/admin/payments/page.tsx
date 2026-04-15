@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -128,29 +132,41 @@ const reasonLabels: Record<string, string> = {
 
 // ==================== MAIN PAGE ====================
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
 export default function AdminPaymentsPage() {
   return (
-    <div className="space-y-6">
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
       <PageHeader
         title="Auditoria Financeira"
         description="Transacoes, pagamentos e auditoria por cliente"
       />
 
-      <Tabs defaultValue="transactions" className="space-y-4">
-        <TabsList className="h-10">
-          <TabsTrigger value="transactions" className="text-sm">Transacoes</TabsTrigger>
-          <TabsTrigger value="audit" className="text-sm">Auditoria por Cliente</TabsTrigger>
-        </TabsList>
+      <motion.div variants={itemVariants}>
+        <Tabs defaultValue="transactions" className="space-y-4">
+          <TabsList className="h-10">
+            <TabsTrigger value="transactions" className="text-sm">Transacoes</TabsTrigger>
+            <TabsTrigger value="audit" className="text-sm">Auditoria por Cliente</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="transactions">
-          <TransactionsTab />
-        </TabsContent>
+          <TabsContent value="transactions">
+            <TransactionsTab />
+          </TabsContent>
 
-        <TabsContent value="audit">
-          <CustomerAuditTab />
-        </TabsContent>
-      </Tabs>
-    </div>
+          <TabsContent value="audit">
+            <CustomerAuditTab />
+          </TabsContent>
+        </Tabs>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -230,8 +246,8 @@ function TransactionsTab() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
+      <BloomCard>
+        <div className="p-5 sm:p-6 md:p-7">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <Input placeholder="Pesquisar por utilizador..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && fetchData()} />
@@ -256,69 +272,67 @@ function TransactionsTab() {
             </Select>
             <Button onClick={fetchData}>Filtrar</Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </BloomCard>
 
       {/* Table */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium">ID</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Usuario</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Tipo</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Status</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium">Valor</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Data</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Acoes</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
-                {loading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i}>{Array.from({ length: 7 }).map((_, j) => (<td key={j} className="px-3 py-2"><Skeleton className="h-4 w-16" /></td>))}</tr>
-                  ))
-                ) : payments.length === 0 ? (
-                  <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground text-sm">Nenhum pagamento encontrado</td></tr>
-                ) : (
-                  payments.map((p) => (
-                    <tr key={p.id} className="hover:bg-muted/30">
-                      <td className="px-3 py-2 font-mono text-xs">{p.id.slice(0, 8)}...</td>
-                      <td className="px-3 py-2">
-                        <p className="text-sm font-medium">{p.userName}</p>
-                        <p className="text-xs text-muted-foreground">{p.userEmail}</p>
-                      </td>
-                      <td className="px-3 py-2"><Badge variant="outline" className="text-xs">{getTypeLabel(p.type)}</Badge></td>
-                      <td className="px-3 py-2">
-                        <StatusBadge status={p.status === "COMPLETED" ? "completed" : p.status === "PENDING" ? "pending" : p.status === "FAILED" ? "failed" : p.status === "REFUNDED" ? "refunded" : "processing"} />
-                      </td>
-                      <td className="px-3 py-2 text-right font-medium text-sm">{formatCurrency(p.amountEurCents)}</td>
-                      <td className="px-3 py-2 text-xs text-muted-foreground">{format(new Date(p.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}</td>
-                      <td className="px-3 py-2">
-                        <div className="flex gap-1">
-                          {p.stripePaymentIntentId && (
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => window.open(`https://dashboard.stripe.com/payments/${p.stripePaymentIntentId}`, "_blank")}>
-                              <IconExternalLink className="h-3.5 w-3.5" />
-                            </Button>
-                          )}
-                          {p.status === "COMPLETED" && !p.refundedAt && (
-                            <Button variant="ghost" size="sm" onClick={() => handleRefund(p.id)} className="text-destructive hover:text-destructive h-7 text-xs px-2">Reemb.</Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <BloomCard>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-muted/50">
+              <tr>
+                <th className="px-3 py-2 text-left text-xs font-medium">ID</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Usuario</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Tipo</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Status</th>
+                <th className="px-3 py-2 text-right text-xs font-medium">Valor</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Data</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Acoes</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/30">
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>{Array.from({ length: 7 }).map((_, j) => (<td key={j} className="px-3 py-2"><Skeleton className="h-4 w-16" /></td>))}</tr>
+                ))
+              ) : payments.length === 0 ? (
+                <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground text-sm">Nenhum pagamento encontrado</td></tr>
+              ) : (
+                payments.map((p) => (
+                  <tr key={p.id} className="hover:bg-muted/30">
+                    <td className="px-3 py-2 font-mono text-xs">{p.id.slice(0, 8)}...</td>
+                    <td className="px-3 py-2">
+                      <p className="text-sm font-medium">{p.userName}</p>
+                      <p className="text-xs text-muted-foreground">{p.userEmail}</p>
+                    </td>
+                    <td className="px-3 py-2"><Badge variant="outline" className="text-xs">{getTypeLabel(p.type)}</Badge></td>
+                    <td className="px-3 py-2">
+                      <StatusBadge status={p.status === "COMPLETED" ? "completed" : p.status === "PENDING" ? "pending" : p.status === "FAILED" ? "failed" : p.status === "REFUNDED" ? "refunded" : "processing"} />
+                    </td>
+                    <td className="px-3 py-2 text-right font-medium text-sm">{formatCurrency(p.amountEurCents)}</td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">{format(new Date(p.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-1">
+                        {p.stripePaymentIntentId && (
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => window.open(`https://dashboard.stripe.com/payments/${p.stripePaymentIntentId}`, "_blank")}>
+                            <IconExternalLink className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {p.status === "COMPLETED" && !p.refundedAt && (
+                          <Button variant="ghost" size="sm" onClick={() => handleRefund(p.id)} className="text-destructive hover:text-destructive h-7 text-xs px-2">Reemb.</Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </BloomCard>
     </div>
-  );
-}
+    );
+  }
 
 // ==================== CUSTOMER AUDIT TAB ====================
 

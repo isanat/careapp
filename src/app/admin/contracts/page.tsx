@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { Card, CardContent } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
@@ -120,7 +122,7 @@ export default function AdminContractsPage() {
       case 'CANCELLED': return <StatusBadge status="cancelled" />;
       case 'DISPUTED': return <StatusBadge status="disputed" />;
       case 'PENDING_ACCEPTANCE': return <StatusBadge status="pending" />;
-      default: return <Badge variant="secondary">{status}</Badge>;
+      default: return <BloomBadge variant="secondary">{status}</BloomBadge>;
     }
   };
 
@@ -169,10 +171,10 @@ export default function AdminContractsPage() {
         <div>
           <p className="font-medium">{c.title}</p>
           {c.status === 'DISPUTED' && (
-            <Badge variant="destructive" className="mt-1 text-xs bg-destructive text-destructive-foreground">
+            <BloomBadge variant="destructive" className="mt-1 text-xs">
               <IconAlertCircle className="h-3 w-3 mr-1" />
               Em disputa
-            </Badge>
+            </BloomBadge>
           )}
         </div>
       ),

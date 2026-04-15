@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatusBadge } from "@/components/admin/common/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,6 +30,7 @@ import {
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { useToast } from "@/hooks/use-toast";
+import { cardHoverVariants, pageTransitionVariants, containerVariants, itemVariants } from "@/lib/animations";
 
 interface UserDetail {
   id: string;
@@ -138,7 +141,13 @@ export default function AdminUserDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageTransitionVariants}
+      className="space-y-6"
+    >
       <PageHeader
         title="Detalhes do Utilizador"
         breadcrumbs={[
@@ -168,10 +177,15 @@ export default function AdminUserDetailPage() {
         }
       />
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <motion.div
+        className="grid gap-6 md:grid-cols-3"
+        variants={containerVariants}
+        initial="initial"
+        animate="animate"
+      >
         {/* User Info Card */}
-        <Card className="md:col-span-1">
-          <CardContent className="pt-6">
+        <motion.div variants={itemVariants}>
+          <BloomCard variant="default" className="p-5 sm:p-6 md:p-7">
             <div className="flex flex-col items-center text-center">
               <Avatar className="h-20 w-20">
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl">
@@ -181,13 +195,13 @@ export default function AdminUserDetailPage() {
               <h2 className="mt-4 text-xl font-bold">{user.name}</h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>
               <div className="mt-2 flex gap-2">
-                <Badge
-                  className={
+                <BloomBadge
+                  variant={
                     user.role === "FAMILY"
-                      ? "bg-primary/10 text-primary"
+                      ? "primary"
                       : user.role === "CAREGIVER"
-                      ? "bg-success/10 text-success"
-                      : "bg-primary/10 text-primary"
+                      ? "success"
+                      : "primary"
                   }
                 >
                   {user.role === "FAMILY"
@@ -195,7 +209,7 @@ export default function AdminUserDetailPage() {
                     : user.role === "CAREGIVER"
                     ? "Cuidador"
                     : "Admin"}
-                </Badge>
+                </BloomBadge>
                 <StatusBadge
                   status={
                     user.status === "ACTIVE"
@@ -250,11 +264,11 @@ export default function AdminUserDetailPage() {
                 />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </BloomCard>
+        </motion.div>
 
         {/* Main Content */}
-        <div className="md:col-span-2">
+        <motion.div variants={itemVariants} className="md:col-span-2">
           <Tabs defaultValue="overview">
             <TabsList>
               <TabsTrigger value="overview">Visão Geral</TabsTrigger>
@@ -262,11 +276,16 @@ export default function AdminUserDetailPage() {
               <TabsTrigger value="contracts">Contratos</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="mt-4 space-y-4">
+            <TabsContent value="overview" className="mt-4 space-y-6">
               {/* Stats */}
-              <div className="grid gap-4 sm:grid-cols-3">
-                <Card>
-                  <CardContent className="pt-6">
+              <motion.div
+                className="grid gap-4 sm:grid-cols-2"
+                variants={containerVariants}
+                initial="initial"
+                animate="animate"
+              >
+                <motion.div variants={itemVariants}>
+                  <BloomCard variant="success" className="p-5 sm:p-6 md:p-7">
                     <div className="flex items-center gap-3">
                       <div className="rounded-full bg-primary/10 p-2">
                         <IconFileText className="h-5 w-5 text-primary" />
@@ -276,10 +295,10 @@ export default function AdminUserDetailPage() {
                         <p className="text-sm text-muted-foreground">Contratos</p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
+                  </BloomCard>
+                </motion.div>
+                <motion.div variants={itemVariants}>
+                  <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7">
                     <div className="flex items-center gap-3">
                       <div className="rounded-full bg-warning/10 p-2">
                         <IconCreditCard className="h-5 w-5 text-warning" />
@@ -291,17 +310,16 @@ export default function AdminUserDetailPage() {
                         <p className="text-sm text-muted-foreground">Total gasto</p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
+                  </BloomCard>
+                </motion.div>
+              </motion.div>
 
               {/* Profile Info */}
               {user.profileFamily && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Perfil Familiar</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm">
+                <motion.div variants={itemVariants}>
+                  <BloomCard className="p-5 sm:p-6 md:p-7">
+                    <BloomSectionHeader title="Perfil Familiar" />
+                    <div className="space-y-2 text-sm">
                     {user.profileFamily.elderName && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Idoso</span>
@@ -326,16 +344,16 @@ export default function AdminUserDetailPage() {
                         </span>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                    </div>
+                  </BloomCard>
+                </motion.div>
               )}
 
               {user.profileCaregiver && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Perfil Cuidador</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm">
+                <motion.div variants={itemVariants}>
+                  <BloomCard className="p-5 sm:p-6 md:p-7">
+                    <BloomSectionHeader title="Perfil Cuidador" />
+                    <div className="space-y-2 text-sm">
                     {user.profileCaregiver.title && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Título</span>
@@ -366,53 +384,54 @@ export default function AdminUserDetailPage() {
                         <p className="mt-1">{user.profileCaregiver.bio}</p>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
+                    </div>
+                  </BloomCard>
+                </motion.div>
               )}
             </TabsContent>
 
-            <TabsContent value="wallet" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Carteira</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {user.wallet ? (
-                    <>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                          <p className="text-sm text-muted-foreground">Saldo</p>
-                          <p className="text-2xl font-bold">
-                            €{(user.wallet.balanceEurCents / 100).toFixed(2)}
-                          </p>
+            <TabsContent value="wallet" className="mt-4 space-y-6">
+              <motion.div variants={itemVariants}>
+                <BloomCard className="p-5 sm:p-6 md:p-7">
+                  <BloomSectionHeader title="Carteira" />
+                  <div className="space-y-4">
+                    {user.wallet ? (
+                      <>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Saldo</p>
+                            <p className="text-2xl font-bold">
+                              €{(user.wallet.balanceEurCents / 100).toFixed(2)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">Endereço</p>
+                            <p className="font-mono text-xs break-all">
+                              {user.wallet.address}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Endereço</p>
-                          <p className="font-mono text-xs break-all">
-                            {user.wallet.address}
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-muted-foreground">Carteira não encontrada</p>
-                  )}
-                </CardContent>
-              </Card>
+                      </>
+                    ) : (
+                      <p className="text-muted-foreground">Carteira não encontrada</p>
+                    )}
+                  </div>
+                </BloomCard>
+              </motion.div>
             </TabsContent>
 
-            <TabsContent value="contracts" className="mt-4">
-              <Card>
-                <CardContent className="pt-6">
+            <TabsContent value="contracts" className="mt-4 space-y-6">
+              <motion.div variants={itemVariants}>
+                <BloomCard className="p-5 sm:p-6 md:p-7">
                   <p className="text-center text-muted-foreground">
                     {user.contractsCount} contrato(s) encontrado(s)
                   </p>
-                </CardContent>
-              </Card>
+                </BloomCard>
+              </motion.div>
             </TabsContent>
           </Tabs>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
