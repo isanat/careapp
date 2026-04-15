@@ -18,3 +18,4 @@ export { BloomSectionDivider } from "./BloomSectionDivider";
 export { BloomEmpty } from "./BloomEmpty";
 export { BloomSectionHeader } from "./BloomSectionHeader";
 export { BloomStatBlock } from "./BloomStatBlock";
+export { DocCard } from "./DocCard";
