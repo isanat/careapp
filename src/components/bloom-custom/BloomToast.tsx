@@ -39,7 +39,7 @@ export function showBloomToast({
 
   return sonnerToast.custom(
     (toastId) => (
-      <div className={`flex items-start gap-3 p-4 rounded-2xl border ${toastStyles[variant]} backdrop-blur-sm`}>
+      <div className={`flex items-start gap-3 p-3 sm:p-4 rounded-2xl border ${toastStyles[variant]} backdrop-blur-sm`}>
         <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
           <p className="font-display font-bold text-sm">{message}</p>

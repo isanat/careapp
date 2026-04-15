@@ -58,7 +58,7 @@ export function Header() {
           <IconLogo className="h-7 w-7 md:h-8 md:w-8 text-primary" />
           <div className="flex flex-col">
             <span className="font-bold text-sm md:text-lg leading-none">{APP_NAME}</span>
-            <span className="text-[10px] md:text-xs text-muted-foreground hidden sm:block">{t.tagline}</span>
+            <span className="text-xs md:text-sm text-muted-foreground hidden sm:block">{t.tagline}</span>
           </div>
         </Link>
 

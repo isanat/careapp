@@ -47,7 +47,7 @@ export function BloomAlert({
 
   return (
     <div
-      className={`flex items-start gap-4 p-5 rounded-2xl border ${styles.container} ${className}`}
+      className={`flex items-start gap-4 p-4 sm:p-5 md:p-6 rounded-2xl border ${styles.container} ${className}`}
       role="alert"
     >
       {/* Icon */}

@@ -27,7 +27,7 @@ export function BloomInfoRow({
 }: BloomInfoRowProps) {
   const variantClasses = {
     default: "border-b border-border pb-3 last:border-0 last:pb-0",
-    highlighted: "bg-primary/5 px-4 py-3 rounded-lg border border-primary/10",
+    highlighted: "bg-primary/5 px-3 sm:px-4 md:px-5 py-2 sm:py-3 md:py-4 rounded-lg border border-primary/10",
     muted: "opacity-60",
   };
 
@@ -40,7 +40,7 @@ export function BloomInfoRow({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <label className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest block">
+          <label className="text-xs font-display font-bold text-muted-foreground/60 uppercase tracking-widest block">
             {label}
           </label>
           <div className="text-sm sm:text-base font-medium text-foreground mt-0.5 truncate">

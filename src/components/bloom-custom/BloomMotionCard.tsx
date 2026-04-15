@@ -34,7 +34,7 @@ export function BloomMotionCard({
         className={`${baseClasses} overflow-hidden ${className}`}
       >
         <div className={`h-1 ${topBarColor}`} />
-        <div className="p-5 sm:p-7">{children}</div>
+        <div className="p-5 sm:p-6 md:p-7">{children}</div>
       </motion.div>
     );
   }
@@ -44,7 +44,7 @@ export function BloomMotionCard({
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
       onClick={onClick}
-      className={`${baseClasses} p-5 sm:p-7 ${className}`}
+      className={`${baseClasses} p-5 sm:p-6 md:p-7 ${className}`}
     >
       {children}
     </motion.div>

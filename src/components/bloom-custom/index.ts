@@ -17,6 +17,24 @@ export { BloomBadge } from "./BloomBadge";
 export { BloomSectionDivider } from "./BloomSectionDivider";
 export { BloomDialog } from "./BloomDialog";
 
+// Bloom component wrappers - UI components from shadcn/radix-ui
+export {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "./BloomBreadcrumb";
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./BloomTooltip";
+
+export { Popover, PopoverTrigger, PopoverContent } from "./BloomPopover";
+
+export { HoverCard, HoverCardTrigger, HoverCardContent } from "./BloomHoverCard";
+
+export { BloomProfileModal } from "./BloomProfileModal";
+
 // Componentes customizados específicos do careapp
 export { BloomEmpty } from "./BloomEmpty";
 export { BloomMotionCard } from "./BloomMotionCard";

@@ -178,13 +178,13 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
                   )}>
                     <Icon className={cn("h-5 w-5", active && "text-primary")} />
                     {item.href === "/app/chat" && unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white">
+                      <span className="absolute -top-1 -right-1 h-4 min-w-[16px] px-0.5 flex items-center justify-center rounded-full bg-destructive text-2xs font-bold text-white">
                         {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
                     )}
                   </div>
                   <span className={cn(
-                    "text-[11px] font-medium leading-tight",
+                    "text-xs font-medium leading-tight",
                     active ? "text-primary font-semibold" : "text-muted-foreground"
                   )}>
                     {item.label}

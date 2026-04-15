@@ -27,7 +27,7 @@ export function BloomStatCard({
   return (
     <div
       className={cn(
-        "bg-card p-7 rounded-3xl border border-border shadow-card transition-all duration-300",
+        "bg-card p-5 sm:p-6 md:p-7 rounded-3xl border border-border shadow-card transition-all duration-300",
         interactive && "hover:shadow-elevated hover:-translate-y-1 cursor-pointer group",
         className
       )}
@@ -45,7 +45,7 @@ export function BloomStatCard({
       {/* Content */}
       <div className="space-y-1">
         {/* Label */}
-        <div className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+        <div className="text-xs font-display font-black text-muted-foreground uppercase tracking-widest">
           {label}
         </div>
 

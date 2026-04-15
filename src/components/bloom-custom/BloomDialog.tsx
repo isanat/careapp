@@ -81,7 +81,7 @@ export function BloomDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent className={cn(
-        'max-w-md p-8 sm:p-10 rounded-3xl bg-card border border-border shadow-elevated',
+        'max-w-md p-5 sm:p-6 md:p-8 rounded-3xl bg-card border border-border shadow-elevated',
         className
       )}>
         {/* Icon */}
@@ -107,7 +107,7 @@ export function BloomDialog({
         </DialogHeader>
 
         {/* Content */}
-        <div className="py-4">
+        <div className="py-3 sm:py-4 md:py-6">
           {children}
         </div>
 

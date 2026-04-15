@@ -76,7 +76,7 @@ const SidebarLink = ({
     </div>
     {isOpen && count && (
       <span className={cn(
-        "px-2 py-0.5 rounded-lg text-[10px] font-bold font-display",
+        "px-2 py-0.5 rounded-lg text-2xs font-bold font-display",
         active ? "bg-primary/15 text-primary" : "bg-primary/10 text-primary"
       )}>
         {count}
@@ -88,7 +88,7 @@ const SidebarLink = ({
 const SectionLabel = ({ label, isOpen }: { label: string; isOpen: boolean }) => (
   <div className="pt-6 pb-2 px-3">
     {isOpen ? (
-      <p className="text-[10px] font-display font-black text-sidebar-foreground/60 uppercase tracking-[0.3em]">{label}</p>
+      <p className="text-2xs font-display font-black text-sidebar-foreground/60 uppercase tracking-[0.3em]">{label}</p>
     ) : (
       <div className="h-px bg-border mx-auto w-8" />
     )}
