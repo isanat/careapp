@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,6 +22,7 @@ import {
 } from "@/components/icons";
 import { CONTRACT_STATUS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+import { containerVariants, itemVariants, cardHoverVariants } from "@/lib/animations";
 
 interface Contract {
   id: string;
@@ -82,36 +84,46 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-6xl">
+      <motion.div
+        className="space-y-6 max-w-6xl"
+        initial="initial"
+        animate="animate"
+        variants={containerVariants}
+      >
         {/* Header - Bloom Elements style */}
         <BloomSectionHeader title={t.contracts.title} />
 
-        {/* Error - Bloom style */}
+        {/* Error - Bloom style with animation */}
         {error && (
-          <BloomCard topBar topBarColor="bg-destructive">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-medium text-destructive">{error}</p>
-              <Button variant="outline" onClick={fetchContracts} size="sm" className="h-8 text-xs">
-                {t.submit}
-              </Button>
-            </div>
-          </BloomCard>
+          <motion.div variants={itemVariants}>
+            <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7">
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-body text-sm font-medium text-destructive">{error}</p>
+                <Button variant="outline" onClick={fetchContracts} size="sm" className="h-8 text-xs">
+                  {t.submit}
+                </Button>
+              </div>
+            </BloomCard>
+          </motion.div>
         )}
 
-        {/* Loading */}
+        {/* Loading state with skeleton animations */}
         {isLoading && (
-          <div className="space-y-2">
+          <motion.div className="space-y-4" variants={containerVariants} initial="initial" animate="animate">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-16 rounded-xl" />
+              <motion.div key={i} variants={itemVariants}>
+                <Skeleton className="h-32 rounded-2xl" />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
-        {/* Tabs */}
+        {/* Tabs and Content */}
         {!isLoading && !error && (
-          <div className="space-y-5">
+          <motion.div className="space-y-6" variants={itemVariants}>
+            {/* Tab Navigation */}
             <div className="border-b border-border/60">
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                 {[
                   { key: "all", label: `Todos (${contracts.length})` },
                   { key: "active", label: `${t.contracts.active} (${activeContracts.length})` },
@@ -121,7 +133,7 @@ export default function ContractsPage() {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key as typeof activeTab)}
-                    className={`h-11 text-sm font-display font-black tracking-wide border-b-2 transition-colors ${
+                    className={`h-11 text-xs sm:text-sm font-display font-bold tracking-wide border-b-2 transition-all duration-300 uppercase ${
                       activeTab === tab.key
                         ? "border-primary text-foreground"
                         : "border-transparent text-muted-foreground hover:text-foreground"
@@ -133,6 +145,7 @@ export default function ContractsPage() {
               </div>
             </div>
 
+            {/* Contract List */}
             {(() => {
               const items =
                 activeTab === "all"
@@ -153,19 +166,28 @@ export default function ContractsPage() {
                   : IconContract;
 
               return (
-                <div className="space-y-4">
-                  {items.map((contract) => (
-                    <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
+                <motion.div
+                  className="space-y-4"
+                  variants={containerVariants}
+                  initial="initial"
+                  animate="animate"
+                >
+                  {items.map((contract, index) => (
+                    <motion.div key={contract.id} variants={itemVariants}>
+                      <ContractCard contract={contract} isFamily={isFamily} t={t} />
+                    </motion.div>
                   ))}
                   {items.length === 0 && (
-                    <BloomEmpty icon={<EmptyIcon className="h-6 w-6" />} title={t.contracts.noContracts} />
+                    <motion.div variants={itemVariants}>
+                      <BloomEmpty icon={<EmptyIcon className="h-6 w-6" />} title={t.contracts.noContracts} />
+                    </motion.div>
                   )}
-                </div>
+                </motion.div>
               );
             })()}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </AppShell>
   );
 }
@@ -174,7 +196,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
   const statusLabel = CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status;
   const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
 
-  // Map status to BloomBadge variants
+  // Map status to BloomBadge variants for Bloom Elements compliance
   const statusVariantMap: Record<string, "primary" | "success" | "warning" | "destructive" | "muted"> = {
     DRAFT: "muted",
     PENDING_ACCEPTANCE: "warning",
@@ -187,60 +209,88 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <BloomCard variant="interactive" className="p-5 sm:p-7">
-        {/* Header with status badge */}
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-display font-black text-foreground truncate uppercase text-[1.12rem] group-hover:text-primary transition-colors">
-              {contract.title || t.contracts.title}
-            </h3>
-            <p className="text-sm font-medium text-muted-foreground mt-1 truncate">{contract.description && contract.description.slice(0, 80)}</p>
-          </div>
-          <BloomBadge variant={statusVariantMap[contract.status] || "muted"}>
-            {statusLabel}
-          </BloomBadge>
-        </div>
-
-        {/* Info grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 py-4 border-y border-border/30">
-          {/* Other Party */}
-          <div className="flex items-start gap-3 hover:bg-primary/5 p-3 rounded-2xl transition-colors">
-            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-muted-foreground">
-              <IconUser className="h-4 w-4" />
+      <motion.div
+        variants={cardHoverVariants}
+        initial="initial"
+        whileHover="hover"
+      >
+        <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7">
+          {/* Header with status badge */}
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-6 pb-6 border-b border-border/30">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-display font-black text-foreground truncate uppercase text-lg sm:text-xl group-hover:text-primary transition-colors duration-300">
+                {contract.title || t.contracts.title}
+              </h3>
+              <p className="font-body text-sm text-muted-foreground mt-2 line-clamp-2">
+                {contract.description && contract.description.slice(0, 100)}
+              </p>
             </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-display font-black text-muted-foreground/70 uppercase tracking-widest">Cuidador</p>
-              <p className="text-sm font-semibold text-foreground truncate mt-1">{contract.otherParty?.name || t.none}</p>
+            <div className="flex-shrink-0">
+              <BloomBadge variant={statusVariantMap[contract.status] || "muted"} className="text-xs font-display font-bold uppercase">
+                {statusLabel}
+              </BloomBadge>
             </div>
           </div>
 
-          {/* Duration */}
-          <div className="flex items-start gap-3 hover:bg-primary/5 p-3 rounded-2xl transition-colors">
-            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-primary">
-              <IconClock className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-display font-black text-muted-foreground/70 uppercase tracking-widest">Duração</p>
-              <p className="text-sm font-semibold text-foreground mt-1">{contract.hoursPerWeek}h/semana</p>
-            </div>
-          </div>
-        </div>
+          {/* Info grid - responsive layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 pb-6 border-b border-border/30">
+            {/* Other Party */}
+            <motion.div
+              className="flex items-start gap-3 p-4 rounded-2xl bg-secondary/5 hover:bg-primary/5 transition-colors duration-300"
+              whileHover={{ y: -2 }}
+            >
+              <div className="h-10 w-10 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-muted-foreground">
+                <IconUser className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-display font-bold text-[10px] text-muted-foreground/70 uppercase tracking-widest">
+                  Cuidador
+                </p>
+                <p className="font-body font-semibold text-sm text-foreground truncate mt-1.5">
+                  {contract.otherParty?.name || t.none}
+                </p>
+              </div>
+            </motion.div>
 
-        {/* Footer: Date & Rate */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
-          <div className="flex items-center gap-2 text-[9px] font-display font-black text-muted-foreground/60 uppercase tracking-widest">
-            <IconCalendar className="h-4 w-4" />
-            {contract.startDate && (
-              <span>{new Date(contract.startDate).toLocaleDateString('pt-PT')}</span>
-            )}
+            {/* Duration */}
+            <motion.div
+              className="flex items-start gap-3 p-4 rounded-2xl bg-secondary/5 hover:bg-primary/5 transition-colors duration-300"
+              whileHover={{ y: -2 }}
+            >
+              <div className="h-10 w-10 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 text-primary">
+                <IconClock className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-display font-bold text-[10px] text-muted-foreground/70 uppercase tracking-widest">
+                  Duração
+                </p>
+                <p className="font-body font-semibold text-sm text-foreground mt-1.5">
+                  {contract.hoursPerWeek}h/semana
+                </p>
+              </div>
+            </motion.div>
           </div>
-          <div className="flex items-center gap-1">
-            <IconEuro className="h-4 w-4 text-success" />
-            <span className="text-base font-display font-black tracking-tighter text-success">{hourlyRate.toFixed(0)}€</span>
-            <span className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">/h</span>
+
+          {/* Footer: Date & Rate */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <IconCalendar className="h-4 w-4 text-muted-foreground/60 flex-shrink-0" />
+              <span className="font-display font-bold text-[10px] text-muted-foreground/60 uppercase tracking-widest">
+                {contract.startDate && new Date(contract.startDate).toLocaleDateString('pt-PT')}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <IconEuro className="h-4 w-4 text-success flex-shrink-0" />
+              <span className="font-display font-black text-base sm:text-lg tracking-tighter text-success">
+                {hourlyRate.toFixed(0)}€
+              </span>
+              <span className="font-display font-bold text-[9px] text-muted-foreground/60 uppercase tracking-widest">
+                /h
+              </span>
+            </div>
           </div>
-        </div>
-      </BloomCard>
+        </BloomCard>
+      </motion.div>
     </Link>
   );
 }

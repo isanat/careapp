@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader, BloomEmpty, BloomCard } from "@/components/bloom-custom";
+import {
+  BloomSectionHeader,
+  BloomEmpty,
+  BloomCard,
+  BloomStatBlock,
+  BloomBadge,
+} from "@/components/bloom-custom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconTrendingUp,
@@ -109,7 +116,7 @@ export default function WalletPage() {
   if (isLoading) {
     return (
       <AppShell>
-        <div className="space-y-8">
+        <div className="space-y-6">
           <Skeleton className="h-10 w-48" />
           <Skeleton className="h-40 rounded-3xl" />
           <Skeleton className="h-64 rounded-3xl" />
@@ -120,79 +127,134 @@ export default function WalletPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-4xl">
+      <motion.div
+        className="space-y-6 max-w-5xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         {/* Page Header */}
-        <BloomSectionHeader
-          title="Minha Carteira"
-          description="Saldo de conta e histórico de transações"
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+        >
+          <BloomSectionHeader
+            title="Minha Carteira"
+            description="Saldo de conta e histórico de transações"
+          />
+        </motion.div>
 
-        {/* Balance Hero Card */}
+        {/* Balance Hero Card with Stats Grid */}
         {walletData && (
-          <BloomCard variant="gradient" className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-7 sm:p-10">
-            <div className="space-y-6">
-              {/* Main Balance */}
-              <div>
-                <p className="text-xs font-display font-black uppercase tracking-widest opacity-80 mb-3">
-                  Saldo Disponível
-                </p>
-                <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter">
-                  €{(walletData.availableBalance / 100).toFixed(2)}
-                </p>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+            className="space-y-6"
+          >
+            {/* Main Balance Card */}
+            <BloomCard
+              variant="gradient"
+              className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-5 sm:p-6 md:p-7"
+            >
+              <div className="space-y-6">
+                {/* Main Balance */}
+                <motion.div
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.3 }}
+                >
+                  <p className="text-xs font-display font-black uppercase tracking-widest opacity-80 mb-3">
+                    Saldo Disponível
+                  </p>
+                  <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter">
+                    €{(walletData.availableBalance / 100).toFixed(2)}
+                  </p>
+                </motion.div>
 
-              {/* Balance Breakdown */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <p className="text-[9px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
-                    Total de Ganhos
-                  </p>
-                  <p className="text-lg font-display font-black tracking-tighter">
-                    €{(walletData.totalEarnings / 100).toFixed(2)}
-                  </p>
-                </div>
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <p className="text-[9px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
-                    Pendente (Escrow)
-                  </p>
-                  <p className="text-lg font-display font-black tracking-tighter">
-                    €{(walletData.pendingAmount / 100).toFixed(2)}
-                  </p>
-                </div>
+                {/* Balance Breakdown - Responsive Grid */}
+                <motion.div
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.3 }}
+                >
+                  {/* Total Earnings Stat */}
+                  <motion.div
+                    className="bg-white/10 rounded-2xl p-5"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <p className="text-xs font-display font-black uppercase tracking-widest opacity-75 mb-2">
+                      Total de Ganhos
+                    </p>
+                    <p className="text-2xl font-display font-black tracking-tighter">
+                      €{(walletData.totalEarnings / 100).toFixed(2)}
+                    </p>
+                  </motion.div>
+
+                  {/* Pending Amount Stat */}
+                  <motion.div
+                    className="bg-white/10 rounded-2xl p-5"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <p className="text-xs font-display font-black uppercase tracking-widest opacity-75 mb-2">
+                      Pendente (Escrow)
+                    </p>
+                    <p className="text-2xl font-display font-black tracking-tighter">
+                      €{(walletData.pendingAmount / 100).toFixed(2)}
+                    </p>
+                  </motion.div>
+                </motion.div>
               </div>
-            </div>
-          </BloomCard>
+            </BloomCard>
+          </motion.div>
         )}
 
         {/* Transaction List */}
         {walletData && walletData.recentTransactions.length > 0 && (
-          <section className="space-y-4">
+          <motion.section
+            className="space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+          >
             <BloomSectionHeader title="Histórico de Transações" />
-            <BloomCard className="rounded-3xl p-5 sm:p-7">
+            <BloomCard className="p-5 sm:p-6 md:p-7">
               <div className="space-y-0">
                 {walletData.recentTransactions.map((transaction, idx) => (
-                  <div
+                  <motion.div
                     key={transaction.id}
-                    className={`flex justify-between items-center py-4 ${
+                    className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 py-4 ${
                       idx < walletData.recentTransactions.length - 1
                         ? "border-b border-border/50"
                         : ""
                     }`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.05, duration: 0.3 }}
+                    whileHover={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}
                   >
                     {/* Left: Icon + Description */}
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary flex-shrink-0">
+                    <div className="flex items-center gap-4 flex-1">
+                      <motion.div
+                        className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary flex-shrink-0"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
                         {transaction.status === "COMPLETED" ? (
                           <IconArrowDown className="h-6 w-6" />
                         ) : (
                           <IconCalendar className="h-6 w-6" />
                         )}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
+                      </motion.div>
+                      <div className="flex-1">
+                        <p className="text-sm font-body font-medium text-foreground">
                           {transaction.description || "Pagamento de Serviço"}
                         </p>
-                        <p className="text-[9px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">
+                        <p className="text-xs font-display font-black text-muted-foreground/50 uppercase tracking-widest mt-1">
                           {new Date(transaction.createdAt).toLocaleDateString("pt-PT", {
                             day: "2-digit",
                             month: "2-digit",
@@ -202,50 +264,64 @@ export default function WalletPage() {
                       </div>
                     </div>
 
-                    {/* Right: Amount + Status */}
-                    <div className="text-right flex-shrink-0">
-                      <p
-                        className={`text-lg font-display font-black tracking-tighter ${
-                          transaction.status === "COMPLETED"
-                            ? "text-success"
-                            : "text-warning"
-                        }`}
+                    {/* Right: Amount + Status Badge */}
+                    <div className="flex items-center gap-4 sm:flex-col sm:items-end">
+                      <div>
+                        <p
+                          className={`text-lg font-display font-black tracking-tighter ${
+                            transaction.status === "COMPLETED"
+                              ? "text-success"
+                              : "text-warning"
+                          }`}
+                        >
+                          +€{(transaction.amount / 100).toFixed(2)}
+                        </p>
+                      </div>
+                      <BloomBadge
+                        variant={
+                          transaction.status === "COMPLETED" ? "success" : "warning"
+                        }
+                        className="text-xs font-display font-black uppercase tracking-widest"
                       >
-                        +€{(transaction.amount / 100).toFixed(2)}
-                      </p>
-                      <p
-                        className={`text-[9px] font-display font-black uppercase tracking-widest ${
-                          transaction.status === "COMPLETED"
-                            ? "text-success/70"
-                            : "text-warning/70"
-                        }`}
-                      >
-                        {transaction.status === "COMPLETED" ? "Libertado" : "Pendente"}
-                      </p>
+                        {transaction.status === "COMPLETED"
+                          ? "Libertado"
+                          : "Pendente"}
+                      </BloomBadge>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </BloomCard>
-          </section>
+          </motion.section>
         )}
 
         {/* Empty State */}
         {(!walletData || walletData.recentTransactions.length === 0) && !error && (
-          <BloomEmpty
-            icon={<IconTrendingUp className="h-8 w-8" />}
-            title="Sem transações ainda"
-            description="Suas transações aparecerão aqui quando completar contratos"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+          >
+            <BloomEmpty
+              icon={<IconTrendingUp className="h-8 w-8" />}
+              title="Sem transações ainda"
+              description="Suas transações aparecerão aqui quando completar contratos"
+            />
+          </motion.div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
-            <p className="text-sm font-medium text-destructive">{error}</p>
-          </div>
+          <motion.div
+            className="flex items-start gap-4 p-5 sm:p-6 md:p-7 bg-destructive/5 border border-destructive/20 rounded-2xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="text-sm font-body font-medium text-destructive">{error}</p>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </AppShell>
   );
 }
