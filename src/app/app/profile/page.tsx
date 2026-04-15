@@ -3,13 +3,13 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,10 +54,29 @@ import {
   IconClock,
   IconAlertTriangle,
 } from "@/components/icons";
+import { BloomCard, BloomBadge, BloomSectionHeader, DocCard } from "@/components/bloom-custom";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
+
+// Framer Motion animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06 }
+  },
+} as const;
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut" as any }
+  },
+} as const;
 
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
@@ -449,22 +468,27 @@ export default function ProfilePage() {
   const getBackgroundCheckBadge = () => {
     switch (formData.backgroundCheckStatus) {
       case "VERIFIED":
-        return <Badge className="bg-success/10 text-success border-success/20" variant="outline"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</Badge>;
+        return <BloomBadge className="bg-success/10 text-success border-success/20" variant="success"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</BloomBadge>;
       case "SUBMITTED":
-        return <Badge className="bg-warning/10 text-warning border-warning/20" variant="outline"><IconClock className="h-3 w-3 mr-1" />Em analise</Badge>;
+        return <BloomBadge className="bg-warning/10 text-warning border-warning/20" variant="warning"><IconClock className="h-3 w-3 mr-1" />Em analise</BloomBadge>;
       case "REJECTED":
-        return <Badge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
+        return <BloomBadge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</BloomBadge>;
       default:
-        return <Badge variant="outline"><IconClock className="h-3 w-3 mr-1" />Pendente</Badge>;
+        return <BloomBadge variant="outline"><IconClock className="h-3 w-3 mr-1" />Pendente</BloomBadge>;
     }
   };
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-4xl">
+      <motion.div
+        className="space-y-8 max-w-4xl"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
         {/* Page Header */}
-        <div className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
+        <motion.div variants={itemVariants} className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-display font-black uppercase tracking-tighter leading-none">
             Meu Perfil
           </h1>
           <p className="text-base text-muted-foreground font-medium">
@@ -472,31 +496,31 @@ export default function ProfilePage() {
               ? "Gerencie suas informações profissionais e preferências"
               : "Gerencie as informações do seu familiar"}
           </p>
-        </div>
+        </motion.div>
 
         {/* Alerts */}
         {error && (
-          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+          <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-display font-bold text-foreground">Erro</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
             </div>
-          </div>
+          </motion.div>
         )}
         {success && (
-          <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
+          <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
             <IconCheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-display font-bold text-foreground">Sucesso</p>
               <p className="text-xs text-muted-foreground mt-1">{success}</p>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Profile Header Section */}
-        <section className="space-y-4">
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4 hover:shadow-elevated transition-all">
+        <motion.section variants={itemVariants} className="space-y-4">
+          <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-5">
                 {/* Avatar */}
@@ -564,19 +588,19 @@ export default function ProfilePage() {
                 )}
               </Button>
             </div>
-          </div>
-        </section>
+          </BloomCard>
+        </motion.section>
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               { value: profile?.totalContracts || 0, label: "Contratos", icon: IconFamily },
               { value: profile?.totalReviews || 0, label: "Avaliações", icon: IconStar },
               { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", icon: IconStar },
               { value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", icon: IconEuro },
             ].map((stat, i) => (
-              <div key={i} className="bg-card p-7 rounded-3xl border border-border shadow-card space-y-4 hover:shadow-elevated transition-all group">
+              <BloomCard key={i} className="p-6 md:p-7 space-y-4 group">
                 <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <stat.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -588,13 +612,14 @@ export default function ProfilePage() {
                     {stat.value}
                   </div>
                 </div>
-              </div>
+              </BloomCard>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="about" className="space-y-6">
+        <motion.div variants={itemVariants}>
+          <Tabs defaultValue="about" className="space-y-6">
           <TabsList className={`w-full h-11 rounded-2xl bg-secondary/50 p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'} gap-1`}>
             <TabsTrigger value="about" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Info</TabsTrigger>
             <TabsTrigger value="documents" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Docs</TabsTrigger>
@@ -606,9 +631,9 @@ export default function ProfilePage() {
 
           {/* Info Tab */}
           <TabsContent value="about" className="space-y-6">
-            <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informações Pessoais</h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+            <motion.section variants={itemVariants} className="space-y-4">
+              <BloomSectionHeader title="Informações Pessoais" />
+              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.name}</Label>
@@ -668,16 +693,16 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
-              </div>
-            </section>
+              </BloomCard>
+            </motion.section>
           </TabsContent>
 
           {/* Documents Tab */}
           <TabsContent value="documents" className="space-y-6">
             {/* Personal Documents Section */}
-            <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Documentos Pessoais</h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+            <motion.section variants={itemVariants} className="space-y-4">
+              <BloomSectionHeader title="Documentos Pessoais" />
+              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div>
                   <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">NIF</Label>
                   <Input
@@ -722,14 +747,14 @@ export default function ProfilePage() {
                     />
                   </div>
                 )}
-              </div>
-            </section>
+              </BloomCard>
+            </motion.section>
 
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
-              <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Verificacao de Antecedentes</h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <motion.section variants={itemVariants} className="space-y-4">
+                <BloomSectionHeader title="Verificacao de Antecedentes" />
+                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center">
@@ -766,8 +791,8 @@ export default function ProfilePage() {
                   {formData.backgroundCheckUrl && (
                     <p className="text-xs text-success flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado com sucesso</p>
                   )}
-                </div>
-              </section>
+                </BloomCard>
+              </motion.section>
             )}
 
             {/* Security Info */}
@@ -783,9 +808,9 @@ export default function ProfilePage() {
           {/* Services Tab */}
           {isCaregiver && (
             <TabsContent value="services" className="space-y-6">
-              <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Servicos Oferecidos</h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+              <motion.section variants={itemVariants} className="space-y-4">
+                <BloomSectionHeader title="Servicos Oferecidos" />
+                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {SERVICE_TYPES.map((service) => (
                       <label
@@ -848,17 +873,17 @@ export default function ProfilePage() {
                       />
                     </div>
                   </div>
-                </div>
-              </section>
+                </BloomCard>
+              </motion.section>
             </TabsContent>
           )}
 
           {/* Elder Tab */}
           {isFamily && (
             <TabsContent value="elder" className="space-y-6">
-              <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informacoes do Familiar</h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <motion.section variants={itemVariants} className="space-y-4">
+                <BloomSectionHeader title="Informacoes do Familiar" />
+                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Nome do Idoso</Label>
@@ -891,16 +916,16 @@ export default function ProfilePage() {
                       placeholder="Descreva as necessidades especificas de saude e cuidado..."
                     />
                   </div>
-                </div>
-              </section>
+                </BloomCard>
+              </motion.section>
             </TabsContent>
           )}
 
           {/* Contact Tab */}
           <TabsContent value="contact" className="space-y-6">
-            <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informacoes de Contato</h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+            <motion.section variants={itemVariants} className="space-y-4">
+              <BloomSectionHeader title="Informacoes de Contato" />
+              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div>
                   <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.email}</Label>
                   <Input
@@ -954,15 +979,15 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
-              </div>
-            </section>
+              </BloomCard>
+            </motion.section>
           </TabsContent>
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             {/* Settings Section */}
-            <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Preferencias e Configuracoes</h3>
+            <motion.section variants={itemVariants} className="space-y-4">
+              <BloomSectionHeader title="Preferencias e Configuracoes" />
 
               {/* Push Notifications */}
               <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
@@ -1022,10 +1047,10 @@ export default function ProfilePage() {
                   </a>
                 </div>
               </div>
-            </section>
+            </motion.section>
 
             {/* Account Actions */}
-            <section className="space-y-3 pt-6 border-t border-border/30 mt-8">
+            <motion.section variants={itemVariants} className="space-y-3 pt-6 border-t border-border/30 mt-8">
               {/* Logout */}
               <Button
                 variant="outline"
@@ -1047,7 +1072,7 @@ export default function ProfilePage() {
                     Apagar conta
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl">
+                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl p-5 sm:p-6 md:p-7">
                   <DialogHeader>
                     <DialogTitle className="text-xl font-display font-black uppercase tracking-tighter">Apagar conta?</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
@@ -1084,7 +1109,7 @@ export default function ProfilePage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-            </section>
+            </motion.section>
 
             {/* Footer */}
             <div className="text-center pt-8">
@@ -1092,7 +1117,8 @@ export default function ProfilePage() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 }
