@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { Separator } from "@/components/ui/separator";
 import { AppShell } from "@/components/layout/app-shell";
 import {
@@ -69,12 +69,12 @@ interface CaregiverData {
 }
 
 const BADGE_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  IDENTITY_VERIFIED: { label: "Identidade Verificada", color: "bg-green-500", icon: "shield" },
-  BACKGROUND_CHECKED: { label: "Antecedentes Verificados", color: "bg-blue-600", icon: "shield" },
-  PROFILE_VERIFIED: { label: "Perfil Verificado", color: "bg-emerald-500", icon: "check" },
-  EXPERIENCED: { label: "Experiente (5+ contratos)", color: "bg-purple-500", icon: "star" },
-  TOP_RATED: { label: "Melhor Avaliado", color: "bg-amber-500", icon: "star" },
-  DEDICATED: { label: "Dedicado (100h+)", color: "bg-indigo-500", icon: "clock" },
+  IDENTITY_VERIFIED: { label: "Identidade Verificada", color: "bg-success", icon: "shield" },
+  BACKGROUND_CHECKED: { label: "Antecedentes Verificados", color: "bg-primary", icon: "shield" },
+  PROFILE_VERIFIED: { label: "Perfil Verificado", color: "bg-success", icon: "check" },
+  EXPERIENCED: { label: "Experiente (5+ contratos)", color: "bg-secondary", icon: "star" },
+  TOP_RATED: { label: "Melhor Avaliado", color: "bg-warning", icon: "star" },
+  DEDICATED: { label: "Dedicado (100h+)", color: "bg-primary", icon: "clock" },
 };
 
 export default function CaregiverProfilePage({ params }: { params: Promise<{ id: string }> }) {

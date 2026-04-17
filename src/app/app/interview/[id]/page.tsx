@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -722,9 +722,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 {interview.questionnaire.wouldRecommend !== undefined && (
                   <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                     <span className="text-sm text-muted-foreground">Recomendação:</span>
-                    <Badge className={interview.questionnaire.wouldRecommend ? "bg-green-500" : "bg-red-500"}>
+                    <BloomBadge className={interview.questionnaire.wouldRecommend ? "bg-success" : "bg-destructive"}>
                       {interview.questionnaire.wouldRecommend ? "Recomenda" : "Não Recomenda"}
-                    </Badge>
+                    </BloomBadge>
                   </div>
                 )}
 
@@ -1112,9 +1112,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 {interview.questionnaire.wouldRecommend !== undefined && (
                   <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                     <span className="text-sm text-muted-foreground">Recomendação:</span>
-                    <Badge className={interview.questionnaire.wouldRecommend ? "bg-green-500" : "bg-red-500"}>
+                    <BloomBadge className={interview.questionnaire.wouldRecommend ? "bg-success" : "bg-destructive"}>
                       {interview.questionnaire.wouldRecommend ? "Recomenda" : "Não Recomenda"}
-                    </Badge>
+                    </BloomBadge>
                   </div>
                 )}
 

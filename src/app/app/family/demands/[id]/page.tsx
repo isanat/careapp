@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { BoostVisibilityModal } from '@/components/demands/boost-visibility-modal';
 import { getServiceTypeLabel } from '@/lib/service-types';
@@ -166,27 +167,54 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35,  },
+    },
+  };
+
   return (
     <AppShell>
-      <div className="space-y-8 pb-8">
-        <div className="max-w-5xl mx-auto px-4 space-y-8">
+      <motion.div
+        className="space-y-8 pb-8"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <motion.div className="max-w-5xl mx-auto px-4 space-y-8">
           {/* Back Button */}
-          <Link href="/app/family/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
-            ← Voltar
-          </Link>
+          <motion.div variants={itemVariants}>
+            <Link href="/app/family/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
+              ← Voltar
+            </Link>
+          </motion.div>
 
           {/* Success Message */}
           {boostSuccess && (
-            <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
+            <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
               <div className="flex-1">
                 <p className="font-display font-bold text-foreground text-sm">Boost de visibilidade ativado com sucesso!</p>
                 <p className="text-xs text-muted-foreground mt-1">Sua demanda agora tem maior visibilidade no marketplace.</p>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Demand Header Card */}
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+          <motion.div variants={itemVariants} className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter leading-none">
@@ -240,10 +268,10 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Boost Section */}
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <motion.div variants={itemVariants} className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h3 className="font-display font-black text-foreground uppercase tracking-tighter mb-1">
                 Aumentar Visibilidade
@@ -258,10 +286,10 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
             >
               Aumentar Visibilidade
             </button>
-          </div>
+          </motion.div>
 
           {/* Demand Details Card */}
-          <section className="space-y-4">
+          <motion.section variants={itemVariants} className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Descrição
             </h4>
@@ -332,10 +360,10 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Proposals Section */}
-          <section className="space-y-4">
+          <motion.section variants={itemVariants} className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Propostas Recebidas
             </h4>
@@ -351,12 +379,13 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-border/50">
+                <motion.div className="divide-y divide-border/50" variants={containerVariants} initial="hidden" animate="visible">
                   {proposals.map(proposal => {
                     const statusBadge = getProposalStatusBadge(proposal.status);
                     return (
-                      <div
+                      <motion.div
                         key={proposal.id}
+                        variants={itemVariants}
                         className="p-5 sm:p-7 hover:bg-secondary/30 transition-colors group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
@@ -422,15 +451,15 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                             Contatar
                           </button>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
-                </div>
+                </motion.div>
               )}
             </div>
-          </section>
-        </div>
-      </div>
+          </motion.section>
+        </motion.div>
+      </motion.div>
 
       {/* Boost Modal */}
       {demand && (

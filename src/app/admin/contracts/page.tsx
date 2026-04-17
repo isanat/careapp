@@ -337,9 +337,9 @@ export default function AdminContractsPage() {
             <tab.icon className="h-4 w-4" />
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
-              <Badge variant="destructive" className="ml-1 bg-destructive text-destructive-foreground">
+              <BloomBadge variant="destructive" className="ml-1">
                 {tab.count}
-              </Badge>
+              </BloomBadge>
             )}
           </Button>
         ))}

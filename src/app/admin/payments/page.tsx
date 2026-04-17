@@ -10,7 +10,6 @@ import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -305,7 +304,7 @@ function TransactionsTab() {
                       <p className="text-sm font-medium">{p.userName}</p>
                       <p className="text-xs text-muted-foreground">{p.userEmail}</p>
                     </td>
-                    <td className="px-3 py-2"><Badge variant="outline" className="text-xs">{getTypeLabel(p.type)}</Badge></td>
+                    <td className="px-3 py-2"><BloomBadge variant="outline" className="text-xs">{getTypeLabel(p.type)}</BloomBadge></td>
                     <td className="px-3 py-2">
                       <StatusBadge status={p.status === "COMPLETED" ? "completed" : p.status === "PENDING" ? "pending" : p.status === "FAILED" ? "failed" : p.status === "REFUNDED" ? "refunded" : "processing"} />
                     </td>
@@ -432,8 +431,8 @@ function CustomerAuditTab() {
                 <IconShield className="h-4 w-4" />
                 Verificacao de Consistencia (Cruzamento)
                 {data.crossCheck.isConsistent
-                  ? <Badge className="bg-success/10 text-success border-0 text-[10px]"><IconCheck className="h-3 w-3 mr-0.5" />OK</Badge>
-                  : <Badge className="bg-destructive/10 text-destructive border-0 text-[10px]"><IconX className="h-3 w-3 mr-0.5" />Divergencia</Badge>
+                  ? <BloomBadge className="bg-success/10 text-success border-0 text-[10px]"><IconCheck className="h-3 w-3 mr-0.5" />OK</BloomBadge>
+                  : <BloomBadge className="bg-destructive/10 text-destructive border-0 text-[10px]"><IconX className="h-3 w-3 mr-0.5" />Divergencia</BloomBadge>
                 }
               </CardTitle>
             </CardHeader>
@@ -488,7 +487,7 @@ function CustomerAuditTab() {
                           <tr key={p.id} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5 whitespace-nowrap">{format(new Date(p.createdAt), "dd/MM/yy HH:mm", { locale: pt })}</td>
                             <td className="px-2 py-1.5">{typeLabels[p.type] || p.type}</td>
-                            <td className="px-2 py-1.5"><Badge className={`${auditStatusColors[p.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{p.status}</Badge></td>
+                            <td className="px-2 py-1.5"><BloomBadge className={`${auditStatusColors[p.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{p.status}</BloomBadge></td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(p.amountEurCents)}</td>
                             <td className="px-2 py-1.5 text-right text-warning font-medium">{p.platformFee > 0 ? EUR(p.platformFee) : '-'}</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(p.amountEurCents - (p.platformFee || 0))}</td>
@@ -522,7 +521,7 @@ function CustomerAuditTab() {
                         {data.paymentsGrouped.map((g, i) => (
                           <tr key={i} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5 font-medium">{typeLabels[g.type] || g.type}</td>
-                            <td className="px-2 py-1.5"><Badge className={`${auditStatusColors[g.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{g.status}</Badge></td>
+                            <td className="px-2 py-1.5"><BloomBadge className={`${auditStatusColors[g.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{g.status}</BloomBadge></td>
                             <td className="px-2 py-1.5 text-right">{g.qty}</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(g.totalAmount)}</td>
                             <td className="px-2 py-1.5 text-right text-warning font-bold">{g.totalFees > 0 ? EUR(g.totalFees) : '-'}</td>
@@ -555,7 +554,7 @@ function CustomerAuditTab() {
                         {data.contracts.map((c) => (
                           <tr key={c.id} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5 font-medium truncate max-w-[120px]">{c.title || c.id.slice(0, 8)}</td>
-                            <td className="px-2 py-1.5"><Badge className={`${auditStatusColors[c.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{c.status}</Badge></td>
+                            <td className="px-2 py-1.5"><BloomBadge className={`${auditStatusColors[c.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{c.status}</BloomBadge></td>
                             <td className="px-2 py-1.5">{c.otherParty.name} <span className="text-muted-foreground">({c.otherParty.role})</span></td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(c.totalValue)}</td>
                             <td className="px-2 py-1.5 text-right">{c.platformFeePct}%</td>
@@ -588,9 +587,9 @@ function CustomerAuditTab() {
                         {data.ledgerGrouped.map((l, i) => (
                           <tr key={i} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5">
-                              <Badge className={`${l.type === 'CREDIT' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'} border-0 text-[9px] px-1.5 py-0`}>
+                              <BloomBadge className={`${l.type === 'CREDIT' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'} border-0 text-[9px] px-1.5 py-0`}>
                                 {l.type === 'CREDIT' ? 'ENTRADA' : 'SAIDA'}
-                              </Badge>
+                              </BloomBadge>
                             </td>
                             <td className="px-2 py-1.5">{reasonLabels[l.reason] || l.reason}</td>
                             <td className="px-2 py-1.5 text-right">{l.qty}</td>

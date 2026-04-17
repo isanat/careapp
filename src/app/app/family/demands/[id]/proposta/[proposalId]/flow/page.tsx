@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   IconArrowLeft,
@@ -292,7 +292,7 @@ function ProposalFlowContent() {
             <p className="text-lg font-display font-bold text-foreground">{caregiver.name}</p>
             <p className="text-sm text-muted-foreground mt-0.5">{caregiver.title}</p>
             <div className="flex items-center gap-1.5 mt-2">
-              <IconStar className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+              <IconStar className="h-3.5 w-3.5 text-warning fill-warning flex-shrink-0" />
               <span className="text-sm font-display font-bold text-foreground">
                 {caregiver.averageRating.toFixed(1)}
               </span>

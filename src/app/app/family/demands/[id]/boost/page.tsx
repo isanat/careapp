@@ -5,10 +5,11 @@ import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
 import {
   IconArrowLeft,
   IconLoader2,
@@ -139,10 +140,35 @@ function BoostContent() {
   const pkgDetails = PACKAGE_DETAILS[packageType] || PACKAGE_DETAILS.BASIC;
   const Icon = pkgDetails.icon;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35 },
+    },
+  };
+
   return (
-    <div className="max-w-2xl mx-auto pb-8">
+    <motion.div
+      className="max-w-2xl mx-auto pb-8"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Header with Back Button */}
-      <div className="mb-8 flex items-center gap-4">
+      <motion.div variants={itemVariants} className="mb-8 flex items-center gap-4">
         <Link
           href="/app/family/demands"
           className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
@@ -158,19 +184,19 @@ function BoostContent() {
             Checkout seguro com Stripe
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {error && (
-        <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <motion.div variants={itemVariants} className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <p className="text-sm text-destructive font-medium">{error}</p>
-        </div>
+        </motion.div>
       )}
 
       {demand && (
-        <div className="space-y-6">
+        <motion.div variants={containerVariants} className="space-y-6" initial="hidden" animate="visible">
           {/* Demand Info Card */}
-          <section className="space-y-4">
+          <motion.section variants={itemVariants} className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Demanda Atual
             </h4>
@@ -194,38 +220,38 @@ function BoostContent() {
                     </span>
                   ))}
                   {demand.serviceTypes.length > 2 && (
-                    <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
+                    <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
                       +{demand.serviceTypes.length - 2}
-                    </span>
+                    </BloomBadge>
                   )}
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Pricing Cards Grid */}
-          <section className="space-y-4">
+          <motion.section variants={itemVariants} className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Pacotes Disponíveis
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={containerVariants} initial="hidden" animate="visible">
               {Object.entries(PACKAGE_DETAILS).map(([key, pkg]) => {
                 const isSelected = key === packageType;
                 return (
-                  <Link
-                    key={key}
-                    href={`?package=${key}`}
-                    className={`bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
-                      isSelected
-                        ? 'bg-primary/5 border-primary/30 shadow-elevated'
-                        : 'border-border hover:shadow-elevated hover:border-primary/30'
-                    }`}
-                  >
+                  <motion.div key={key} variants={itemVariants}>
+                    <Link
+                      href={`?package=${key}`}
+                      className={`block bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
+                        isSelected
+                          ? 'bg-primary/5 border-primary/30 shadow-elevated'
+                          : 'border-border hover:shadow-elevated hover:border-primary/30'
+                      }`}
+                    >
                     <div className="space-y-4">
                       {/* Badge */}
-                      <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
+                      <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
                         {pkg.label}
-                      </span>
+                      </BloomBadge>
 
                       {/* Icon */}
                       <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
@@ -270,14 +296,15 @@ function BoostContent() {
                         </li>
                       </ul>
                     </div>
-                  </Link>
+                    </Link>
+                  </motion.div>
                 );
               })}
-            </div>
-          </section>
+            </motion.div>
+          </motion.section>
 
           {/* Summary Box */}
-          <section className="space-y-4">
+          <motion.section variants={itemVariants} className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Resumo
             </h4>
@@ -291,7 +318,7 @@ function BoostContent() {
                 </span>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Info Banner */}
           <div className="bg-info/5 p-5 rounded-2xl border border-info/20 flex items-start gap-3">
@@ -333,9 +360,9 @@ function BoostContent() {
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

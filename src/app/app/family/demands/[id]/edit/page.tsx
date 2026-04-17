@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ import {
   IconLoader2,
   IconAlertCircle,
   IconCheck,
+  IconMapPin,
 } from '@/components/icons';
 
 interface Demand {
@@ -193,11 +195,36 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35,  },
+    },
+  };
+
   return (
     <AppShell>
-      <div className="max-w-2xl mx-auto py-12 px-4 space-y-8">
+      <motion.div
+        className="max-w-2xl mx-auto py-12 px-4 space-y-8"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
         {/* Header */}
-        <div className="space-y-2">
+        <motion.div variants={itemVariants} className="space-y-2">
           <Link
             href={`/app/family/demands/${resolvedParams.id}`}
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-4"
@@ -211,20 +238,20 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
           <p className="text-base text-muted-foreground font-medium">
             Atualize os detalhes da sua demanda de serviços
           </p>
-        </div>
+        </motion.div>
 
         {/* Form Card */}
-        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+        <motion.div variants={itemVariants} className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Error Alert */}
             {error && (
-              <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
                 <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm font-display font-bold text-foreground mb-1">Erro ao atualizar</p>
                   <p className="text-xs text-muted-foreground">{error}</p>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* Form Section */}
@@ -351,8 +378,8 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 }

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -118,28 +119,53 @@ function FamilyDemandsContent() {
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35,  },
+    },
+  };
+
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <motion.div
+      className="max-w-7xl mx-auto space-y-8"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Header Section */}
-      <div className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex items-center justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter leading-none">Suas Demandas</h1>
           <p className="text-base text-muted-foreground font-medium">
             Gerencie e acompanhe todas as suas demandas de serviços de cuidados
           </p>
         </div>
-        <Button asChild className="rounded-2xl gap-2 h-10">
+        <Button asChild className="rounded-2xl gap-2 h-10 shrink-0">
           <Link href="/app/family/demands/new">
             <IconPlus className="h-4 w-4" />
             <span className="hidden sm:inline">Criar Demanda</span>
             <span className="sm:hidden">Nova</span>
           </Link>
         </Button>
-      </div>
+      </motion.div>
 
       {/* Analytics Cards */}
       {analytics && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+        <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
           <BloomStatBlock
             label="Ativas"
             value={analytics.activeDemands}
@@ -174,11 +200,12 @@ function FamilyDemandsContent() {
             icon={<IconEye className="h-6 w-6" />}
             colorClass="text-secondary"
           />
-        </div>
+        </motion.div>
       )}
 
       {/* Tabs Section */}
-      <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full space-y-6">
+      <motion.div variants={itemVariants}>
+        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full space-y-6">
         <TabsList className="w-full grid grid-cols-3 h-11 rounded-2xl bg-muted/50 p-1 border border-border/30">
           <TabsTrigger value="ACTIVE" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
             Ativas ({demands.filter(d => d.status === 'ACTIVE').length})
@@ -207,7 +234,12 @@ function FamilyDemandsContent() {
               }
             />
           ) : (
-            <div className="space-y-3">
+            <motion.div
+              className="space-y-3"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
               {demands.map(demand => {
                 const visibilityConfig: Record<string, { badgeVariant: 'primary' | 'success' | 'warning' | 'destructive' | 'secondary' | 'info' | 'muted', label: string }> = {
                   'URGENT': { badgeVariant: 'destructive', label: 'Urgente' },
@@ -218,10 +250,15 @@ function FamilyDemandsContent() {
                 const config = visibilityConfig[demand.visibilityPackage as keyof typeof visibilityConfig] || { badgeVariant: 'muted' as const, label: '' };
 
                 return (
-                  <Link key={demand.id} href={`/app/family/demands/${demand.id}`} className="group">
-                    <BloomCard variant="interactive" className="p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-                      {/* Left: Title, Description, Badge */}
-                      <div className="flex-1 space-y-3 min-w-0">
+                  <motion.div key={demand.id} variants={itemVariants}>
+                    <Link href={`/app/family/demands/${demand.id}`} className="group">
+                      <motion.div
+                        whileHover={{ scale: 1.02, y: -4 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <BloomCard variant="interactive" className="p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                        {/* Left: Title, Description, Badge */}
+                        <div className="flex-1 space-y-3 min-w-0">
                         <div className="space-y-2">
                           <h3 className="text-lg font-display font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                             {demand.title}
@@ -245,67 +282,78 @@ function FamilyDemandsContent() {
                         <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                           {demand.description}
                         </p>
-                      </div>
-
-                      {/* Right: Metrics & Actions */}
-                      <div className="flex items-center justify-between md:flex-col md:items-end gap-4 md:gap-3 flex-shrink-0">
-                        {/* Metrics Row */}
-                        <div className="flex justify-between gap-4 md:justify-end md:w-full">
-                          <div className="flex flex-col items-center gap-1">
-                            <IconEye className="h-4 w-4 text-secondary" />
-                            <p className="text-sm font-display font-black text-foreground">{demand.metrics.viewCount}</p>
-                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Vistas</p>
-                          </div>
-
-                          <div className="flex flex-col items-center gap-1">
-                            <IconMessageSquare className="h-4 w-4 text-accent" />
-                            <p className="text-sm font-display font-black text-foreground">{demand.metrics.proposalCount}</p>
-                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Propostas</p>
-                          </div>
-
-                          <div className="flex flex-col items-center gap-1">
-                            <IconEuro className="h-4 w-4 text-primary" />
-                            <p className="text-sm font-display font-black text-foreground">€{demand.metrics.visibilitySpent}</p>
-                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Investido</p>
-                          </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-2 w-full md:w-auto">
-                          <Link
-                            href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-1 md:flex-none"
-                          >
-                            <Button
-                              size="sm"
-                              className="w-full md:w-auto rounded-xl"
+                        {/* Right: Metrics & Actions */}
+                        <div className="flex items-center justify-between md:flex-col md:items-end gap-4 md:gap-3 flex-shrink-0">
+                          {/* Metrics Row */}
+                          <div className="flex justify-between gap-4 md:justify-end md:w-full">
+                            <div className="flex flex-col items-center gap-1">
+                              <IconEye className="h-4 w-4 text-secondary" />
+                              <p className="text-sm font-display font-black text-foreground">{demand.metrics.viewCount}</p>
+                              <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Vistas</p>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-1">
+                              <IconMessageSquare className="h-4 w-4 text-accent" />
+                              <p className="text-sm font-display font-black text-foreground">{demand.metrics.proposalCount}</p>
+                              <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Propostas</p>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-1">
+                              <IconEuro className="h-4 w-4 text-primary" />
+                              <p className="text-sm font-display font-black text-foreground">€{demand.metrics.visibilitySpent}</p>
+                              <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Investido</p>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 w-full md:w-auto">
+                            <Link
+                              href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
                               onClick={(e) => e.stopPropagation()}
+                              className="flex-1 md:flex-none"
                             >
-                              <IconEuro className="h-3.5 w-3.5 mr-1.5" />
-                              <span className="hidden xs:inline">Boost</span>
-                            </Button>
-                          </Link>
-                          <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                            <DemandActionsDropdown
-                              demandId={demand.id}
-                              demandTitle={demand.title}
-                              onActionComplete={() => {}}
-                            />
+                              <Button
+                                size="sm"
+                                className="w-full md:w-auto rounded-xl"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <IconEuro className="h-3.5 w-3.5 mr-1.5" />
+                                <span className="hidden xs:inline">Boost</span>
+                              </Button>
+                            </Link>
+                            <div onClick={(e) => e.stopPropagation()} className="shrink-0">
+                              <DemandActionsDropdown
+                                demandId={demand.id}
+                                demandTitle={demand.title}
+                                onActionComplete={() => {}}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </BloomCard>
-                  </Link>
+                      </BloomCard>
+                      </motion.div>
+                    </Link>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           )}
         </TabsContent>
       </Tabs>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
+
+const pageVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.5 },
+  },
+};
 
 export default function FamilyDemandsPage() {
   return (

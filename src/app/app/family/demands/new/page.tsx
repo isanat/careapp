@@ -5,13 +5,14 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   IconArrowLeft,
@@ -234,10 +235,35 @@ function NewDemandContent() {
   const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35,  },
+    },
+  };
+
   return (
-    <div className="max-w-2xl mx-auto pb-8">
+    <motion.div
+      className="max-w-2xl mx-auto pb-8"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Header Section */}
-      <div className="mb-8 flex items-start justify-between">
+      <motion.div variants={itemVariants} className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
             Criar Nova Demanda
@@ -253,10 +279,10 @@ function NewDemandContent() {
         >
           <IconX className="h-5 w-5" />
         </Link>
-      </div>
+      </motion.div>
 
       {/* Progress Stepper */}
-      <div className="mb-8 space-y-4">
+      <motion.div variants={itemVariants} className="mb-8 space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
             Passo {step} de {totalSteps}
@@ -281,32 +307,32 @@ function NewDemandContent() {
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
       {/* Error Alert */}
       {error && (
-        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm font-display font-bold text-foreground">Erro</p>
             <p className="text-xs text-destructive mt-1">{error}</p>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {submitError && (
-        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm font-display font-bold text-foreground">Erro ao criar demanda</p>
             <p className="text-xs text-destructive mt-1">{submitError}</p>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 1: Informações Básicas */}
       {step === 1 && (
-        <div className="space-y-8">
+        <motion.div variants={itemVariants} className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 1: Informações Básicas
@@ -355,7 +381,7 @@ function NewDemandContent() {
                       {formData.description.length}/100 caracteres mínimos
                     </p>
                     {formData.description.length >= 100 && (
-                      <div className="flex items-center gap-1 text-xs text-success font-medium">
+                      <div className="flex items-center gap-1 text-xs text-success font-medium animate-fade-in">
                         <IconCheck className="h-4 w-4" />
                         OK
                       </div>
@@ -377,12 +403,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 2: Detalhes */}
       {step === 2 && (
-        <div className="space-y-8">
+        <motion.div variants={itemVariants} className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 2: Detalhes da Demanda
@@ -571,12 +597,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 3: Schedule & Frequency */}
       {step === 3 && (
-        <div className="space-y-8">
+        <motion.div variants={itemVariants} className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 3: Agenda e Frequência
@@ -699,12 +725,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 4: Revisão */}
       {step === 4 && (
-        <div className="space-y-8">
+        <motion.div variants={itemVariants} className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 4: Revisar Demanda
@@ -744,9 +770,9 @@ function NewDemandContent() {
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-2">
                       {formData.serviceTypes.map(type => (
-                        <span key={type} className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
+                        <BloomBadge key={type} className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
                           {SERVICE_LABELS[type]}
-                        </span>
+                        </BloomBadge>
                       ))}
                     </div>
                     <div className="flex items-center gap-2 text-sm text-foreground">
@@ -837,12 +863,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Step 5: Visibility Package - PREMIUM DESIGN */}
       {step === 5 && (
-        <div className="space-y-8">
+        <motion.div variants={itemVariants} className="space-y-8">
           {/* Premium Header */}
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
@@ -1005,9 +1031,9 @@ function NewDemandContent() {
               )}
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
