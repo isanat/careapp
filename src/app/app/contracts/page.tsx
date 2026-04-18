@@ -91,39 +91,44 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-6xl">
-        {/* Header - Bloom Elements style */}
-        <BloomSectionHeader title={t.contracts.title} />
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
+        {/* Page Heading */}
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            {t.contracts.title}
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+            Gerencie seus contratos e acompanhe o progresso
+          </p>
+        </div>
 
-        {/* Error - Bloom style */}
+        {/* Error */}
         {error && (
-          <BloomCard topBar topBarColor="bg-destructive">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-medium text-destructive">{error}</p>
-              <Button
-                variant="outline"
-                onClick={fetchContracts}
-                size="sm"
-                className="h-8 text-xs"
-              >
-                {t.submit}
-              </Button>
-            </div>
-          </BloomCard>
+          <div className="flex items-center justify-between gap-3 p-4 sm:p-5 md:p-7 bg-destructive/5 border border-destructive/20 rounded-2xl sm:rounded-3xl">
+            <p className="text-sm font-medium text-destructive">{error}</p>
+            <Button
+              variant="outline"
+              onClick={fetchContracts}
+              size="sm"
+              className="h-8 text-xs"
+            >
+              {t.submit}
+            </Button>
+          </div>
         )}
 
         {/* Loading */}
         {isLoading && (
-          <div className="space-y-2">
+          <div className="space-y-3 sm:space-y-4">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-16 rounded-xl" />
+              <Skeleton key={i} className="h-16 rounded-2xl sm:rounded-3xl" />
             ))}
           </div>
         )}
 
         {/* Tabs */}
         {!isLoading && !error && (
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             <div className="border-b border-border/60">
               <div className="grid grid-cols-4 gap-2">
                 {[
@@ -176,7 +181,7 @@ export default function ContractsPage() {
                       : IconContract;
 
               return (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {items.map((contract) => (
                     <ContractCard
                       key={contract.id}
@@ -231,14 +236,14 @@ function ContractCard({
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <BloomCard variant="interactive" className="p-5 sm:p-7">
+      <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl">
         {/* Header with status badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-black text-foreground truncate uppercase text-[1.12rem] group-hover:text-primary transition-colors">
+            <h3 className="font-display font-black text-foreground truncate uppercase text-base sm:text-lg group-hover:text-primary transition-colors">
               {contract.title || t.contracts.title}
             </h3>
-            <p className="text-sm font-medium text-muted-foreground mt-1 truncate">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground mt-1 truncate">
               {contract.description && contract.description.slice(0, 80)}
             </p>
           </div>
@@ -248,32 +253,32 @@ function ContractCard({
         </div>
 
         {/* Info grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 py-4 border-y border-border/30">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 py-3 sm:py-4 border-y border-border/30">
           {/* Other Party */}
-          <div className="flex items-start gap-3 hover:bg-primary/5 p-3 rounded-2xl transition-colors">
-            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-muted-foreground">
+          <div className="flex items-start gap-3 hover:bg-secondary p-2 sm:p-3 rounded-2xl transition-colors">
+            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-muted-foreground border border-border/50">
               <IconUser className="h-4 w-4" />
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-display font-black text-muted-foreground/70 uppercase tracking-widest">
                 Cuidador
               </p>
-              <p className="text-sm font-semibold text-foreground truncate mt-1">
+              <p className="text-xs sm:text-sm font-display font-black text-foreground truncate mt-1">
                 {contract.otherParty?.name || t.none}
               </p>
             </div>
           </div>
 
           {/* Duration */}
-          <div className="flex items-start gap-3 hover:bg-primary/5 p-3 rounded-2xl transition-colors">
-            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-primary">
+          <div className="flex items-start gap-3 hover:bg-secondary p-2 sm:p-3 rounded-2xl transition-colors">
+            <div className="h-9 w-9 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5 text-primary border border-border/50">
               <IconClock className="h-4 w-4" />
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-display font-black text-muted-foreground/70 uppercase tracking-widest">
                 Duração
               </p>
-              <p className="text-sm font-semibold text-foreground mt-1">
+              <p className="text-xs sm:text-sm font-display font-black text-foreground mt-1">
                 {contract.hoursPerWeek}h/semana
               </p>
             </div>
@@ -281,8 +286,8 @@ function ContractCard({
         </div>
 
         {/* Footer: Date & Rate */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/30">
-          <div className="flex items-center gap-2 text-[9px] font-display font-black text-muted-foreground/60 uppercase tracking-widest">
+        <div className="flex items-center justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border/30">
+          <div className="flex items-center gap-2 text-[10px] font-display font-black text-muted-foreground/60 uppercase tracking-widest">
             <IconCalendar className="h-4 w-4" />
             {contract.startDate && (
               <span>
@@ -292,10 +297,10 @@ function ContractCard({
           </div>
           <div className="flex items-center gap-1">
             <IconEuro className="h-4 w-4 text-success" />
-            <span className="text-base font-display font-black tracking-tighter text-success">
+            <span className="text-base sm:text-lg font-display font-black tracking-tighter text-success">
               {hourlyRate.toFixed(0)}€
             </span>
-            <span className="text-[9px] font-display font-bold text-muted-foreground/60 uppercase tracking-widest">
+            <span className="text-[10px] font-display font-black text-muted-foreground/60 uppercase tracking-widest">
               /h
             </span>
           </div>

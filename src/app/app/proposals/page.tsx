@@ -273,13 +273,17 @@ export default function ProposalsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-6xl">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <BloomSectionHeader
-            title="Propostas"
-            desc="Gerencie propostas recebidas e negociações com famílias."
-          />
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
+        {/* Page Heading */}
+        <div className="flex items-center gap-3 justify-between">
+          <div className="space-y-1 sm:space-y-2">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+              Propostas
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+              Gerencie propostas recebidas e negociações com famílias.
+            </p>
+          </div>
           <Button
             variant="ghost"
             size="sm"
@@ -293,7 +297,7 @@ export default function ProposalsPage() {
         </div>
 
         {successMessage && (
-          <div className="flex items-start gap-3 p-5 bg-success/5 border border-success/20 rounded-2xl">
+          <div className="flex items-start gap-3 p-4 sm:p-5 md:p-7 bg-success/5 border border-success/20 rounded-2xl sm:rounded-3xl">
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <p className="text-sm font-medium text-foreground">
               {successMessage}
@@ -302,16 +306,16 @@ export default function ProposalsPage() {
         )}
 
         {error && (
-          <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+          <div className="flex items-start gap-3 p-4 sm:p-5 md:p-7 bg-destructive/5 border border-destructive/20 rounded-2xl sm:rounded-3xl">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <p className="text-sm font-medium text-foreground">{error}</p>
           </div>
         )}
 
         {isLoading && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {[1, 2].map((i) => (
-              <Skeleton key={i} className="h-24 w-full rounded-3xl" />
+              <Skeleton key={i} className="h-24 w-full rounded-2xl sm:rounded-3xl" />
             ))}
           </div>
         )}
@@ -330,7 +334,7 @@ export default function ProposalsPage() {
         )}
 
         {!isLoading && proposals.length > 0 && (
-          <Tabs defaultValue="pending" className="space-y-6">
+          <Tabs defaultValue="pending" className="space-y-4 sm:space-y-6">
             <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b border-border/60 rounded-none">
               <TabsTrigger
                 value="pending"
@@ -361,7 +365,7 @@ export default function ProposalsPage() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pending" className="space-y-4">
+            <TabsContent value="pending" className="space-y-3 sm:space-y-4">
               {pendingProposals.length === 0 ? (
                 <BloomEmpty
                   icon={<IconCheck className="h-8 w-8" />}
@@ -390,7 +394,7 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="counter" className="space-y-4">
+            <TabsContent value="counter" className="space-y-3 sm:space-y-4">
               {counterProposals.length === 0 ? (
                 <BloomEmpty
                   icon={<IconEdit className="h-8 w-8" />}
@@ -409,7 +413,7 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="accepted" className="space-y-4">
+            <TabsContent value="accepted" className="space-y-3 sm:space-y-4">
               {acceptedProposals.length === 0 ? (
                 <BloomEmpty
                   icon={<IconClock className="h-8 w-8" />}
@@ -709,19 +713,19 @@ function ProposalCard({
   return (
     <BloomCard
       variant="interactive"
-      className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-5 sm:p-7"
+      className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-5 p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl"
     >
       {/* Left side: Family info */}
-      <div className="flex-1 flex items-start gap-4 min-w-0">
-        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
-          <IconFamily className="h-6 w-6 text-primary" />
+      <div className="flex-1 flex items-start gap-3 sm:gap-4 min-w-0">
+        <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
+          <IconFamily className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-lg font-display font-bold text-foreground truncate">
+          <h4 className="text-base sm:text-lg font-display font-black text-foreground truncate uppercase tracking-tight">
             {proposal.family.name}
           </h4>
           {proposal.family.city && (
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mt-1">
               <IconMapPin className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{proposal.family.city}</span>
             </div>
@@ -731,13 +735,13 @@ function ProposalCard({
               {proposal.serviceTypes.slice(0, 2).map((s, i) => (
                 <span
                   key={i}
-                  className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest"
+                  className="text-[9px] font-display font-black bg-secondary rounded-2xl text-secondary-foreground border border-border/50 px-2 py-1 uppercase tracking-widest"
                 >
                   {getServiceTypeLabel(s)}
                 </span>
               ))}
               {proposal.serviceTypes.length > 2 && (
-                <span className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest">
+                <span className="text-[9px] font-display font-black bg-secondary rounded-2xl text-secondary-foreground border border-border/50 px-2 py-1 uppercase tracking-widest">
                   +{proposal.serviceTypes.length - 2}
                 </span>
               )}
@@ -747,37 +751,37 @@ function ProposalCard({
       </div>
 
       {/* Right side: Info + Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 w-full md:w-auto md:text-right">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 w-full md:w-auto md:text-right">
         {/* Stats */}
-        <div className="flex gap-6 w-full sm:w-auto">
+        <div className="flex gap-4 sm:gap-6 w-full sm:w-auto">
           <div>
-            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+            <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
               Taxa/h
             </p>
-            <p className="text-lg font-display font-bold text-foreground mt-1">
+            <p className="text-base sm:text-lg font-display font-black text-foreground mt-1">
               €{(proposal.hourlyRateEur / 100).toFixed(0)}
             </p>
           </div>
           <div>
-            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+            <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
               Horas
             </p>
-            <p className="text-lg font-display font-bold text-foreground mt-1">
+            <p className="text-base sm:text-lg font-display font-black text-foreground mt-1">
               {proposal.hoursPerWeek}h
             </p>
           </div>
           <div>
-            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+            <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
               Total
             </p>
-            <p className="text-lg font-display font-bold text-foreground mt-1">
+            <p className="text-base sm:text-lg font-display font-black text-foreground mt-1">
               €{totalEur.toFixed(0)}
             </p>
           </div>
         </div>
 
         {/* Date */}
-        <div className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+        <div className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
           {proposal.startDate
             ? new Date(proposal.startDate).toLocaleDateString("pt-PT")
             : "A definir"}
@@ -785,7 +789,7 @@ function ProposalCard({
 
         {/* Status Badge */}
         <span
-          className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border shrink-0 ${getStatusBadgeVariant(proposal.status)}`}
+          className={`text-[10px] font-display font-black rounded-2xl sm:rounded-3xl uppercase tracking-widest px-2.5 py-1 border shrink-0 ${getStatusBadgeVariant(proposal.status)}`}
         >
           {getStatusLabel(proposal.status)}
         </span>

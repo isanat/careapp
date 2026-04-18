@@ -122,45 +122,49 @@ export default function WalletPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-4xl">
-        {/* Page Header */}
-        <BloomSectionHeader
-          title="Minha Carteira"
-          description="Saldo de conta e histórico de transações"
-        />
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
+        {/* Page Heading */}
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            Minha Carteira
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+            Saldo de conta e histórico de transações
+          </p>
+        </div>
 
         {/* Balance Hero Card */}
         {walletData && (
           <BloomCard
             variant="gradient"
-            className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-7 sm:p-10"
+            className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-5 sm:p-7 md:p-10 rounded-2xl sm:rounded-3xl"
           >
             <div className="space-y-6">
               {/* Main Balance */}
               <div>
-                <p className="text-xs font-display font-black uppercase tracking-widest opacity-80 mb-3">
+                <p className="text-xs sm:text-[10px] font-display font-black uppercase tracking-widest opacity-80 mb-2 sm:mb-3">
                   Saldo Disponível
                 </p>
-                <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter">
+                <p className="text-3xl sm:text-4xl md:text-5xl font-display font-black tracking-tighter">
                   €{(walletData.availableBalance / 100).toFixed(2)}
                 </p>
               </div>
 
               {/* Balance Breakdown */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <p className="text-[9px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="bg-white/10 rounded-2xl p-4 sm:p-5">
+                  <p className="text-[9px] sm:text-[10px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
                     Total de Ganhos
                   </p>
-                  <p className="text-lg font-display font-black tracking-tighter">
+                  <p className="text-base sm:text-lg font-display font-black tracking-tighter">
                     €{(walletData.totalEarnings / 100).toFixed(2)}
                   </p>
                 </div>
-                <div className="bg-white/10 rounded-2xl p-5">
-                  <p className="text-[9px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
+                <div className="bg-white/10 rounded-2xl p-4 sm:p-5">
+                  <p className="text-[9px] sm:text-[10px] font-display font-black uppercase tracking-widest opacity-75 mb-2">
                     Pendente (Escrow)
                   </p>
-                  <p className="text-lg font-display font-black tracking-tighter">
+                  <p className="text-base sm:text-lg font-display font-black tracking-tighter">
                     €{(walletData.pendingAmount / 100).toFixed(2)}
                   </p>
                 </div>
@@ -172,32 +176,32 @@ export default function WalletPage() {
         {/* Transaction List */}
         {walletData && walletData.recentTransactions.length > 0 && (
           <section className="space-y-4">
-            <BloomSectionHeader title="Histórico de Transações" />
-            <BloomCard className="rounded-3xl p-5 sm:p-7">
+            <h3 className="text-sm font-display font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-3">
+              Histórico de Transações
+            </h3>
+            <BloomCard className="rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-7">
               <div className="space-y-0">
                 {walletData.recentTransactions.map((transaction, idx) => (
                   <div
                     key={transaction.id}
-                    className={`flex justify-between items-center py-4 ${
-                      idx < walletData.recentTransactions.length - 1
-                        ? "border-b border-border/50"
-                        : ""
+                    className={`flex justify-between items-center py-3 sm:py-4 px-3 sm:px-4 rounded-2xl ${
+                      idx % 2 === 0 ? "bg-secondary/30" : ""
                     }`}
                   >
                     {/* Left: Icon + Description */}
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary flex-shrink-0">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary flex-shrink-0">
                         {transaction.status === "COMPLETED" ? (
-                          <IconArrowDown className="h-6 w-6" />
+                          <IconArrowDown className="h-5 w-5 sm:h-6 sm:w-6" />
                         ) : (
-                          <IconCalendar className="h-6 w-6" />
+                          <IconCalendar className="h-5 w-5 sm:h-6 sm:w-6" />
                         )}
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-display font-black text-foreground truncate">
                           {transaction.description || "Pagamento de Serviço"}
                         </p>
-                        <p className="text-[9px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">
+                        <p className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">
                           {new Date(transaction.createdAt).toLocaleDateString(
                             "pt-PT",
                             {
@@ -211,9 +215,9 @@ export default function WalletPage() {
                     </div>
 
                     {/* Right: Amount + Status */}
-                    <div className="text-right flex-shrink-0">
+                    <div className="text-right flex-shrink-0 ml-3 sm:ml-4">
                       <p
-                        className={`text-lg font-display font-black tracking-tighter ${
+                        className={`text-base sm:text-lg font-display font-black tracking-tighter ${
                           transaction.status === "COMPLETED"
                             ? "text-success"
                             : "text-warning"
@@ -222,7 +226,7 @@ export default function WalletPage() {
                         +€{(transaction.amount / 100).toFixed(2)}
                       </p>
                       <p
-                        className={`text-[9px] font-display font-black uppercase tracking-widest ${
+                        className={`text-[10px] font-display font-black uppercase tracking-widest ${
                           transaction.status === "COMPLETED"
                             ? "text-success/70"
                             : "text-warning/70"

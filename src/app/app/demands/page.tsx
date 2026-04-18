@@ -202,13 +202,17 @@ function DemandsContent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      {/* Header */}
+    <div className="space-y-4 sm:space-y-6 md:space-y-8">
+      {/* Page Heading */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <BloomSectionHeader
-          title="Marketplace de Demandas"
-          desc="Explore oportunidades de trabalho disponíveis e envie suas propostas."
-        />
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            Marketplace de Demandas
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+            Explore oportunidades de trabalho disponíveis e envie suas propostas.
+          </p>
+        </div>
         <span className="px-3 py-1 text-[10px] font-display font-black rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
           {demands.length} vagas
         </span>
@@ -216,28 +220,18 @@ function DemandsContent() {
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-4 p-5 bg-destructive/10 rounded-2xl border border-destructive/20">
+        <div className="flex items-center gap-4 p-4 sm:p-5 md:p-7 bg-destructive/10 rounded-2xl sm:rounded-3xl border border-destructive/20">
           <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
           <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
       )}
 
       {/* Filters */}
-      <BloomCard className="p-5 sm:p-7">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center text-primary shadow-sm border border-border">
-            <IconFilter className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="font-display font-black text-foreground text-sm uppercase">
-              Filtros
-            </p>
-            <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">
-              Refine sua busca de oportunidades
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <BloomCard className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl">
+        <h3 className="text-sm font-display font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-3">
+          Filtros
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-2">
             <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
               Localidade
@@ -247,7 +241,7 @@ function DemandsContent() {
               value={searchCity}
               onChange={(e) => setSearchCity(e.target.value)}
               placeholder="Ex: Lisboa, Porto, Covilhã..."
-              className="bg-secondary border-border/50"
+              className="bg-secondary border-border rounded-2xl h-11"
             />
           </div>
           <div className="space-y-2">
@@ -260,7 +254,7 @@ function DemandsContent() {
                 setSelectedService(value === "ALL" ? "" : value)
               }
             >
-              <SelectTrigger className="h-11 rounded-xl bg-secondary border-border/50">
+              <SelectTrigger className="h-11 rounded-2xl bg-secondary border-border">
                 <SelectValue placeholder="Todos os serviços" />
               </SelectTrigger>
               <SelectContent>
@@ -292,7 +286,7 @@ function DemandsContent() {
           description="Tente ajustar seus filtros para encontrar mais oportunidades"
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {demands.map((demand) => {
             const createdDate = new Date(demand.createdAt);
             const daysAgo = Math.floor(
@@ -321,19 +315,19 @@ function DemandsContent() {
               <BloomCard
                 key={demand.id}
                 variant="interactive"
-                className="p-5 sm:p-7 cursor-pointer group flex flex-col h-full"
+                className="p-4 sm:p-5 md:p-7 cursor-pointer group flex flex-col h-full rounded-2xl sm:rounded-3xl"
               >
                 {/* Header */}
-                <div className="flex items-start justify-between gap-3 mb-5">
+                <div className="flex items-start justify-between gap-3 mb-4 sm:mb-5">
                   <div className="flex-1 min-w-0">
                     <Link href={`/app/demands/${demand.id}`}>
-                      <h3 className="text-base font-display font-black text-foreground group-hover:text-primary transition-colors truncate">
+                      <h3 className="text-base sm:text-lg font-display font-black text-foreground group-hover:text-primary transition-colors truncate uppercase">
                         {demand.title}
                       </h3>
                     </Link>
                     <div className="flex items-center gap-1 mt-1">
                       <IconMapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-[11px] font-medium text-muted-foreground truncate">
+                      <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground truncate">
                         {demand.city}
                         {demand.postalCode && ` (${demand.postalCode})`}
                       </span>
@@ -341,7 +335,7 @@ function DemandsContent() {
                   </div>
                   {visibilityBadge && (
                     <span
-                      className={`px-3 py-1 text-[10px] font-semibold rounded-lg shrink-0 ${visibilityBadge.classes}`}
+                      className={`px-2.5 py-1 text-[10px] font-display font-black rounded-2xl shrink-0 uppercase tracking-widest ${visibilityBadge.classes}`}
                     >
                       {visibilityBadge.label}
                     </span>
@@ -349,21 +343,21 @@ function DemandsContent() {
                 </div>
 
                 {/* Description */}
-                <div className="flex-1 mb-5">
-                  <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-2">
+                <div className="flex-1 mb-4 sm:mb-5">
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed line-clamp-2">
                     {demand.description}
                   </p>
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {demand.serviceTypes.slice(0, 3).map((service, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-lg"
+                        className="text-[10px] font-display font-black text-muted-foreground bg-secondary rounded-2xl px-2 py-1 border border-border/50 uppercase tracking-widest"
                       >
                         {getServiceTypeLabel(service)}
                       </span>
                     ))}
                     {demand.serviceTypes.length > 3 && (
-                      <span className="text-[10px] font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-lg">
+                      <span className="text-[10px] font-display font-black text-muted-foreground bg-secondary rounded-2xl px-2 py-1 border border-border/50 uppercase tracking-widest">
                         +{demand.serviceTypes.length - 3}
                       </span>
                     )}
@@ -371,7 +365,7 @@ function DemandsContent() {
                 </div>
 
                 {/* Stats row */}
-                <div className="flex items-center justify-between pt-5 border-t border-border">
+                <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-border/30">
                   <div className="flex items-center gap-4">
                     {demand.hoursPerWeek && (
                       <div className="flex items-center gap-1.5">

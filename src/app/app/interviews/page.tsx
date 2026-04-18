@@ -93,15 +93,19 @@ export default function InterviewsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-6xl">
-        {/* Header */}
-        <BloomSectionHeader
-          title="Entrevistas"
-          desc="Acompanhe o estado das entrevistas agendadas e realizadas."
-        />
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
+        {/* Page Heading */}
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            Entrevistas
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+            Acompanhe o estado das entrevistas agendadas e realizadas.
+          </p>
+        </div>
 
         {error && (
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border-2 border-destructive/30 bg-destructive/5 flex items-center gap-3 shadow-card">
+          <div className="bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-7 border border-destructive/30 bg-destructive/5 flex items-center gap-3 shadow-card">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
             <p className="text-sm font-medium text-destructive">{error}</p>
           </div>
@@ -110,25 +114,24 @@ export default function InterviewsPage() {
         {/* Upcoming Interviews */}
         {upcomingInterviews.length > 0 && (
           <section className="space-y-4">
-            <BloomSectionDivider
-              title="Próximas Entrevistas"
-              borderColor="primary"
-            />
-            <div className="grid grid-cols-1 gap-4">
+            <h3 className="text-sm font-display font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-3">
+              Próximas Entrevistas
+            </h3>
+            <div className="grid grid-cols-1 gap-3 sm:gap-4">
               {upcomingInterviews.map((interview) => (
                 <Link
                   key={interview.id}
                   href={`/app/interview/${interview.id}`}
                 >
-                  <BloomCard variant="interactive" className="p-5 sm:p-7">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                      <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary shrink-0 text-primary">
-                          <IconVideo className="h-6 w-6" />
+                  <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-5">
+                      <div className="flex items-center gap-4 sm:gap-5">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-secondary flex items-center justify-center shrink-0 text-primary border border-border/50">
+                          <IconVideo className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-3 flex-wrap">
-                            <h4 className="text-lg font-display font-black text-foreground uppercase tracking-tight">
+                          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                            <h4 className="text-base sm:text-lg font-display font-black text-foreground uppercase tracking-tight">
                               {interview.otherPartyRole === "family"
                                 ? "Entrevista com Família"
                                 : "Entrevista com Cuidador"}
@@ -140,12 +143,12 @@ export default function InterviewsPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-8">
+                      <div className="flex items-center gap-4 sm:gap-6">
                         <div className="text-right">
                           <p className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">
                             Data
                           </p>
-                          <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
+                          <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter leading-none">
                             {new Date(interview.scheduledAt).toLocaleDateString(
                               "pt-PT",
                             )}
@@ -170,22 +173,24 @@ export default function InterviewsPage() {
         {/* Past Interviews */}
         {pastInterviews.length > 0 && (
           <section className="space-y-4">
-            <BloomSectionDivider title="Histórico" borderColor="primary" />
-            <div className="grid grid-cols-1 gap-4">
+            <h3 className="text-sm font-display font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-3">
+              Histórico
+            </h3>
+            <div className="grid grid-cols-1 gap-3 sm:gap-4">
               {pastInterviews.map((interview) => (
                 <Link
                   key={interview.id}
                   href={`/app/interview/${interview.id}`}
                 >
-                  <BloomCard variant="interactive" className="p-5 sm:p-7">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                      <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary shrink-0 text-muted-foreground">
-                          <IconVideo className="h-6 w-6" />
+                  <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-5">
+                      <div className="flex items-center gap-4 sm:gap-5">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-secondary flex items-center justify-center shrink-0 text-muted-foreground border border-border/50">
+                          <IconVideo className="h-5 w-5 sm:h-6 sm:w-6" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-3 flex-wrap">
-                            <h4 className="text-lg font-display font-black text-foreground uppercase tracking-tight">
+                          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                            <h4 className="text-base sm:text-lg font-display font-black text-foreground uppercase tracking-tight">
                               {interview.otherPartyRole === "family"
                                 ? "Entrevista com Família"
                                 : "Entrevista com Cuidador"}
@@ -211,12 +216,12 @@ export default function InterviewsPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-8">
+                      <div className="flex items-center gap-4 sm:gap-6">
                         <div className="text-right">
                           <p className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-widest">
                             Data
                           </p>
-                          <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
+                          <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter leading-none">
                             {new Date(interview.scheduledAt).toLocaleDateString(
                               "pt-PT",
                             )}

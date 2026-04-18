@@ -181,9 +181,9 @@ export default function ChatPage() {
           <div
             className={`bg-card border border-border rounded-l-3xl rounded-r-none flex flex-col ${mobileShowChat ? "hidden" : "flex"} lg:flex`}
           >
-            <div className="p-5 sm:p-7 border-b border-border space-y-4">
+            <div className="p-4 sm:p-5 md:p-7 border-b border-border space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-display font-black text-foreground uppercase tracking-tighter">
                   {t.chat.title}
                 </h2>
                 <div className="h-6 min-w-6 px-2 rounded-full bg-primary text-primary-foreground text-xs font-black flex items-center justify-center">
@@ -203,7 +203,7 @@ export default function ChatPage() {
 
             <ScrollArea className="flex-1">
               {isLoadingConversations ? (
-                <div className="p-5 sm:p-7 space-y-4">
+                <div className="p-4 sm:p-5 md:p-7 space-y-3 sm:space-y-4">
                   {[1, 2, 3].map((i) => (
                     <Skeleton
                       key={i}
@@ -212,7 +212,7 @@ export default function ChatPage() {
                   ))}
                 </div>
               ) : (
-                <div className="p-5 sm:p-7 space-y-3">
+                <div className="p-4 sm:p-5 md:p-7 space-y-3">
                   {conversations
                     .filter(
                       (conv) =>
@@ -231,15 +231,15 @@ export default function ChatPage() {
                         className="w-full"
                       >
                         <div
-                          className={`px-4 py-3.5 rounded-2xl border transition-all duration-300 text-left ${
+                          className={`px-3 sm:px-4 py-3 sm:py-3.5 rounded-2xl border transition-all duration-300 text-left ${
                             selectedConversation?.id === conv.id
-                              ? "bg-primary/10 border-primary/30 shadow-sm"
-                              : "bg-card border-border hover:bg-muted/50 hover:border-border/70"
+                              ? "bg-secondary border-primary/30 shadow-sm"
+                              : "bg-card border-border hover:bg-secondary/50 hover:border-border/70"
                           }`}
                         >
-                          <div className="flex items-center gap-3.5">
-                            <div className="w-12 h-12 rounded-2xl bg-secondary/40 border border-border/50 flex items-center justify-center flex-shrink-0">
-                              <span className="text-sm font-display font-black text-foreground/90">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary border border-border/50 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs sm:text-sm font-display font-black text-foreground">
                                 {conv.participant?.name
                                   ?.split(" ")
                                   .map((n) => n[0])
@@ -248,11 +248,11 @@ export default function ChatPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-2 mb-0.5">
-                                <p className="font-display font-black text-[1rem] text-foreground truncate">
+                                <p className="font-display font-black text-sm sm:text-base text-foreground truncate">
                                   {conv.participant?.name || "Usuario"}
                                 </p>
                                 {conv.lastMessage && (
-                                  <span className="text-[11px] text-muted-foreground/60 whitespace-nowrap shrink-0">
+                                  <span className="text-[10px] sm:text-[11px] text-muted-foreground/60 whitespace-nowrap shrink-0">
                                     {new Date(
                                       conv.lastMessage.createdAt,
                                     ).toLocaleTimeString("pt-PT", {
@@ -263,14 +263,14 @@ export default function ChatPage() {
                                 )}
                               </div>
                               <div className="flex items-center justify-between gap-2">
-                                <p className="text-sm text-muted-foreground line-clamp-1 leading-relaxed">
+                                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 leading-relaxed">
                                   {conv.lastMessage?.content ||
                                     t.chat.noMessages}
                                 </p>
                                 {conv.unreadCount > 0 && (
                                   <BloomBadge
                                     variant="default"
-                                    className="shrink-0 min-w-5 h-5 flex items-center justify-center rounded-full text-[11px]"
+                                    className="shrink-0 min-w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-black"
                                   >
                                     {conv.unreadCount}
                                   </BloomBadge>
@@ -301,7 +301,7 @@ export default function ChatPage() {
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
-                <div className="p-5 sm:p-7 border-b border-border flex items-center justify-between gap-4">
+                <div className="p-4 sm:p-5 md:p-7 border-b border-border flex items-center justify-between gap-3 sm:gap-4">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -310,8 +310,8 @@ export default function ChatPage() {
                   >
                     <IconArrowLeft className="h-4 w-4" />
                   </Button>
-                  <div className="w-12 h-12 rounded-2xl bg-secondary/40 border border-border/50 flex items-center justify-center">
-                    <span className="text-sm font-display font-black text-foreground">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary border border-border/50 flex items-center justify-center">
+                    <span className="text-xs sm:text-sm font-display font-black text-foreground">
                       {selectedConversation.participant?.name
                         ?.split(" ")
                         .map((n) => n[0])
@@ -319,10 +319,10 @@ export default function ChatPage() {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-display font-black text-lg text-foreground truncate">
+                    <p className="font-display font-black text-base sm:text-lg text-foreground truncate">
                       {selectedConversation.participant?.name || "Usuario"}
                     </p>
-                    <p className="text-[11px] tracking-[0.25em] text-success uppercase">
+                    <p className="text-[10px] font-display font-black tracking-widest text-success uppercase">
                       Online
                     </p>
                   </div>
@@ -335,9 +335,9 @@ export default function ChatPage() {
                 </div>
 
                 {/* Messages */}
-                <ScrollArea className="flex-1 px-5 sm:px-7 py-5 sm:py-7">
+                <ScrollArea className="flex-1 px-4 sm:px-5 md:px-7 py-4 sm:py-5 md:py-7">
                   {isLoadingMessages && isInitialLoad ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       {[1, 2, 3].map((i) => (
                         <Skeleton
                           key={i}
@@ -346,7 +346,7 @@ export default function ChatPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       {messages.map((message) => {
                         const isOwn = message.senderId === session?.user?.id;
                         return (
@@ -402,8 +402,8 @@ export default function ChatPage() {
                 </ScrollArea>
 
                 {/* Message Input */}
-                <div className="p-5 sm:p-7 border-t border-border">
-                  <div className="flex gap-2 items-center bg-secondary rounded-2xl border border-border pl-4 pr-2 py-2.5">
+                <div className="p-4 sm:p-5 md:p-7 border-t border-border">
+                  <div className="flex gap-2 items-center bg-secondary rounded-2xl border border-border pl-3 sm:pl-4 pr-2 py-2.5">
                     <button className="h-8 w-8 rounded-xl hover:bg-muted/40 flex items-center justify-center text-muted-foreground">
                       <Paperclip className="h-4 w-4" />
                     </button>

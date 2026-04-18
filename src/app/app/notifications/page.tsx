@@ -103,29 +103,31 @@ export default function NotificationsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-4xl">
-        {/* Page Header */}
-        <div className="flex items-center justify-between gap-4">
-          <BloomSectionHeader
-            title="Notificações"
-            description={
-              unreadCount > 0
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
+        {/* Page Heading */}
+        <div className="flex items-center gap-3 justify-between">
+          <div className="space-y-1 sm:space-y-2">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+              Notificações
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+              {unreadCount > 0
                 ? `${unreadCount} nova${unreadCount !== 1 ? "s" : ""}`
-                : "Você receberá notificações sobre contratos e propostas"
-            }
-          />
+                : "Você receberá notificações sobre contratos e propostas"}
+            </p>
+          </div>
           {unreadCount > 0 && (
             <Button size="sm" onClick={markAllAsRead} className="h-10 text-xs">
               <IconCheck className="h-4 w-4 mr-1" />
-              Marcar todas como lidas
+              Marcar todas
             </Button>
           )}
         </div>
 
         {isLoading && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-20 rounded-3xl" />
+              <Skeleton key={i} className="h-20 rounded-2xl sm:rounded-3xl" />
             ))}
           </div>
         )}
@@ -139,7 +141,7 @@ export default function NotificationsPage() {
         )}
 
         {!isLoading && notifications.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {notifications.map((notification) => {
               const Icon = typeIcons[notification.type] || IconBell;
               const isUnread = !notification.isRead;
@@ -166,28 +168,28 @@ export default function NotificationsPage() {
                 <BloomCard
                   key={notification.id}
                   variant={isUnread ? "interactive" : "default"}
-                  className="cursor-pointer group flex items-start gap-4 p-5 sm:p-7"
+                  className="cursor-pointer group flex items-start gap-3 sm:gap-4 p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl border border-border"
                   onClick={() => handleNotificationClick(notification)}
                 >
                   {/* Icon Container */}
                   <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorScheme.bg} group-hover:scale-105 transition-transform duration-500`}
+                    className={`w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorScheme.bg} group-hover:scale-105 transition-transform duration-500`}
                   >
-                    <Icon className={`w-6 h-6 ${colorScheme.icon}`} />
+                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${colorScheme.icon}`} />
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="space-y-1.5">
                       <p
-                        className={`font-display font-bold text-foreground text-sm ${isUnread ? "opacity-100" : "opacity-75"}`}
+                        className={`font-display font-black text-foreground text-sm uppercase tracking-tight ${isUnread ? "opacity-100" : "opacity-75"}`}
                       >
                         {notification.title}
                       </p>
                       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                         {notification.message}
                       </p>
-                      <span className="text-[9px] text-muted-foreground/50 uppercase tracking-widest inline-block">
+                      <span className="text-[10px] font-display font-black text-muted-foreground/50 uppercase tracking-widest inline-block">
                         {new Date(notification.createdAt).toLocaleDateString(
                           "pt-PT",
                           {
