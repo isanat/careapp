@@ -132,11 +132,14 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Sidebar Overlay - closes when clicked */}
       {mobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Escape' && setMobileMenuOpen(false)}
         />
       )}
 
@@ -148,6 +151,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         <EvyraSidebar
           isOpen={sidebarOpen}
           setIsOpen={setSidebarOpen}
+          onLinkClick={() => setMobileMenuOpen(false)}
         />
       </div>
 

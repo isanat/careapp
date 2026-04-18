@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 interface EvyraSidebarProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  onLinkClick?: () => void;
 }
 
 interface NavItem {
@@ -41,7 +42,8 @@ const SidebarLink = ({
   active,
   isOpen,
   count,
-  variant = 'default'
+  variant = 'default',
+  onLinkClick
 }: {
   href: string;
   icon: React.ElementType;
@@ -50,9 +52,11 @@ const SidebarLink = ({
   isOpen: boolean;
   count?: string;
   variant?: 'default' | 'danger';
+  onLinkClick?: () => void;
 }) => (
   <Link
     href={href}
+    onClick={onLinkClick}
     className={cn(
       "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group",
       active
@@ -95,7 +99,7 @@ const SectionLabel = ({ label, isOpen }: { label: string; isOpen: boolean }) => 
   </div>
 );
 
-export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen }) => {
+export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen, onLinkClick }) => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -204,6 +208,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
                   active={isActive(item.href)}
                   isOpen={isOpen}
                   count={item.count}
+                  onLinkClick={onLinkClick}
                 />
               ))}
             </>
@@ -222,6 +227,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
                   active={isActive(item.href)}
                   isOpen={isOpen}
                   count={item.count}
+                  onLinkClick={onLinkClick}
                 />
               ))}
             </>
@@ -240,6 +246,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
                   active={isActive(item.href)}
                   isOpen={isOpen}
                   count={item.count}
+                  onLinkClick={onLinkClick}
                 />
               ))}
             </>
@@ -254,6 +261,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
             label="Configurações"
             active={isActive('/app/profile')}
             isOpen={isOpen}
+            onLinkClick={onLinkClick}
           />
           <SidebarLink
             href="/logout"
@@ -262,6 +270,7 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen })
             active={false}
             isOpen={isOpen}
             variant="danger"
+            onLinkClick={onLinkClick}
           />
         </div>
       </div>

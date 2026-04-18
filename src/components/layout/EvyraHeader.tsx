@@ -79,12 +79,32 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen, mobileMen
         </button>
 
         {/* Notifications */}
-        <button className="relative p-2 md:p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors border border-transparent hover:border-border">
-          <IconBell className="h-5 w-5" />
-          {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full" />
-          )}
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="relative p-2 md:p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors border border-transparent hover:border-border">
+              <IconBell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full" />
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-display font-bold text-foreground">
+                Notificações
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {unreadCount} não lidas
+              </p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <a href="/app/notifications" className="cursor-pointer">
+                Ver todas as notificações
+              </a>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* User Avatar Dropdown */}
         <DropdownMenu>
