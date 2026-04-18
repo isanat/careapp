@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
@@ -262,25 +261,14 @@ function AdminFamiliesContent() {
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
 
   return (
-    <motion.div
+    <div
       className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+     
+     
+     
     >
       <PageHeader
         title="Famílias"
@@ -288,7 +276,7 @@ function AdminFamiliesContent() {
       />
 
       {/* Filters */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard variant="interactive">
           <div className="p-5 sm:p-6 md:p-7">
             <div className="flex flex-col gap-4 md:flex-row">
@@ -328,10 +316,10 @@ function AdminFamiliesContent() {
             </div>
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
 
       {/* Users Table */}
-      <motion.div variants={itemVariants}>
+      <div>
         <DataTable
           columns={columns}
           data={users}
@@ -345,7 +333,7 @@ function AdminFamiliesContent() {
             onPageChange: (page) => setPagination((p) => ({ ...p, page })),
           }}
         />
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

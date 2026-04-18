@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { StatusBadge } from "@/components/admin/common/status-badge";
@@ -39,7 +38,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
-import { pageTransitionVariants, containerVariants, itemVariants } from "@/lib/animations";
 
 interface CaregiverDetails {
   id: string;
@@ -333,11 +331,11 @@ export default function AdminCaregiverDetailPage() {
   ];
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
+    <div
+     
+     
       exit="exit"
-      variants={pageTransitionVariants}
+     
       className="space-y-6"
     >
       <PageHeader
@@ -357,44 +355,44 @@ export default function AdminCaregiverDetailPage() {
       />
 
       {/* Stats */}
-      <motion.div
+      <div
         className="grid gap-4 md:grid-cols-4"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
+       
+       
+       
       >
-        <motion.div variants={itemVariants}>
+        <div>
           <StatsCard
             title="Contratos"
             value={caregiver.totalContracts || 0}
             icon={<IconBriefcase className="h-5 w-5" />}
           />
-        </motion.div>
-        <motion.div variants={itemVariants}>
+        </div>
+        <div>
           <StatsCard
             title="Horas Trabalhadas"
             value={caregiver.totalHoursWorked || 0}
             icon={<IconClock className="h-5 w-5" />}
           />
-        </motion.div>
-        <motion.div variants={itemVariants}>
+        </div>
+        <div>
           <StatsCard
             title="Avaliação"
             value={caregiver.averageRating?.toFixed(1) || "-"}
             description={`${caregiver.totalReviews || 0} avaliações`}
             icon={<IconStar className="h-5 w-5" />}
           />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      <motion.div
+      <div
         className="grid gap-6 lg:grid-cols-3"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
+       
+       
+       
       >
         {/* User Info Card */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
             <BloomSectionHeader title="Informações Pessoais" />
             <div className="space-y-4">
@@ -474,10 +472,10 @@ export default function AdminCaregiverDetailPage() {
             )}
             </div>
           </BloomCard>
-        </motion.div>
+        </div>
 
         {/* KYC Verification Panel */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
             <BloomSectionHeader
               title="Verificação KYC"
@@ -558,13 +556,13 @@ export default function AdminCaregiverDetailPage() {
 
             {/* Reject Modal */}
             {showRejectModal && (
-              <motion.div
+              <div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
               >
-                <motion.div
+                <div
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.95, opacity: 0 }}
@@ -605,15 +603,15 @@ export default function AdminCaregiverDetailPage() {
                       </div>
                     </div>
                   </BloomCard>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             )}
             </div>
           </BloomCard>
-        </motion.div>
+        </div>
 
         {/* Featured Status */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
             <BloomSectionHeader
               title="Destaque"
@@ -663,11 +661,11 @@ export default function AdminCaregiverDetailPage() {
             </div>
             </div>
           </BloomCard>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Contracts */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard className="p-5 sm:p-6 md:p-7">
           <BloomSectionHeader title={`Contratos (${caregiver.contracts?.length || 0})`} />
           <div className="pt-4">
@@ -679,10 +677,10 @@ export default function AdminCaregiverDetailPage() {
             />
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
 
       {/* Reviews */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard className="p-5 sm:p-6 md:p-7">
           <BloomSectionHeader title={`Avaliações (${caregiver.reviews?.length || 0})`} />
           <div className="pt-4">
@@ -694,7 +692,7 @@ export default function AdminCaregiverDetailPage() {
             />
           </div>
         </BloomCard>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

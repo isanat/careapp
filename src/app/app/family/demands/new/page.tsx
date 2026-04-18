@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -235,35 +234,17 @@ function NewDemandContent() {
   const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35,  },
-    },
-  };
 
   return (
-    <motion.div
+    <div
       className="max-w-2xl mx-auto pb-8"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+     
+     
+     
     >
       {/* Header Section */}
-      <motion.div variants={itemVariants} className="mb-8 flex items-start justify-between">
+      <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
             Criar Nova Demanda
@@ -279,10 +260,10 @@ function NewDemandContent() {
         >
           <IconX className="h-5 w-5" />
         </Link>
-      </motion.div>
+      </div>
 
       {/* Progress Stepper */}
-      <motion.div variants={itemVariants} className="mb-8 space-y-4">
+      <div className="mb-8 space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
             Passo {step} de {totalSteps}
@@ -307,32 +288,32 @@ function NewDemandContent() {
             );
           })}
         </div>
-      </motion.div>
+      </div>
 
       {/* Error Alert */}
       {error && (
-        <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm font-display font-bold text-foreground">Erro</p>
             <p className="text-xs text-destructive mt-1">{error}</p>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {submitError && (
-        <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="text-sm font-display font-bold text-foreground">Erro ao criar demanda</p>
             <p className="text-xs text-destructive mt-1">{submitError}</p>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 1: Informações Básicas */}
       {step === 1 && (
-        <motion.div variants={itemVariants} className="space-y-8">
+        <div className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 1: Informações Básicas
@@ -403,12 +384,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 2: Detalhes */}
       {step === 2 && (
-        <motion.div variants={itemVariants} className="space-y-8">
+        <div className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 2: Detalhes da Demanda
@@ -597,12 +578,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 3: Schedule & Frequency */}
       {step === 3 && (
-        <motion.div variants={itemVariants} className="space-y-8">
+        <div className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 3: Agenda e Frequência
@@ -725,12 +706,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 4: Revisão */}
       {step === 4 && (
-        <motion.div variants={itemVariants} className="space-y-8">
+        <div className="space-y-8">
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Passo 4: Revisar Demanda
@@ -863,12 +844,12 @@ function NewDemandContent() {
               <IconArrowRight className="h-4 w-4" />
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Step 5: Visibility Package - PREMIUM DESIGN */}
       {step === 5 && (
-        <motion.div variants={itemVariants} className="space-y-8">
+        <div className="space-y-8">
           {/* Premium Header */}
           <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
@@ -1031,9 +1012,9 @@ function NewDemandContent() {
               )}
             </Button>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 

@@ -1,46 +1,34 @@
-import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
 
 export default function AppLoading() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
 
   return (
-    <motion.div
+    <div
       className="container max-w-5xl mx-auto p-5 sm:p-6 md:p-7 space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+     
+     
+     
     >
       {/* Header skeleton */}
-      <motion.div className="space-y-2" variants={itemVariants}>
+      <div className="space-y-2">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-4 w-64" />
-      </motion.div>
+      </div>
 
       {/* Stats grid skeleton */}
-      <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-4" variants={itemVariants}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
           <BloomCard key={i} className="p-4 space-y-2">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-8 w-16" />
           </BloomCard>
         ))}
-      </motion.div>
+      </div>
 
       {/* Content skeleton */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
           <Skeleton className="h-6 w-40" />
           <div className="space-y-3">
@@ -56,7 +44,7 @@ export default function AppLoading() {
             ))}
           </div>
         </BloomCard>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

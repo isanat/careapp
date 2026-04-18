@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
 import { BloomSectionHeader, BloomEmpty, BloomCard, BloomBadge } from '@/components/bloom-custom';
@@ -270,7 +269,7 @@ function DemandsContent() {
           description="Tente ajustar seus filtros para encontrar mais oportunidades"
         />
       ) : (
-        <motion.div
+        <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -297,7 +296,7 @@ function DemandsContent() {
               : null;
 
             return (
-              <motion.div
+              <div
                 key={demand.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -371,22 +370,22 @@ function DemandsContent() {
                     </Button>
                   </div>
                 </BloomCard>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
       )}
 
       {/* Proposal Wizard Modal */}
       {wizard.demandId && (
-        <motion.div
+        <div
           className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <motion.div
+          <div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
@@ -411,7 +410,7 @@ function DemandsContent() {
                 {/* Progress Bar */}
                 <div>
                   <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                    <motion.div
+                    <div
                       className="h-full bg-primary rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${(wizard.step / 3) * 100}%` }}
@@ -422,7 +421,7 @@ function DemandsContent() {
 
                 {/* Step 1 */}
                 {wizard.step === 1 && (
-                  <motion.div
+                  <div
                     className="space-y-4 sm:space-y-5"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -452,12 +451,12 @@ function DemandsContent() {
                     >
                       Continuar <IconArrowRight className="h-4 w-4 ml-2" />
                     </Button>
-                  </motion.div>
+                  </div>
                 )}
 
                 {/* Step 2 */}
                 {wizard.step === 2 && (
-                  <motion.div
+                  <div
                     className="space-y-4 sm:space-y-5"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -469,7 +468,7 @@ function DemandsContent() {
                       <p className="text-xs text-muted-foreground mt-1">Por que você é ideal para esta demanda?</p>
                     </div>
                     <div className="space-y-4">
-                      <motion.div
+                      <div
                         className="space-y-2"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -483,8 +482,8 @@ function DemandsContent() {
                           rows={4}
                           className="rounded-xl text-sm resize-none bg-secondary border-border/50"
                         />
-                      </motion.div>
-                      <motion.div
+                      </div>
+                      <div
                         className="space-y-2"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -500,7 +499,7 @@ function DemandsContent() {
                           min="0"
                           className="h-11 rounded-xl bg-secondary border-border/50"
                         />
-                      </motion.div>
+                      </div>
                     </div>
                     <div className="flex gap-3">
                       <Button variant="outline" onClick={() => setWizard(prev => ({ ...prev, step: 1 }))} size="lg" className="h-11 px-4">
@@ -515,12 +514,12 @@ function DemandsContent() {
                         Revisar <IconArrowRight className="h-4 w-4 ml-2" />
                       </Button>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
 
                 {/* Step 3 */}
                 {wizard.step === 3 && (
-                  <motion.div
+                  <div
                     className="space-y-4 sm:space-y-5"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -532,7 +531,7 @@ function DemandsContent() {
                       <p className="text-xs text-muted-foreground mt-1">Verifique suas informações antes de enviar</p>
                     </div>
                     <div className="space-y-3 bg-secondary rounded-2xl border border-border/50 p-4 sm:p-5">
-                      <motion.div
+                      <div
                         className="border-b border-border/50 pb-3"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -540,8 +539,8 @@ function DemandsContent() {
                       >
                         <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Sobre você</p>
                         <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
-                      </motion.div>
-                      <motion.div
+                      </div>
+                      <div
                         className="border-b border-border/50 pb-3"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -549,19 +548,19 @@ function DemandsContent() {
                       >
                         <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Mensagem</p>
                         <p className="text-sm line-clamp-3">{wizard.message}</p>
-                      </motion.div>
-                      <motion.div
+                      </div>
+                      <div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                       >
                         <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Taxa horária</p>
                         <p className="text-2xl font-display font-black text-foreground tracking-tighter">€{parseFloat(wizard.expectedRate || '0').toFixed(2)}/h</p>
-                      </motion.div>
+                      </div>
                     </div>
 
                     {wizard.error && (
-                      <motion.div
+                      <div
                         className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl"
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -569,7 +568,7 @@ function DemandsContent() {
                       >
                         <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                         <p className="text-sm text-destructive">{wizard.error}</p>
-                      </motion.div>
+                      </div>
                     )}
 
                     <div className="flex gap-3">
@@ -584,12 +583,12 @@ function DemandsContent() {
                         )}
                       </Button>
                     </div>
-                  </motion.div>
+                  </div>
                 )}
               </div>
             </BloomCard>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
     </div>
   );

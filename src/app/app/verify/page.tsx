@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
 import { Button } from "@/components/ui/button";
@@ -118,35 +117,24 @@ export default function VerifyPage() {
 
   // Familiares veem página de confiança em vez de KYC
   if (isFamily) {
-    const containerVariants = {
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-      },
-    };
 
-    const itemVariants = {
-      hidden: { opacity: 0, y: 10 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    };
 
     return (
       <AppShell>
-        <motion.div
+        <div
           className="space-y-6 max-w-2xl"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+         
+         
+         
         >
           {/* Header */}
-          <motion.div className="space-y-2" variants={itemVariants}>
+          <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">Score de Confiança</h1>
             <p className="text-base text-muted-foreground font-medium">Aumente sua confiabilidade entre cuidadores</p>
-          </motion.div>
+          </div>
 
           {/* Trust Score Card */}
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard className="p-5 sm:p-6 md:p-7">
               <div className="flex flex-col items-center text-center space-y-6">
                 <div className="text-5xl font-display font-black text-primary mb-2">0</div>
@@ -157,10 +145,10 @@ export default function VerifyPage() {
                 </p>
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
 
           {/* Payment Badge */}
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
               <h3 className="text-lg sm:text-xl font-display font-bold uppercase flex items-center gap-3">
                 <div className="w-9 h-9 rounded-2xl bg-success/10 flex items-center justify-center">
@@ -176,10 +164,10 @@ export default function VerifyPage() {
                 <IconCheck className="h-6 w-6 text-success shrink-0" />
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
 
           {/* Trust Building Tips */}
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
               <h3 className="text-lg sm:text-xl font-display font-bold uppercase">Como aumentar sua confiabilidade</h3>
               <ul className="space-y-4">
@@ -212,14 +200,14 @@ export default function VerifyPage() {
                 </li>
               </ul>
             </BloomCard>
-          </motion.div>
+          </div>
 
-          <motion.div variants={itemVariants}>
+          <div>
             <Button onClick={() => router.push("/app/panel")} className="w-full rounded-2xl">
               Ir para Dashboard
             </Button>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </AppShell>
     );
   }
@@ -251,35 +239,24 @@ export default function VerifyPage() {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-6 max-w-2xl"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+       
+       
+       
       >
         {/* Header */}
-        <motion.div className="space-y-2" variants={itemVariants}>
+        <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">{t.kyc.title}</h1>
           <p className="text-base text-muted-foreground font-medium">{t.kyc.description}</p>
-        </motion.div>
+        </div>
 
         {/* Status Card */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard className="p-5 sm:p-6 md:p-7">
             <div className="flex flex-col items-center text-center space-y-4">
             {getStatusIcon()}
@@ -350,18 +327,18 @@ export default function VerifyPage() {
             )}
             </div>
           </BloomCard>
-        </motion.div>
+        </div>
 
         {error && (
-          <motion.div variants={itemVariants}>
+          <div>
             <div className="bg-destructive/5 border border-destructive/20 rounded-3xl p-5 sm:p-6 md:p-7">
               <p className="text-destructive text-sm">{error}</p>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Benefits */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
             <h3 className="text-lg sm:text-xl font-display font-bold uppercase">{t.kyc.benefits.title}</h3>
             <ul className="space-y-4">
@@ -375,10 +352,10 @@ export default function VerifyPage() {
               ))}
             </ul>
           </BloomCard>
-        </motion.div>
+        </div>
 
         {/* Requirements */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
             <h3 className="text-lg sm:text-xl font-display font-bold uppercase">{t.kyc.requirements.title}</h3>
             <div className="space-y-4">
@@ -402,8 +379,8 @@ export default function VerifyPage() {
               </div>
             </div>
           </BloomCard>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </AppShell>
   );
 }

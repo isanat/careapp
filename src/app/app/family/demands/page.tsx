@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -119,35 +118,17 @@ function FamilyDemandsContent() {
     );
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35,  },
-    },
-  };
 
   return (
-    <motion.div
+    <div
       className="max-w-7xl mx-auto space-y-8"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+     
+     
+     
     >
       {/* Header Section */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter leading-none">Suas Demandas</h1>
           <p className="text-base text-muted-foreground font-medium">
@@ -161,11 +142,11 @@ function FamilyDemandsContent() {
             <span className="sm:hidden">Nova</span>
           </Link>
         </Button>
-      </motion.div>
+      </div>
 
       {/* Analytics Cards */}
       {analytics && (
-        <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
           <BloomStatBlock
             label="Ativas"
             value={analytics.activeDemands}
@@ -200,11 +181,11 @@ function FamilyDemandsContent() {
             icon={<IconEye className="h-6 w-6" />}
             colorClass="text-secondary"
           />
-        </motion.div>
+        </div>
       )}
 
       {/* Tabs Section */}
-      <motion.div variants={itemVariants}>
+      <div>
         <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full space-y-6">
         <TabsList className="w-full grid grid-cols-3 h-11 rounded-2xl bg-muted/50 p-1 border border-border/30">
           <TabsTrigger value="ACTIVE" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
@@ -234,11 +215,11 @@ function FamilyDemandsContent() {
               }
             />
           ) : (
-            <motion.div
+            <div
               className="space-y-3"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+             
+             
+             
             >
               {demands.map(demand => {
                 const visibilityConfig: Record<string, { badgeVariant: 'primary' | 'success' | 'warning' | 'destructive' | 'secondary' | 'info' | 'muted', label: string }> = {
@@ -250,9 +231,9 @@ function FamilyDemandsContent() {
                 const config = visibilityConfig[demand.visibilityPackage as keyof typeof visibilityConfig] || { badgeVariant: 'muted' as const, label: '' };
 
                 return (
-                  <motion.div key={demand.id} variants={itemVariants}>
+                  <div key={demand.id}>
                     <Link href={`/app/family/demands/${demand.id}`} className="group">
-                      <motion.div
+                      <div
                         whileHover={{ scale: 1.02, y: -4 }}
                         transition={{ duration: 0.2 }}
                       >
@@ -333,17 +314,17 @@ function FamilyDemandsContent() {
                           </div>
                         </div>
                       </BloomCard>
-                      </motion.div>
+                      </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
+            </div>
           )}
         </TabsContent>
       </Tabs>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -162,25 +161,7 @@ export default function ChatPage() {
   };
 
   // Framer Motion variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3 },
-    },
-  };
 
   const headerVariants = {
     hidden: { opacity: 0, y: -12 },
@@ -198,10 +179,10 @@ export default function ChatPage() {
           {/* Conversations List */}
           <div className={`bg-card border border-border rounded-l-3xl rounded-r-none flex flex-col ${mobileShowChat ? "hidden" : "flex"} md:flex`}>
             {/* Header with Search */}
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={headerVariants}
+            <div
+             
+             
+             
               className="p-5 sm:p-6 md:p-7 border-b border-border space-y-4"
             >
               <div className="flex items-center justify-between">
@@ -222,37 +203,37 @@ export default function ChatPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-            </motion.div>
+            </div>
 
             {/* Conversations */}
             <ScrollArea className="flex-1">
               {isLoadingConversations ? (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={containerVariants}
+                <div
+                 
+                 
+                 
                   className="p-5 sm:p-6 md:p-7 space-y-4"
                 >
                   {[1, 2, 3].map((i) => (
-                    <motion.div key={i} variants={itemVariants}>
+                    <div key={i}>
                       <Skeleton className="h-16 bg-secondary rounded-2xl" />
-                    </motion.div>
+                    </div>
                   ))}
-                </motion.div>
+                </div>
               ) : (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={containerVariants}
+                <div
+                 
+                 
+                 
                   className="p-5 sm:p-6 md:p-7 space-y-3"
                 >
                   <AnimatePresence mode="popLayout">
                     {conversations
                       .filter((conv) => !searchQuery || conv.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase()))
                       .map((conv, idx) => (
-                        <motion.div
+                        <div
                           key={conv.id}
-                          variants={itemVariants}
+                         
                           layout
                           exit={{ opacity: 0, y: -8 }}
                         >
@@ -305,20 +286,20 @@ export default function ChatPage() {
                               </div>
                             </BloomCard>
                           </button>
-                        </motion.div>
+                        </div>
                       ))}
                   </AnimatePresence>
 
                   {conversations.length === 0 && (
-                    <motion.div variants={itemVariants}>
+                    <div>
                       <BloomEmpty
                         icon={<IconChat className="h-8 w-8" />}
                         title={t.chat.noChats}
                         description={t.chat.noMessages}
                       />
-                    </motion.div>
+                    </div>
                   )}
-                </motion.div>
+                </div>
               )}
             </ScrollArea>
           </div>
@@ -328,10 +309,10 @@ export default function ChatPage() {
             {selectedConversation ? (
               <>
                 {/* Chat Header */}
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={headerVariants}
+                <div
+                 
+                 
+                 
                   className="p-5 sm:p-6 md:p-7 border-b border-border flex items-center justify-between gap-4"
                 >
                   <Button
@@ -361,37 +342,37 @@ export default function ChatPage() {
                   <Button variant="ghost" size="icon-sm" className="rounded-xl">
                     <IconMoreVertical className="h-4 w-4" />
                   </Button>
-                </motion.div>
+                </div>
 
                 {/* Messages */}
                 <ScrollArea className="flex-1 px-5 sm:px-6 md:px-7 py-5 sm:py-6 md:py-7">
                   {isLoadingMessages && isInitialLoad ? (
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      variants={containerVariants}
+                    <div
+                     
+                     
+                     
                       className="space-y-4"
                     >
                       {[1, 2, 3].map((i) => (
-                        <motion.div key={i} variants={itemVariants}>
+                        <div key={i}>
                           <Skeleton className="h-12 w-3/4 bg-secondary rounded-2xl" />
-                        </motion.div>
+                        </div>
                       ))}
-                    </motion.div>
+                    </div>
                   ) : (
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      variants={containerVariants}
+                    <div
+                     
+                     
+                     
                       className="space-y-4"
                     >
                       <AnimatePresence>
                         {messages.map((message) => {
                           const isOwn = message.senderId === session?.user?.id;
                           return (
-                            <motion.div
+                            <div
                               key={message.id}
-                              variants={itemVariants}
+                             
                               layout
                               className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
                             >
@@ -414,13 +395,13 @@ export default function ChatPage() {
                                   {new Date(message.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
                                 </p>
                               </div>
-                            </motion.div>
+                            </div>
                           );
                         })}
 
                         {typingUser && (
-                          <motion.div
-                            variants={itemVariants}
+                          <div
+                           
                             layout
                             className="flex justify-start"
                           >
@@ -432,19 +413,19 @@ export default function ChatPage() {
                                 <p className="text-sm font-body text-muted-foreground">Typing...</p>
                               </BloomCard>
                             </div>
-                          </motion.div>
+                          </div>
                         )}
                       </AnimatePresence>
                       <div ref={messagesEndRef} />
-                    </motion.div>
+                    </div>
                   )}
                 </ScrollArea>
 
                 {/* Message Input */}
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  variants={headerVariants}
+                <div
+                 
+                 
+                 
                   className="p-5 sm:p-6 md:p-7 border-t border-border"
                 >
                   <BloomCard className="p-2 bg-secondary/40 flex gap-2 items-center">
@@ -471,13 +452,13 @@ export default function ChatPage() {
                       <IconSend className="h-4 w-4" />
                     </Button>
                   </BloomCard>
-                </motion.div>
+                </div>
               </>
             ) : (
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={headerVariants}
+              <div
+               
+               
+               
                 className="flex-1 flex items-center justify-center"
               >
                 <BloomEmpty
@@ -485,7 +466,7 @@ export default function ChatPage() {
                   title={t.chat.new}
                   description={t.chat.noChats}
                 />
-              </motion.div>
+              </div>
             )}
           </div>
         </div>

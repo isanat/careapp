@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState, ComponentType } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
@@ -107,38 +106,20 @@ export default function DashboardPage() {
   const firstName = session?.user?.name?.split(" ")[0] || "";
 
   // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-6 sm:space-y-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+       
+       
+       
       >
         {/* Welcome + Status inline */}
-        <motion.div
+        <div
           className="flex items-center justify-between gap-4"
-          variants={itemVariants}
+         
         >
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none">
@@ -149,55 +130,55 @@ export default function DashboardPage() {
           <BloomBadge variant={session?.user?.status === "ACTIVE" ? "success" : "warning"}>
             {session?.user?.status === "ACTIVE" ? t.dashboard.status.active : t.dashboard.status.pending}
           </BloomBadge>
-        </motion.div>
+        </div>
 
         {/* Stats - 4 columns */}
-        <motion.div
+        <div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-          variants={itemVariants}
+         
         >
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomStatBlock
               label={t.nav.contracts}
               value={stats?.activeContracts || 0}
               icon={<IconContract className="h-6 w-6" />}
               colorClass="text-primary"
             />
-          </motion.div>
-          <motion.div variants={itemVariants}>
+          </div>
+          <div>
             <BloomStatBlock
               label="Horas"
               value={`${stats?.totalHours || 0}h`}
               icon={<IconClock className="h-6 w-6" />}
               colorClass="text-warning"
             />
-          </motion.div>
-          <motion.div variants={itemVariants}>
+          </div>
+          <div>
             <BloomStatBlock
               label="Nota"
               value={stats?.rating?.toFixed(1) || '-'}
               icon={<IconStar className="h-6 w-6" />}
               colorClass="text-info"
             />
-          </motion.div>
-          <motion.div variants={itemVariants}>
+          </div>
+          <div>
             <BloomStatBlock
               label="Reviews"
               value={stats?.totalReviews || 0}
               icon={<IconEuro className="h-6 w-6" />}
               colorClass="text-success"
             />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Quick Actions */}
-        <motion.div
+        <div
           className="flex flex-col sm:flex-row gap-4"
-          variants={itemVariants}
+         
         >
           {isFamily && (
             <Link href="/app/search" className="sm:flex-1">
-              <motion.div
+              <div
                 whileHover={{ scale: 1.02, translateY: -4 }}
                 transition={{ duration: 0.2 }}
               >
@@ -212,12 +193,12 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </BloomCard>
-              </motion.div>
+              </div>
             </Link>
           )}
           {isCaregiver && (
             <Link href="/app/proposals" className="sm:flex-1">
-              <motion.div
+              <div
                 whileHover={{ scale: 1.02, translateY: -4 }}
                 transition={{ duration: 0.2 }}
               >
@@ -232,11 +213,11 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </BloomCard>
-              </motion.div>
+              </div>
             </Link>
           )}
           <Link href="/app/contracts" className="sm:flex-1">
-            <motion.div
+            <div
               whileHover={{ scale: 1.02, translateY: -4 }}
               transition={{ duration: 0.2 }}
             >
@@ -251,13 +232,13 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </BloomCard>
-            </motion.div>
+            </div>
           </Link>
-        </motion.div>
+        </div>
 
         {/* Next Steps */}
         {pendingSteps.length > 0 && (
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
@@ -266,7 +247,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="space-y-2">
                   {pendingSteps.map((step) => (
-                    <motion.div
+                    <div
                       key={step.key}
                       whileHover={{ x: 4 }}
                       transition={{ duration: 0.2 }}
@@ -276,38 +257,38 @@ export default function DashboardPage() {
                         <span className="flex-1 font-body text-sm font-medium text-foreground">{step.label}</span>
                         <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
                       </Link>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
         )}
 
         {/* All set */}
         {pendingSteps.length === 0 && (
-          <motion.div
-            variants={itemVariants}
+          <div
+           
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
             <BloomCard variant="success" className="p-5 sm:p-6 md:p-7">
               <div className="flex items-center gap-3">
-                <motion.div
+                <div
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 >
                   <IconCheck className="h-6 w-6 text-success flex-shrink-0" />
-                </motion.div>
+                </div>
                 <span className="font-display font-black text-success text-sm">{t.dashboard.allSet}</span>
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
         )}
 
         {/* Platform Benefits */}
-        <motion.div className="space-y-6 sm:space-y-8" variants={itemVariants}>
+        <div className="space-y-6 sm:space-y-8">
           <BloomSectionHeader
             title="Benefícios"
             className="mb-4"
@@ -328,7 +309,7 @@ export default function DashboardPage() {
                     { title: "Proteção Jurídica", sub: "Contrato formal" },
                   ]
               ).map((item, i) => (
-                <motion.div
+                <div
                   key={i}
                   whileHover={{ scale: 1.02, y: -2 }}
                   transition={{ duration: 0.2 }}
@@ -342,14 +323,14 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   </BloomCard>
-                </motion.div>
+                </div>
               ))}
             </div>
           </BloomCard>
-        </motion.div>
+        </div>
 
         {/* Recent Activity */}
-        <motion.div className="space-y-6 sm:space-y-8" variants={itemVariants}>
+        <div className="space-y-6 sm:space-y-8">
           <div className="flex items-center justify-between gap-4">
             <BloomSectionHeader
               title={t.dashboard.recentActivity}
@@ -361,16 +342,16 @@ export default function DashboardPage() {
           </div>
 
           {recentActivity.length > 0 ? (
-            <motion.div
+            <div
               className="space-y-3"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+             
+             
+             
             >
               {recentActivity.slice(0, 5).map((activity, index) => (
-                <motion.div
+                <div
                   key={index}
-                  variants={itemVariants}
+                 
                   whileHover={{ scale: 1.01, x: 4 }}
                   transition={{ duration: 0.2 }}
                 >
@@ -397,19 +378,19 @@ export default function DashboardPage() {
                       </span>
                     </div>
                   </BloomCard>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           ) : (
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomEmpty
                 icon={<IconWallet className="h-8 w-8" />}
                 title={t.dashboard.noActivity}
               />
-            </motion.div>
+            </div>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </AppShell>
   );
 }

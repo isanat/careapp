@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
@@ -32,7 +31,6 @@ import {
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { useToast } from "@/hooks/use-toast";
-import { cardHoverVariants, pageTransitionVariants, containerVariants, itemVariants } from "@/lib/animations";
 
 interface UserDetail {
   id: string;
@@ -143,11 +141,11 @@ export default function AdminUserDetailPage() {
   }
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
+    <div
+     
+     
       exit="exit"
-      variants={pageTransitionVariants}
+     
       className="space-y-6"
     >
       <PageHeader
@@ -179,14 +177,14 @@ export default function AdminUserDetailPage() {
         }
       />
 
-      <motion.div
+      <div
         className="grid gap-6 md:grid-cols-3"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
+       
+       
+       
       >
         {/* User Info Card */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomCard variant="default" className="p-5 sm:p-6 md:p-7">
             <div className="flex flex-col items-center text-center">
               <Avatar className="h-20 w-20">
@@ -267,10 +265,10 @@ export default function AdminUserDetailPage() {
               </div>
             </div>
           </BloomCard>
-        </motion.div>
+        </div>
 
         {/* Main Content */}
-        <motion.div variants={itemVariants} className="md:col-span-2">
+        <div className="md:col-span-2">
           <Tabs defaultValue="overview">
             <TabsList>
               <TabsTrigger value="overview">Visão Geral</TabsTrigger>
@@ -280,13 +278,13 @@ export default function AdminUserDetailPage() {
 
             <TabsContent value="overview" className="mt-4 space-y-6">
               {/* Stats */}
-              <motion.div
+              <div
                 className="grid gap-4 sm:grid-cols-2"
-                variants={containerVariants}
-                initial="initial"
-                animate="animate"
+               
+               
+               
               >
-                <motion.div variants={itemVariants}>
+                <div>
                   <BloomCard variant="success" className="p-5 sm:p-6 md:p-7">
                     <div className="flex items-center gap-3">
                       <div className="rounded-full bg-primary/10 p-2">
@@ -298,8 +296,8 @@ export default function AdminUserDetailPage() {
                       </div>
                     </div>
                   </BloomCard>
-                </motion.div>
-                <motion.div variants={itemVariants}>
+                </div>
+                <div>
                   <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7">
                     <div className="flex items-center gap-3">
                       <div className="rounded-full bg-warning/10 p-2">
@@ -313,12 +311,12 @@ export default function AdminUserDetailPage() {
                       </div>
                     </div>
                   </BloomCard>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
 
               {/* Profile Info */}
               {user.profileFamily && (
-                <motion.div variants={itemVariants}>
+                <div>
                   <BloomCard className="p-5 sm:p-6 md:p-7">
                     <BloomSectionHeader title="Perfil Familiar" />
                     <div className="space-y-2 text-sm">
@@ -348,11 +346,11 @@ export default function AdminUserDetailPage() {
                     )}
                     </div>
                   </BloomCard>
-                </motion.div>
+                </div>
               )}
 
               {user.profileCaregiver && (
-                <motion.div variants={itemVariants}>
+                <div>
                   <BloomCard className="p-5 sm:p-6 md:p-7">
                     <BloomSectionHeader title="Perfil Cuidador" />
                     <div className="space-y-2 text-sm">
@@ -388,12 +386,12 @@ export default function AdminUserDetailPage() {
                     )}
                     </div>
                   </BloomCard>
-                </motion.div>
+                </div>
               )}
             </TabsContent>
 
             <TabsContent value="wallet" className="mt-4 space-y-6">
-              <motion.div variants={itemVariants}>
+              <div>
                 <BloomCard className="p-5 sm:p-6 md:p-7">
                   <BloomSectionHeader title="Carteira" />
                   <div className="space-y-4">
@@ -419,21 +417,21 @@ export default function AdminUserDetailPage() {
                     )}
                   </div>
                 </BloomCard>
-              </motion.div>
+              </div>
             </TabsContent>
 
             <TabsContent value="contracts" className="mt-4 space-y-6">
-              <motion.div variants={itemVariants}>
+              <div>
                 <BloomCard className="p-5 sm:p-6 md:p-7">
                   <p className="text-center text-muted-foreground">
                     {user.contractsCount} contrato(s) encontrado(s)
                   </p>
                 </BloomCard>
-              </motion.div>
+              </div>
             </TabsContent>
           </Tabs>
-        </motion.div>
-      </motion.div>
-    </motion.div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Variants } from "framer-motion";
 
 /**
  * Bloom Elements Animation Presets

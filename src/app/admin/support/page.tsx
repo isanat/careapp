@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
@@ -181,18 +180,10 @@ export default function AdminSupportPage() {
       ticket.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
 
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Suporte"
         description="Gerenciar tickets de suporte"
@@ -205,7 +196,7 @@ export default function AdminSupportPage() {
       />
 
       {/* Stats */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <StatsCard
           title="Total"
           value={stats.total}
@@ -241,10 +232,10 @@ export default function AdminSupportPage() {
           loading={loading}
           className="border-warning/20"
         />
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard>
           <div className="p-5 sm:p-6 md:p-7">
           <div className="flex flex-col gap-4 md:flex-row">
@@ -284,10 +275,10 @@ export default function AdminSupportPage() {
           </div>
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
 
       {/* Tickets List */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard>
           <div className="p-5 sm:p-6 md:p-7">
             <div className="flex items-center justify-between mb-4">
@@ -372,7 +363,7 @@ export default function AdminSupportPage() {
           )}
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
 
       {/* Ticket Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -490,6 +481,6 @@ export default function AdminSupportPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </motion.div>
+    </div>
   );
 }

@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
@@ -364,25 +363,14 @@ export default function AdminCaregiversPage() {
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
 
   return (
-    <motion.div
+    <div
       className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+     
+     
+     
     >
       <PageHeader
         title="Cuidadores"
@@ -390,7 +378,7 @@ export default function AdminCaregiversPage() {
       />
 
       {/* Stats Cards */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-4">
         <StatsCard
           title="Total de Cuidadores"
           value={stats.total}
@@ -413,10 +401,10 @@ export default function AdminCaregiversPage() {
           value={stats.featured}
           icon={<IconStar className="h-5 w-5" />}
         />
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div variants={itemVariants}>
+      <div>
         <BloomCard variant="interactive">
           <div className="p-5 sm:p-6 md:p-7">
             <div className="flex flex-col gap-4 md:flex-row md:items-center">
@@ -459,10 +447,10 @@ export default function AdminCaregiversPage() {
             </div>
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
 
       {/* Data Table */}
-      <motion.div variants={itemVariants}>
+      <div>
         <DataTable
           columns={columns}
           data={caregivers}
@@ -476,7 +464,7 @@ export default function AdminCaregiversPage() {
             onPageChange: (page) => setPagination(prev => ({ ...prev, page })),
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Reject KYC Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
@@ -519,6 +507,6 @@ export default function AdminCaregiversPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </motion.div>
+    </div>
   );
 }

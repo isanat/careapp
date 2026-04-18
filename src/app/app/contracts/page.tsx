@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,7 +21,6 @@ import {
 } from "@/components/icons";
 import { CONTRACT_STATUS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
-import { containerVariants, itemVariants, cardHoverVariants } from "@/lib/animations";
 
 interface Contract {
   id: string;
@@ -84,18 +82,18 @@ export default function ContractsPage() {
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-6 max-w-6xl"
-        initial="initial"
-        animate="animate"
-        variants={containerVariants}
+       
+       
+       
       >
         {/* Header - Bloom Elements style */}
         <BloomSectionHeader title={t.contracts.title} />
 
         {/* Error - Bloom style with animation */}
         {error && (
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7">
               <div className="flex items-center justify-between gap-3">
                 <p className="font-body text-sm font-medium text-destructive">{error}</p>
@@ -104,23 +102,23 @@ export default function ContractsPage() {
                 </Button>
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
         )}
 
         {/* Loading state with skeleton animations */}
         {isLoading && (
-          <motion.div className="space-y-4" variants={containerVariants} initial="initial" animate="animate">
+          <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <motion.div key={i} variants={itemVariants}>
+              <div key={i}>
                 <Skeleton className="h-32 rounded-2xl" />
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Tabs and Content */}
         {!isLoading && !error && (
-          <motion.div className="space-y-6" variants={itemVariants}>
+          <div className="space-y-6">
             {/* Tab Navigation */}
             <div className="border-b border-border/60">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
@@ -166,28 +164,28 @@ export default function ContractsPage() {
                   : IconContract;
 
               return (
-                <motion.div
+                <div
                   className="space-y-4"
-                  variants={containerVariants}
-                  initial="initial"
-                  animate="animate"
+                 
+                 
+                 
                 >
                   {items.map((contract, index) => (
-                    <motion.div key={contract.id} variants={itemVariants}>
+                    <div key={contract.id}>
                       <ContractCard contract={contract} isFamily={isFamily} t={t} />
-                    </motion.div>
+                    </div>
                   ))}
                   {items.length === 0 && (
-                    <motion.div variants={itemVariants}>
+                    <div>
                       <BloomEmpty icon={<EmptyIcon className="h-6 w-6" />} title={t.contracts.noContracts} />
-                    </motion.div>
+                    </div>
                   )}
-                </motion.div>
+                </div>
               );
             })()}
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
     </AppShell>
   );
 }
@@ -209,9 +207,9 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="group">
-      <motion.div
-        variants={cardHoverVariants}
-        initial="initial"
+      <div
+       
+       
         whileHover="hover"
       >
         <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7">
@@ -235,7 +233,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
           {/* Info grid - responsive layout */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 pb-6 border-b border-border/30">
             {/* Other Party */}
-            <motion.div
+            <div
               className="flex items-start gap-3 p-4 rounded-2xl bg-secondary/5 hover:bg-primary/5 transition-colors duration-300"
               whileHover={{ y: -2 }}
             >
@@ -250,10 +248,10 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
                   {contract.otherParty?.name || t.none}
                 </p>
               </div>
-            </motion.div>
+            </div>
 
             {/* Duration */}
-            <motion.div
+            <div
               className="flex items-start gap-3 p-4 rounded-2xl bg-secondary/5 hover:bg-primary/5 transition-colors duration-300"
               whileHover={{ y: -2 }}
             >
@@ -268,7 +266,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
                   {contract.hoursPerWeek}h/semana
                 </p>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Footer: Date & Rate */}
@@ -290,7 +288,7 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
             </div>
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
     </Link>
   );
 }

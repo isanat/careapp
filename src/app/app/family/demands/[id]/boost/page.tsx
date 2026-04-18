@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -140,35 +139,17 @@ function BoostContent() {
   const pkgDetails = PACKAGE_DETAILS[packageType] || PACKAGE_DETAILS.BASIC;
   const Icon = pkgDetails.icon;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35 },
-    },
-  };
 
   return (
-    <motion.div
+    <div
       className="max-w-2xl mx-auto pb-8"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+     
+     
+     
     >
       {/* Header with Back Button */}
-      <motion.div variants={itemVariants} className="mb-8 flex items-center gap-4">
+      <div className="mb-8 flex items-center gap-4">
         <Link
           href="/app/family/demands"
           className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
@@ -184,19 +165,19 @@ function BoostContent() {
             Checkout seguro com Stripe
           </p>
         </div>
-      </motion.div>
+      </div>
 
       {error && (
-        <motion.div variants={itemVariants} className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <p className="text-sm text-destructive font-medium">{error}</p>
-        </motion.div>
+        </div>
       )}
 
       {demand && (
-        <motion.div variants={containerVariants} className="space-y-6" initial="hidden" animate="visible">
+        <div className="space-y-6">
           {/* Demand Info Card */}
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Demanda Atual
             </h4>
@@ -227,18 +208,18 @@ function BoostContent() {
                 </div>
               </div>
             </div>
-          </motion.section>
+          </section>
 
           {/* Pricing Cards Grid */}
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Pacotes Disponíveis
             </h4>
-            <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={containerVariants} initial="hidden" animate="visible">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {Object.entries(PACKAGE_DETAILS).map(([key, pkg]) => {
                 const isSelected = key === packageType;
                 return (
-                  <motion.div key={key} variants={itemVariants}>
+                  <div key={key}>
                     <Link
                       href={`?package=${key}`}
                       className={`block bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
@@ -297,14 +278,14 @@ function BoostContent() {
                       </ul>
                     </div>
                     </Link>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
-          </motion.section>
+            </div>
+          </section>
 
           {/* Summary Box */}
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Resumo
             </h4>
@@ -318,7 +299,7 @@ function BoostContent() {
                 </span>
               </div>
             </div>
-          </motion.section>
+          </section>
 
           {/* Info Banner */}
           <div className="bg-info/5 p-5 rounded-2xl border border-info/20 flex items-start gap-3">
@@ -360,9 +341,9 @@ function BoostContent() {
               </Button>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 

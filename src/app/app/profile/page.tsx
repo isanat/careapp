@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,182 +60,6 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
 
 // Framer Motion animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06 }
-  },
-} as const;
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: "easeOut" as any }
-  },
-} as const;
-
-const SERVICE_TYPES = [
-  { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
-  { id: "MEDICATION", label: "Medicacao" },
-  { id: "MOBILITY", label: "Mobilidade" },
-  { id: "COMPANIONSHIP", label: "Companhia" },
-  { id: "MEAL_PREPARATION", label: "Refeicoes" },
-  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domesticas" },
-  { id: "TRANSPORTATION", label: "Transporte" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulacao Cognitiva" },
-  { id: "NIGHT_CARE", label: "Cuidados Noturnos" },
-  { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos" },
-  { id: "PHYSIOTHERAPY", label: "Fisioterapia" },
-  { id: "NURSING_CARE", label: "Enfermagem" },
-];
-
-const DOCUMENT_TYPES = [
-  { id: "CC", label: "Cartao de Cidadao", placeholder: "12345678 1 ZZ2", maxLength: 15 },
-  { id: "PASSPORT", label: "Passaporte", placeholder: "AA123456", maxLength: 9 },
-  { id: "RESIDENCE", label: "Titulo de Residencia", placeholder: "Numero do titulo", maxLength: 20 },
-];
-
-function validateNIF(nif: string): boolean {
-  if (!/^\d{9}$/.test(nif)) return false;
-  const digits = nif.split("").map(Number);
-  const checkSum = digits.slice(0, 8).reduce((sum, d, i) => sum + d * (9 - i), 0);
-  const remainder = checkSum % 11;
-  const checkDigit = remainder < 2 ? 0 : 11 - remainder;
-  return checkDigit === digits[8];
-}
-
-function formatPhonePT(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.startsWith("351")) {
-    const num = digits.slice(3);
-    if (num.length <= 3) return `+351 ${num}`;
-    if (num.length <= 6) return `+351 ${num.slice(0, 3)} ${num.slice(3)}`;
-    return `+351 ${num.slice(0, 3)} ${num.slice(3, 6)} ${num.slice(6, 9)}`;
-  }
-  if (digits.length <= 3) return `+351 ${digits}`;
-  if (digits.length <= 6) return `+351 ${digits.slice(0, 3)} ${digits.slice(3)}`;
-  return `+351 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
-}
-
-interface ProfileData {
-  name: string;
-  email: string;
-  phone: string;
-  nif?: string;
-  documentType?: string;
-  documentNumber?: string;
-  profileImage?: string;
-  title?: string;
-  bio?: string;
-  experienceYears?: number;
-  city?: string;
-  services?: string[];
-  hourlyRateEur?: number;
-  certifications?: string;
-  languages?: string;
-  averageRating?: number;
-  totalReviews?: number;
-  totalContracts?: number;
-  elderName?: string;
-  elderAge?: number;
-  elderNeeds?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  backgroundCheckStatus?: string;
-  backgroundCheckUrl?: string;
-}
-
-export default function ProfilePage() {
-  const { data: session, status, update } = useSession();
-  const { t } = useI18n();
-  const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported, pushError } = useNotifications();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [pushLoading, setPushLoading] = useState(false);
-
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [formData, setFormData] = useState<ProfileData>({
-    name: "",
-    email: "",
-    phone: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-  });
-
-  const isFamily = session?.user?.role === "FAMILY";
-  const isCaregiver = session?.user?.role === "CAREGIVER";
-
-  useEffect(() => {
-    if (status === "authenticated") fetchProfile();
-  }, [status]);
-
-  const fetchProfile = async () => {
-    setIsLoading(true);
-    try {
-      const response = await apiFetch("/api/user/profile");
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error("Erro ao carregar perfil: " + errorText);
-      }
-      const data = await response.json();
-      setProfile(data.profile);
-
-      // Parse services from JSON string if it's stored as string
-      let services: string[] = [];
-      if (typeof data.profile?.services === 'string') {
-        try {
-          services = JSON.parse(data.profile.services);
-        } catch {
-          services = [];
-        }
-      } else if (Array.isArray(data.profile?.services)) {
-        services = data.profile.services;
-      }
-
-      setFormData({
-        name: data.user?.name || "",
-        email: data.user?.email || "",
-        phone: data.user?.phone || "",
-        nif: data.user?.nif || "",
-        documentType: data.user?.documentType || "",
-        documentNumber: data.user?.documentNumber || "",
-        profileImage: data.user?.profileImage || "",
-        title: data.profile?.title || "",
-        bio: data.profile?.bio || "",
-        experienceYears: data.profile?.experienceYears || 0,
-        city: data.profile?.city || "",
-        services: services,
-        hourlyRateEur: data.profile?.hourlyRateEur ? (data.profile.hourlyRateEur / 100) : 15,
-        certifications: data.profile?.certifications || "",
-        languages: data.profile?.languages || "",
-        averageRating: data.profile?.averageRating || 0,
-        totalReviews: data.profile?.totalReviews || 0,
-        totalContracts: data.profile?.totalContracts || 0,
-        elderName: data.profile?.elderName || "",
-        elderAge: data.profile?.elderAge || undefined,
-        elderNeeds: data.profile?.elderNeeds || "",
-        emergencyContactName: data.profile?.emergencyContactName || "",
-        emergencyContactPhone: data.profile?.emergencyContactPhone || "",
-        backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
-        backgroundCheckUrl: data.user?.backgroundCheckUrl || "",
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -480,14 +303,14 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-8 max-w-4xl"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
+       
+       
+       
       >
         {/* Page Header */}
-        <motion.div variants={itemVariants} className="space-y-2">
+        <div className="space-y-2">
           <h1 className="text-2xl sm:text-3xl font-display font-black uppercase tracking-tighter leading-none">
             Meu Perfil
           </h1>
@@ -496,30 +319,30 @@ export default function ProfilePage() {
               ? "Gerencie suas informações profissionais e preferências"
               : "Gerencie as informações do seu familiar"}
           </p>
-        </motion.div>
+        </div>
 
         {/* Alerts */}
         {error && (
-          <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-display font-bold text-foreground">Erro</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
             </div>
-          </motion.div>
+          </div>
         )}
         {success && (
-          <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
+          <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
             <IconCheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-display font-bold text-foreground">Sucesso</p>
               <p className="text-xs text-muted-foreground mt-1">{success}</p>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Profile Header Section */}
-        <motion.section variants={itemVariants} className="space-y-4">
+        <section className="space-y-4">
           <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-5">
@@ -589,11 +412,11 @@ export default function ProfilePage() {
               </Button>
             </div>
           </BloomCard>
-        </motion.section>
+        </section>
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               { value: profile?.totalContracts || 0, label: "Contratos", icon: IconFamily },
               { value: profile?.totalReviews || 0, label: "Avaliações", icon: IconStar },
@@ -614,11 +437,11 @@ export default function ProfilePage() {
                 </div>
               </BloomCard>
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Tabs */}
-        <motion.div variants={itemVariants}>
+        <div>
           <Tabs defaultValue="about" className="space-y-6">
           <TabsList className={`w-full h-11 rounded-2xl bg-secondary/50 p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'} gap-1`}>
             <TabsTrigger value="about" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Info</TabsTrigger>
@@ -631,7 +454,7 @@ export default function ProfilePage() {
 
           {/* Info Tab */}
           <TabsContent value="about" className="space-y-6">
-            <motion.section variants={itemVariants} className="space-y-4">
+            <section className="space-y-4">
               <BloomSectionHeader title="Informações Pessoais" />
               <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -694,13 +517,13 @@ export default function ProfilePage() {
                   </>
                 )}
               </BloomCard>
-            </motion.section>
+            </section>
           </TabsContent>
 
           {/* Documents Tab */}
           <TabsContent value="documents" className="space-y-6">
             {/* Personal Documents Section */}
-            <motion.section variants={itemVariants} className="space-y-4">
+            <section className="space-y-4">
               <BloomSectionHeader title="Documentos Pessoais" />
               <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div>
@@ -748,11 +571,11 @@ export default function ProfilePage() {
                   </div>
                 )}
               </BloomCard>
-            </motion.section>
+            </section>
 
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
-              <motion.section variants={itemVariants} className="space-y-4">
+              <section className="space-y-4">
                 <BloomSectionHeader title="Verificacao de Antecedentes" />
                 <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                   <div className="flex items-center justify-between mb-2">
@@ -792,7 +615,7 @@ export default function ProfilePage() {
                     <p className="text-xs text-success flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado com sucesso</p>
                   )}
                 </BloomCard>
-              </motion.section>
+              </section>
             )}
 
             {/* Security Info */}
@@ -808,7 +631,7 @@ export default function ProfilePage() {
           {/* Services Tab */}
           {isCaregiver && (
             <TabsContent value="services" className="space-y-6">
-              <motion.section variants={itemVariants} className="space-y-4">
+              <section className="space-y-4">
                 <BloomSectionHeader title="Servicos Oferecidos" />
                 <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -874,14 +697,14 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </BloomCard>
-              </motion.section>
+              </section>
             </TabsContent>
           )}
 
           {/* Elder Tab */}
           {isFamily && (
             <TabsContent value="elder" className="space-y-6">
-              <motion.section variants={itemVariants} className="space-y-4">
+              <section className="space-y-4">
                 <BloomSectionHeader title="Informacoes do Familiar" />
                 <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -917,13 +740,13 @@ export default function ProfilePage() {
                     />
                   </div>
                 </BloomCard>
-              </motion.section>
+              </section>
             </TabsContent>
           )}
 
           {/* Contact Tab */}
           <TabsContent value="contact" className="space-y-6">
-            <motion.section variants={itemVariants} className="space-y-4">
+            <section className="space-y-4">
               <BloomSectionHeader title="Informacoes de Contato" />
               <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div>
@@ -980,13 +803,13 @@ export default function ProfilePage() {
                   </>
                 )}
               </BloomCard>
-            </motion.section>
+            </section>
           </TabsContent>
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             {/* Settings Section */}
-            <motion.section variants={itemVariants} className="space-y-4">
+            <section className="space-y-4">
               <BloomSectionHeader title="Preferencias e Configuracoes" />
 
               {/* Push Notifications */}
@@ -1047,10 +870,10 @@ export default function ProfilePage() {
                   </a>
                 </div>
               </div>
-            </motion.section>
+            </section>
 
             {/* Account Actions */}
-            <motion.section variants={itemVariants} className="space-y-3 pt-6 border-t border-border/30 mt-8">
+            <section className="space-y-3 pt-6 border-t border-border/30 mt-8">
               {/* Logout */}
               <Button
                 variant="outline"
@@ -1109,7 +932,7 @@ export default function ProfilePage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-            </motion.section>
+            </section>
 
             {/* Footer */}
             <div className="text-center pt-8">
@@ -1117,8 +940,8 @@ export default function ProfilePage() {
             </div>
           </TabsContent>
         </Tabs>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </AppShell>
   );
 }

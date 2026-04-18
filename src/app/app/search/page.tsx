@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { Input } from "@/components/ui/input";
@@ -176,36 +175,18 @@ export default function SearchPage() {
     return results;
   }, [families, searchTerm, selectedService]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35 },
-    },
-  };
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-8"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
+       
+       
+       
       >
         {/* Page Header */}
-        <motion.div variants={itemVariants} className="space-y-2">
+        <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
             {isCaregiver ? "Famílias em Busca" : "Explorar Cuidadores"}
           </h1>
@@ -214,10 +195,10 @@ export default function SearchPage() {
               ? "Encontre famílias que precisam de seus serviços"
               : "Descubra os melhores cuidadores disponíveis"}
           </p>
-        </motion.div>
+        </div>
 
         {/* Search/Filter Bar */}
-        <motion.div variants={itemVariants} className="bg-card rounded-3xl p-4 sm:p-6 border border-border shadow-card space-y-4">
+        <div className="bg-card rounded-3xl p-4 sm:p-6 border border-border shadow-card space-y-4">
           <div className="flex gap-3">
             <div className="relative flex-1">
               <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -286,16 +267,16 @@ export default function SearchPage() {
               )}
             </div>
           )}
-        </motion.div>
+        </div>
 
         {/* Results Count */}
         {!isLoading && (
-          <motion.p variants={itemVariants} className="text-xs text-muted-foreground font-medium">
+          <p className="text-xs text-muted-foreground font-medium">
             {isCaregiver
               ? `${filteredFamilies.length} ${filteredFamilies.length === 1 ? "família encontrada" : "famílias encontradas"}`
               : `${filteredCaregivers.length} ${filteredCaregivers.length === 1 ? "cuidador encontrado" : t.search.resultsFound || "cuidadores encontrados"}`
             }
-          </motion.p>
+          </p>
         )}
 
         {/* Loading Skeletons */}
@@ -309,11 +290,11 @@ export default function SearchPage() {
 
         {/* Caregiver Grid */}
         {!isLoading && !isCaregiver && (
-          <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={containerVariants} initial="hidden" animate="visible">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredCaregivers.map((caregiver) => (
-              <motion.div key={caregiver.id} variants={itemVariants}>
+              <div key={caregiver.id}>
                 <Link href={`/app/caregivers/${caregiver.id}`} className="group">
-                  <motion.div
+                  <div
                     whileHover={{ scale: 1.02, y: -4 }}
                     transition={{ duration: 0.2 }}
                     className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 cursor-pointer space-y-4"
@@ -387,9 +368,9 @@ export default function SearchPage() {
                       {"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(2)}
                     </span>
                   </div>
-                  </motion.div>
+                  </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
 
             {/* Empty State */}
@@ -402,16 +383,16 @@ export default function SearchPage() {
                 <p className="text-sm text-muted-foreground">{t.search.placeholder}</p>
               </div>
             )}
-          </motion.div>
+          </div>
         )}
 
         {/* Family Grid */}
         {!isLoading && isCaregiver && (
-          <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" variants={containerVariants} initial="hidden" animate="visible">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredFamilies.map((family) => (
-              <motion.div key={family.id} variants={itemVariants}>
+              <div key={family.id}>
                 <Link href={`/app/families/${family.id}`} className="group">
-                  <motion.div
+                  <div
                     whileHover={{ scale: 1.02, y: -4 }}
                     transition={{ duration: 0.2 }}
                     className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-secondary/30 transition-all duration-300 cursor-pointer space-y-4"
@@ -493,9 +474,9 @@ export default function SearchPage() {
                       <Link href={`/app/messages?userId=${family.id}`}>Mensagem</Link>
                     </Button>
                   </div>
-                  </motion.div>
+                  </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
 
             {/* Empty State */}
@@ -508,9 +489,9 @@ export default function SearchPage() {
                 <p className="text-sm text-muted-foreground">Tente ajustar os filtros</p>
               </div>
             )}
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
     </AppShell>
   );
 }

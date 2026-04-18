@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
 import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
@@ -124,18 +123,10 @@ export default function AdminNotificationsPage() {
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
 
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Notificações"
         description="Alertas e notificações do sistema"
@@ -156,7 +147,7 @@ export default function AdminNotificationsPage() {
       />
 
       {/* Stats */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         <BloomCard variant="gradient">
           <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
             <div className="p-3 bg-primary/20 rounded-full">
@@ -192,10 +183,10 @@ export default function AdminNotificationsPage() {
             </div>
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
 
       {/* Tabs */}
-      <motion.div variants={itemVariants}>
+      <div>
         <Tabs value={filter} onValueChange={(v) => setFilter(v as "all" | "unread")}>
           <TabsList>
             <TabsTrigger value="all">
@@ -212,10 +203,10 @@ export default function AdminNotificationsPage() {
             </TabsTrigger>
           </TabsList>
         </Tabs>
-      </motion.div>
+      </div>
 
       {/* Notifications List */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <div className="space-y-3">
         {loading ? (
           Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-24 w-full" />
@@ -270,7 +261,7 @@ export default function AdminNotificationsPage() {
             </BloomCard>
           ))
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
@@ -117,18 +116,10 @@ export default function AdminModerationPage() {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
 
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Moderação"
         description="Modere conteúdo e resolva denúncias"
@@ -141,7 +132,7 @@ export default function AdminModerationPage() {
       />
 
       {/* Stats */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         <StatsCard
           title="Pendentes"
           value={stats.pending}
@@ -161,10 +152,10 @@ export default function AdminModerationPage() {
           icon={<IconX className="h-5 w-5" />}
           loading={loading}
         />
-      </motion.div>
+      </div>
 
       {/* Tabs */}
-      <motion.div variants={itemVariants}>
+      <div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="all">
@@ -272,7 +263,7 @@ export default function AdminModerationPage() {
           )}
           </TabsContent>
         </Tabs>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

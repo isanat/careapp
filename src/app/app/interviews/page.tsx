@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
@@ -84,70 +83,52 @@ export default function InterviewsPage() {
     );
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4 },
-    },
-  };
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-6 max-w-6xl"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
+       
+       
+       
       >
         {/* Header */}
-        <motion.div variants={itemVariants}>
+        <div>
           <BloomSectionHeader
             title="Entrevistas"
             desc="Acompanhe o estado das entrevistas agendadas e realizadas."
           />
-        </motion.div>
+        </div>
 
         <AnimatePresence>
           {error && (
-            <motion.div
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
+            <div
+             
+             
+             
               exit={{ opacity: 0, y: -10 }}
             >
               <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7 flex items-center gap-3">
                 <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
                 <p className="font-body text-sm font-medium text-destructive">{error}</p>
               </BloomCard>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
         {/* Upcoming Interviews */}
         {upcomingInterviews.length > 0 && (
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <BloomSectionDivider title="Próximas Entrevistas" borderColor="primary" />
-            <motion.div
+            <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+             
+             
+             
             >
               {upcomingInterviews.map((interview) => (
-                <motion.div key={interview.id} variants={itemVariants}>
+                <div key={interview.id}>
                   <Link href={`/app/interview/${interview.id}`}>
                     <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7 h-full flex flex-col justify-between">
                       <div className="space-y-4">
@@ -182,24 +163,24 @@ export default function InterviewsPage() {
                       </div>
                     </BloomCard>
                   </Link>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          </motion.section>
+            </div>
+          </section>
         )}
 
         {/* Past Interviews */}
         {pastInterviews.length > 0 && (
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <BloomSectionDivider title="Histórico" borderColor="primary" />
-            <motion.div
+            <div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+             
+             
+             
             >
               {pastInterviews.map((interview) => (
-                <motion.div key={interview.id} variants={itemVariants}>
+                <div key={interview.id}>
                   <Link href={`/app/interview/${interview.id}`}>
                     <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7 h-full flex flex-col justify-between opacity-75 hover:opacity-100 transition-opacity">
                       <div className="space-y-4">
@@ -241,19 +222,19 @@ export default function InterviewsPage() {
                       </div>
                     </BloomCard>
                   </Link>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          </motion.section>
+            </div>
+          </section>
         )}
 
         {/* Empty State */}
         <AnimatePresence>
           {interviews.length === 0 && !isLoading && (
-            <motion.div
-              variants={itemVariants}
-              initial="hidden"
-              animate="visible"
+            <div
+             
+             
+             
               exit={{ opacity: 0 }}
             >
               <BloomEmpty
@@ -261,10 +242,10 @@ export default function InterviewsPage() {
                 title="Nenhuma entrevista agendada"
                 description="Suas entrevistas aparecerão aqui quando agendadas"
               />
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </AppShell>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
 import { IconAlert } from "@/components/icons";
@@ -24,10 +23,10 @@ export default function AppError({
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] px-4">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={cardVariants}
+      <div
+       
+       
+       
         className="w-full max-w-md"
       >
         <BloomCard className="p-5 sm:p-6 md:p-7 text-center space-y-6">
@@ -62,7 +61,7 @@ export default function AppError({
             </div>
           </div>
         </BloomCard>
-      </motion.div>
+      </div>
     </div>
   );
 }

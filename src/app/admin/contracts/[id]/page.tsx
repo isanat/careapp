@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { StatusBadge } from "@/components/admin/common/status-badge";
@@ -38,7 +37,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
-import { pageTransitionVariants, containerVariants, itemVariants } from "@/lib/animations";
 
 interface ContractDetails {
   contract: {
@@ -304,11 +302,11 @@ function AdminContractDetailContent() {
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
+    <div
+     
+     
       exit="exit"
-      variants={pageTransitionVariants}
+     
       className="space-y-6"
     >
       <PageHeader
@@ -329,43 +327,43 @@ function AdminContractDetailContent() {
       />
 
       {/* Stats */}
-      <motion.div
+      <div
         className="grid gap-4 md:grid-cols-4"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
+       
+       
+       
       >
-        <motion.div variants={itemVariants}>
+        <div>
           <StatsCard
             title="Valor Total"
             value={formatCurrency(contract.totalEurCents)}
             icon={<IconEuro className="h-5 w-5" />}
           />
-        </motion.div>
-        <motion.div variants={itemVariants}>
+        </div>
+        <div>
           <StatsCard
             title="Tokens"
             value={contract.totalTokens || 0}
             icon={<IconCoins className="h-5 w-5" />}
           />
-        </motion.div>
-        <motion.div variants={itemVariants}>
+        </div>
+        <div>
           <StatsCard
             title="Taxa Plataforma"
             value={formatCurrency(contract.platformFeeCents)}
             description="10%"
             icon={<IconShield className="h-5 w-5" />}
           />
-        </motion.div>
-        <motion.div variants={itemVariants}>
+        </div>
+        <div>
           <StatsCard
             title="Valor Cuidador"
             value={formatCurrency(contract.caregiverAmountCents)}
             description="90%"
             icon={<IconUsers className="h-5 w-5" />}
           />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       <Tabs defaultValue={defaultTab} className="space-y-6">
         <TabsList>
@@ -383,14 +381,14 @@ function AdminContractDetailContent() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
-          <motion.div
+          <div
             className="grid gap-6 lg:grid-cols-2"
-            variants={containerVariants}
-            initial="initial"
-            animate="animate"
+           
+           
+           
           >
             {/* Contract Details */}
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7">
                 <BloomSectionHeader title="Detalhes do Contrato" />
                 <div className="space-y-4">
@@ -457,10 +455,10 @@ function AdminContractDetailContent() {
                   )}
                 </div>
               </BloomCard>
-            </motion.div>
+            </div>
 
             {/* Payment Breakdown */}
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7">
                 <BloomSectionHeader title="Detalhamento Financeiro" />
                 <div className="space-y-4">
@@ -536,20 +534,20 @@ function AdminContractDetailContent() {
                   )}
                 </div>
               </BloomCard>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Parties Tab */}
         <TabsContent value="parties" className="space-y-6">
-          <motion.div
+          <div
             className="grid gap-6 md:grid-cols-2"
-            variants={containerVariants}
-            initial="initial"
-            animate="animate"
+           
+           
+           
           >
             {/* Family */}
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7">
                 <BloomSectionHeader title="Família" />
                 <div className="space-y-4">
@@ -587,10 +585,10 @@ function AdminContractDetailContent() {
                   </Link>
                 </div>
               </BloomCard>
-            </motion.div>
+            </div>
 
             {/* Caregiver */}
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7">
                 <BloomSectionHeader title="Cuidador" />
                 <div className="space-y-4">
@@ -628,12 +626,12 @@ function AdminContractDetailContent() {
                   </Link>
                 </div>
               </BloomCard>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Acceptance Logs */}
           {acceptance && (
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7">
                 <BloomSectionHeader title="Registro de Aceite" desc="Informações de aceite com endereço IP para conformidade legal" />
                 <div className="grid gap-6 md:grid-cols-2">
@@ -659,13 +657,13 @@ function AdminContractDetailContent() {
                   )}
                 </div>
               </BloomCard>
-            </motion.div>
+            </div>
           )}
         </TabsContent>
 
         {/* Payments Tab */}
         <TabsContent value="payments" className="space-y-6">
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard className="p-5 sm:p-6 md:p-7">
               <BloomSectionHeader title={`Pagamentos Relacionados (${payments?.length || 0})`} />
               {payments && payments.length > 0 ? (
@@ -698,11 +696,11 @@ function AdminContractDetailContent() {
                 </p>
               )}
             </BloomCard>
-          </motion.div>
+          </div>
 
           {/* Reviews */}
           {reviews && reviews.length > 0 && (
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7">
                 <BloomSectionHeader title={`Avaliações (${reviews.length})`} />
                 <div className="space-y-4">
@@ -726,14 +724,14 @@ function AdminContractDetailContent() {
                   ))}
                 </div>
               </BloomCard>
-            </motion.div>
+            </div>
           )}
         </TabsContent>
 
         {/* Dispute Tab */}
         {contract.status === 'DISPUTED' && (
           <TabsContent value="dispute" className="space-y-6">
-            <motion.div variants={itemVariants}>
+            <div>
               <BloomCard className="p-5 sm:p-6 md:p-7 border-destructive">
                 <BloomSectionHeader title="Resolução de Disputa" desc="Este contrato está em disputa. Resolva a situação escolhendo uma das opções abaixo." />
                 <div className="space-y-6">
@@ -802,13 +800,13 @@ function AdminContractDetailContent() {
                   </div>
                 </div>
               </BloomCard>
-            </motion.div>
+            </div>
           </TabsContent>
         )}
 
         {/* Timeline Tab */}
         <TabsContent value="timeline" className="space-y-6">
-          <motion.div variants={itemVariants}>
+          <div>
             <BloomCard className="p-5 sm:p-6 md:p-7">
               <BloomSectionHeader title="Histórico de Eventos" />
               <div className="relative">
@@ -830,9 +828,9 @@ function AdminContractDetailContent() {
                 ))}
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
         </TabsContent>
       </Tabs>
-    </motion.div>
+    </div>
   );
 }

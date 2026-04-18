@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
 import {
@@ -127,14 +126,14 @@ export default function WalletPage() {
 
   return (
     <AppShell>
-      <motion.div
+      <div
         className="space-y-6 max-w-5xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
         {/* Page Header */}
-        <motion.div
+        <div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.3 }}
@@ -143,11 +142,11 @@ export default function WalletPage() {
             title="Minha Carteira"
             description="Saldo de conta e histórico de transações"
           />
-        </motion.div>
+        </div>
 
         {/* Balance Hero Card with Stats Grid */}
         {walletData && (
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
@@ -160,7 +159,7 @@ export default function WalletPage() {
             >
               <div className="space-y-6">
                 {/* Main Balance */}
-                <motion.div
+                <div
                   initial={{ scale: 0.95 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
@@ -171,17 +170,17 @@ export default function WalletPage() {
                   <p className="text-4xl sm:text-5xl font-display font-black tracking-tighter">
                     €{(walletData.availableBalance / 100).toFixed(2)}
                   </p>
-                </motion.div>
+                </div>
 
                 {/* Balance Breakdown - Responsive Grid */}
-                <motion.div
+                <div
                   className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.3 }}
                 >
                   {/* Total Earnings Stat */}
-                  <motion.div
+                  <div
                     className="bg-white/10 rounded-2xl p-5"
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300 }}
@@ -192,10 +191,10 @@ export default function WalletPage() {
                     <p className="text-2xl font-display font-black tracking-tighter">
                       €{(walletData.totalEarnings / 100).toFixed(2)}
                     </p>
-                  </motion.div>
+                  </div>
 
                   {/* Pending Amount Stat */}
-                  <motion.div
+                  <div
                     className="bg-white/10 rounded-2xl p-5"
                     whileHover={{ scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300 }}
@@ -206,16 +205,16 @@ export default function WalletPage() {
                     <p className="text-2xl font-display font-black tracking-tighter">
                       €{(walletData.pendingAmount / 100).toFixed(2)}
                     </p>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               </div>
             </BloomCard>
-          </motion.div>
+          </div>
         )}
 
         {/* Transaction List */}
         {walletData && walletData.recentTransactions.length > 0 && (
-          <motion.section
+          <section
             className="space-y-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -225,7 +224,7 @@ export default function WalletPage() {
             <BloomCard className="p-5 sm:p-6 md:p-7">
               <div className="space-y-0">
                 {walletData.recentTransactions.map((transaction, idx) => (
-                  <motion.div
+                  <div
                     key={transaction.id}
                     className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 py-4 ${
                       idx < walletData.recentTransactions.length - 1
@@ -239,7 +238,7 @@ export default function WalletPage() {
                   >
                     {/* Left: Icon + Description */}
                     <div className="flex items-center gap-4 flex-1">
-                      <motion.div
+                      <div
                         className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary flex-shrink-0"
                         whileHover={{ scale: 1.1 }}
                         transition={{ type: "spring", stiffness: 300 }}
@@ -249,7 +248,7 @@ export default function WalletPage() {
                         ) : (
                           <IconCalendar className="h-6 w-6" />
                         )}
-                      </motion.div>
+                      </div>
                       <div className="flex-1">
                         <p className="text-sm font-body font-medium text-foreground">
                           {transaction.description || "Pagamento de Serviço"}
@@ -288,16 +287,16 @@ export default function WalletPage() {
                           : "Pendente"}
                       </BloomBadge>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </BloomCard>
-          </motion.section>
+          </section>
         )}
 
         {/* Empty State */}
         {(!walletData || walletData.recentTransactions.length === 0) && !error && (
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.4 }}
@@ -307,21 +306,21 @@ export default function WalletPage() {
               title="Sem transações ainda"
               description="Suas transações aparecerão aqui quando completar contratos"
             />
-          </motion.div>
+          </div>
         )}
 
         {/* Error State */}
         {error && (
-          <motion.div
+          <div
             className="flex items-start gap-4 p-5 sm:p-6 md:p-7 bg-destructive/5 border border-destructive/20 rounded-2xl"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
             <p className="text-sm font-body font-medium text-destructive">{error}</p>
-          </motion.div>
+          </div>
         )}
-      </motion.div>
+      </div>
     </AppShell>
   );
 }
