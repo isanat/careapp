@@ -10,6 +10,8 @@ import {
   IconSun,
   IconMoon,
   IconUser,
+  IconMenu,
+  IconX,
 } from '@/components/icons';
 import {
   DropdownMenu,
@@ -23,9 +25,11 @@ import { Input } from '@/components/ui/input';
 
 interface EvyraHeaderProps {
   sidebarOpen: boolean;
+  mobileMenuOpen?: boolean;
+  setMobileMenuOpen?: (open: boolean) => void;
 }
 
-export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
+export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen, mobileMenuOpen = false, setMobileMenuOpen }) => {
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
   const [unreadCount] = useState(3); // TODO: Replace with actual unread count from API
@@ -34,8 +38,22 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
     <header className={cn(
       "h-14 md:h-16 border-b border-border bg-card/90 backdrop-blur-xl sticky top-0 z-40 px-4 md:px-6 lg:px-8 flex items-center justify-between"
     )}>
-      {/* Left: Search */}
+      {/* Left: Menu + Search */}
       <div className="flex items-center gap-3 md:gap-6 flex-1">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setMobileMenuOpen?.(!mobileMenuOpen)}
+          className="lg:hidden p-2 text-muted-foreground hover:bg-accent hover:text-foreground rounded-xl transition-colors"
+          title="Menu"
+        >
+          {mobileMenuOpen ? (
+            <IconX className="h-5 w-5" />
+          ) : (
+            <IconMenu className="h-5 w-5" />
+          )}
+        </button>
+
+        {/* Search */}
         <div className="relative w-full max-w-md hidden lg:block">
           <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

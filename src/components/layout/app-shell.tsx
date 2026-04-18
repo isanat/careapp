@@ -132,8 +132,19 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Bloom Elements: Fixed Sidebar (hidden on mobile, shown on lg+) */}
-      <div className="hidden lg:block">
+      <div className={cn(
+        "hidden lg:block",
+        mobileMenuOpen && "block fixed inset-0 z-50 lg:z-auto lg:relative"
+      )}>
         <EvyraSidebar
           isOpen={sidebarOpen}
           setIsOpen={setSidebarOpen}
@@ -146,7 +157,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         sidebarOpen ? "lg:pl-72" : "lg:pl-20"
       )}>
         {/* Bloom Elements: Sticky Glassmorphic Header */}
-        <EvyraHeader sidebarOpen={sidebarOpen} />
+        <EvyraHeader sidebarOpen={sidebarOpen} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
         {/* Content Area */}
         <div className="p-4 md:p-6 lg:p-10 max-w-7xl mx-auto w-full">
