@@ -5,7 +5,6 @@ import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { I18nProvider } from "@/lib/i18n";
-import { AnimatePresenceWrapper } from "@/components/motion";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -30,9 +29,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           disableTransitionOnChange
         >
           <I18nProvider>
-            <AnimatePresenceWrapper>
-              {children}
-            </AnimatePresenceWrapper>
+            {children}
           </I18nProvider>
         </NextThemesProvider>
       </QueryClientProvider>
