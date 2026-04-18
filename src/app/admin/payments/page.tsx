@@ -1,9 +1,6 @@
 "use client";
 
-export const revalidate = 0;
-
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
@@ -133,25 +130,15 @@ const reasonLabels: Record<string, string> = {
 
 // ==================== MAIN PAGE ====================
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-};
-
 export default function AdminPaymentsPage() {
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Auditoria Financeira"
         description="Transacoes, pagamentos e auditoria por cliente"
       />
 
-      <motion.div variants={itemVariants}>
+      <div>
         <Tabs defaultValue="transactions" className="space-y-4">
           <TabsList className="h-10">
             <TabsTrigger value="transactions" className="text-sm">Transacoes</TabsTrigger>
@@ -166,8 +153,8 @@ export default function AdminPaymentsPage() {
             <CustomerAuditTab />
           </TabsContent>
         </Tabs>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
