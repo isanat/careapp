@@ -139,38 +139,38 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 sm:space-y-8 p-6 md:p-8">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
 
         {/* Page Heading */}
         <div className="flex items-center gap-3">
           <div className="space-y-1 sm:space-y-2">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
               Dashboard
             </h2>
-            <p className="text-sm text-muted-foreground font-medium">
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
               Visão geral da sua atividade na plataforma.
             </p>
           </div>
         </div>
 
         {/* Greeting Card */}
-        <div className="relative bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+        <div className="relative bg-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-7 border border-border shadow-card">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+            <h1 className="text-lg sm:text-2xl md:text-3xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
               {t.dashboard.welcome}, {firstName.toUpperCase()}
             </h1>
-            <p className="text-sm text-muted-foreground font-medium mt-2">
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-2">
               {session?.user?.email || ""}
             </p>
           </div>
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
             {isActive ? (
-              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 border border-emerald-400/30 bg-emerald-400/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px]">
                 <IconCheck className="h-3 w-3" />
                 Conta Ativa
               </span>
             ) : (
-              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-warning border border-warning/30 bg-warning/10 px-3 py-1.5 rounded-full">
+              <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-warning border border-warning/30 bg-warning/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px]">
                 <IconAlertCircle className="h-3 w-3" />
                 Pendente
               </span>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats - 4 columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <BloomStatBlock
             label={t.nav.contracts}
             value={stats?.activeContracts || 0}
@@ -211,19 +211,19 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           {isFamily && (
-            <Link href="/app/search" className="sm:flex-1">
-              <BloomCard variant="interactive" className="p-5 sm:p-7 h-full rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+            <Link href="/app/search" className="w-full">
+              <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
                     <IconSearch className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
                       {t.nav.searchCaregivers}
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                       Encontrar profissional ideal
                     </p>
                   </div>
@@ -232,17 +232,17 @@ export default function DashboardPage() {
             </Link>
           )}
           {isCaregiver && (
-            <Link href="/app/proposals" className="sm:flex-1">
-              <BloomCard variant="interactive" className="p-5 sm:p-7 h-full rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+            <Link href="/app/proposals" className="w-full">
+              <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
                     <IconInbox className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
                       Propostas
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                       Solicitações recebidas
                     </p>
                   </div>
@@ -250,17 +250,17 @@ export default function DashboardPage() {
               </BloomCard>
             </Link>
           )}
-          <Link href="/app/contracts" className="sm:flex-1">
-            <BloomCard variant="interactive" className="p-5 sm:p-7 h-full rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+          <Link href="/app/contracts" className="w-full">
+            <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
                   <IconContract className="h-5 w-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
                     {t.contracts.title}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                     {t.dashboard.viewAll}
                   </p>
                 </div>

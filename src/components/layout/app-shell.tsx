@@ -132,22 +132,24 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
-      {/* Bloom Elements: Fixed Sidebar + Main with Header */}
-      <EvyraSidebar
-        isOpen={sidebarOpen}
-        setIsOpen={setSidebarOpen}
-      />
+      {/* Bloom Elements: Fixed Sidebar (hidden on mobile, shown on lg+) */}
+      <div className="hidden lg:block">
+        <EvyraSidebar
+          isOpen={sidebarOpen}
+          setIsOpen={setSidebarOpen}
+        />
+      </div>
 
       {/* Main Content with Responsive Padding */}
       <main className={cn(
-        "transition-all duration-500 min-h-screen",
+        "transition-all duration-500 min-h-screen pb-24 lg:pb-0",
         sidebarOpen ? "lg:pl-72" : "lg:pl-20"
       )}>
         {/* Bloom Elements: Sticky Glassmorphic Header */}
         <EvyraHeader sidebarOpen={sidebarOpen} />
 
         {/* Content Area */}
-        <div className="p-6 md:p-10 max-w-7xl mx-auto">
+        <div className="p-4 md:p-6 lg:p-10 max-w-7xl mx-auto w-full">
           {children}
         </div>
 
