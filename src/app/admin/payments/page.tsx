@@ -1,5 +1,6 @@
 "use client";
 
+// Force dynamic rendering - Framer Motion component dependency
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from "react";
