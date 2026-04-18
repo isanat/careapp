@@ -141,7 +141,7 @@ export default function DashboardPage() {
           variants={itemVariants}
         >
           <div>
-            <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tight leading-none">
+            <h1 className="text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none">
               {t.dashboard.welcome}
             </h1>
             <p className="font-body text-base text-muted-foreground font-medium mt-2">{firstName}</p>
