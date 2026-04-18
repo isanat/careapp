@@ -96,7 +96,7 @@ export default function InterviewsPage() {
       <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {/* Page Heading */}
         <div className="space-y-1 sm:space-y-2">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
             Entrevistas
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground font-medium">

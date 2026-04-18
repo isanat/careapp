@@ -206,7 +206,7 @@ function DemandsContent() {
       {/* Page Heading */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div className="space-y-1 sm:space-y-2">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
             Marketplace de Demandas
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground font-medium">

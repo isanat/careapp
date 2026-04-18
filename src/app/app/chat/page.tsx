@@ -183,7 +183,7 @@ export default function ChatPage() {
           >
             <div className="p-4 sm:p-5 md:p-7 border-b border-border space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-display font-black text-foreground uppercase tracking-tighter">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground uppercase tracking-tighter">
                   {t.chat.title}
                 </h2>
                 <div className="h-6 min-w-6 px-2 rounded-full bg-primary text-primary-foreground text-xs font-black flex items-center justify-center">
