@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     console.error("Admin integrations error:", error);
     return NextResponse.json(
       { error: "Failed to fetch integrations" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -8,23 +8,29 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { 
-  IconLogo, 
-  IconMail, 
-  IconLock, 
+import {
+  IconLogo,
+  IconMail,
+  IconLock,
   IconUser,
   IconPhone,
-  IconEye, 
-  IconEyeOff, 
+  IconEye,
+  IconEyeOff,
   IconAlert,
   IconCheck,
   IconFamily,
   IconCaregiver,
   IconShield,
-  IconLoader2
+  IconLoader2,
 } from "@/components/icons";
 import { APP_NAME, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -39,7 +45,11 @@ function RegisterPageContent() {
 
   const [step, setStep] = useState(preselectedRole ? 2 : 1);
   const [role, setRole] = useState<"FAMILY" | "CAREGIVER">(
-    preselectedRole === "caregiver" ? "CAREGIVER" : preselectedRole === "family" ? "FAMILY" : "FAMILY"
+    preselectedRole === "caregiver"
+      ? "CAREGIVER"
+      : preselectedRole === "family"
+        ? "FAMILY"
+        : "FAMILY",
   );
 
   const [formData, setFormData] = useState({
@@ -70,7 +80,8 @@ function RegisterPageContent() {
     // Validation
     if (!acceptTerms) {
       console.log("Terms not accepted");
-      const msg = t.register?.termsRequired || "Deve aceitar os termos para continuar";
+      const msg =
+        t.register?.termsRequired || "Deve aceitar os termos para continuar";
       setErrorMessage(msg);
       toast.error(msg);
       setIsLoading(false);
@@ -182,7 +193,8 @@ function RegisterPageContent() {
       }
     } catch (error) {
       console.error("Registration error:", error);
-      const errorMsg = error instanceof Error ? error.message : "Erro ao criar conta";
+      const errorMsg =
+        error instanceof Error ? error.message : "Erro ao criar conta";
       setErrorMessage(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -194,11 +206,16 @@ function RegisterPageContent() {
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 mx-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 mx-auto"
+          >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">{t.auth.register} - {APP_NAME}</CardTitle>
+            <CardTitle className="text-2xl">
+              {t.auth.register} - {APP_NAME}
+            </CardTitle>
             <CardDescription>
               {step === 1 ? t.auth.role : t.auth.name}
             </CardDescription>
@@ -224,13 +241,17 @@ function RegisterPageContent() {
                 onClick={() => setRole("FAMILY")}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-full ${role === "FAMILY" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                  <div
+                    className={`p-3 rounded-full ${role === "FAMILY" ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  >
                     <IconFamily className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold">{t.auth.family}</span>
-                      {role === "FAMILY" && <IconCheck className="h-4 w-4 text-primary" />}
+                      {role === "FAMILY" && (
+                        <IconCheck className="h-4 w-4 text-primary" />
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {t.dashboard.familyPanel}
@@ -248,13 +269,17 @@ function RegisterPageContent() {
                 onClick={() => setRole("CAREGIVER")}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-full ${role === "CAREGIVER" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                  <div
+                    className={`p-3 rounded-full ${role === "CAREGIVER" ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  >
                     <IconCaregiver className="h-6 w-6" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold">{t.auth.caregiver}</span>
-                      {role === "CAREGIVER" && <IconCheck className="h-4 w-4 text-primary" />}
+                      {role === "CAREGIVER" && (
+                        <IconCheck className="h-4 w-4 text-primary" />
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {t.dashboard.caregiverPanel}
@@ -273,11 +298,20 @@ function RegisterPageContent() {
           {step === 2 && (
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="flex items-center gap-2 p-3 bg-muted rounded-lg mb-4">
-                {role === "FAMILY" ? <IconFamily className="h-5 w-5" /> : <IconCaregiver className="h-5 w-5" />}
+                {role === "FAMILY" ? (
+                  <IconFamily className="h-5 w-5" />
+                ) : (
+                  <IconCaregiver className="h-5 w-5" />
+                )}
                 <span className="text-sm font-medium">
                   {role === "FAMILY" ? t.auth.family : t.auth.caregiver}
                 </span>
-                <Button variant="ghost" size="sm" className="ml-auto text-xs" onClick={() => setStep(1)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-auto text-xs"
+                  onClick={() => setStep(1)}
+                >
                   {t.edit}
                 </Button>
               </div>
@@ -352,13 +386,19 @@ function RegisterPageContent() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <IconEyeOff className="h-4 w-4" />
+                    ) : (
+                      <IconEye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">{t.auth.confirmPassword}</Label>
+                <Label htmlFor="confirmPassword">
+                  {t.auth.confirmPassword}
+                </Label>
                 <div className="relative">
                   <IconLock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -383,8 +423,9 @@ function RegisterPageContent() {
                     <Badge>€{ACTIVATION_COST_EUR_CENTS / 100}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Taxa única para ativar a sua conta e ter acesso completo à plataforma. 
-                    Inclui verificação de segurança e suporte dedicado.
+                    Taxa única para ativar a sua conta e ter acesso completo à
+                    plataforma. Inclui verificação de segurança e suporte
+                    dedicado.
                   </p>
                 </div>
               )}
@@ -395,10 +436,12 @@ function RegisterPageContent() {
                   <div className="flex items-center gap-3">
                     <IconCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
                     <div>
-                      <span className="font-medium text-green-700 dark:text-green-300">Registo Gratuito</span>
+                      <span className="font-medium text-green-700 dark:text-green-300">
+                        Registo Gratuito
+                      </span>
                       <p className="text-sm text-green-600 dark:text-green-400">
-                        Como cuidador, não precisa pagar taxa de ativação. 
-                        Crie o seu perfil e comece a receber propostas.
+                        Como cuidador, não precisa pagar taxa de ativação. Crie
+                        o seu perfil e comece a receber propostas.
                       </p>
                     </div>
                   </div>
@@ -430,7 +473,10 @@ function RegisterPageContent() {
 
           <div className="text-center text-sm text-muted-foreground">
             {t.auth.hasAccount}{" "}
-            <Link href="/auth/login" className="text-primary hover:underline font-medium">
+            <Link
+              href="/auth/login"
+              className="text-primary hover:underline font-medium"
+            >
               {t.auth.login}
             </Link>
           </div>
@@ -450,17 +496,19 @@ function RegisterPageContent() {
 
 export default function RegisterPage() {
   const { t } = useI18n();
-  
+
   return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <Card className="w-full max-w-lg">
-          <CardContent className="py-12 text-center">
-            <p>{t.loading}</p>
-          </CardContent>
-        </Card>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+          <Card className="w-full max-w-lg">
+            <CardContent className="py-12 text-center">
+              <p>{t.loading}</p>
+            </CardContent>
+          </Card>
+        </main>
+      }
+    >
       <RegisterPageContent />
     </Suspense>
   );

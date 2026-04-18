@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { AppShell } from "@/components/layout/app-shell";
 import {
@@ -68,16 +68,43 @@ interface CaregiverData {
   reviews: CaregiverReview[];
 }
 
-const BADGE_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  IDENTITY_VERIFIED: { label: "Identidade Verificada", color: "bg-success", icon: "shield" },
-  BACKGROUND_CHECKED: { label: "Antecedentes Verificados", color: "bg-primary", icon: "shield" },
-  PROFILE_VERIFIED: { label: "Perfil Verificado", color: "bg-success", icon: "check" },
-  EXPERIENCED: { label: "Experiente (5+ contratos)", color: "bg-secondary", icon: "star" },
-  TOP_RATED: { label: "Melhor Avaliado", color: "bg-warning", icon: "star" },
-  DEDICATED: { label: "Dedicado (100h+)", color: "bg-primary", icon: "clock" },
+const BADGE_CONFIG: Record<
+  string,
+  { label: string; color: string; icon: string }
+> = {
+  IDENTITY_VERIFIED: {
+    label: "Identidade Verificada",
+    color: "bg-green-500",
+    icon: "shield",
+  },
+  BACKGROUND_CHECKED: {
+    label: "Antecedentes Verificados",
+    color: "bg-blue-600",
+    icon: "shield",
+  },
+  PROFILE_VERIFIED: {
+    label: "Perfil Verificado",
+    color: "bg-emerald-500",
+    icon: "check",
+  },
+  EXPERIENCED: {
+    label: "Experiente (5+ contratos)",
+    color: "bg-purple-500",
+    icon: "star",
+  },
+  TOP_RATED: { label: "Melhor Avaliado", color: "bg-amber-500", icon: "star" },
+  DEDICATED: {
+    label: "Dedicado (100h+)",
+    color: "bg-indigo-500",
+    icon: "clock",
+  },
 };
 
-export default function CaregiverProfilePage({ params }: { params: Promise<{ id: string }> }) {
+export default function CaregiverProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const resolvedParams = use(params);
   const { status } = useSession();
   const router = useRouter();
@@ -105,7 +132,11 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
         const data = await res.json();
         setCaregiver(data.caregiver);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro inesperado ao carregar perfil.");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Erro inesperado ao carregar perfil.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -129,7 +160,12 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
       const data = await res.json();
       router.push(`/app/chat?room=${data.chatRoomId}`);
     } catch (err) {
-      toast({ title: "Erro", description: err instanceof Error ? err.message : "Erro ao enviar mensagem.", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description:
+          err instanceof Error ? err.message : "Erro ao enviar mensagem.",
+        variant: "destructive",
+      });
       setIsSendingMessage(false);
     }
   }, [caregiver, router]);
@@ -138,7 +174,11 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
     return (
       <AppShell>
         <div className="space-y-8">
-          <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            asChild
+            className="text-muted-foreground hover:text-foreground"
+          >
             <Link href="/app/search" className="flex items-center gap-2">
               <IconArrowLeft className="h-4 w-4" />
               Voltar para busca
@@ -163,7 +203,11 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
     return (
       <AppShell>
         <div className="space-y-8">
-          <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            asChild
+            className="text-muted-foreground hover:text-foreground"
+          >
             <Link href="/app/search" className="flex items-center gap-2">
               <IconArrowLeft className="h-4 w-4" />
               Voltar para busca
@@ -173,7 +217,9 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
             <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto">
               <IconShield className="h-8 w-8 text-muted-foreground" />
             </div>
-            <p className="text-lg font-display font-black text-foreground">{error || "Cuidador nao encontrado."}</p>
+            <p className="text-lg font-display font-black text-foreground">
+              {error || "Cuidador nao encontrado."}
+            </p>
             <Button asChild>
               <Link href="/app/search">Voltar para busca</Link>
             </Button>
@@ -184,22 +230,50 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
   }
 
   const educationList = caregiver.education
-    ? caregiver.education.split(",").map((s) => s.trim()).filter(Boolean)
+    ? caregiver.education
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
     : [];
 
   // Calculate average sub-ratings from reviews
-  const reviewsWithSubRatings = caregiver.reviews.filter(r => r.punctualityRating);
-  const avgSubRatings = reviewsWithSubRatings.length > 0 ? {
-    punctuality: reviewsWithSubRatings.reduce((s, r) => s + (Number(r.punctualityRating) || 0), 0) / reviewsWithSubRatings.length,
-    professionalism: reviewsWithSubRatings.reduce((s, r) => s + (Number(r.professionalismRating) || 0), 0) / reviewsWithSubRatings.length,
-    communication: reviewsWithSubRatings.reduce((s, r) => s + (Number(r.communicationRating) || 0), 0) / reviewsWithSubRatings.length,
-    quality: reviewsWithSubRatings.reduce((s, r) => s + (Number(r.qualityRating) || 0), 0) / reviewsWithSubRatings.length,
-  } : null;
+  const reviewsWithSubRatings = caregiver.reviews.filter(
+    (r) => r.punctualityRating,
+  );
+  const avgSubRatings =
+    reviewsWithSubRatings.length > 0
+      ? {
+          punctuality:
+            reviewsWithSubRatings.reduce(
+              (s, r) => s + (Number(r.punctualityRating) || 0),
+              0,
+            ) / reviewsWithSubRatings.length,
+          professionalism:
+            reviewsWithSubRatings.reduce(
+              (s, r) => s + (Number(r.professionalismRating) || 0),
+              0,
+            ) / reviewsWithSubRatings.length,
+          communication:
+            reviewsWithSubRatings.reduce(
+              (s, r) => s + (Number(r.communicationRating) || 0),
+              0,
+            ) / reviewsWithSubRatings.length,
+          quality:
+            reviewsWithSubRatings.reduce(
+              (s, r) => s + (Number(r.qualityRating) || 0),
+              0,
+            ) / reviewsWithSubRatings.length,
+        }
+      : null;
 
   return (
     <AppShell>
       <div className="space-y-8 max-w-6xl">
-        <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          asChild
+          className="text-muted-foreground hover:text-foreground"
+        >
           <Link href="/app/search" className="flex items-center gap-2">
             <IconArrowLeft className="h-4 w-4" />
             Voltar para busca
@@ -212,7 +286,10 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
             {/* Avatar & Basic Info */}
             <div className="flex flex-col items-center md:items-start gap-4">
               <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-2xl font-display font-black text-primary flex-shrink-0">
-                {caregiver.name.split(" ").map((n) => n[0]).join("")}
+                {caregiver.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </div>
               <div className="text-center md:text-left">
                 <h1 className="text-2xl sm:text-3xl font-display font-black uppercase mb-1">
@@ -249,7 +326,7 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
               {/* Trust Badges */}
               {caregiver.badges.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {caregiver.badges.map(badge => {
+                  {caregiver.badges.map((badge) => {
                     const config = BADGE_CONFIG[badge];
                     if (!config) return null;
                     return (
@@ -257,10 +334,15 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                         key={badge}
                         className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 flex items-center gap-1"
                       >
-                        {config.icon === "shield" ? <IconShield className="h-3 w-3" /> :
-                         config.icon === "star" ? <IconStar className="h-3 w-3" /> :
-                         config.icon === "clock" ? <IconClock className="h-3 w-3" /> :
-                         <IconCheck className="h-3 w-3" />}
+                        {config.icon === "shield" ? (
+                          <IconShield className="h-3 w-3" />
+                        ) : config.icon === "star" ? (
+                          <IconStar className="h-3 w-3" />
+                        ) : config.icon === "clock" ? (
+                          <IconClock className="h-3 w-3" />
+                        ) : (
+                          <IconCheck className="h-3 w-3" />
+                        )}
                         {config.label}
                       </div>
                     );
@@ -273,13 +355,17 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                 {caregiver.city && (
                   <div className="flex items-center gap-2">
                     <IconMapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">{caregiver.city}</span>
+                    <span className="text-muted-foreground">
+                      {caregiver.city}
+                    </span>
                   </div>
                 )}
                 {caregiver.experienceYears > 0 && (
                   <div className="flex items-center gap-2">
                     <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">{caregiver.experienceYears} anos de experiencia</span>
+                    <span className="text-muted-foreground">
+                      {caregiver.experienceYears} anos de experiencia
+                    </span>
                   </div>
                 )}
               </div>
@@ -292,7 +378,8 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                       key={service}
                       className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30"
                     >
-                      {SERVICE_TYPES[service as keyof typeof SERVICE_TYPES] || service}
+                      {SERVICE_TYPES[service as keyof typeof SERVICE_TYPES] ||
+                        service}
                     </span>
                   ))}
                 </div>
@@ -311,25 +398,26 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
               </div>
 
               {/* Contact Info */}
-              {caregiver.hasActiveContract && (caregiver.phone || caregiver.email) && (
-                <div className="p-3 bg-success/10 border border-success/30 rounded-2xl space-y-1">
-                  <p className="text-[10px] font-display font-bold text-success uppercase tracking-widest">
-                    Contato direto
-                  </p>
-                  {caregiver.phone && (
-                    <div className="flex items-center gap-1.5 text-xs text-foreground">
-                      <IconPhone className="h-3.5 w-3.5" />
-                      <span>{caregiver.phone}</span>
-                    </div>
-                  )}
-                  {caregiver.email && (
-                    <div className="flex items-center gap-1.5 text-xs text-foreground">
-                      <IconMail className="h-3.5 w-3.5" />
-                      <span>{caregiver.email}</span>
-                    </div>
-                  )}
-                </div>
-              )}
+              {caregiver.hasActiveContract &&
+                (caregiver.phone || caregiver.email) && (
+                  <div className="p-3 bg-success/10 border border-success/30 rounded-2xl space-y-1">
+                    <p className="text-[10px] font-display font-bold text-success uppercase tracking-widest">
+                      Contato direto
+                    </p>
+                    {caregiver.phone && (
+                      <div className="flex items-center gap-1.5 text-xs text-foreground">
+                        <IconPhone className="h-3.5 w-3.5" />
+                        <span>{caregiver.phone}</span>
+                      </div>
+                    )}
+                    {caregiver.email && (
+                      <div className="flex items-center gap-1.5 text-xs text-foreground">
+                        <IconMail className="h-3.5 w-3.5" />
+                        <span>{caregiver.email}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {/* No Contract Info */}
               {!caregiver.hasActiveContract && (
@@ -379,9 +467,10 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
               Protecao da Plataforma
             </p>
             <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              Toda comunicacao e feita pelo chat da plataforma. Contratos formalizados
-              incluem protecao juridica, recibos fiscais e historico verificavel para ambas as partes.
-              Dados de contato direto so sao disponibilizados apos contrato ativo.
+              Toda comunicacao e feita pelo chat da plataforma. Contratos
+              formalizados incluem protecao juridica, recibos fiscais e
+              historico verificavel para ambas as partes. Dados de contato
+              direto so sao disponibilizados apos contrato ativo.
             </p>
           </div>
         </div>
@@ -404,7 +493,8 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
             )}
 
             {/* Education & Certifications */}
-            {(educationList.length > 0 || caregiver.certifications.length > 0) && (
+            {(educationList.length > 0 ||
+              caregiver.certifications.length > 0) && (
               <section className="space-y-4">
                 <h2 className="text-xl font-display font-black uppercase mb-4">
                   Formacao e Certificacoes
@@ -424,15 +514,18 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                             <div className="w-6 h-6 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <IconCheck className="h-4 w-4 text-success" />
                             </div>
-                            <span className="text-sm text-muted-foreground">{edu}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {edu}
+                            </span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
-                  {educationList.length > 0 && caregiver.certifications.length > 0 && (
-                    <div className="border-t border-border/50" />
-                  )}
+                  {educationList.length > 0 &&
+                    caregiver.certifications.length > 0 && (
+                      <div className="border-t border-border/50" />
+                    )}
                   {caregiver.certifications.length > 0 && (
                     <div className="space-y-3">
                       <h4 className="text-sm font-display font-bold text-foreground uppercase tracking-widest">
@@ -447,7 +540,9 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                             <div className="w-6 h-6 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <IconCheck className="h-4 w-4 text-success" />
                             </div>
-                            <span className="text-sm text-muted-foreground">{cert}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {cert}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -466,12 +561,23 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                 <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                   {[
                     { label: "Pontualidade", value: avgSubRatings.punctuality },
-                    { label: "Profissionalismo", value: avgSubRatings.professionalism },
-                    { label: "Comunicacao", value: avgSubRatings.communication },
+                    {
+                      label: "Profissionalismo",
+                      value: avgSubRatings.professionalism,
+                    },
+                    {
+                      label: "Comunicacao",
+                      value: avgSubRatings.communication,
+                    },
                     { label: "Qualidade", value: avgSubRatings.quality },
-                  ].map(item => (
-                    <div key={item.label} className="flex justify-between items-center py-4 border-b border-border/50 last:border-b-0">
-                      <span className="text-sm text-muted-foreground font-medium">{item.label}</span>
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className="flex justify-between items-center py-4 border-b border-border/50 last:border-b-0"
+                    >
+                      <span className="text-sm text-muted-foreground font-medium">
+                        {item.label}
+                      </span>
                       <div className="flex items-center gap-3">
                         <div className="w-32 h-2 bg-secondary rounded-full overflow-hidden">
                           <div
@@ -479,7 +585,9 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                             style={{ width: `${(item.value / 5) * 100}%` }}
                           />
                         </div>
-                        <span className="text-sm font-display font-bold w-12 text-right">{item.value.toFixed(1)}</span>
+                        <span className="text-sm font-display font-bold w-12 text-right">
+                          {item.value.toFixed(1)}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -501,18 +609,29 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-display font-bold text-foreground">{review.reviewerName}</span>
+                          <span className="text-sm font-display font-bold text-foreground">
+                            {review.reviewerName}
+                          </span>
                           <div className="flex items-center gap-1">
-                            {Array.from({ length: Number(review.rating) }).map((_, i) => (
-                              <IconStar key={i} className="h-4 w-4 text-primary fill-primary" />
-                            ))}
+                            {Array.from({ length: Number(review.rating) }).map(
+                              (_, i) => (
+                                <IconStar
+                                  key={i}
+                                  className="h-4 w-4 text-primary fill-primary"
+                                />
+                              ),
+                            )}
                           </div>
                         </div>
                         <span className="text-xs text-muted-foreground font-medium">
-                          {new Date(String(review.date)).toLocaleDateString("pt-PT")}
+                          {new Date(String(review.date)).toLocaleDateString(
+                            "pt-PT",
+                          )}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{review.comment}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {review.comment}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -549,8 +668,13 @@ export default function CaregiverProfilePage({ params }: { params: Promise<{ id:
                 </h3>
                 <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-3">
                   {caregiver.languages.map((lang) => (
-                    <div key={lang} className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0">
-                      <span className="text-sm font-medium text-foreground">{lang}</span>
+                    <div
+                      key={lang}
+                      className="flex items-center justify-between py-3 border-b border-border/50 last:border-b-0"
+                    >
+                      <span className="text-sm font-medium text-foreground">
+                        {lang}
+                      </span>
                       <div className="w-4 h-4 rounded-full bg-success/20 border border-success/30" />
                     </div>
                   ))}

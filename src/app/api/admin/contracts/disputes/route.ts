@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - List disputed contracts
 export async function GET(request: NextRequest) {
@@ -23,16 +23,19 @@ export async function GET(request: NextRequest) {
         WHERE c.status = 'DISPUTED'
         ORDER BY c.updatedAt ASC
       `,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
       disputes: result.rows,
-      count: result.rows.length
+      count: result.rows.length,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error('Error listing disputes:', msg);
-    return NextResponse.json({ error: 'Internal server error', detail: msg }, { status: 500 });
+    console.error("Error listing disputes:", msg);
+    return NextResponse.json(
+      { error: "Internal server error", detail: msg },
+      { status: 500 },
+    );
   }
 }

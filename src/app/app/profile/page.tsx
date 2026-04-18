@@ -3,13 +3,13 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,29 +54,10 @@ import {
   IconClock,
   IconAlertTriangle,
 } from "@/components/icons";
-import { BloomCard, BloomBadge, BloomSectionHeader, DocCard } from "@/components/bloom-custom";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
-
-// Framer Motion animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06 }
-  },
-} as const;
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: "easeOut" as any }
-  },
-} as const;
 
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
@@ -94,15 +75,32 @@ const SERVICE_TYPES = [
 ];
 
 const DOCUMENT_TYPES = [
-  { id: "CC", label: "Cartao de Cidadao", placeholder: "12345678 1 ZZ2", maxLength: 15 },
-  { id: "PASSPORT", label: "Passaporte", placeholder: "AA123456", maxLength: 9 },
-  { id: "RESIDENCE", label: "Titulo de Residencia", placeholder: "Numero do titulo", maxLength: 20 },
+  {
+    id: "CC",
+    label: "Cartao de Cidadao",
+    placeholder: "12345678 1 ZZ2",
+    maxLength: 15,
+  },
+  {
+    id: "PASSPORT",
+    label: "Passaporte",
+    placeholder: "AA123456",
+    maxLength: 9,
+  },
+  {
+    id: "RESIDENCE",
+    label: "Titulo de Residencia",
+    placeholder: "Numero do titulo",
+    maxLength: 20,
+  },
 ];
 
 function validateNIF(nif: string): boolean {
   if (!/^\d{9}$/.test(nif)) return false;
   const digits = nif.split("").map(Number);
-  const checkSum = digits.slice(0, 8).reduce((sum, d, i) => sum + d * (9 - i), 0);
+  const checkSum = digits
+    .slice(0, 8)
+    .reduce((sum, d, i) => sum + d * (9 - i), 0);
   const remainder = checkSum % 11;
   const checkDigit = remainder < 2 ? 0 : 11 - remainder;
   return checkDigit === digits[8];
@@ -117,7 +115,8 @@ function formatPhonePT(value: string): string {
     return `+351 ${num.slice(0, 3)} ${num.slice(3, 6)} ${num.slice(6, 9)}`;
   }
   if (digits.length <= 3) return `+351 ${digits}`;
-  if (digits.length <= 6) return `+351 ${digits.slice(0, 3)} ${digits.slice(3)}`;
+  if (digits.length <= 6)
+    return `+351 ${digits.slice(0, 3)} ${digits.slice(3)}`;
   return `+351 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
 }
 
@@ -152,7 +151,13 @@ interface ProfileData {
 export default function ProfilePage() {
   const { data: session, status, update } = useSession();
   const { t } = useI18n();
-  const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported, pushError } = useNotifications();
+  const {
+    isPushEnabled,
+    subscribeToPush,
+    requestPushPermission,
+    isPushSupported,
+    pushError,
+  } = useNotifications();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -194,7 +199,7 @@ export default function ProfilePage() {
 
       // Parse services from JSON string if it's stored as string
       let services: string[] = [];
-      if (typeof data.profile?.services === 'string') {
+      if (typeof data.profile?.services === "string") {
         try {
           services = JSON.parse(data.profile.services);
         } catch {
@@ -217,7 +222,9 @@ export default function ProfilePage() {
         experienceYears: data.profile?.experienceYears || 0,
         city: data.profile?.city || "",
         services: services,
-        hourlyRateEur: data.profile?.hourlyRateEur ? (data.profile.hourlyRateEur / 100) : 15,
+        hourlyRateEur: data.profile?.hourlyRateEur
+          ? data.profile.hourlyRateEur / 100
+          : 15,
         certifications: data.profile?.certifications || "",
         languages: data.profile?.languages || "",
         averageRating: data.profile?.averageRating || 0,
@@ -248,7 +255,11 @@ export default function ProfilePage() {
       setIsSaving(false);
       return;
     }
-    if (formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif)) {
+    if (
+      formData.nif &&
+      formData.nif.length === 9 &&
+      !validateNIF(formData.nif)
+    ) {
       setError("NIF invalido - verifique o numero");
       setIsSaving(false);
       return;
@@ -263,14 +274,16 @@ export default function ProfilePage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        const msg = errorData?.error || errorData?.detail || 'Erro ao salvar perfil';
+        const msg =
+          errorData?.error || errorData?.detail || "Erro ao salvar perfil";
         throw new Error(msg);
       }
 
       await response.json();
       setSuccess("Guardado com sucesso!");
       setIsEditing(false);
-      if (formData.name !== session?.user?.name) await update({ name: formData.name });
+      if (formData.name !== session?.user?.name)
+        await update({ name: formData.name });
       fetchProfile();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao salvar");
@@ -280,11 +293,11 @@ export default function ProfilePage() {
   };
 
   const handleServiceToggle = (serviceId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       services: prev.services?.includes(serviceId)
-        ? prev.services.filter(s => s !== serviceId)
-        : [...(prev.services || []), serviceId]
+        ? prev.services.filter((s) => s !== serviceId)
+        : [...(prev.services || []), serviceId],
     }));
   };
 
@@ -306,7 +319,9 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
-      const response = await apiFetch("/api/user/account", { method: "DELETE" });
+      const response = await apiFetch("/api/user/account", {
+        method: "DELETE",
+      });
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Erro ao apagar conta");
@@ -321,16 +336,23 @@ export default function ProfilePage() {
     signOut({ callbackUrl: "/" });
   };
 
-  const handlePhotoClick = () => { fileInputRef.current?.click(); };
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
 
   // Compress image before upload
-  const compressImage = async (file: File, maxWidth = 800, maxHeight = 800, quality = 0.7): Promise<File> => {
+  const compressImage = async (
+    file: File,
+    maxWidth = 800,
+    maxHeight = 800,
+    quality = 0.7,
+  ): Promise<File> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           let width = img.width;
           let height = img.height;
 
@@ -349,9 +371,9 @@ export default function ProfilePage() {
 
           canvas.width = width;
           canvas.height = height;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           if (!ctx) {
-            reject(new Error('Could not get canvas context'));
+            reject(new Error("Could not get canvas context"));
             return;
           }
           ctx.drawImage(img, 0, 0, width, height);
@@ -359,19 +381,19 @@ export default function ProfilePage() {
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                resolve(new File([blob], file.name, { type: "image/jpeg" }));
               } else {
-                reject(new Error('Could not compress image'));
+                reject(new Error("Could not compress image"));
               }
             },
-            'image/jpeg',
-            quality
+            "image/jpeg",
+            quality,
           );
         };
-        img.onerror = () => reject(new Error('Could not load image'));
+        img.onerror = () => reject(new Error("Could not load image"));
         img.src = e.target?.result as string;
       };
-      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.onerror = () => reject(new Error("Could not read file"));
       reader.readAsDataURL(file);
     });
   };
@@ -384,7 +406,9 @@ export default function ProfilePage() {
     try {
       // Validate file size
       if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Ficheiro muito grande. Máximo 5MB. O ficheiro será comprimido automaticamente.');
+        throw new Error(
+          "Ficheiro muito grande. Máximo 5MB. O ficheiro será comprimido automaticamente.",
+        );
       }
 
       // Compress image
@@ -393,13 +417,16 @@ export default function ProfilePage() {
       const fd = new FormData();
       fd.append("file", compressedFile);
       fd.append("type", "profile");
-      const response = await apiFetch("/api/upload", { method: "POST", body: fd });
+      const response = await apiFetch("/api/upload", {
+        method: "POST",
+        body: fd,
+      });
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.error || "Erro ao enviar foto");
       }
       const data = await response.json();
-      setFormData(prev => ({ ...prev, profileImage: data.url }));
+      setFormData((prev) => ({ ...prev, profileImage: data.url }));
       await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -414,26 +441,31 @@ export default function ProfilePage() {
     }
   };
 
-  const handleBackgroundCheckUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBackgroundCheckUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingPhoto(true);
     try {
       // Validate file size (10MB for documents/images)
       if (file.size > 10 * 1024 * 1024) {
-        throw new Error('Ficheiro muito grande. Máximo 10MB');
+        throw new Error("Ficheiro muito grande. Máximo 10MB");
       }
 
       // For images, compress them
       let uploadFile = file;
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith("image/")) {
         uploadFile = await compressImage(file, 1200, 1200, 0.75);
       }
 
       const fd = new FormData();
       fd.append("file", uploadFile);
       fd.append("type", "background_check");
-      const response = await apiFetch("/api/upload", { method: "POST", body: fd });
+      const response = await apiFetch("/api/upload", {
+        method: "POST",
+        body: fd,
+      });
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.error || "Erro ao enviar documento");
@@ -442,9 +474,16 @@ export default function ProfilePage() {
       await apiFetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ backgroundCheckUrl: data.url, backgroundCheckStatus: "SUBMITTED" }),
+        body: JSON.stringify({
+          backgroundCheckUrl: data.url,
+          backgroundCheckStatus: "SUBMITTED",
+        }),
       });
-      setFormData(prev => ({ ...prev, backgroundCheckUrl: data.url, backgroundCheckStatus: "SUBMITTED" }));
+      setFormData((prev) => ({
+        ...prev,
+        backgroundCheckUrl: data.url,
+        backgroundCheckStatus: "SUBMITTED",
+      }));
       setSuccess("Comprovativo enviado!");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao enviar documento");
@@ -468,27 +507,48 @@ export default function ProfilePage() {
   const getBackgroundCheckBadge = () => {
     switch (formData.backgroundCheckStatus) {
       case "VERIFIED":
-        return <BloomBadge className="bg-success/10 text-success border-success/20" variant="success"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</BloomBadge>;
+        return (
+          <Badge
+            className="bg-success/10 text-success border-success/20"
+            variant="outline"
+          >
+            <IconCheckCircle className="h-3 w-3 mr-1" />
+            Verificado
+          </Badge>
+        );
       case "SUBMITTED":
-        return <BloomBadge className="bg-warning/10 text-warning border-warning/20" variant="warning"><IconClock className="h-3 w-3 mr-1" />Em analise</BloomBadge>;
+        return (
+          <Badge
+            className="bg-warning/10 text-warning border-warning/20"
+            variant="outline"
+          >
+            <IconClock className="h-3 w-3 mr-1" />
+            Em analise
+          </Badge>
+        );
       case "REJECTED":
-        return <BloomBadge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</BloomBadge>;
+        return (
+          <Badge variant="destructive">
+            <IconAlertTriangle className="h-3 w-3 mr-1" />
+            Rejeitado
+          </Badge>
+        );
       default:
-        return <BloomBadge variant="outline"><IconClock className="h-3 w-3 mr-1" />Pendente</BloomBadge>;
+        return (
+          <Badge variant="outline">
+            <IconClock className="h-3 w-3 mr-1" />
+            Pendente
+          </Badge>
+        );
     }
   };
 
   return (
     <AppShell>
-      <motion.div
-        className="space-y-8 max-w-4xl"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
+      <div className="space-y-8 max-w-4xl">
         {/* Page Header */}
-        <motion.div variants={itemVariants} className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-display font-black uppercase tracking-tighter leading-none">
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
             Meu Perfil
           </h1>
           <p className="text-base text-muted-foreground font-medium">
@@ -496,41 +556,55 @@ export default function ProfilePage() {
               ? "Gerencie suas informações profissionais e preferências"
               : "Gerencie as informações do seu familiar"}
           </p>
-        </motion.div>
+        </div>
 
         {/* Alerts */}
         {error && (
-          <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-display font-bold text-foreground">Erro</p>
+              <p className="text-sm font-display font-bold text-foreground">
+                Erro
+              </p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
             </div>
-          </motion.div>
+          </div>
         )}
         {success && (
-          <motion.div variants={itemVariants} className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
+          <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
             <IconCheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-display font-bold text-foreground">Sucesso</p>
+              <p className="text-sm font-display font-bold text-foreground">
+                Sucesso
+              </p>
               <p className="text-xs text-muted-foreground mt-1">{success}</p>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Profile Header Section */}
-        <motion.section variants={itemVariants} className="space-y-4">
-          <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
+        <section className="space-y-4">
+          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4 hover:shadow-elevated transition-all">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-5">
                 {/* Avatar */}
                 <div className="relative shrink-0">
-                  <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-secondary/30 bg-secondary flex items-center justify-center cursor-pointer group" onClick={handlePhotoClick}>
+                  <div
+                    className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-secondary/30 bg-secondary flex items-center justify-center cursor-pointer group"
+                    onClick={handlePhotoClick}
+                  >
                     {formData.profileImage ? (
-                      <img src={formData.profileImage} alt={formData.name} className="w-full h-full object-cover" />
+                      <img
+                        src={formData.profileImage}
+                        alt={formData.name}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="text-2xl font-display font-black text-muted-foreground">
-                        {session?.user?.name?.split(" ").map((n) => n[0]).join("") || "U"}
+                        {session?.user?.name
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("") || "U"}
                       </div>
                     )}
                   </div>
@@ -539,25 +613,48 @@ export default function ProfilePage() {
                     onClick={handlePhotoClick}
                     disabled={uploadingPhoto}
                   >
-                    {uploadingPhoto ? <IconLoader2 className="h-3.5 w-3.5 animate-spin" /> : <IconCamera className="h-3.5 w-3.5" />}
+                    {uploadingPhoto ? (
+                      <IconLoader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <IconCamera className="h-3.5 w-3.5" />
+                    )}
                   </button>
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
                 </div>
 
                 {/* Profile Info */}
                 <div className="flex-1 min-w-0 pt-1 space-y-2">
-                  <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">{session?.user?.name}</h2>
+                  <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">
+                    {session?.user?.name}
+                  </h2>
                   {isCaregiver && formData.title && (
-                    <p className="text-sm text-muted-foreground font-medium">{formData.title}{formData.city ? ` • ${formData.city}` : ""}</p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      {formData.title}
+                      {formData.city ? ` • ${formData.city}` : ""}
+                    </p>
                   )}
                   <div className="space-y-1">
-                    <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Email</p>
-                    <p className="text-sm font-medium text-foreground">{formData.email}</p>
+                    <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      Email
+                    </p>
+                    <p className="text-sm font-medium text-foreground">
+                      {formData.email}
+                    </p>
                   </div>
                   {formData.phone && (
                     <div className="space-y-1">
-                      <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Telefone</p>
-                      <p className="text-sm font-medium text-foreground">{formData.phone}</p>
+                      <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Telefone
+                      </p>
+                      <p className="text-sm font-medium text-foreground">
+                        {formData.phone}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -565,7 +662,7 @@ export default function ProfilePage() {
 
               {/* Edit Button */}
               <Button
-                onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
                 disabled={isSaving}
                 className="rounded-2xl px-4 h-10 text-sm font-display font-bold uppercase"
                 variant={isEditing ? "default" : "outline"}
@@ -588,19 +685,38 @@ export default function ProfilePage() {
                 )}
               </Button>
             </div>
-          </BloomCard>
-        </motion.section>
+          </div>
+        </section>
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { value: profile?.totalContracts || 0, label: "Contratos", icon: IconFamily },
-              { value: profile?.totalReviews || 0, label: "Avaliações", icon: IconStar },
-              { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", icon: IconStar },
-              { value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", icon: IconEuro },
+              {
+                value: profile?.totalContracts || 0,
+                label: "Contratos",
+                icon: IconFamily,
+              },
+              {
+                value: profile?.totalReviews || 0,
+                label: "Avaliações",
+                icon: IconStar,
+              },
+              {
+                value: (profile?.averageRating || 0).toFixed(1),
+                label: "Nota",
+                icon: IconStar,
+              },
+              {
+                value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`,
+                label: "/hora",
+                icon: IconEuro,
+              },
             ].map((stat, i) => (
-              <BloomCard key={i} className="p-6 md:p-7 space-y-4 group">
+              <div
+                key={i}
+                className="bg-card p-7 rounded-3xl border border-border shadow-card space-y-4 hover:shadow-elevated transition-all group"
+              >
                 <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <stat.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -612,43 +728,88 @@ export default function ProfilePage() {
                     {stat.value}
                   </div>
                 </div>
-              </BloomCard>
+              </div>
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Tabs */}
-        <motion.div variants={itemVariants}>
-          <Tabs defaultValue="about" className="space-y-6">
-          <TabsList className={`w-full h-11 rounded-2xl bg-secondary/50 p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'} gap-1`}>
-            <TabsTrigger value="about" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Info</TabsTrigger>
-            <TabsTrigger value="documents" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Docs</TabsTrigger>
-            {isCaregiver && <TabsTrigger value="services" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Servicos</TabsTrigger>}
-            {isFamily && <TabsTrigger value="elder" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Idoso</TabsTrigger>}
-            <TabsTrigger value="contact" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Contato</TabsTrigger>
-            <TabsTrigger value="settings" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Config</TabsTrigger>
+        <Tabs defaultValue="about" className="space-y-6">
+          <TabsList
+            className={`w-full h-11 rounded-2xl bg-secondary/50 p-1 grid ${isCaregiver ? "grid-cols-5" : "grid-cols-4"} gap-1`}
+          >
+            <TabsTrigger
+              value="about"
+              className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              Info
+            </TabsTrigger>
+            <TabsTrigger
+              value="documents"
+              className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              Docs
+            </TabsTrigger>
+            {isCaregiver && (
+              <TabsTrigger
+                value="services"
+                className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
+                Servicos
+              </TabsTrigger>
+            )}
+            {isFamily && (
+              <TabsTrigger
+                value="elder"
+                className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+              >
+                Idoso
+              </TabsTrigger>
+            )}
+            <TabsTrigger
+              value="contact"
+              className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              Contato
+            </TabsTrigger>
+            <TabsTrigger
+              value="settings"
+              className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              Config
+            </TabsTrigger>
           </TabsList>
 
           {/* Info Tab */}
           <TabsContent value="about" className="space-y-6">
-            <motion.section variants={itemVariants} className="space-y-4">
-              <BloomSectionHeader title="Informações Pessoais" />
-              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                Informações Pessoais
+              </h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.name}</Label>
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      {t.auth.name}
+                    </Label>
                     <Input
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       disabled={!isEditing}
                       className="mt-2 rounded-2xl"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Cidade</Label>
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      Cidade
+                    </Label>
                     <Input
                       value={formData.city || ""}
-                      onChange={(e) => setFormData({...formData, city: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, city: e.target.value })
+                      }
                       disabled={!isEditing}
                       className="mt-2 rounded-2xl"
                       placeholder="Cidade"
@@ -660,31 +821,46 @@ export default function ProfilePage() {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Titulo Profissional</Label>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          Titulo Profissional
+                        </Label>
                         <Input
                           value={formData.title || ""}
-                          onChange={(e) => setFormData({...formData, title: e.target.value})}
+                          onChange={(e) =>
+                            setFormData({ ...formData, title: e.target.value })
+                          }
                           disabled={!isEditing}
                           className="mt-2 rounded-2xl"
                           placeholder="Ex: Enfermeira"
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Anos de Experiencia</Label>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          Anos de Experiencia
+                        </Label>
                         <Input
                           type="number"
                           value={formData.experienceYears || 0}
-                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              experienceYears: parseInt(e.target.value) || 0,
+                            })
+                          }
                           disabled={!isEditing}
                           className="mt-2 rounded-2xl"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Bio / Sobre voce</Label>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Bio / Sobre voce
+                      </Label>
                       <Textarea
                         value={formData.bio || ""}
-                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({ ...formData, bio: e.target.value })
+                        }
                         rows={3}
                         disabled={!isEditing}
                         className="mt-2 rounded-2xl"
@@ -693,41 +869,76 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
-              </BloomCard>
-            </motion.section>
+              </div>
+            </section>
           </TabsContent>
 
           {/* Documents Tab */}
           <TabsContent value="documents" className="space-y-6">
             {/* Personal Documents Section */}
-            <motion.section variants={itemVariants} className="space-y-4">
-              <BloomSectionHeader title="Documentos Pessoais" />
-              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                Documentos Pessoais
+              </h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                 <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">NIF</Label>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    NIF
+                  </Label>
                   <Input
                     value={formData.nif || ""}
-                    onChange={(e) => { const val = e.target.value.replace(/\D/g, "").slice(0, 9); setFormData({...formData, nif: val}); }}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "").slice(0, 9);
+                      setFormData({ ...formData, nif: val });
+                    }}
                     disabled={!isEditing}
                     className={`mt-2 rounded-2xl ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-destructive" : ""}`}
                     placeholder="123456789"
                     maxLength={9}
                     inputMode="numeric"
                   />
-                  {formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) && (
-                    <p className="text-xs text-destructive mt-2 flex items-center gap-1"><IconAlertCircle className="h-3 w-3" />NIF invalido</p>
-                  )}
-                  {formData.nif && formData.nif.length === 9 && validateNIF(formData.nif) && (
-                    <p className="text-xs text-success mt-2 flex items-center gap-1"><IconCheck className="h-3 w-3" />NIF valido</p>
-                  )}
+                  {formData.nif &&
+                    formData.nif.length === 9 &&
+                    !validateNIF(formData.nif) && (
+                      <p className="text-xs text-destructive mt-2 flex items-center gap-1">
+                        <IconAlertCircle className="h-3 w-3" />
+                        NIF invalido
+                      </p>
+                    )}
+                  {formData.nif &&
+                    formData.nif.length === 9 &&
+                    validateNIF(formData.nif) && (
+                      <p className="text-xs text-success mt-2 flex items-center gap-1">
+                        <IconCheck className="h-3 w-3" />
+                        NIF valido
+                      </p>
+                    )}
                 </div>
 
                 <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Tipo de Documento</Label>
-                  <Select value={formData.documentType || ""} onValueChange={(value) => setFormData({...formData, documentType: value, documentNumber: ""})} disabled={!isEditing}>
-                    <SelectTrigger className="mt-2 rounded-2xl"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    Tipo de Documento
+                  </Label>
+                  <Select
+                    value={formData.documentType || ""}
+                    onValueChange={(value) =>
+                      setFormData({
+                        ...formData,
+                        documentType: value,
+                        documentNumber: "",
+                      })
+                    }
+                    disabled={!isEditing}
+                  >
+                    <SelectTrigger className="mt-2 rounded-2xl">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
                     <SelectContent className="bg-card border shadow-card z-50">
-                      {DOCUMENT_TYPES.map((doc) => (<SelectItem key={doc.id} value={doc.id}>{doc.label}</SelectItem>))}
+                      {DOCUMENT_TYPES.map((doc) => (
+                        <SelectItem key={doc.id} value={doc.id}>
+                          {doc.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -735,43 +946,72 @@ export default function ProfilePage() {
                 {formData.documentType && (
                   <div>
                     <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                      Numero do {DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.label || "Documento"}
+                      Numero do{" "}
+                      {DOCUMENT_TYPES.find(
+                        (d) => d.id === formData.documentType,
+                      )?.label || "Documento"}
                     </Label>
                     <Input
                       value={formData.documentNumber || ""}
-                      onChange={(e) => setFormData({...formData, documentNumber: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          documentNumber: e.target.value,
+                        })
+                      }
                       disabled={!isEditing}
                       className="mt-2 rounded-2xl"
-                      placeholder={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.placeholder || ""}
-                      maxLength={DOCUMENT_TYPES.find(d => d.id === formData.documentType)?.maxLength || 20}
+                      placeholder={
+                        DOCUMENT_TYPES.find(
+                          (d) => d.id === formData.documentType,
+                        )?.placeholder || ""
+                      }
+                      maxLength={
+                        DOCUMENT_TYPES.find(
+                          (d) => d.id === formData.documentType,
+                        )?.maxLength || 20
+                      }
                     />
                   </div>
                 )}
-              </BloomCard>
-            </motion.section>
+              </div>
+            </section>
 
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
-              <motion.section variants={itemVariants} className="space-y-4">
-                <BloomSectionHeader title="Verificacao de Antecedentes" />
-                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
+              <section className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                  Verificacao de Antecedentes
+                </h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center">
                         <IconShield className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="font-display font-bold text-sm">Antecedentes Criminais</p>
-                        <p className="text-xs text-muted-foreground font-medium">Status da verificacao</p>
+                        <p className="font-display font-bold text-sm">
+                          Antecedentes Criminais
+                        </p>
+                        <p className="text-xs text-muted-foreground font-medium">
+                          Status da verificacao
+                        </p>
                       </div>
                     </div>
                     {getBackgroundCheckBadge()}
                   </div>
-                  <p className="text-sm text-muted-foreground font-medium">Para trabalhar como cuidador, e necessario apresentar o registo criminal.</p>
+                  <p className="text-sm text-muted-foreground font-medium">
+                    Para trabalhar como cuidador, e necessario apresentar o
+                    registo criminal.
+                  </p>
                   <Button
-                    variant={formData.backgroundCheckUrl ? "outline" : "default"}
+                    variant={
+                      formData.backgroundCheckUrl ? "outline" : "default"
+                    }
                     size="sm"
-                    onClick={() => document.getElementById('backgroundCheckInput')?.click()}
+                    onClick={() =>
+                      document.getElementById("backgroundCheckInput")?.click()
+                    }
                     disabled={uploadingPhoto}
                     className="w-full rounded-2xl h-10 font-display font-bold uppercase"
                   >
@@ -783,24 +1023,40 @@ export default function ProfilePage() {
                     ) : (
                       <>
                         <IconUpload className="h-4 w-4 mr-2" />
-                        {formData.backgroundCheckUrl ? "Atualizar Comprovativo" : "Enviar Comprovativo"}
+                        {formData.backgroundCheckUrl
+                          ? "Atualizar Comprovativo"
+                          : "Enviar Comprovativo"}
                       </>
                     )}
                   </Button>
-                  <input id="backgroundCheckInput" type="file" accept="image/*,.pdf" className="hidden" onChange={handleBackgroundCheckUpload} />
+                  <input
+                    id="backgroundCheckInput"
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={handleBackgroundCheckUpload}
+                  />
                   {formData.backgroundCheckUrl && (
-                    <p className="text-xs text-success flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado com sucesso</p>
+                    <p className="text-xs text-success flex items-center gap-1">
+                      <IconCheck className="h-3 w-3" />
+                      Documento enviado com sucesso
+                    </p>
                   )}
-                </BloomCard>
-              </motion.section>
+                </div>
+              </section>
             )}
 
             {/* Security Info */}
             <div className="flex items-start gap-4 p-5 bg-info/5 border border-info/20 rounded-2xl">
               <IconShield className="h-5 w-5 text-info shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-display font-bold text-foreground">Seguranca dos dados</p>
-                <p className="text-xs text-muted-foreground mt-1">Seus documentos sao armazenados de forma segura e criptografada em conformidade com LGPD.</p>
+                <p className="text-sm font-display font-bold text-foreground">
+                  Seguranca dos dados
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Seus documentos sao armazenados de forma segura e
+                  criptografada em conformidade com LGPD.
+                </p>
               </div>
             </div>
           </TabsContent>
@@ -808,24 +1064,32 @@ export default function ProfilePage() {
           {/* Services Tab */}
           {isCaregiver && (
             <TabsContent value="services" className="space-y-6">
-              <motion.section variants={itemVariants} className="space-y-4">
-                <BloomSectionHeader title="Servicos Oferecidos" />
-                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
+              <section className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                  Servicos Oferecidos
+                </h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {SERVICE_TYPES.map((service) => (
                       <label
                         key={service.id}
                         className={`flex items-center gap-3 p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all cursor-pointer ${
-                          formData.services?.includes(service.id) ? "border-primary bg-primary/10" : ""
+                          formData.services?.includes(service.id)
+                            ? "border-primary bg-primary/10"
+                            : ""
                         } ${!isEditing ? "pointer-events-none opacity-60" : ""}`}
                       >
                         <Checkbox
                           checked={formData.services?.includes(service.id)}
-                          onCheckedChange={() => handleServiceToggle(service.id)}
+                          onCheckedChange={() =>
+                            handleServiceToggle(service.id)
+                          }
                           disabled={!isEditing}
                           className="h-5 w-5"
                         />
-                        <span className="text-sm font-display font-bold text-foreground">{service.label}</span>
+                        <span className="text-sm font-display font-bold text-foreground">
+                          {service.label}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -833,7 +1097,9 @@ export default function ProfilePage() {
                   <div className="border-t border-border/30 pt-6 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Taxa Horaria ({"\u20AC"}/hora)</Label>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          Taxa Horaria ({"\u20AC"}/hora)
+                        </Label>
                         <div className="relative mt-2">
                           <IconEuro className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <Input
@@ -841,9 +1107,15 @@ export default function ProfilePage() {
                             inputMode="decimal"
                             value={formData.hourlyRateEur?.toString() || ""}
                             onChange={(e) => {
-                              const normalized = e.target.value.replace(',', '.');
+                              const normalized = e.target.value.replace(
+                                ",",
+                                ".",
+                              );
                               const value = parseFloat(normalized) || 0;
-                              setFormData({...formData, hourlyRateEur: value});
+                              setFormData({
+                                ...formData,
+                                hourlyRateEur: value,
+                              });
                             }}
                             className="pl-11 rounded-2xl"
                             disabled={!isEditing}
@@ -852,10 +1124,17 @@ export default function ProfilePage() {
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idiomas</Label>
+                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          Idiomas
+                        </Label>
                         <Input
                           value={formData.languages || ""}
-                          onChange={(e) => setFormData({...formData, languages: e.target.value})}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              languages: e.target.value,
+                            })
+                          }
                           disabled={!isEditing}
                           className="mt-2 rounded-2xl"
                           placeholder="PT, EN, ES..."
@@ -863,71 +1142,102 @@ export default function ProfilePage() {
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Certificacoes</Label>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Certificacoes
+                      </Label>
                       <Input
                         value={formData.certifications || ""}
-                        onChange={(e) => setFormData({...formData, certifications: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            certifications: e.target.value,
+                          })
+                        }
                         disabled={!isEditing}
                         className="mt-2 rounded-2xl"
                         placeholder="Curso de Cuidador, Primeiros Socorros..."
                       />
                     </div>
                   </div>
-                </BloomCard>
-              </motion.section>
+                </div>
+              </section>
             </TabsContent>
           )}
 
           {/* Elder Tab */}
           {isFamily && (
             <TabsContent value="elder" className="space-y-6">
-              <motion.section variants={itemVariants} className="space-y-4">
-                <BloomSectionHeader title="Informacoes do Familiar" />
-                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
+              <section className="space-y-4">
+                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                  Informacoes do Familiar
+                </h3>
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Nome do Idoso</Label>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Nome do Idoso
+                      </Label>
                       <Input
                         value={formData.elderName || ""}
-                        onChange={(e) => setFormData({...formData, elderName: e.target.value})}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            elderName: e.target.value,
+                          })
+                        }
                         disabled={!isEditing}
                         className="mt-2 rounded-2xl"
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idade</Label>
+                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Idade
+                      </Label>
                       <Input
                         type="number"
                         value={formData.elderAge || ""}
-                        onChange={(e) => setFormData({...formData, elderAge: parseInt(e.target.value) || 0})}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            elderAge: parseInt(e.target.value) || 0,
+                          })
+                        }
                         disabled={!isEditing}
                         className="mt-2 rounded-2xl"
                       />
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Necessidades Especificas</Label>
+                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      Necessidades Especificas
+                    </Label>
                     <Textarea
                       value={formData.elderNeeds || ""}
-                      onChange={(e) => setFormData({...formData, elderNeeds: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, elderNeeds: e.target.value })
+                      }
                       rows={4}
                       disabled={!isEditing}
                       className="mt-2 rounded-2xl"
                       placeholder="Descreva as necessidades especificas de saude e cuidado..."
                     />
                   </div>
-                </BloomCard>
-              </motion.section>
+                </div>
+              </section>
             </TabsContent>
           )}
 
           {/* Contact Tab */}
           <TabsContent value="contact" className="space-y-6">
-            <motion.section variants={itemVariants} className="space-y-4">
-              <BloomSectionHeader title="Informacoes de Contato" />
-              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                Informacoes de Contato
+              </h3>
+              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                 <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.email}</Label>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    {t.auth.email}
+                  </Label>
                   <Input
                     type="email"
                     value={formData.email}
@@ -936,11 +1246,18 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Telemovel</Label>
+                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    Telemovel
+                  </Label>
                   <Input
                     type="tel"
                     value={formData.phone || ""}
-                    onChange={(e) => setFormData({...formData, phone: formatPhonePT(e.target.value)})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: formatPhonePT(e.target.value),
+                      })
+                    }
                     disabled={!isEditing}
                     className="mt-2 rounded-2xl"
                     placeholder="+351 912 345 678"
@@ -951,24 +1268,42 @@ export default function ProfilePage() {
                 {isFamily && (
                   <>
                     <div className="border-t border-border/30 pt-6 space-y-4">
-                      <h4 className="text-sm font-display font-bold uppercase text-foreground">Contato de Emergencia</h4>
+                      <h4 className="text-sm font-display font-bold uppercase text-foreground">
+                        Contato de Emergencia
+                      </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Nome</Label>
+                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                            Nome
+                          </Label>
                           <Input
                             value={formData.emergencyContactName || ""}
-                            onChange={(e) => setFormData({...formData, emergencyContactName: e.target.value})}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                emergencyContactName: e.target.value,
+                              })
+                            }
                             disabled={!isEditing}
                             className="mt-2 rounded-2xl"
                             placeholder="Nome completo"
                           />
                         </div>
                         <div>
-                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Telefone</Label>
+                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                            Telefone
+                          </Label>
                           <Input
                             type="tel"
                             value={formData.emergencyContactPhone || ""}
-                            onChange={(e) => setFormData({...formData, emergencyContactPhone: formatPhonePT(e.target.value)})}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                emergencyContactPhone: formatPhonePT(
+                                  e.target.value,
+                                ),
+                              })
+                            }
                             disabled={!isEditing}
                             className="mt-2 rounded-2xl"
                             placeholder="+351 912 345 678"
@@ -979,15 +1314,17 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
-              </BloomCard>
-            </motion.section>
+              </div>
+            </section>
           </TabsContent>
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             {/* Settings Section */}
-            <motion.section variants={itemVariants} className="space-y-4">
-              <BloomSectionHeader title="Preferencias e Configuracoes" />
+            <section className="space-y-4">
+              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                Preferencias e Configuracoes
+              </h3>
 
               {/* Push Notifications */}
               <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
@@ -996,16 +1333,30 @@ export default function ProfilePage() {
                     <IconBell className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-display font-bold text-foreground">Notificacoes Push</p>
-                    <p className="text-xs text-muted-foreground font-medium">Alertas em tempo real</p>
+                    <p className="text-sm font-display font-bold text-foreground">
+                      Notificacoes Push
+                    </p>
+                    <p className="text-xs text-muted-foreground font-medium">
+                      Alertas em tempo real
+                    </p>
                   </div>
                 </div>
                 {isPushSupported ? (
                   isPushEnabled ? (
-                    <span className="px-3 py-1 text-[10px] font-display font-bold rounded-full uppercase tracking-widest bg-success/10 text-success border border-success/20">Ativo</span>
+                    <span className="px-3 py-1 text-[10px] font-display font-bold rounded-full uppercase tracking-widest bg-success/10 text-success border border-success/20">
+                      Ativo
+                    </span>
                   ) : (
-                    <Button size="sm" variant="default" onClick={handleEnablePush} className="rounded-lg h-9 text-xs font-display font-bold uppercase" disabled={pushLoading}>
-                      {pushLoading && <IconLoader2 className="h-3 w-3 animate-spin mr-2" />}
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={handleEnablePush}
+                      className="rounded-lg h-9 text-xs font-display font-bold uppercase"
+                      disabled={pushLoading}
+                    >
+                      {pushLoading && (
+                        <IconLoader2 className="h-3 w-3 animate-spin mr-2" />
+                      )}
                       Ativar
                     </Button>
                   )
@@ -1014,7 +1365,9 @@ export default function ProfilePage() {
                 )}
               </div>
               {pushError && !isPushEnabled && (
-                <p className="text-xs text-destructive font-medium">{pushError}</p>
+                <p className="text-xs text-destructive font-medium">
+                  {pushError}
+                </p>
               )}
 
               {/* Theme */}
@@ -1023,34 +1376,50 @@ export default function ProfilePage() {
                   <div className="w-10 h-10 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <IconShield className="h-5 w-5 text-primary" />
                   </div>
-                  <p className="text-sm font-display font-bold text-foreground">Tema</p>
+                  <p className="text-sm font-display font-bold text-foreground">
+                    Tema
+                  </p>
                 </div>
                 <ThemeToggle />
               </div>
 
               {/* Language */}
               <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
-                <p className="text-sm font-display font-bold text-foreground">Idioma</p>
+                <p className="text-sm font-display font-bold text-foreground">
+                  Idioma
+                </p>
                 <LanguageSelector />
               </div>
 
               {/* Legal Links */}
               <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
-                <p className="text-sm font-display font-bold text-foreground">Legal</p>
+                <p className="text-sm font-display font-bold text-foreground">
+                  Legal
+                </p>
                 <div className="flex items-center gap-4">
-                  <a href="/termos" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors">
+                  <a
+                    href="/termos"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors"
+                  >
                     Termos
                   </a>
                   <span className="text-border/50">/</span>
-                  <a href="/privacidade" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors">
+                  <a
+                    href="/privacidade"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors"
+                  >
                     Privacidade
                   </a>
                 </div>
               </div>
-            </motion.section>
+            </section>
 
             {/* Account Actions */}
-            <motion.section variants={itemVariants} className="space-y-3 pt-6 border-t border-border/30 mt-8">
+            <section className="space-y-3 pt-6 border-t border-border/30 mt-8">
               {/* Logout */}
               <Button
                 variant="outline"
@@ -1062,7 +1431,10 @@ export default function ProfilePage() {
               </Button>
 
               {/* Delete Account */}
-              <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+              <Dialog
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+              >
                 <DialogTrigger asChild>
                   <Button
                     variant="ghost"
@@ -1072,11 +1444,14 @@ export default function ProfilePage() {
                     Apagar conta
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl p-5 sm:p-6 md:p-7">
+                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl">
                   <DialogHeader>
-                    <DialogTitle className="text-xl font-display font-black uppercase tracking-tighter">Apagar conta?</DialogTitle>
+                    <DialogTitle className="text-xl font-display font-black uppercase tracking-tighter">
+                      Apagar conta?
+                    </DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
-                      Esta acao e irreversivel. Todos os seus dados serao excluidos permanentemente.
+                      Esta acao e irreversivel. Todos os seus dados serao
+                      excluidos permanentemente.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="flex gap-3 mt-6">
@@ -1109,16 +1484,17 @@ export default function ProfilePage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-            </motion.section>
+            </section>
 
             {/* Footer */}
             <div className="text-center pt-8">
-              <p className="text-xs text-muted-foreground font-display font-bold uppercase tracking-widest">{APP_NAME} v1.0.0</p>
+              <p className="text-xs text-muted-foreground font-display font-bold uppercase tracking-widest">
+                {APP_NAME} v1.0.0
+              </p>
             </div>
           </TabsContent>
         </Tabs>
-        </motion.div>
-      </motion.div>
+      </div>
     </AppShell>
   );
 }

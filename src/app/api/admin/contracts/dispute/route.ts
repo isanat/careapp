@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // POST - Resolve dispute
 export async function POST(request: NextRequest) {
@@ -11,29 +11,43 @@ export async function POST(request: NextRequest) {
     const { adminUserId } = auth;
 
     const body = await request.json();
-    const { contractId, resolution, familyAmount, caregiverAmount, reason } = body;
+    const { contractId, resolution, familyAmount, caregiverAmount, reason } =
+      body;
 
     if (!contractId || !resolution) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
     }
 
     const now = new Date().toISOString();
-    const newStatus = resolution === 'cancel' ? 'CANCELLED' : 'COMPLETED';
+    const newStatus = resolution === "cancel" ? "CANCELLED" : "COMPLETED";
 
     await db.execute({
       sql: `UPDATE Contract SET status = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [newStatus, contractId]
+      args: [newStatus, contractId],
     });
 
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, createdAt)
         VALUES (?, ?, 'RESOLVE_DISPUTE', 'CONTRACT', ?, ?, ?, ?)`,
-      args: [generateId("action"), adminUserId, contractId, JSON.stringify({ resolution, familyAmount, caregiverAmount }), reason, now]
+      args: [
+        generateId("action"),
+        adminUserId,
+        contractId,
+        JSON.stringify({ resolution, familyAmount, caregiverAmount }),
+        reason,
+        now,
+      ],
     });
 
     return NextResponse.json({ success: true, contractId, resolution });
   } catch (error) {
-    console.error('Error resolving dispute:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error resolving dispute:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

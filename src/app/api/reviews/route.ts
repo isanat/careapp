@@ -1,24 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
-import { createReviewSchema } from '@/lib/validations/schemas';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
+import { createReviewSchema } from "@/lib/validations/schemas";
 
 // GET: List reviews
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const toUserId = searchParams.get('toUserId');
-    const fromUserId = searchParams.get('fromUserId');
-    const contractId = searchParams.get('contractId');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const toUserId = searchParams.get("toUserId");
+    const fromUserId = searchParams.get("fromUserId");
+    const contractId = searchParams.get("contractId");
+    const limit = parseInt(searchParams.get("limit") || "20");
 
     let sql = `
       SELECT 
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     const result = await db.execute({ sql, args });
 
-    const reviews = result.rows.map(row => ({
+    const reviews = result.rows.map((row) => ({
       id: row.id,
       contractId: row.contractId,
       fromUserId: row.fromUserId,
@@ -88,8 +88,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ reviews });
   } catch (error) {
-    console.error('Error fetching reviews:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching reviews:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -97,17 +100,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const parsed = createReviewSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Invalid input', details: parsed.error.flatten() },
-        { status: 400 }
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 },
       );
     }
     const {
@@ -118,43 +121,59 @@ export async function POST(request: NextRequest) {
       punctualityRating,
       professionalismRating,
       communicationRating,
-      qualityRating
+      qualityRating,
     } = parsed.data;
 
     // Verify contract exists and user is part of it
     const contract = await db.execute({
       sql: `SELECT familyUserId, caregiverUserId, status FROM Contract WHERE id = ?`,
-      args: [contractId]
+      args: [contractId],
     });
 
     if (contract.rows.length === 0) {
-      return NextResponse.json({ error: 'Contract not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
     }
 
     const contractData = contract.rows[0];
-    
+
     // Verify user is part of the contract
-    if (contractData.familyUserId !== session.user.id && contractData.caregiverUserId !== session.user.id) {
-      return NextResponse.json({ error: 'You can only review contracts you participated in' }, { status: 403 });
+    if (
+      contractData.familyUserId !== session.user.id &&
+      contractData.caregiverUserId !== session.user.id
+    ) {
+      return NextResponse.json(
+        { error: "You can only review contracts you participated in" },
+        { status: 403 },
+      );
     }
 
     // Verify toUserId is the other party
-    const otherUserId = contractData.familyUserId === session.user.id 
-      ? contractData.caregiverUserId 
-      : contractData.familyUserId;
-    
+    const otherUserId =
+      contractData.familyUserId === session.user.id
+        ? contractData.caregiverUserId
+        : contractData.familyUserId;
+
     if (toUserId !== otherUserId) {
-      return NextResponse.json({ error: 'Invalid toUserId for this contract' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid toUserId for this contract" },
+        { status: 400 },
+      );
     }
 
     // Check if already reviewed
     const existingReview = await db.execute({
       sql: `SELECT id FROM Review WHERE contractId = ? AND fromUserId = ?`,
-      args: [contractId, session.user.id]
+      args: [contractId, session.user.id],
     });
 
     if (existingReview.rows.length > 0) {
-      return NextResponse.json({ error: 'You have already reviewed this contract' }, { status: 400 });
+      return NextResponse.json(
+        { error: "You have already reviewed this contract" },
+        { status: 400 },
+      );
     }
 
     const reviewId = generateId("review");
@@ -167,23 +186,32 @@ export async function POST(request: NextRequest) {
         isPublic, isModerated, createdAt, updatedAt
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, ?, ?)`,
       args: [
-        reviewId, contractId, session.user.id, toUserId, rating, comment || null,
-        punctualityRating || null, professionalismRating || null, 
-        communicationRating || null, qualityRating || null, now, now
-      ]
+        reviewId,
+        contractId,
+        session.user.id,
+        toUserId,
+        rating,
+        comment || null,
+        punctualityRating || null,
+        professionalismRating || null,
+        communicationRating || null,
+        qualityRating || null,
+        now,
+        now,
+      ],
     });
 
     // Update caregiver's average rating if reviewing a caregiver
     const toUser = await db.execute({
       sql: `SELECT role FROM User WHERE id = ?`,
-      args: [toUserId]
+      args: [toUserId],
     });
 
-    if (toUser.rows.length > 0 && toUser.rows[0].role === 'CAREGIVER') {
+    if (toUser.rows.length > 0 && toUser.rows[0].role === "CAREGIVER") {
       // Recalculate average rating
       const stats = await db.execute({
         sql: `SELECT AVG(rating) as avg_rating, COUNT(*) as total FROM Review WHERE toUserId = ?`,
-        args: [toUserId]
+        args: [toUserId],
       });
 
       if (stats.rows.length > 0) {
@@ -192,17 +220,20 @@ export async function POST(request: NextRequest) {
 
         await db.execute({
           sql: `UPDATE ProfileCaregiver SET averageRating = ?, totalReviews = ? WHERE userId = ?`,
-          args: [avgRating, totalReviews, toUserId]
+          args: [avgRating, totalReviews, toUserId],
         });
       }
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       reviewId,
-      message: 'Review created successfully' 
+      message: "Review created successfully",
     });
   } catch (error) {
-    console.error('Error creating review:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error creating review:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

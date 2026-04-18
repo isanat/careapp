@@ -32,7 +32,7 @@ export const EvyraHeader: React.FC<EvyraHeaderProps> = ({ sidebarOpen }) => {
 
   return (
     <header className={cn(
-      "h-16 border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-40 px-6 md:px-8 flex items-center justify-between"
+      "h-16 border-b border-border bg-card/90 backdrop-blur-xl sticky top-0 z-40 px-6 md:px-8 flex items-center justify-between"
     )}>
       {/* Left: Search */}
       <div className="flex items-center gap-6 flex-1">

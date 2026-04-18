@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
-import { Suspense, useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { AppShell } from '@/components/layout/app-shell';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
+import { Suspense, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { AppShell } from "@/components/layout/app-shell";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   IconArrowLeft,
   IconLoader2,
@@ -18,7 +17,7 @@ import {
   IconStar,
   IconTrendingUp,
   IconEuro,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface Demand {
   id: string;
@@ -28,25 +27,28 @@ interface Demand {
   serviceTypes: string[];
 }
 
-const PACKAGE_DETAILS: Record<string, { label: string; price: number; desc: string; days: number; icon: any }> = {
+const PACKAGE_DETAILS: Record<
+  string,
+  { label: string; price: number; desc: string; days: number; icon: any }
+> = {
   BASIC: {
-    label: 'BASIC',
+    label: "BASIC",
     price: 3,
-    desc: '7 dias de visibilidade padrão',
+    desc: "7 dias de visibilidade padrão",
     days: 7,
     icon: IconEuro,
   },
   PREMIUM: {
-    label: 'PREMIUM',
+    label: "PREMIUM",
     price: 8,
-    desc: '30 dias destacado na plataforma',
+    desc: "30 dias destacado na plataforma",
     days: 30,
     icon: IconStar,
   },
   URGENT: {
-    label: 'URGENTE',
+    label: "URGENTE",
     price: 15,
-    desc: '3 dias no topo da lista de demandas',
+    desc: "3 dias no topo da lista de demandas",
     days: 3,
     icon: IconTrendingUp,
   },
@@ -59,7 +61,7 @@ function BoostContent() {
   const searchParams = useSearchParams();
 
   const demandId = params.id as string;
-  const packageType = (searchParams.get('package') || 'BASIC') as string;
+  const packageType = (searchParams.get("package") || "BASIC") as string;
 
   const [demand, setDemand] = useState<Demand | null>(null);
   const [loading, setLoading] = useState(true);
@@ -67,23 +69,25 @@ function BoostContent() {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated' || !demandId) return;
+    if (status !== "authenticated" || !demandId) return;
 
     const fetchDemand = async () => {
       try {
         setLoading(true);
         const res = await fetch(`/api/demands/${demandId}`);
-        if (!res.ok) throw new Error('Demanda não encontrada');
+        if (!res.ok) throw new Error("Demanda não encontrada");
         const data = await res.json();
         setDemand(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar demanda');
+        setError(
+          err instanceof Error ? err.message : "Erro ao carregar demanda",
+        );
       } finally {
         setLoading(false);
       }
@@ -100,8 +104,8 @@ function BoostContent() {
     try {
       // Create checkout session
       const res = await fetch(`/api/demands/${demandId}/boost`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           package: packageType,
         }),
@@ -109,7 +113,7 @@ function BoostContent() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Falha ao processar checkout');
+        throw new Error(errorData.error || "Falha ao processar checkout");
       }
 
       const { url } = await res.json();
@@ -118,15 +122,15 @@ function BoostContent() {
       if (url) {
         window.location.href = url;
       } else {
-        throw new Error('Falha ao obter URL de checkout');
+        throw new Error("Falha ao obter URL de checkout");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro inesperado');
+      setError(err instanceof Error ? err.message : "Erro inesperado");
       setProcessing(false);
     }
   };
 
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -140,35 +144,10 @@ function BoostContent() {
   const pkgDetails = PACKAGE_DETAILS[packageType] || PACKAGE_DETAILS.BASIC;
   const Icon = pkgDetails.icon;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35 },
-    },
-  };
-
   return (
-    <motion.div
-      className="max-w-2xl mx-auto pb-8"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
+    <div className="max-w-2xl mx-auto pb-8">
       {/* Header with Back Button */}
-      <motion.div variants={itemVariants} className="mb-8 flex items-center gap-4">
+      <div className="mb-8 flex items-center gap-4">
         <Link
           href="/app/family/demands"
           className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
@@ -184,19 +163,19 @@ function BoostContent() {
             Checkout seguro com Stripe
           </p>
         </div>
-      </motion.div>
+      </div>
 
       {error && (
-        <motion.div variants={itemVariants} className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+        <div className="flex items-start gap-3 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <p className="text-sm text-destructive font-medium">{error}</p>
-        </motion.div>
+        </div>
       )}
 
       {demand && (
-        <motion.div variants={containerVariants} className="space-y-6" initial="hidden" animate="visible">
+        <div className="space-y-6">
           {/* Demand Info Card */}
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Demanda Atual
             </h4>
@@ -216,42 +195,42 @@ function BoostContent() {
                       key={idx}
                       className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg"
                     >
-                      {service.replace(/_/g, ' ')}
+                      {service.replace(/_/g, " ")}
                     </span>
                   ))}
                   {demand.serviceTypes.length > 2 && (
-                    <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
+                    <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
                       +{demand.serviceTypes.length - 2}
-                    </BloomBadge>
+                    </span>
                   )}
                 </div>
               </div>
             </div>
-          </motion.section>
+          </section>
 
           {/* Pricing Cards Grid */}
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Pacotes Disponíveis
             </h4>
-            <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-6" variants={containerVariants} initial="hidden" animate="visible">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {Object.entries(PACKAGE_DETAILS).map(([key, pkg]) => {
                 const isSelected = key === packageType;
                 return (
-                  <motion.div key={key} variants={itemVariants}>
-                    <Link
-                      href={`?package=${key}`}
-                      className={`block bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
-                        isSelected
-                          ? 'bg-primary/5 border-primary/30 shadow-elevated'
-                          : 'border-border hover:shadow-elevated hover:border-primary/30'
-                      }`}
-                    >
+                  <Link
+                    key={key}
+                    href={`?package=${key}`}
+                    className={`bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
+                      isSelected
+                        ? "bg-primary/5 border-primary/30 shadow-elevated"
+                        : "border-border hover:shadow-elevated hover:border-primary/30"
+                    }`}
+                  >
                     <div className="space-y-4">
                       {/* Badge */}
-                      <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
+                      <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
                         {pkg.label}
-                      </BloomBadge>
+                      </span>
 
                       {/* Icon */}
                       <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
@@ -296,15 +275,14 @@ function BoostContent() {
                         </li>
                       </ul>
                     </div>
-                    </Link>
-                  </motion.div>
+                  </Link>
                 );
               })}
-            </motion.div>
-          </motion.section>
+            </div>
+          </section>
 
           {/* Summary Box */}
-          <motion.section variants={itemVariants} className="space-y-4">
+          <section className="space-y-4">
             <h4 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
               Resumo
             </h4>
@@ -318,15 +296,19 @@ function BoostContent() {
                 </span>
               </div>
             </div>
-          </motion.section>
+          </section>
 
           {/* Info Banner */}
           <div className="bg-info/5 p-5 rounded-2xl border border-info/20 flex items-start gap-3">
             <div className="w-6 h-6 rounded-lg bg-info/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-sm font-display font-bold text-info">i</span>
+              <span className="text-sm font-display font-bold text-info">
+                i
+              </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Pagamento 100% seguro com <strong className="text-foreground">Stripe</strong>. Sua demanda será publicada imediatamente após confirmação.
+              Pagamento 100% seguro com{" "}
+              <strong className="text-foreground">Stripe</strong>. Sua demanda
+              será publicada imediatamente após confirmação.
             </p>
           </div>
 
@@ -353,16 +335,14 @@ function BoostContent() {
                     Processando...
                   </>
                 ) : (
-                  <>
-                    Pagar €{pkgDetails.price}
-                  </>
+                  <>Pagar €{pkgDetails.price}</>
                 )}
               </Button>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 

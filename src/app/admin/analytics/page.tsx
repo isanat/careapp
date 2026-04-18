@@ -1,15 +1,11 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -46,7 +42,12 @@ interface AnalyticsData {
   usersChart: Array<{ date: string; users: number }>;
   contractsByStatus: Array<{ status: string; count: number }>;
   topCities: Array<{ city: string; count: number }>;
-  topCaregivers: Array<{ name: string; rating: number; contracts: number; revenue: number }>;
+  topCaregivers: Array<{
+    name: string;
+    rating: number;
+    contracts: number;
+    revenue: number;
+  }>;
 }
 
 export default function AdminAnalyticsPage() {
@@ -57,7 +58,9 @@ export default function AdminAnalyticsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await apiFetch(`/api/admin/analytics/overview?days=${period}`);
+      const response = await apiFetch(
+        `/api/admin/analytics/overview?days=${period}`,
+      );
       if (response.ok) {
         setData(await response.json());
       }
@@ -82,7 +85,7 @@ export default function AdminAnalyticsPage() {
   const exportData = () => {
     // Simple CSV export
     if (!data) return;
-    
+
     const csvRows = [
       ["Métrica", "Valor"],
       ["Total Usuários", data.kpis.totalUsers],
@@ -92,7 +95,7 @@ export default function AdminAnalyticsPage() {
       ["Tokens Emitidos", data.kpis.tokensIssued],
     ];
 
-    const csvContent = csvRows.map(row => row.join(",")).join("\n");
+    const csvContent = csvRows.map((row) => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -101,18 +104,8 @@ export default function AdminAnalyticsPage() {
     a.click();
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
-
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Analytics"
         description="Métricas e relatórios da plataforma"
@@ -142,12 +135,18 @@ export default function AdminAnalyticsPage() {
       />
 
       {/* KPIs */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total de Usuários"
           value={data?.kpis.totalUsers || 0}
           change={`${(data?.kpis?.usersGrowth ?? 0) > 0 ? "+" : ""}${data?.kpis?.usersGrowth || 0}%`}
-          trend={(data?.kpis?.usersGrowth ?? 0) > 0 ? "up" : (data?.kpis?.usersGrowth ?? 0) < 0 ? "down" : "neutral"}
+          trend={
+            (data?.kpis?.usersGrowth ?? 0) > 0
+              ? "up"
+              : (data?.kpis?.usersGrowth ?? 0) < 0
+                ? "down"
+                : "neutral"
+          }
           icon={<IconUsers className="h-5 w-5" />}
           loading={loading}
         />
@@ -155,7 +154,13 @@ export default function AdminAnalyticsPage() {
           title="Receita Total"
           value={formatCurrency(data?.kpis.totalRevenue || 0)}
           change={`${(data?.kpis?.revenueGrowth ?? 0) > 0 ? "+" : ""}${data?.kpis?.revenueGrowth || 0}%`}
-          trend={(data?.kpis?.revenueGrowth ?? 0) > 0 ? "up" : (data?.kpis?.revenueGrowth ?? 0) < 0 ? "down" : "neutral"}
+          trend={
+            (data?.kpis?.revenueGrowth ?? 0) > 0
+              ? "up"
+              : (data?.kpis?.revenueGrowth ?? 0) < 0
+                ? "down"
+                : "neutral"
+          }
           icon={<IconCreditCard className="h-5 w-5" />}
           loading={loading}
         />
@@ -163,7 +168,13 @@ export default function AdminAnalyticsPage() {
           title="Contratos Ativos"
           value={data?.kpis.activeContracts || 0}
           change={`${(data?.kpis?.contractsGrowth ?? 0) > 0 ? "+" : ""}${data?.kpis?.contractsGrowth || 0}%`}
-          trend={(data?.kpis?.contractsGrowth ?? 0) > 0 ? "up" : (data?.kpis?.contractsGrowth ?? 0) < 0 ? "down" : "neutral"}
+          trend={
+            (data?.kpis?.contractsGrowth ?? 0) > 0
+              ? "up"
+              : (data?.kpis?.contractsGrowth ?? 0) < 0
+                ? "down"
+                : "neutral"
+          }
           icon={<IconFileText className="h-5 w-5" />}
           loading={loading}
         />
@@ -174,20 +185,26 @@ export default function AdminAnalyticsPage() {
           icon={<IconCoin className="h-5 w-5" />}
           loading={loading}
         />
-      </motion.div>
+      </div>
 
       {/* Charts Row */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Revenue Chart */}
-        <BloomCard variant="gradient">
-          <div className="p-5 sm:p-6 md:p-7">
-            <h3 className="font-semibold text-base mb-4">Receita ao Longo do Tempo</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              Receita ao Longo do Tempo
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             {loading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
               <div className="h-48 flex items-end gap-1">
                 {data?.revenueChart?.slice(-14).map((item, i) => {
-                  const maxRevenue = Math.max(...(data?.revenueChart?.map(d => d.revenue) || [1]));
+                  const maxRevenue = Math.max(
+                    ...(data?.revenueChart?.map((d) => d.revenue) || [1]),
+                  );
                   const height = (item.revenue / maxRevenue) * 100;
                   return (
                     <div
@@ -200,19 +217,23 @@ export default function AdminAnalyticsPage() {
                 })}
               </div>
             )}
-          </div>
-        </BloomCard>
+          </CardContent>
+        </Card>
 
         {/* Users Chart */}
-        <BloomCard variant="success">
-          <div className="p-5 sm:p-6 md:p-7">
-            <h3 className="font-semibold text-base mb-4">Crescimento de Usuários</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Crescimento de Usuários</CardTitle>
+          </CardHeader>
+          <CardContent>
             {loading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
               <div className="h-48 flex items-end gap-1">
                 {data?.usersChart?.slice(-14).map((item, i) => {
-                  const maxUsers = Math.max(...(data?.usersChart?.map(d => d.users) || [1]));
+                  const maxUsers = Math.max(
+                    ...(data?.usersChart?.map((d) => d.users) || [1]),
+                  );
                   const height = (item.users / maxUsers) * 100;
                   return (
                     <div
@@ -220,21 +241,23 @@ export default function AdminAnalyticsPage() {
                       className="flex-1 bg-success rounded-t"
                       style={{ height: `${Math.max(height, 5)}%` }}
                       title={`${item.users} utilizadores`}
-                  />
+                    />
                   );
                 })}
               </div>
             )}
-          </div>
-        </BloomCard>
-      </motion.div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Bottom Row */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         {/* Contracts by Status */}
-        <BloomCard>
-          <div className="p-5 sm:p-6 md:p-7">
-            <h3 className="font-semibold text-base mb-4">Contratos por Status</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Contratos por Status</CardTitle>
+          </CardHeader>
+          <CardContent>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -244,20 +267,25 @@ export default function AdminAnalyticsPage() {
             ) : (
               <div className="space-y-3">
                 {data?.contractsByStatus?.map((item) => (
-                  <div key={item.status} className="flex items-center justify-between">
+                  <div
+                    key={item.status}
+                    className="flex items-center justify-between"
+                  >
                     <span className="text-sm">{item.status}</span>
-                    <BloomBadge>{item.count}</BloomBadge>
+                    <Badge>{item.count}</Badge>
                   </div>
                 ))}
               </div>
             )}
-          </div>
-        </BloomCard>
+          </CardContent>
+        </Card>
 
         {/* Top Cities */}
-        <BloomCard>
-          <div className="p-5 sm:p-6 md:p-7">
-            <h3 className="font-semibold text-base mb-4">Top Cidades</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Top Cidades</CardTitle>
+          </CardHeader>
+          <CardContent>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -267,22 +295,27 @@ export default function AdminAnalyticsPage() {
             ) : (
               <div className="space-y-3">
                 {data?.topCities?.slice(0, 5).map((item, i) => (
-                  <div key={item.city} className="flex items-center justify-between">
+                  <div
+                    key={item.city}
+                    className="flex items-center justify-between"
+                  >
                     <span className="text-sm">
                       {i + 1}. {item.city}
                     </span>
-                    <BloomBadge variant="outline">{item.count}</BloomBadge>
+                    <Badge variant="outline">{item.count}</Badge>
                   </div>
                 ))}
               </div>
             )}
-          </div>
-        </BloomCard>
+          </CardContent>
+        </Card>
 
         {/* Top Caregivers */}
-        <BloomCard>
-          <div className="p-5 sm:p-6 md:p-7">
-            <h3 className="font-semibold text-base mb-4">Top Cuidadores</h3>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Top Cuidadores</CardTitle>
+          </CardHeader>
+          <CardContent>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -307,9 +340,9 @@ export default function AdminAnalyticsPage() {
                 ))}
               </div>
             )}
-          </div>
-        </BloomCard>
-      </motion.div>
-    </motion.div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }

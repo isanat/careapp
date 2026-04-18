@@ -11,18 +11,18 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  IconShield, 
-  IconCheck, 
-  IconX, 
-  IconLoader2, 
+import {
+  IconShield,
+  IconCheck,
+  IconX,
+  IconLoader2,
   IconClock,
   IconCamera,
   IconId,
   IconSun,
   IconRefresh,
   IconArrowRight,
-  IconAlertCircle
+  IconAlertCircle,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -130,7 +130,9 @@ function KycPageContent() {
       if (data.url) {
         setWidgetUrl(data.url);
         setShowWidget(true);
-        setKycStatus(prev => prev ? { ...prev, verification_status: "PENDING" } : null);
+        setKycStatus((prev) =>
+          prev ? { ...prev, verification_status: "PENDING" } : null,
+        );
         // Start polling for status
         setTimeout(() => fetchKycStatus(), 2000);
       }
@@ -187,8 +189,8 @@ function KycPageContent() {
                 <IconShield className="h-4 w-4 text-primary" />
                 <span className="text-sm font-semibold">{t.kyc.title}</span>
               </div>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={closeWidget}
                 className="h-7 w-7"
@@ -196,7 +198,7 @@ function KycPageContent() {
                 <IconX className="h-4 w-4" />
               </Button>
             </div>
-            
+
             {/* Widget Container */}
             <div className="relative" style={{ height: "500px" }}>
               <iframe
@@ -206,7 +208,7 @@ function KycPageContent() {
                 title="Didit Verification"
               />
             </div>
-            
+
             {/* Modal Footer */}
             <div className="p-3 border-t bg-muted/30 text-center">
               <p className="text-xs text-muted-foreground">
@@ -240,7 +242,9 @@ function KycPageContent() {
           {success && (
             <Alert className="mx-4 border-green-500/20 bg-green-500/5">
               <IconCheck className="h-4 w-4 text-green-500" />
-              <AlertDescription className="text-green-600">{success}</AlertDescription>
+              <AlertDescription className="text-green-600">
+                {success}
+              </AlertDescription>
             </Alert>
           )}
 
@@ -274,29 +278,48 @@ function KycPageContent() {
                   </div>
 
                   {/* Status Badge */}
-                  <Badge 
+                  <Badge
                     variant={
-                      kycStatus?.verification_status === "VERIFIED" ? "default" :
-                      kycStatus?.verification_status === "PENDING" ? "secondary" :
-                      kycStatus?.verification_status === "REJECTED" ? "destructive" : "outline"
+                      kycStatus?.verification_status === "VERIFIED"
+                        ? "default"
+                        : kycStatus?.verification_status === "PENDING"
+                          ? "secondary"
+                          : kycStatus?.verification_status === "REJECTED"
+                            ? "destructive"
+                            : "outline"
                     }
-                    className={kycStatus?.verification_status === "VERIFIED" ? "bg-green-500" : ""}
+                    className={
+                      kycStatus?.verification_status === "VERIFIED"
+                        ? "bg-green-500"
+                        : ""
+                    }
                   >
-                    {kycStatus?.verification_status === "VERIFIED" && t.kyc.status.verified}
-                    {kycStatus?.verification_status === "PENDING" && t.kyc.status.pending}
-                    {kycStatus?.verification_status === "REJECTED" && t.kyc.status.rejected}
-                    {kycStatus?.verification_status === "UNVERIFIED" && t.kyc.status.unverified}
+                    {kycStatus?.verification_status === "VERIFIED" &&
+                      t.kyc.status.verified}
+                    {kycStatus?.verification_status === "PENDING" &&
+                      t.kyc.status.pending}
+                    {kycStatus?.verification_status === "REJECTED" &&
+                      t.kyc.status.rejected}
+                    {kycStatus?.verification_status === "UNVERIFIED" &&
+                      t.kyc.status.unverified}
                   </Badge>
 
                   {/* Status-specific content */}
                   <div className="mt-3 w-full">
                     {kycStatus?.verification_status === "VERIFIED" && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-green-600">{t.kyc.verifiedTitle}</p>
-                        <p className="text-xs text-muted-foreground">{t.kyc.verifiedDesc}</p>
+                        <p className="text-sm font-medium text-green-600">
+                          {t.kyc.verifiedTitle}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t.kyc.verifiedDesc}
+                        </p>
                         {kycStatus.completed_at && (
                           <p className="text-[10px] text-muted-foreground">
-                            {t.kyc.completedAt}: {new Date(kycStatus.completed_at).toLocaleDateString('pt-PT')}
+                            {t.kyc.completedAt}:{" "}
+                            {new Date(
+                              kycStatus.completed_at,
+                            ).toLocaleDateString("pt-PT")}
                           </p>
                         )}
                       </div>
@@ -304,10 +327,14 @@ function KycPageContent() {
 
                     {kycStatus?.verification_status === "PENDING" && (
                       <div className="space-y-3">
-                        <p className="text-sm font-medium text-yellow-600">{t.kyc.inProgress}</p>
-                        <p className="text-xs text-muted-foreground">{t.kyc.inProgressDesc}</p>
+                        <p className="text-sm font-medium text-yellow-600">
+                          {t.kyc.inProgress}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t.kyc.inProgressDesc}
+                        </p>
                         <div className="flex gap-2 justify-center">
-                          <Button 
+                          <Button
                             size="sm"
                             variant="outline"
                             onClick={fetchKycStatus}
@@ -315,9 +342,13 @@ function KycPageContent() {
                             <IconRefresh className="h-3.5 w-3.5 mr-1" />
                             {t.kyc.refreshStatus || "Atualizar"}
                           </Button>
-                          <Button 
+                          <Button
                             size="sm"
-                            onClick={() => widgetUrl ? setShowWidget(true) : startVerification()}
+                            onClick={() =>
+                              widgetUrl
+                                ? setShowWidget(true)
+                                : startVerification()
+                            }
                           >
                             {t.kyc.continueVerification || "Continuar"}
                           </Button>
@@ -327,14 +358,20 @@ function KycPageContent() {
 
                     {kycStatus?.verification_status === "REJECTED" && (
                       <div className="space-y-3">
-                        <p className="text-sm font-medium text-destructive">{t.kyc.rejectedTitle}</p>
-                        <p className="text-xs text-muted-foreground">{t.kyc.rejectedDesc}</p>
-                        <Button 
+                        <p className="text-sm font-medium text-destructive">
+                          {t.kyc.rejectedTitle}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t.kyc.rejectedDesc}
+                        </p>
+                        <Button
                           size="sm"
                           onClick={startVerification}
                           disabled={isStarting}
                         >
-                          {isStarting ? <IconLoader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : null}
+                          {isStarting ? (
+                            <IconLoader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+                          ) : null}
                           {t.kyc.startNewVerification}
                         </Button>
                       </div>
@@ -342,8 +379,10 @@ function KycPageContent() {
 
                     {kycStatus?.verification_status === "UNVERIFIED" && (
                       <div className="space-y-3 mt-2">
-                        <p className="text-xs text-muted-foreground">{t.kyc.description}</p>
-                        <Button 
+                        <p className="text-xs text-muted-foreground">
+                          {t.kyc.description}
+                        </p>
+                        <Button
                           size="sm"
                           onClick={startVerification}
                           disabled={isStarting}
@@ -372,25 +411,33 @@ function KycPageContent() {
           <div className="px-4">
             <Card>
               <CardContent className="py-3">
-                <p className="text-xs font-medium mb-2">{t.kyc.requirements.title}</p>
+                <p className="text-xs font-medium mb-2">
+                  {t.kyc.requirements.title}
+                </p>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-primary/10 rounded">
                       <IconId className="h-3.5 w-3.5 text-primary" />
                     </div>
-                    <span className="text-xs text-muted-foreground">{t.kyc.requirements.item1}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t.kyc.requirements.item1}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-primary/10 rounded">
                       <IconCamera className="h-3.5 w-3.5 text-primary" />
                     </div>
-                    <span className="text-xs text-muted-foreground">{t.kyc.requirements.item2}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t.kyc.requirements.item2}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-primary/10 rounded">
                       <IconSun className="h-3.5 w-3.5 text-primary" />
                     </div>
-                    <span className="text-xs text-muted-foreground">{t.kyc.requirements.item3}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t.kyc.requirements.item3}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -401,13 +448,19 @@ function KycPageContent() {
           <div className="px-4 pb-4">
             <Card className="bg-primary/5 border-primary/20">
               <CardContent className="py-3">
-                <p className="text-xs font-medium mb-2">{t.kyc.benefits.title}</p>
+                <p className="text-xs font-medium mb-2">
+                  {t.kyc.benefits.title}
+                </p>
                 <ul className="space-y-1.5">
                   {[1, 2, 3, 4].map((i) => (
                     <li key={i} className="flex items-start gap-2">
                       <IconCheck className="h-3.5 w-3.5 text-green-500 mt-0.5 shrink-0" />
                       <span className="text-xs text-muted-foreground">
-                        {t.kyc.benefits[`item${i}` as keyof typeof t.kyc.benefits]}
+                        {
+                          t.kyc.benefits[
+                            `item${i}` as keyof typeof t.kyc.benefits
+                          ]
+                        }
                       </span>
                     </li>
                   ))}
@@ -423,17 +476,19 @@ function KycPageContent() {
 
 export default function KycPage() {
   const { t } = useI18n();
-  
+
   return (
-    <Suspense fallback={
-      <AppShell>
-        <div className="space-y-3 p-4">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-32 w-full rounded-lg" />
-          <Skeleton className="h-24 w-full rounded-lg" />
-        </div>
-      </AppShell>
-    }>
+    <Suspense
+      fallback={
+        <AppShell>
+          <div className="space-y-3 p-4">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+          </div>
+        </AppShell>
+      }
+    >
       <KycPageContent />
     </Suspense>
   );

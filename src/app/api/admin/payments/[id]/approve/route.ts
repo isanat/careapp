@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { sendEmail } from '@/lib/services/email';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { sendEmail } from "@/lib/services/email";
 
 /**
  * POST /api/admin/payments/[id]/approve
@@ -9,7 +9,7 @@ import { sendEmail } from '@/lib/services/email';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -26,23 +26,20 @@ export async function POST(
         JOIN User u ON p.userId = u.id
         WHERE p.id = ?
       `,
-      args: [id]
+      args: [id],
     });
 
     if (paymentResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Payment not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
     }
 
     const payment = paymentResult.rows[0];
 
     // Only approve INTERNAL provider payments that are PENDING
-    if (payment.provider !== 'INTERNAL' || payment.status !== 'PENDING') {
+    if (payment.provider !== "INTERNAL" || payment.status !== "PENDING") {
       return NextResponse.json(
-        { error: 'Only pending internal payments can be approved' },
-        { status: 400 }
+        { error: "Only pending internal payments can be approved" },
+        { status: 400 },
       );
     }
 
@@ -55,11 +52,11 @@ export async function POST(
         SET status = ?, approvedAt = ?, approvedByAdminId = ?
         WHERE id = ?
       `,
-      args: ['COMPLETED', now, adminId, id]
+      args: ["COMPLETED", now, adminId, id],
     });
 
     // If this is a visibility boost, activate it
-    if (payment.type === 'VISIBILITY_BOOST' && payment.demandId) {
+    if (payment.type === "VISIBILITY_BOOST" && payment.demandId) {
       // Update VisibilityPurchase status
       await db.execute({
         sql: `
@@ -67,11 +64,13 @@ export async function POST(
           SET status = ?, completedAt = ?
           WHERE demandId = ? AND status = 'PENDING'
         `,
-        args: ['COMPLETED', now, payment.demandId]
+        args: ["COMPLETED", now, payment.demandId],
       });
 
       // Mark demand as boosted
-      const metadata = payment.metadata ? JSON.parse(String(payment.metadata)) : {};
+      const metadata = payment.metadata
+        ? JSON.parse(String(payment.metadata))
+        : {};
       const expiresAt = metadata.expiresAt || now;
 
       await db.execute({
@@ -80,7 +79,7 @@ export async function POST(
           SET isBoosted = ?, boostExpiresAt = ?
           WHERE id = ?
         `,
-        args: [1, expiresAt, payment.demandId]
+        args: [1, expiresAt, payment.demandId],
       });
     }
 
@@ -89,34 +88,34 @@ export async function POST(
       if (payment.userEmail) {
         await sendEmail({
           to: String(payment.userEmail),
-          subject: 'Pagamento Aprovado - Evyra',
+          subject: "Pagamento Aprovado - Evyra",
           html: `
             <p>Olá ${payment.userName},</p>
             <p>Seu pagamento de €${(Number(payment.amountEurCents) / 100).toFixed(2)} foi aprovado com sucesso!</p>
-            ${payment.type === 'VISIBILITY_BOOST' ? '<p>Sua demanda agora tem maior visibilidade.</p>' : ''}
+            ${payment.type === "VISIBILITY_BOOST" ? "<p>Sua demanda agora tem maior visibilidade.</p>" : ""}
             <p>Obrigado por usar Evyra.</p>
           `,
         });
       }
     } catch (emailError) {
-      console.error('Error sending approval email:', emailError);
+      console.error("Error sending approval email:", emailError);
       // Don't fail the request due to email error
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Payment approved',
+      message: "Payment approved",
       payment: {
         id: payment.id,
-        status: 'COMPLETED',
+        status: "COMPLETED",
         approvedAt: now,
       },
     });
   } catch (error: any) {
-    console.error('Error approving payment:', error);
+    console.error("Error approving payment:", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to approve payment' },
-      { status: 500 }
+      { error: error.message || "Failed to approve payment" },
+      { status: 500 },
     );
   }
 }

@@ -1,15 +1,15 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -83,9 +83,11 @@ export default function AdminSupportPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
-  
+
   // Dialog states
-  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(
+    null,
+  );
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [resolveDialogOpen, setResolveDialogOpen] = useState(false);
   const [resolution, setResolution] = useState("");
@@ -102,7 +104,15 @@ export default function AdminSupportPage() {
       if (response.ok) {
         const data = await response.json();
         setTickets(data.tickets || []);
-        setStats(data.stats || { total: 0, open: 0, inProgress: 0, resolved: 0, urgent: 0 });
+        setStats(
+          data.stats || {
+            total: 0,
+            open: 0,
+            inProgress: 0,
+            resolved: 0,
+            urgent: 0,
+          },
+        );
       }
     } catch (error) {
       console.error("Error fetching tickets:", error);
@@ -131,36 +141,70 @@ export default function AdminSupportPage() {
         setResolution("");
         fetchTickets();
       } else {
-        toast({ title: "Erro", description: "Falha ao atualizar", variant: "destructive" });
+        toast({
+          title: "Erro",
+          description: "Falha ao atualizar",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      toast({ title: "Erro", description: "Falha ao atualizar", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Falha ao atualizar",
+        variant: "destructive",
+      });
     } finally {
       setUpdating(false);
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const config: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string; className?: string }> = {
+    const config: Record<
+      string,
+      {
+        variant: "default" | "secondary" | "destructive" | "outline";
+        label: string;
+        className?: string;
+      }
+    > = {
       open: { variant: "destructive", label: "Aberto" },
-      in_progress: { variant: "secondary", label: "Em Progresso", className: "bg-primary/10 text-primary" },
+      in_progress: {
+        variant: "secondary",
+        label: "Em Progresso",
+        className: "bg-primary/10 text-primary",
+      },
       waiting_user: { variant: "outline", label: "Aguardando Usuário" },
-      resolved: { variant: "default", label: "Resolvido", className: "bg-success/10 text-success" },
+      resolved: {
+        variant: "default",
+        label: "Resolvido",
+        className: "bg-success/10 text-success",
+      },
       closed: { variant: "outline", label: "Fechado" },
     };
     const c = config[status] || config.open;
-    return <Badge variant={c.variant} className={c.className}>{c.label}</Badge>;
+    return (
+      <Badge variant={c.variant} className={c.className}>
+        {c.label}
+      </Badge>
+    );
   };
 
   const getPriorityBadge = (priority: string) => {
     const config: Record<string, { className: string; label: string }> = {
-      urgent: { className: "bg-destructive/10 text-destructive", label: "URGENTE" },
+      urgent: {
+        className: "bg-destructive/10 text-destructive",
+        label: "URGENTE",
+      },
       high: { className: "bg-warning/10 text-warning", label: "Alta" },
       normal: { className: "bg-warning/10 text-warning", label: "Normal" },
       low: { className: "bg-muted text-muted-foreground", label: "Baixa" },
     };
     const c = config[priority] || config.normal;
-    return <Badge variant="outline" className={c.className}>{c.label}</Badge>;
+    return (
+      <Badge variant="outline" className={c.className}>
+        {c.label}
+      </Badge>
+    );
   };
 
   const getCategoryLabel = (category: string) => {
@@ -178,21 +222,11 @@ export default function AdminSupportPage() {
     (ticket) =>
       ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ticket.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
+      ticket.userEmail.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
-
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Suporte"
         description="Gerenciar tickets de suporte"
@@ -205,7 +239,7 @@ export default function AdminSupportPage() {
       />
 
       {/* Stats */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <StatsCard
           title="Total"
           value={stats.total}
@@ -241,12 +275,11 @@ export default function AdminSupportPage() {
           loading={loading}
           className="border-warning/20"
         />
-      </motion.div>
+      </div>
 
       {/* Filters */}
-      <motion.div variants={itemVariants}>
-        <BloomCard>
-          <div className="p-5 sm:p-6 md:p-7">
+      <Card>
+        <CardContent className="p-4">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -282,20 +315,18 @@ export default function AdminSupportPage() {
               </SelectContent>
             </Select>
           </div>
-          </div>
-        </BloomCard>
-      </motion.div>
+        </CardContent>
+      </Card>
 
       {/* Tickets List */}
-      <motion.div variants={itemVariants}>
-        <BloomCard>
-          <div className="p-5 sm:p-6 md:p-7">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold">Tickets de Suporte</h3>
-              <p className="text-sm text-muted-foreground">
-                {filteredTickets.length} ticket(s) encontrado(s)
-              </p>
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Tickets de Suporte</CardTitle>
+          <CardDescription>
+            {filteredTickets.length} ticket(s) encontrado(s)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
           {loading ? (
             <div className="p-4 space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -312,7 +343,10 @@ export default function AdminSupportPage() {
             <div className="text-center py-12 text-muted-foreground">
               <IconHeadphones className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhum ticket encontrado</p>
-              <p className="text-sm mt-2">Os tickets de suporte aparecerão aqui quando os utilizadores os criarem.</p>
+              <p className="text-sm mt-2">
+                Os tickets de suporte aparecerão aqui quando os utilizadores os
+                criarem.
+              </p>
             </div>
           ) : (
             <div className="divide-y">
@@ -341,7 +375,9 @@ export default function AdminSupportPage() {
                           </Badge>
                         </div>
                         <h3 className="font-medium">{ticket.subject}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-1">{ticket.description}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {ticket.description}
+                        </p>
                         <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/70">
                           <span className="flex items-center gap-1">
                             <IconUser className="h-3 w-3" />
@@ -353,16 +389,22 @@ export default function AdminSupportPage() {
                           </span>
                           <span className="flex items-center gap-1">
                             <IconClock className="h-3 w-3" />
-                            {new Date(ticket.createdAt).toLocaleDateString("pt-PT")}
+                            {new Date(ticket.createdAt).toLocaleDateString(
+                              "pt-PT",
+                            )}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedTicket(ticket);
-                      setDetailsOpen(true);
-                    }}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedTicket(ticket);
+                        setDetailsOpen(true);
+                      }}
+                    >
                       Ver Detalhes
                     </Button>
                   </div>
@@ -370,33 +412,34 @@ export default function AdminSupportPage() {
               ))}
             </div>
           )}
-          </div>
-        </BloomCard>
-      </motion.div>
+        </CardContent>
+      </Card>
 
       {/* Ticket Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{selectedTicket?.subject}</DialogTitle>
-            <DialogDescription>
-              Ticket #{selectedTicket?.id}
-            </DialogDescription>
+            <DialogDescription>Ticket #{selectedTicket?.id}</DialogDescription>
           </DialogHeader>
-          
+
           {selectedTicket && (
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 {getStatusBadge(selectedTicket.status)}
                 {getPriorityBadge(selectedTicket.priority)}
-                <Badge variant="outline">{getCategoryLabel(selectedTicket.category)}</Badge>
+                <Badge variant="outline">
+                  {getCategoryLabel(selectedTicket.category)}
+                </Badge>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Utilizador</p>
                   <p className="font-medium">{selectedTicket.userName}</p>
-                  <p className="text-muted-foreground">{selectedTicket.userEmail}</p>
+                  <p className="text-muted-foreground">
+                    {selectedTicket.userEmail}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Criado em</p>
@@ -412,18 +455,21 @@ export default function AdminSupportPage() {
                   {selectedTicket.description}
                 </p>
               </div>
-              
+
               {selectedTicket.resolvedAt && (
                 <div>
                   <p className="text-slate-500 text-sm mb-2">Resolução</p>
                   <p className="text-sm bg-success/10 p-3 rounded-lg text-success">
-                    Resolvido em {new Date(selectedTicket.resolvedAt).toLocaleString("pt-PT")}
+                    Resolvido em{" "}
+                    {new Date(selectedTicket.resolvedAt).toLocaleString(
+                      "pt-PT",
+                    )}
                   </p>
                 </div>
               )}
             </div>
           )}
-          
+
           <DialogFooter className="flex gap-2">
             {selectedTicket?.status !== "resolved" && (
               <>
@@ -464,7 +510,7 @@ export default function AdminSupportPage() {
               Adicione uma resolução para este ticket
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Resolução</Label>
@@ -476,13 +522,18 @@ export default function AdminSupportPage() {
               />
             </div>
           </div>
-          
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setResolveDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setResolveDialogOpen(false)}
+            >
               Cancelar
             </Button>
             <Button
-              onClick={() => handleUpdateStatus(selectedTicket?.id || "", "resolved")}
+              onClick={() =>
+                handleUpdateStatus(selectedTicket?.id || "", "resolved")
+              }
               disabled={updating || !resolution.trim()}
             >
               {updating ? "A resolver..." : "Resolver Ticket"}
@@ -490,6 +541,6 @@ export default function AdminSupportPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </motion.div>
+    </div>
   );
 }

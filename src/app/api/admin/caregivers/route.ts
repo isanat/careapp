@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - List caregivers with filters
 export async function GET(request: NextRequest) {
@@ -10,10 +10,10 @@ export async function GET(request: NextRequest) {
     const { session, adminUserId } = auth;
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status'); // PENDING, VERIFIED, etc
-    const search = searchParams.get('search');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const status = searchParams.get("status"); // PENDING, VERIFIED, etc
+    const search = searchParams.get("search");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
     const offset = (page - 1) * limit;
 
     let sql = `SELECT 
@@ -59,10 +59,18 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       caregivers: result.rows,
-      pagination: { page, limit, total, totalPages: Math.ceil(Number(total) / limit) }
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(Number(total) / limit),
+      },
     });
   } catch (error) {
-    console.error('Error fetching caregivers:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching caregivers:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

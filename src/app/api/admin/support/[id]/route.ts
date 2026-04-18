@@ -5,7 +5,7 @@ import { db } from "@/lib/db-turso";
 // GET - Get single ticket details with messages
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -74,7 +74,7 @@ export async function GET(
     console.error("Error fetching ticket:", error);
     return NextResponse.json(
       { error: "Failed to fetch ticket" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -82,7 +82,7 @@ export async function GET(
 // PATCH - Update ticket status/priority/assignment
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -132,7 +132,7 @@ export async function PATCH(
     console.error("Error updating ticket:", error);
     return NextResponse.json(
       { error: "Failed to update ticket" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

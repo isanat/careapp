@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 // GET: Fetch user profile
 export async function GET(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user and their profile
@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
             LEFT JOIN ProfileFamily pf ON u.id = pf.userId
             LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
             WHERE u.id = ?`,
-      args: [session.user.id]
+      args: [session.user.id],
     });
 
     if (userResult.rows.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const row = userResult.rows[0];
@@ -106,11 +106,14 @@ export async function GET(request: NextRequest) {
         backgroundCheckStatus: row.backgroundCheckStatus,
         backgroundCheckUrl: row.backgroundCheckUrl,
       },
-      profile: profile
+      profile: profile,
     });
   } catch (error) {
-    console.error('Error fetching user profile:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching user profile:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -120,7 +123,7 @@ export async function PUT(request: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -131,38 +134,38 @@ export async function PUT(request: NextRequest) {
     const userValues: any[] = [];
 
     if (body.name !== undefined) {
-      userUpdates.push('name = ?');
+      userUpdates.push("name = ?");
       userValues.push(body.name);
     }
     if (body.phone !== undefined) {
-      userUpdates.push('phone = ?');
+      userUpdates.push("phone = ?");
       userValues.push(body.phone);
     }
     if (body.profileImage !== undefined) {
-      userUpdates.push('profileImage = ?');
+      userUpdates.push("profileImage = ?");
       userValues.push(body.profileImage);
     }
     if (body.nif !== undefined) {
-      userUpdates.push('nif = ?');
+      userUpdates.push("nif = ?");
       userValues.push(body.nif);
     }
     if (body.documentType !== undefined) {
-      userUpdates.push('documentType = ?');
+      userUpdates.push("documentType = ?");
       userValues.push(body.documentType);
     }
     if (body.documentNumber !== undefined) {
-      userUpdates.push('documentNumber = ?');
+      userUpdates.push("documentNumber = ?");
       userValues.push(body.documentNumber);
     }
 
     if (userUpdates.length > 0) {
-      userUpdates.push('updatedAt = ?');
+      userUpdates.push("updatedAt = ?");
       userValues.push(now);
       userValues.push(session.user.id);
 
       await db.execute({
-        sql: `UPDATE User SET ${userUpdates.join(', ')} WHERE id = ?`,
-        args: userValues
+        sql: `UPDATE User SET ${userUpdates.join(", ")} WHERE id = ?`,
+        args: userValues,
       });
     }
 
@@ -171,46 +174,46 @@ export async function PUT(request: NextRequest) {
     const familyValues: any[] = [];
 
     if (body.address !== undefined) {
-      familyUpdates.push('address = ?');
+      familyUpdates.push("address = ?");
       familyValues.push(body.address);
     }
     if (body.city !== undefined) {
-      familyUpdates.push('city = ?');
+      familyUpdates.push("city = ?");
       familyValues.push(body.city);
     }
     if (body.country !== undefined) {
-      familyUpdates.push('country = ?');
+      familyUpdates.push("country = ?");
       familyValues.push(body.country);
     }
     if (body.elderName !== undefined) {
-      familyUpdates.push('elderName = ?');
+      familyUpdates.push("elderName = ?");
       familyValues.push(body.elderName);
     }
     if (body.elderAge !== undefined) {
-      familyUpdates.push('elderAge = ?');
+      familyUpdates.push("elderAge = ?");
       familyValues.push(body.elderAge);
     }
     if (body.elderNeeds !== undefined) {
-      familyUpdates.push('elderNeeds = ?');
+      familyUpdates.push("elderNeeds = ?");
       familyValues.push(body.elderNeeds);
     }
     if (body.emergencyContactName !== undefined) {
-      familyUpdates.push('emergencyContactName = ?');
+      familyUpdates.push("emergencyContactName = ?");
       familyValues.push(body.emergencyContactName);
     }
     if (body.emergencyContactPhone !== undefined) {
-      familyUpdates.push('emergencyContactPhone = ?');
+      familyUpdates.push("emergencyContactPhone = ?");
       familyValues.push(body.emergencyContactPhone);
     }
 
     if (familyUpdates.length > 0) {
-      familyUpdates.push('updatedAt = ?');
+      familyUpdates.push("updatedAt = ?");
       familyValues.push(now);
       familyValues.push(session.user.id);
 
       await db.execute({
-        sql: `UPDATE ProfileFamily SET ${familyUpdates.join(', ')} WHERE userId = ?`,
-        args: familyValues
+        sql: `UPDATE ProfileFamily SET ${familyUpdates.join(", ")} WHERE userId = ?`,
+        args: familyValues,
       });
     }
 
@@ -219,43 +222,43 @@ export async function PUT(request: NextRequest) {
     const caregiverValues: any[] = [];
 
     if (body.title !== undefined) {
-      caregiverUpdates.push('title = ?');
+      caregiverUpdates.push("title = ?");
       caregiverValues.push(body.title);
     }
     if (body.bio !== undefined) {
-      caregiverUpdates.push('bio = ?');
+      caregiverUpdates.push("bio = ?");
       caregiverValues.push(body.bio);
     }
     if (body.experienceYears !== undefined) {
-      caregiverUpdates.push('experienceYears = ?');
+      caregiverUpdates.push("experienceYears = ?");
       caregiverValues.push(body.experienceYears);
     }
     if (body.education !== undefined) {
-      caregiverUpdates.push('education = ?');
+      caregiverUpdates.push("education = ?");
       caregiverValues.push(body.education);
     }
     if (body.certifications !== undefined) {
-      caregiverUpdates.push('certifications = ?');
+      caregiverUpdates.push("certifications = ?");
       caregiverValues.push(body.certifications);
     }
     if (body.languages !== undefined) {
-      caregiverUpdates.push('languages = ?');
+      caregiverUpdates.push("languages = ?");
       caregiverValues.push(body.languages);
     }
     if (body.city !== undefined) {
-      caregiverUpdates.push('city = ?');
+      caregiverUpdates.push("city = ?");
       caregiverValues.push(body.city);
     }
     if (body.country !== undefined) {
-      caregiverUpdates.push('country = ?');
+      caregiverUpdates.push("country = ?");
       caregiverValues.push(body.country);
     }
     if (body.services !== undefined) {
-      caregiverUpdates.push('services = ?');
+      caregiverUpdates.push("services = ?");
       caregiverValues.push(JSON.stringify(body.services));
     }
     if (body.hourlyRateEur !== undefined) {
-      caregiverUpdates.push('hourlyRateEur = ?');
+      caregiverUpdates.push("hourlyRateEur = ?");
       caregiverValues.push(Math.round(body.hourlyRateEur * 100));
     }
 
@@ -263,16 +266,16 @@ export async function PUT(request: NextRequest) {
       // Ensure caregiver profile row exists
       await db.execute({
         sql: `INSERT OR IGNORE INTO ProfileCaregiver (id, userId, hourlyRateEur, createdAt, updatedAt) VALUES (?, ?, 0, ?, ?)`,
-        args: [`pc_${session.user.id}`, session.user.id, now, now]
+        args: [`pc_${session.user.id}`, session.user.id, now, now],
       });
 
-      caregiverUpdates.push('updatedAt = ?');
+      caregiverUpdates.push("updatedAt = ?");
       caregiverValues.push(now);
       caregiverValues.push(session.user.id);
 
       await db.execute({
-        sql: `UPDATE ProfileCaregiver SET ${caregiverUpdates.join(', ')} WHERE userId = ?`,
-        args: caregiverValues
+        sql: `UPDATE ProfileCaregiver SET ${caregiverUpdates.join(", ")} WHERE userId = ?`,
+        args: caregiverValues,
       });
     }
 
@@ -280,13 +283,16 @@ export async function PUT(request: NextRequest) {
     if (familyUpdates.length > 0) {
       await db.execute({
         sql: `INSERT OR IGNORE INTO ProfileFamily (id, userId, createdAt, updatedAt) VALUES (?, ?, ?, ?)`,
-        args: [`pf_${session.user.id}`, session.user.id, now, now]
+        args: [`pf_${session.user.id}`, session.user.id, now, now],
       });
     }
 
-    return NextResponse.json({ success: true, message: 'Profile updated' });
+    return NextResponse.json({ success: true, message: "Profile updated" });
   } catch (error) {
-    console.error('Error updating user profile:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error updating user profile:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

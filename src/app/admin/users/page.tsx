@@ -1,16 +1,11 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   IconSearch,
   IconEye,
@@ -85,7 +81,9 @@ function AdminFamiliesContent() {
   // Filters
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [roleFilter, setRoleFilter] = useState(searchParams.get("role") || "");
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "");
+  const [statusFilter, setStatusFilter] = useState(
+    searchParams.get("status") || "",
+  );
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -126,7 +124,11 @@ function AdminFamiliesContent() {
       if (!response.ok) throw new Error("Failed to suspend user");
       fetchUsers();
     } catch (error) {
-      toast({ title: "Erro", description: "Erro ao suspender utilizador", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Erro ao suspender utilizador",
+        variant: "destructive",
+      });
     }
   };
 
@@ -138,15 +140,19 @@ function AdminFamiliesContent() {
       if (!response.ok) throw new Error("Failed to activate user");
       fetchUsers();
     } catch (error) {
-      toast({ title: "Erro", description: "Erro ao ativar utilizador", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Erro ao ativar utilizador",
+        variant: "destructive",
+      });
     }
   };
 
   const getRoleBadge = (role: User["role"]) => {
-    const variants: Record<User["role"], "default" | "secondary" | "success" | "primary"> = {
-      FAMILY: "primary",
-      CAREGIVER: "success",
-      ADMIN: "primary",
+    const variants: Record<User["role"], string> = {
+      FAMILY: "bg-primary/10 text-primary",
+      CAREGIVER: "bg-success/10 text-success",
+      ADMIN: "bg-primary/10 text-primary",
     };
     const labels: Record<User["role"], string> = {
       FAMILY: "Família",
@@ -154,9 +160,9 @@ function AdminFamiliesContent() {
       ADMIN: "Admin",
     };
     return (
-      <BloomBadge variant={variants[role]}>
+      <Badge className={variants[role]} variant="secondary">
         {labels[role]}
-      </BloomBadge>
+      </Badge>
     );
   };
 
@@ -192,10 +198,10 @@ function AdminFamiliesContent() {
             user.status === "ACTIVE"
               ? "active"
               : user.status === "SUSPENDED"
-              ? "suspended"
-              : user.status === "PENDING"
-              ? "pending"
-              : "inactive"
+                ? "suspended"
+                : user.status === "PENDING"
+                  ? "pending"
+                  : "inactive"
           }
         />
       ),
@@ -209,10 +215,10 @@ function AdminFamiliesContent() {
             user.verificationStatus === "VERIFIED"
               ? "verified"
               : user.verificationStatus === "PENDING"
-              ? "pending"
-              : user.verificationStatus === "REJECTED"
-              ? "rejected"
-              : "unverified"
+                ? "pending"
+                : user.verificationStatus === "REJECTED"
+                  ? "rejected"
+                  : "unverified"
           }
         />
       ),
@@ -262,90 +268,68 @@ function AdminFamiliesContent() {
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <motion.div
-      className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="space-y-6">
       <PageHeader
         title="Famílias"
         description="Gerencie as famílias cadastradas na plataforma"
       />
 
       {/* Filters */}
-      <motion.div variants={itemVariants}>
-        <BloomCard variant="interactive">
-          <div className="p-5 sm:p-6 md:p-7">
-            <div className="flex flex-col gap-4 md:flex-row">
-              <div className="relative flex-1">
-                <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por nome ou email..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-              <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-full md:w-40">
-                  <SelectValue placeholder="Função" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="FAMILY">Família</SelectItem>
-                  <SelectItem value="CAREGIVER">Cuidador</SelectItem>
-                  <SelectItem value="ADMIN">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="ACTIVE">Ativo</SelectItem>
-                  <SelectItem value="PENDING">Pendente</SelectItem>
-                  <SelectItem value="SUSPENDED">Suspenso</SelectItem>
-                  <SelectItem value="INACTIVE">Inativo</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={() => fetchUsers()}>Filtrar</Button>
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <div className="relative flex-1">
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome ou email..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
             </div>
+            <Select value={roleFilter} onValueChange={setRoleFilter}>
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Função" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                <SelectItem value="FAMILY">Família</SelectItem>
+                <SelectItem value="CAREGIVER">Cuidador</SelectItem>
+                <SelectItem value="ADMIN">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-40">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="ACTIVE">Ativo</SelectItem>
+                <SelectItem value="PENDING">Pendente</SelectItem>
+                <SelectItem value="SUSPENDED">Suspenso</SelectItem>
+                <SelectItem value="INACTIVE">Inativo</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button onClick={() => fetchUsers()}>Filtrar</Button>
           </div>
-        </BloomCard>
-      </motion.div>
+        </CardContent>
+      </Card>
 
       {/* Users Table */}
-      <motion.div variants={itemVariants}>
-        <DataTable
-          columns={columns}
-          data={users}
-          keyExtractor={(user) => user.id}
-          loading={loading}
-          onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
-          pagination={{
-            page: pagination.page,
-            pageSize: pagination.limit,
-            total: pagination.total,
-            onPageChange: (page) => setPagination((p) => ({ ...p, page })),
-          }}
-        />
-      </motion.div>
-    </motion.div>
+      <DataTable
+        columns={columns}
+        data={users}
+        keyExtractor={(user) => user.id}
+        loading={loading}
+        onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
+        pagination={{
+          page: pagination.page,
+          pageSize: pagination.limit,
+          total: pagination.total,
+          onPageChange: (page) => setPagination((p) => ({ ...p, page })),
+        }}
+      />
+    </div>
   );
 }

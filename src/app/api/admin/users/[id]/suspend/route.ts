@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 // POST - Suspend user with reason
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -20,7 +20,7 @@ export async function POST(
     if (!reason || reason.trim().length < 10) {
       return NextResponse.json(
         { error: "Reason is required and must be at least 10 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,7 +43,7 @@ export async function POST(
     if (userBefore.status === "SUSPENDED") {
       return NextResponse.json(
         { error: "User is already suspended" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(
     if (userBefore.role === "ADMIN") {
       return NextResponse.json(
         { error: "Cannot suspend admin users" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -64,9 +64,10 @@ export async function POST(
     const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     // Get IP and user agent
-    const ipAddress = request.headers.get("x-forwarded-for") ||
-                      request.headers.get("x-real-ip") ||
-                      "unknown";
+    const ipAddress =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Update user status to SUSPENDED
@@ -140,7 +141,7 @@ export async function POST(
     console.error("User suspend error:", error);
     return NextResponse.json(
       { error: "Failed to suspend user" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

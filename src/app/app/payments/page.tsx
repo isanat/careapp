@@ -4,7 +4,14 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { AppShell } from "@/components/layout/app-shell";
-import { BloomSectionHeader, BloomStatBlock, BloomEmpty, BloomCard, BloomBadge, BloomSectionDivider } from "@/components/bloom-custom";
+import {
+  BloomSectionHeader,
+  BloomStatBlock,
+  BloomEmpty,
+  BloomCard,
+  BloomBadge,
+  BloomSectionDivider,
+} from "@/components/bloom-custom";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconEuro,
@@ -55,9 +62,7 @@ export default function PaymentsPage() {
       setIsLoading(true);
       setError(null);
 
-      const [receiptsRes] = await Promise.all([
-        apiFetch("/api/contracts"),
-      ]);
+      const [receiptsRes] = await Promise.all([apiFetch("/api/contracts")]);
 
       if (!receiptsRes.ok) {
         throw new Error("Erro ao carregar dados de ganhos");
@@ -165,21 +170,29 @@ export default function PaymentsPage() {
               borderColor="primary"
             />
             <BloomCard className="p-5 sm:p-7">
-            <div className="space-y-4">
+              <div className="space-y-4">
                 {walletData.recentPayments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl border border-border/60 hover:bg-secondary/50 transition-all">
+                  <div
+                    key={payment.id}
+                    className="flex items-center justify-between p-4 bg-secondary/30 rounded-2xl border border-border/60 hover:bg-secondary/50 transition-all"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-card rounded-2xl flex items-center justify-center text-primary shadow-sm border border-border">
                         <IconCalendar className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="font-display font-black text-foreground text-base uppercase tracking-tight">{payment.description || "Pagamento de Serviço"}</p>
+                        <p className="font-display font-black text-foreground text-base uppercase tracking-tight">
+                          {payment.description || "Pagamento de Serviço"}
+                        </p>
                         <p className="text-xs font-display font-black text-muted-foreground mt-1">
-                          {new Date(payment.createdAt).toLocaleDateString("pt-PT", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}
+                          {new Date(payment.createdAt).toLocaleDateString(
+                            "pt-PT",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            },
+                          )}
                         </p>
                       </div>
                     </div>
@@ -189,10 +202,16 @@ export default function PaymentsPage() {
                           {(payment.amount / 100).toFixed(2)}€
                         </p>
                         <BloomBadge
-                          variant={payment.status === "COMPLETED" ? "success" : "warning"}
+                          variant={
+                            payment.status === "COMPLETED"
+                              ? "success"
+                              : "warning"
+                          }
                           className="text-[10px] mt-1"
                         >
-                          {payment.status === "COMPLETED" ? "Libertado" : "Pendente"}
+                          {payment.status === "COMPLETED"
+                            ? "Libertado"
+                            : "Pendente"}
                         </BloomBadge>
                       </div>
                       <button className="p-2.5 bg-card border border-border text-muted-foreground hover:text-primary hover:bg-secondary rounded-xl transition-all shadow-sm">

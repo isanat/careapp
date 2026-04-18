@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { isAdmin: false, error: "Not authenticated" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -58,7 +58,8 @@ export async function GET(request: NextRequest) {
           role: session.user.role,
           status: session.user.status,
         },
-        message: "Admin user without AdminUser profile. Please create an admin profile.",
+        message:
+          "Admin user without AdminUser profile. Please create an admin profile.",
       });
     }
 
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
     console.error("Admin auth check error:", error);
     return NextResponse.json(
       { isAdmin: false, error: "Failed to check admin status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

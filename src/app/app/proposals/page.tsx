@@ -83,7 +83,9 @@ export default function ProposalsPage() {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
   const [counterDialogOpen, setCounterDialogOpen] = useState(false);
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
+    null,
+  );
   const [rejectReason, setRejectReason] = useState("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -102,21 +104,23 @@ export default function ProposalsPage() {
     const message = urlParams.get("message");
     if (message === "accepted") setSuccessMessage("Proposta aceita!");
     else if (message === "rejected") setSuccessMessage("Proposta recusada.");
-    else if (message === "countered") setSuccessMessage("Contraproposta enviada!");
+    else if (message === "countered")
+      setSuccessMessage("Contraproposta enviada!");
   }, []);
 
   const fetchProposals = async () => {
     setIsLoading(true);
     try {
-      const response = await apiFetch('/api/contracts');
+      const response = await apiFetch("/api/contracts");
       if (!response.ok) throw new Error("Erro ao carregar");
       const data = await response.json();
       const caregiverProposals = (data.contracts || []).filter(
-        (c: Proposal) => c.status === "PENDING_ACCEPTANCE" ||
-                        c.status === "PENDING_PAYMENT" ||
-                        c.status === "ACTIVE" ||
-                        c.status === "DRAFT" ||
-                        c.status === "COUNTER_PROPOSED"
+        (c: Proposal) =>
+          c.status === "PENDING_ACCEPTANCE" ||
+          c.status === "PENDING_PAYMENT" ||
+          c.status === "ACTIVE" ||
+          c.status === "DRAFT" ||
+          c.status === "COUNTER_PROPOSED",
       );
       setProposals(caregiverProposals);
     } catch (err: any) {
@@ -130,10 +134,13 @@ export default function ProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(selectedProposal.id);
     try {
-      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/accept`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await apiFetch(
+        `/api/contracts/${selectedProposal.id}/accept`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
       if (!response.ok) throw new Error("Erro ao aceitar");
       setSuccessMessage("Proposta aceita!");
       setAcceptDialogOpen(false);
@@ -149,11 +156,14 @@ export default function ProposalsPage() {
     if (!selectedProposal) return;
     setActionLoading(selectedProposal.id);
     try {
-      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/reject`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rejectionReason: rejectReason }),
-      });
+      const response = await apiFetch(
+        `/api/contracts/${selectedProposal.id}/reject`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rejectionReason: rejectReason }),
+        },
+      );
       if (!response.ok) throw new Error("Erro ao recusar");
       setSuccessMessage("Proposta recusada.");
       setRejectDialogOpen(false);
@@ -182,17 +192,32 @@ export default function ProposalsPage() {
     try {
       // Build the body with only changed values (convert euros back to cents for hourlyRate)
       const body: Record<string, unknown> = {};
-      const newHourlyRateCents = counterHourlyRate ? Math.round(parseFloat(counterHourlyRate) * 100) : null;
-      const newTotalHours = counterTotalHours ? parseInt(counterTotalHours) : null;
-      const newHoursPerWeek = counterHoursPerWeek ? parseInt(counterHoursPerWeek) : null;
+      const newHourlyRateCents = counterHourlyRate
+        ? Math.round(parseFloat(counterHourlyRate) * 100)
+        : null;
+      const newTotalHours = counterTotalHours
+        ? parseInt(counterTotalHours)
+        : null;
+      const newHoursPerWeek = counterHoursPerWeek
+        ? parseInt(counterHoursPerWeek)
+        : null;
 
-      if (newHourlyRateCents != null && newHourlyRateCents !== selectedProposal.hourlyRateEur) {
+      if (
+        newHourlyRateCents != null &&
+        newHourlyRateCents !== selectedProposal.hourlyRateEur
+      ) {
         body.hourlyRateEur = newHourlyRateCents;
       }
-      if (newTotalHours != null && newTotalHours !== selectedProposal.totalHours) {
+      if (
+        newTotalHours != null &&
+        newTotalHours !== selectedProposal.totalHours
+      ) {
         body.totalHours = newTotalHours;
       }
-      if (newHoursPerWeek != null && newHoursPerWeek !== selectedProposal.hoursPerWeek) {
+      if (
+        newHoursPerWeek != null &&
+        newHoursPerWeek !== selectedProposal.hoursPerWeek
+      ) {
         body.hoursPerWeek = newHoursPerWeek;
       }
       if (counterMessage.trim()) {
@@ -201,16 +226,21 @@ export default function ProposalsPage() {
 
       // Validate at least one value changed
       if (!body.hourlyRateEur && !body.totalHours && !body.hoursPerWeek) {
-        setError("Deve alterar pelo menos um valor para enviar uma contraproposta.");
+        setError(
+          "Deve alterar pelo menos um valor para enviar uma contraproposta.",
+        );
         setActionLoading(null);
         return;
       }
 
-      const response = await apiFetch(`/api/contracts/${selectedProposal.id}/counter`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const response = await apiFetch(
+        `/api/contracts/${selectedProposal.id}/counter`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
 
       if (!response.ok) {
         const data = await response.json();
@@ -231,25 +261,43 @@ export default function ProposalsPage() {
     router.push("/app/dashboard");
     return null;
   }
-  const pendingProposals = proposals.filter(p => p.status === "PENDING_ACCEPTANCE");
-  const counterProposals = proposals.filter(p => p.status === "COUNTER_PROPOSED");
-  const acceptedProposals = proposals.filter(p => p.status === "PENDING_PAYMENT" || p.status === "ACTIVE");
+  const pendingProposals = proposals.filter(
+    (p) => p.status === "PENDING_ACCEPTANCE",
+  );
+  const counterProposals = proposals.filter(
+    (p) => p.status === "COUNTER_PROPOSED",
+  );
+  const acceptedProposals = proposals.filter(
+    (p) => p.status === "PENDING_PAYMENT" || p.status === "ACTIVE",
+  );
 
   return (
     <AppShell>
       <div className="space-y-6 max-w-6xl">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <BloomSectionHeader title="Propostas" desc="Gerencie propostas recebidas e negociações com famílias." />
-          <Button variant="ghost" size="sm" onClick={fetchProposals} disabled={isLoading}>
-            <IconRefresh className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <BloomSectionHeader
+            title="Propostas"
+            desc="Gerencie propostas recebidas e negociações com famílias."
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={fetchProposals}
+            disabled={isLoading}
+          >
+            <IconRefresh
+              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+            />
           </Button>
         </div>
 
         {successMessage && (
           <div className="flex items-start gap-3 p-5 bg-success/5 border border-success/20 rounded-2xl">
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
-            <p className="text-sm font-medium text-foreground">{successMessage}</p>
+            <p className="text-sm font-medium text-foreground">
+              {successMessage}
+            </p>
           </div>
         )}
 
@@ -284,14 +332,32 @@ export default function ProposalsPage() {
         {!isLoading && proposals.length > 0 && (
           <Tabs defaultValue="pending" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b border-border/60 rounded-none">
-              <TabsTrigger value="pending" className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground">
-                Novas <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{pendingProposals.length}</span>
+              <TabsTrigger
+                value="pending"
+                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground"
+              >
+                Novas{" "}
+                <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">
+                  {pendingProposals.length}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="counter" className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground">
-                Contra <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{counterProposals.length}</span>
+              <TabsTrigger
+                value="counter"
+                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground"
+              >
+                Contra{" "}
+                <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">
+                  {counterProposals.length}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="accepted" className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground">
-                Aceitas <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">{acceptedProposals.length}</span>
+              <TabsTrigger
+                value="accepted"
+                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground"
+              >
+                Aceitas{" "}
+                <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">
+                  {acceptedProposals.length}
+                </span>
               </TabsTrigger>
             </TabsList>
 
@@ -307,8 +373,15 @@ export default function ProposalsPage() {
                   <ProposalCard
                     key={p.id}
                     proposal={p}
-                    onAccept={() => { setSelectedProposal(p); setAcceptDialogOpen(true); }}
-                    onReject={() => { setSelectedProposal(p); setRejectReason(""); setRejectDialogOpen(true); }}
+                    onAccept={() => {
+                      setSelectedProposal(p);
+                      setAcceptDialogOpen(true);
+                    }}
+                    onReject={() => {
+                      setSelectedProposal(p);
+                      setRejectReason("");
+                      setRejectDialogOpen(true);
+                    }}
                     onCounter={() => openCounterDialog(p)}
                     isLoading={actionLoading === p.id}
                     showActions
@@ -326,7 +399,12 @@ export default function ProposalsPage() {
                 />
               ) : (
                 counterProposals.map((p) => (
-                  <ProposalCard key={p.id} proposal={p} isLoading={false} showActions={false} />
+                  <ProposalCard
+                    key={p.id}
+                    proposal={p}
+                    isLoading={false}
+                    showActions={false}
+                  />
                 ))
               )}
             </TabsContent>
@@ -340,7 +418,12 @@ export default function ProposalsPage() {
                 />
               ) : (
                 acceptedProposals.map((p) => (
-                  <ProposalCard key={p.id} proposal={p} isLoading={false} showActions={false} />
+                  <ProposalCard
+                    key={p.id}
+                    proposal={p}
+                    isLoading={false}
+                    showActions={false}
+                  />
                 ))
               )}
             </TabsContent>
@@ -351,27 +434,55 @@ export default function ProposalsPage() {
         <Dialog open={acceptDialogOpen} onOpenChange={setAcceptDialogOpen}>
           <DialogContent className="max-w-sm border border-border bg-card rounded-3xl">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-lg font-display font-bold text-foreground">Aceitar Proposta?</DialogTitle>
+              <DialogTitle className="text-lg font-display font-bold text-foreground">
+                Aceitar Proposta?
+              </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-2">
-                {selectedProposal?.family.name} • €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)} total
+                {selectedProposal?.family.name} • €
+                {((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}{" "}
+                total
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="p-4 bg-success/5 border border-success/20 rounded-2xl space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Horas/semana:</span>
-                  <span className="font-display font-bold text-foreground">{selectedProposal?.hoursPerWeek}h</span>
+                  <span className="font-display font-bold text-foreground">
+                    {selectedProposal?.hoursPerWeek}h
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Data de início:</span>
-                  <span className="font-display font-bold text-foreground">{selectedProposal?.startDate ? new Date(selectedProposal.startDate).toLocaleDateString('pt-PT') : "A definir"}</span>
+                  <span className="font-display font-bold text-foreground">
+                    {selectedProposal?.startDate
+                      ? new Date(selectedProposal.startDate).toLocaleDateString(
+                          "pt-PT",
+                        )
+                      : "A definir"}
+                  </span>
                 </div>
               </div>
             </div>
             <DialogFooter className="gap-2 pt-4 border-t border-border/30">
-              <Button variant="outline" size="sm" onClick={() => setAcceptDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" onClick={confirmAccept} disabled={actionLoading !== null}>
-                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconCheck className="h-4 w-4 mr-1" /> Aceitar</>}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAcceptDialogOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                onClick={confirmAccept}
+                disabled={actionLoading !== null}
+              >
+                {actionLoading ? (
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <IconCheck className="h-4 w-4 mr-1" /> Aceitar
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -381,8 +492,12 @@ export default function ProposalsPage() {
         <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
           <DialogContent className="max-w-sm border border-border bg-card rounded-3xl">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-lg font-display font-bold text-foreground">Recusar Proposta</DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground mt-2">Insira um motivo (opcional)</DialogDescription>
+              <DialogTitle className="text-lg font-display font-bold text-foreground">
+                Recusar Proposta
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground mt-2">
+                Insira um motivo (opcional)
+              </DialogDescription>
             </DialogHeader>
             <div className="py-4">
               <Textarea
@@ -394,9 +509,26 @@ export default function ProposalsPage() {
               />
             </div>
             <DialogFooter className="gap-2 pt-4 border-t border-border/30">
-              <Button variant="outline" size="sm" onClick={() => setRejectDialogOpen(false)}>Cancelar</Button>
-              <Button variant="destructive" size="sm" onClick={confirmReject} disabled={actionLoading !== null}>
-                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconX className="h-4 w-4 mr-1" /> Recusar</>}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setRejectDialogOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={confirmReject}
+                disabled={actionLoading !== null}
+              >
+                {actionLoading ? (
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <IconX className="h-4 w-4 mr-1" /> Recusar
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -406,7 +538,9 @@ export default function ProposalsPage() {
         <Dialog open={counterDialogOpen} onOpenChange={setCounterDialogOpen}>
           <DialogContent className="max-w-md border border-border bg-card rounded-3xl">
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-lg font-display font-bold text-foreground">Contraproposta</DialogTitle>
+              <DialogTitle className="text-lg font-display font-bold text-foreground">
+                Contraproposta
+              </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-2">
                 Proponha novos valores para {selectedProposal?.family.name}
               </DialogDescription>
@@ -414,22 +548,33 @@ export default function ProposalsPage() {
             <div className="space-y-4 py-4">
               {/* Current values summary */}
               <div className="p-4 bg-secondary/5 border border-secondary/20 rounded-2xl text-sm space-y-2">
-                <p className="text-xs font-display font-bold text-secondary uppercase tracking-widest">Valores Atuais</p>
+                <p className="text-xs font-display font-bold text-secondary uppercase tracking-widest">
+                  Valores Atuais
+                </p>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Taxa horária:</span>
-                  <span className="font-display font-bold text-foreground">€{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}/h</span>
+                  <span className="font-display font-bold text-foreground">
+                    €{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}
+                    /h
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total horas:</span>
-                  <span className="font-display font-bold text-foreground">{selectedProposal?.totalHours || 0}h</span>
+                  <span className="font-display font-bold text-foreground">
+                    {selectedProposal?.totalHours || 0}h
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Horas/semana:</span>
-                  <span className="font-display font-bold text-foreground">{selectedProposal?.hoursPerWeek || 0}h</span>
+                  <span className="font-display font-bold text-foreground">
+                    {selectedProposal?.hoursPerWeek || 0}h
+                  </span>
                 </div>
                 <div className="flex justify-between border-t border-secondary/30 pt-2 font-display font-black">
                   <span className="text-muted-foreground">Total:</span>
-                  <span className="text-foreground">€{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}</span>
+                  <span className="text-foreground">
+                    €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}
+                  </span>
                 </div>
               </div>
 
@@ -437,14 +582,18 @@ export default function ProposalsPage() {
               {error && (
                 <div className="flex items-start gap-2 p-3 bg-destructive/5 border border-destructive/20 rounded-2xl">
                   <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                  <p className="text-xs text-destructive font-medium">{error}</p>
+                  <p className="text-xs text-destructive font-medium">
+                    {error}
+                  </p>
                 </div>
               )}
 
               {/* Counter values */}
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Nova Taxa Horária (€)</Label>
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Nova Taxa Horária (€)
+                  </Label>
                   <Input
                     type="number"
                     step="0.50"
@@ -456,7 +605,9 @@ export default function ProposalsPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Total de Horas</Label>
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Total de Horas
+                  </Label>
                   <Input
                     type="number"
                     min="1"
@@ -467,7 +618,9 @@ export default function ProposalsPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Horas por Semana</Label>
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Horas por Semana
+                  </Label>
                   <Input
                     type="number"
                     min="1"
@@ -478,7 +631,9 @@ export default function ProposalsPage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">Mensagem (Opcional)</Label>
+                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    Mensagem (Opcional)
+                  </Label>
                   <Textarea
                     value={counterMessage}
                     onChange={(e) => setCounterMessage(e.target.value)}
@@ -492,17 +647,39 @@ export default function ProposalsPage() {
               {/* Preview new total */}
               {counterHourlyRate && counterTotalHours && (
                 <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl">
-                  <p className="text-xs font-display font-bold text-primary uppercase tracking-widest mb-2">Novo Valor Total Estimado</p>
+                  <p className="text-xs font-display font-bold text-primary uppercase tracking-widest mb-2">
+                    Novo Valor Total Estimado
+                  </p>
                   <p className="font-display font-black text-2xl text-primary">
-                    €{(parseFloat(counterHourlyRate) * parseInt(counterTotalHours || "0")).toFixed(2)}
+                    €
+                    {(
+                      parseFloat(counterHourlyRate) *
+                      parseInt(counterTotalHours || "0")
+                    ).toFixed(2)}
                   </p>
                 </div>
               )}
             </div>
             <DialogFooter className="gap-2 pt-4 border-t border-border/30">
-              <Button variant="outline" size="sm" onClick={() => setCounterDialogOpen(false)}>Cancelar</Button>
-              <Button size="sm" onClick={confirmCounter} disabled={actionLoading !== null}>
-                {actionLoading ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <><IconEdit className="h-4 w-4 mr-1" /> Enviar</>}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCounterDialogOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                onClick={confirmCounter}
+                disabled={actionLoading !== null}
+              >
+                {actionLoading ? (
+                  <IconLoader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <IconEdit className="h-4 w-4 mr-1" /> Enviar
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -512,7 +689,14 @@ export default function ProposalsPage() {
   );
 }
 
-function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, showActions }: {
+function ProposalCard({
+  proposal,
+  onAccept,
+  onReject,
+  onCounter,
+  isLoading,
+  showActions,
+}: {
   proposal: Proposal;
   onAccept?: () => void;
   onReject?: () => void;
@@ -523,7 +707,10 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
   const totalEur = proposal.totalEurCents ? proposal.totalEurCents / 100 : 0;
 
   return (
-    <BloomCard variant="interactive" className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-5 sm:p-7">
+    <BloomCard
+      variant="interactive"
+      className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-5 sm:p-7"
+    >
       {/* Left side: Family info */}
       <div className="flex-1 flex items-start gap-4 min-w-0">
         <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-500">
@@ -542,7 +729,10 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
           {proposal.serviceTypes && proposal.serviceTypes.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {proposal.serviceTypes.slice(0, 2).map((s, i) => (
-                <span key={i} className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest">
+                <span
+                  key={i}
+                  className="text-[9px] font-display font-bold bg-secondary/10 text-secondary border border-secondary/30 rounded-lg px-2 py-0.5 uppercase tracking-widest"
+                >
                   {getServiceTypeLabel(s)}
                 </span>
               ))}
@@ -561,28 +751,42 @@ function ProposalCard({ proposal, onAccept, onReject, onCounter, isLoading, show
         {/* Stats */}
         <div className="flex gap-6 w-full sm:w-auto">
           <div>
-            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">Taxa/h</p>
+            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+              Taxa/h
+            </p>
             <p className="text-lg font-display font-bold text-foreground mt-1">
               €{(proposal.hourlyRateEur / 100).toFixed(0)}
             </p>
           </div>
           <div>
-            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">Horas</p>
-            <p className="text-lg font-display font-bold text-foreground mt-1">{proposal.hoursPerWeek}h</p>
+            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+              Horas
+            </p>
+            <p className="text-lg font-display font-bold text-foreground mt-1">
+              {proposal.hoursPerWeek}h
+            </p>
           </div>
           <div>
-            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">Total</p>
-            <p className="text-lg font-display font-bold text-foreground mt-1">€{totalEur.toFixed(0)}</p>
+            <p className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
+              Total
+            </p>
+            <p className="text-lg font-display font-bold text-foreground mt-1">
+              €{totalEur.toFixed(0)}
+            </p>
           </div>
         </div>
 
         {/* Date */}
         <div className="text-[9px] text-muted-foreground/50 uppercase tracking-widest font-display font-medium">
-          {proposal.startDate ? new Date(proposal.startDate).toLocaleDateString('pt-PT') : "A definir"}
+          {proposal.startDate
+            ? new Date(proposal.startDate).toLocaleDateString("pt-PT")
+            : "A definir"}
         </div>
 
         {/* Status Badge */}
-        <span className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border shrink-0 ${getStatusBadgeVariant(proposal.status)}`}>
+        <span
+          className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 border shrink-0 ${getStatusBadgeVariant(proposal.status)}`}
+        >
           {getStatusLabel(proposal.status)}
         </span>
 

@@ -47,7 +47,8 @@ export async function GET(request: NextRequest) {
       args.push(endDate);
     }
 
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     // Get total count
     const countResult = await db.execute({
@@ -104,14 +105,18 @@ export async function GET(request: NextRequest) {
       sql: `SELECT DISTINCT action FROM AdminAction ORDER BY action`,
       args: [],
     });
-    const actionTypes = actionTypesResult.rows.map((row) => row.action as string);
+    const actionTypes = actionTypesResult.rows.map(
+      (row) => row.action as string,
+    );
 
     // Get unique entity types for filters
     const entityTypesResult = await db.execute({
       sql: `SELECT DISTINCT entityType FROM AdminAction ORDER BY entityType`,
       args: [],
     });
-    const entityTypes = entityTypesResult.rows.map((row) => row.entityType as string);
+    const entityTypes = entityTypesResult.rows.map(
+      (row) => row.entityType as string,
+    );
 
     return NextResponse.json({
       logs,
@@ -128,7 +133,7 @@ export async function GET(request: NextRequest) {
     console.error("Admin logs error:", error);
     return NextResponse.json(
       { error: "Failed to fetch audit logs" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

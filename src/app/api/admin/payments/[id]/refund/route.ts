@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
-import Stripe from 'stripe';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
+import Stripe from "stripe";
 
 // POST - Process refund
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -19,7 +19,10 @@ export async function POST(
     const { amount, reason, notifyUser = true } = body;
 
     if (!reason) {
-      return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Reason is required" },
+        { status: 400 },
+      );
     }
 
     // Get payment
@@ -28,20 +31,23 @@ export async function POST(
             FROM Payment p
             JOIN User u ON p.userId = u.id
             WHERE p.id = ? AND p.status = 'COMPLETED' AND p.refundedAt IS NULL`,
-      args: [id]
+      args: [id],
     });
 
     if (payment.rows.length === 0) {
-      return NextResponse.json({ error: 'Payment not found or already refunded' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Payment not found or already refunded" },
+        { status: 404 },
+      );
     }
 
     const p = payment.rows[0] as any;
     const refundAmountCents = amount || p.amountEurCents;
 
     // Call Stripe API for refund if provider is STRIPE and payment intent exists
-    if (p.provider === 'STRIPE' && p.stripePaymentIntentId) {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-        apiVersion: '2023-10-16' as any,
+    if (p.provider === "STRIPE" && p.stripePaymentIntentId) {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+        apiVersion: "2023-10-16" as any,
       });
 
       try {
@@ -50,18 +56,24 @@ export async function POST(
           amount: refundAmountCents,
         });
       } catch (stripeError) {
-        console.error('Stripe refund failed:', stripeError);
-        return NextResponse.json({
-          error: 'Stripe refund failed',
-          details: stripeError instanceof Error ? stripeError.message : 'Unknown Stripe error'
-        }, { status: 502 });
+        console.error("Stripe refund failed:", stripeError);
+        return NextResponse.json(
+          {
+            error: "Stripe refund failed",
+            details:
+              stripeError instanceof Error
+                ? stripeError.message
+                : "Unknown Stripe error",
+          },
+          { status: 502 },
+        );
       }
     }
 
     // Update payment status
     await db.execute({
       sql: `UPDATE Payment SET status = 'REFUNDED', refundedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     // Log action
@@ -72,11 +84,11 @@ export async function POST(
         generateId("action"),
         adminUserId,
         id,
-        JSON.stringify({ status: 'COMPLETED' }),
-        JSON.stringify({ status: 'REFUNDED' }),
+        JSON.stringify({ status: "COMPLETED" }),
+        JSON.stringify({ status: "REFUNDED" }),
         reason,
-        request.headers.get('x-forwarded-for') || 'unknown'
-      ]
+        request.headers.get("x-forwarded-for") || "unknown",
+      ],
     });
 
     // Notify user
@@ -84,20 +96,28 @@ export async function POST(
       await db.execute({
         sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
               VALUES (?, ?, 'PAYMENT', 'Reembolso Processado', ?, 'PAYMENT', ?, CURRENT_TIMESTAMP)`,
-        args: [generateId("notif"), p.userId, `Seu pagamento de €${(refundAmountCents/100).toFixed(2)} foi reembolsado.`, id]
+        args: [
+          generateId("notif"),
+          p.userId,
+          `Seu pagamento de €${(refundAmountCents / 100).toFixed(2)} foi reembolsado.`,
+          id,
+        ],
       });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Refund processed',
+      message: "Refund processed",
       refund: {
         paymentId: id,
-        amountCents: refundAmountCents
-      }
+        amountCents: refundAmountCents,
+      },
     });
   } catch (error) {
-    console.error('Error processing refund:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error processing refund:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

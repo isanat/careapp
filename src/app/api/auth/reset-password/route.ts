@@ -11,16 +11,13 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid input", details: parsed.error.flatten() },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const { token, email, password } = parsed.data;
 
     // Hash the incoming token to compare with stored hash
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     // Look up the token
     const tokenResult = await db.execute({
@@ -31,7 +28,7 @@ export async function POST(request: NextRequest) {
     if (tokenResult.rows.length === 0) {
       return NextResponse.json(
         { error: "Invalid or expired reset token" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -46,7 +43,7 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json(
         { error: "Reset token has expired. Please request a new one." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,10 +57,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (updateResult.rowsAffected === 0) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
 
     // Delete the used token (single-use)
@@ -77,7 +71,7 @@ export async function POST(request: NextRequest) {
     console.error("Error in reset-password:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

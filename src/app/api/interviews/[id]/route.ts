@@ -2,16 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
-import { validateQuestionnaire, formatQuestionnaireJson } from "@/lib/services/interview";
+import {
+  validateQuestionnaire,
+  formatQuestionnaireJson,
+} from "@/lib/services/interview";
 
 // GET: Get interview by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -29,18 +32,23 @@ export async function GET(
         JOIN User fm ON i.familyUserId = fm.id
         JOIN User cg ON i.caregiverUserId = cg.id
         WHERE i.id = ?`,
-      args: [id]
+      args: [id],
     });
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ error: "Interview not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Interview not found" },
+        { status: 404 },
+      );
     }
 
     const interview = result.rows[0];
 
     // Verify user is participant
-    if (interview.familyUserId !== session.user.id && 
-        interview.caregiverUserId !== session.user.id) {
+    if (
+      interview.familyUserId !== session.user.id &&
+      interview.caregiverUserId !== session.user.id
+    ) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
@@ -55,26 +63,33 @@ export async function GET(
         caregiverUserId: interview.caregiverUserId,
         familyName: interview.family_name,
         caregiverName: interview.caregiver_name,
-        questionnaire: interview.questionnaireJson ? JSON.parse(String(interview.questionnaireJson)) : null,
-        caregiverQuestionnaire: interview.caregiverQuestionnaireJson ? JSON.parse(String(interview.caregiverQuestionnaireJson)) : null,
+        questionnaire: interview.questionnaireJson
+          ? JSON.parse(String(interview.questionnaireJson))
+          : null,
+        caregiverQuestionnaire: interview.caregiverQuestionnaireJson
+          ? JSON.parse(String(interview.caregiverQuestionnaireJson))
+          : null,
         familyCompletedAt: interview.familyCompletedAt,
-        caregiverCompletedAt: interview.caregiverCompletedAt
-      }
+        caregiverCompletedAt: interview.caregiverCompletedAt,
+      },
     });
   } catch (error) {
     console.error("Error fetching interview:", error);
-    return NextResponse.json({ error: "Failed to fetch interview" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch interview" },
+      { status: 500 },
+    );
   }
 }
 
 // PATCH: Update interview status or submit questionnaire
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -86,17 +101,22 @@ export async function PATCH(
     // Verify user is participant
     const interviewResult = await db.execute({
       sql: `SELECT * FROM Interview WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     if (interviewResult.rows.length === 0) {
-      return NextResponse.json({ error: "Interview not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Interview not found" },
+        { status: 404 },
+      );
     }
 
     const interview = interviewResult.rows[0];
 
-    if (interview.familyUserId !== session.user.id && 
-        interview.caregiverUserId !== session.user.id) {
+    if (
+      interview.familyUserId !== session.user.id &&
+      interview.caregiverUserId !== session.user.id
+    ) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
@@ -104,14 +124,14 @@ export async function PATCH(
     if (status) {
       await db.execute({
         sql: `UPDATE Interview SET status = ?, updatedAt = ? WHERE id = ?`,
-        args: [status, new Date().toISOString(), id]
+        args: [status, new Date().toISOString(), id],
       });
 
       // If starting interview, set startedAt
       if (status === "IN_PROGRESS") {
         await db.execute({
           sql: `UPDATE Interview SET startedAt = ? WHERE id = ?`,
-          args: [new Date().toISOString(), id]
+          args: [new Date().toISOString(), id],
         });
       }
 
@@ -119,7 +139,7 @@ export async function PATCH(
       if (status === "COMPLETED") {
         await db.execute({
           sql: `UPDATE Interview SET endedAt = ? WHERE id = ?`,
-          args: [new Date().toISOString(), id]
+          args: [new Date().toISOString(), id],
         });
       }
     }
@@ -138,7 +158,12 @@ export async function PATCH(
         sql: `UPDATE Interview
               SET caregiverQuestionnaireJson = ?, caregiverCompletedAt = ?, updatedAt = ?
               WHERE id = ?`,
-        args: [caregiverQuestionnaireJson, new Date().toISOString(), new Date().toISOString(), id]
+        args: [
+          caregiverQuestionnaireJson,
+          new Date().toISOString(),
+          new Date().toISOString(),
+          id,
+        ],
       });
 
       return NextResponse.json({ success: true });
@@ -150,7 +175,7 @@ export async function PATCH(
       if (!validation.valid) {
         return NextResponse.json(
           { error: validation.errors.join(", ") },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -160,14 +185,20 @@ export async function PATCH(
         sql: `UPDATE Interview
               SET questionnaireJson = ?, familyCompletedAt = ?, updatedAt = ?
               WHERE id = ?`,
-        args: [questionnaireJson, new Date().toISOString(), new Date().toISOString(), id]
+        args: [
+          questionnaireJson,
+          new Date().toISOString(),
+          new Date().toISOString(),
+          id,
+        ],
       });
 
       // If family wants to proceed and there's a contract, update acceptance
       if (questionnaire.proceedWithContract && interview.contractId) {
-        const ip = request.headers.get("x-forwarded-for") ||
-                   request.headers.get("x-real-ip") ||
-                   "unknown";
+        const ip =
+          request.headers.get("x-forwarded-for") ||
+          request.headers.get("x-real-ip") ||
+          "unknown";
         const userAgent = request.headers.get("user-agent") || "unknown";
 
         // Record contract acceptance with IP and timestamp
@@ -181,14 +212,14 @@ export async function PATCH(
             new Date().toISOString(),
             ip,
             userAgent,
-            new Date().toISOString()
-          ]
+            new Date().toISOString(),
+          ],
         });
 
         // Update contract status
         await db.execute({
           sql: `UPDATE Contract SET status = 'PENDING_ACCEPTANCE', updatedAt = ? WHERE id = ?`,
-          args: [new Date().toISOString(), interview.contractId]
+          args: [new Date().toISOString(), interview.contractId],
         });
 
         // Notify caregiver
@@ -203,8 +234,8 @@ export async function PATCH(
             "The family has completed the interview and wants to proceed with the contract.",
             "interview",
             id,
-            new Date().toISOString()
-          ]
+            new Date().toISOString(),
+          ],
         });
       }
 
@@ -224,14 +255,14 @@ export async function PATCH(
             `Contrato - Entrevista ${id}`,
             "Contrato criado automaticamente apos entrevista.",
             now,
-            now
-          ]
+            now,
+          ],
         });
 
         // Update the interview with the new contractId
         await db.execute({
           sql: `UPDATE Interview SET contractId = ?, updatedAt = ? WHERE id = ?`,
-          args: [newContractId, now, id]
+          args: [newContractId, now, id],
         });
 
         // Notify the caregiver about the new draft contract
@@ -246,27 +277,33 @@ export async function PATCH(
             "A familia completou a entrevista e deseja prosseguir. Um rascunho de contrato foi criado.",
             "contract",
             newContractId,
-            now
-          ]
+            now,
+          ],
         });
       }
     }
 
-    return NextResponse.json({ success: true, ...(newContractId ? { contractId: newContractId } : {}) });
+    return NextResponse.json({
+      success: true,
+      ...(newContractId ? { contractId: newContractId } : {}),
+    });
   } catch (error) {
     console.error("Error updating interview:", error);
-    return NextResponse.json({ error: "Failed to update interview" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update interview" },
+      { status: 500 },
+    );
   }
 }
 
 // DELETE: Cancel interview
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -276,30 +313,36 @@ export async function DELETE(
     // Verify user is participant
     const interviewResult = await db.execute({
       sql: `SELECT * FROM Interview WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     if (interviewResult.rows.length === 0) {
-      return NextResponse.json({ error: "Interview not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Interview not found" },
+        { status: 404 },
+      );
     }
 
     const interview = interviewResult.rows[0];
 
-    if (interview.familyUserId !== session.user.id && 
-        interview.caregiverUserId !== session.user.id) {
+    if (
+      interview.familyUserId !== session.user.id &&
+      interview.caregiverUserId !== session.user.id
+    ) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     // Mark as cancelled instead of deleting
     await db.execute({
       sql: `UPDATE Interview SET status = 'CANCELLED', updatedAt = ? WHERE id = ?`,
-      args: [new Date().toISOString(), id]
+      args: [new Date().toISOString(), id],
     });
 
     // Notify other party
-    const otherUserId = interview.familyUserId === session.user.id 
-      ? interview.caregiverUserId 
-      : interview.familyUserId;
+    const otherUserId =
+      interview.familyUserId === session.user.id
+        ? interview.caregiverUserId
+        : interview.familyUserId;
 
     await db.execute({
       sql: `INSERT INTO Notification (id, userId, type, title, message, createdAt)
@@ -310,13 +353,16 @@ export async function DELETE(
         "interview",
         "Interview Cancelled",
         "An interview has been cancelled.",
-        new Date().toISOString()
-      ]
+        new Date().toISOString(),
+      ],
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error cancelling interview:", error);
-    return NextResponse.json({ error: "Failed to cancel interview" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to cancel interview" },
+      { status: 500 },
+    );
   }
 }

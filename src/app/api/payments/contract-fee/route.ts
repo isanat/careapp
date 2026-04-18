@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     if (!process.env.EASYPAY_API_KEY || !process.env.EASYPAY_ACCOUNT_ID) {
       return NextResponse.json(
         { error: "Pagamento temporariamente indisponível" },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid input", details: parsed.error.flatten() },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const { contractId } = parsed.data;
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!["mbway", "multibanco", "cc"].includes(method)) {
       return NextResponse.json(
         { error: "Método de pagamento inválido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     if (contractResult.rows.length === 0) {
       return NextResponse.json(
         { error: "Contract not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -58,21 +58,24 @@ export async function POST(request: NextRequest) {
     if (contract.familyUserId !== session.user.id) {
       return NextResponse.json(
         { error: "Only the family can pay the contract fee" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     if (contract.status !== "PENDING_PAYMENT") {
       return NextResponse.json(
         { error: "Contract is not in PENDING_PAYMENT status" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    if (Number(contract.familyFeePaid) === 1 || Boolean(contract.familyFeePaid) === true) {
+    if (
+      Number(contract.familyFeePaid) === 1 ||
+      Boolean(contract.familyFeePaid) === true
+    ) {
       return NextResponse.json(
         { error: "Contract fee already paid" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -92,7 +95,14 @@ export async function POST(request: NextRequest) {
     await db.execute({
       sql: `INSERT INTO Payment (id, userId, type, status, provider, amountEurCents, contractId, description, createdAt)
             VALUES (?, ?, 'CONTRACT_FEE', 'PENDING', 'EASYPAY', ?, ?, ?, ?)`,
-      args: [paymentId, session.user.id, CONTRACT_FEE_EUR_CENTS, contractId, `Taxa de contrato ${APP_NAME}`, now],
+      args: [
+        paymentId,
+        session.user.id,
+        CONTRACT_FEE_EUR_CENTS,
+        contractId,
+        `Taxa de contrato ${APP_NAME}`,
+        now,
+      ],
     });
 
     // Create Easypay payment
@@ -117,7 +127,12 @@ export async function POST(request: NextRequest) {
       sql: `UPDATE Payment SET stripeCheckoutSessionId = ?, metadata = ? WHERE id = ?`,
       args: [
         easypayResponse.uid,
-        JSON.stringify({ easypayId: easypayResponse.id, transactionKey, method, contractId }),
+        JSON.stringify({
+          easypayId: easypayResponse.id,
+          transactionKey,
+          method,
+          contractId,
+        }),
         paymentId,
       ],
     });
@@ -136,9 +151,12 @@ export async function POST(request: NextRequest) {
     console.error("Error creating contract fee payment:", error);
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Erro ao processar pagamento",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Erro ao processar pagamento",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

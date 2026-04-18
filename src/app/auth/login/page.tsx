@@ -8,9 +8,23 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { IconLogo, IconMail, IconLock, IconEye, IconEyeOff, IconAlert, IconLoader2 } from "@/components/icons";
+import {
+  IconLogo,
+  IconMail,
+  IconLock,
+  IconEye,
+  IconEyeOff,
+  IconAlert,
+  IconLoader2,
+} from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
@@ -51,7 +65,8 @@ function LoginPageContent() {
 
       if (result?.error) {
         // Show error message
-        const msg = "Email ou senha incorretos. Verifique seus dados e tente novamente.";
+        const msg =
+          "Email ou senha incorretos. Verifique seus dados e tente novamente.";
         setErrorMessage(msg);
         toast.error(msg);
         setIsLoading(false);
@@ -80,14 +95,17 @@ function LoginPageContent() {
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 mx-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 mx-auto"
+          >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">{t.auth.login} - {APP_NAME}</CardTitle>
-            <CardDescription>
-              {t.loading}
-            </CardDescription>
+            <CardTitle className="text-2xl">
+              {t.auth.login} - {APP_NAME}
+            </CardTitle>
+            <CardDescription>{t.loading}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -131,7 +149,9 @@ function LoginPageContent() {
               <Separator className="w-full" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">{t.all}</span>
+              <span className="bg-card px-2 text-muted-foreground">
+                {t.all}
+              </span>
             </div>
           </div>
 
@@ -171,13 +191,20 @@ function LoginPageContent() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <IconEyeOff className="h-4 w-4" />
+                  ) : (
+                    <IconEye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <Link href="/auth/forgot-password" className="text-primary hover:underline">
+              <Link
+                href="/auth/forgot-password"
+                className="text-primary hover:underline"
+              >
                 {t.auth.forgotPassword}
               </Link>
             </div>
@@ -196,7 +223,10 @@ function LoginPageContent() {
 
           <div className="text-center text-sm text-muted-foreground">
             {t.auth.noAccount}{" "}
-            <Link href="/auth/register" className="text-primary hover:underline font-medium">
+            <Link
+              href="/auth/register"
+              className="text-primary hover:underline font-medium"
+            >
               {t.auth.register}
             </Link>
           </div>
@@ -208,17 +238,19 @@ function LoginPageContent() {
 
 export default function LoginPage() {
   const { t } = useI18n();
-  
+
   return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <Card className="w-full max-w-md">
-          <CardContent className="py-12 text-center">
-            <p>{t.loading}</p>
-          </CardContent>
-        </Card>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+          <Card className="w-full max-w-md">
+            <CardContent className="py-12 text-center">
+              <p>{t.loading}</p>
+            </CardContent>
+          </Card>
+        </main>
+      }
+    >
       <LoginPageContent />
     </Suspense>
   );

@@ -1,30 +1,37 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
-import { APP_NAME } from '@/lib/constants';
-import { easypayService } from '@/lib/services/easypay';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
+import { APP_NAME } from "@/lib/constants";
+import { easypayService } from "@/lib/services/easypay";
 
 // POST: Create an Easypay payment
 export async function POST(request: NextRequest) {
   try {
     // Check if Easypay is configured
     if (!process.env.EASYPAY_API_KEY || !process.env.EASYPAY_ACCOUNT_ID) {
-      return NextResponse.json({ 
-        error: "Pagamento temporariamente indisponível",
-        details: "O sistema de pagamento não está configurado. Entre em contato com o suporte." 
-      }, { status: 503 });
+      return NextResponse.json(
+        {
+          error: "Pagamento temporariamente indisponível",
+          details:
+            "O sistema de pagamento não está configurado. Entre em contato com o suporte.",
+        },
+        { status: 503 },
+      );
     }
 
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Não autorizado. Faça login novamente.' }, { status: 401 });
+      return NextResponse.json(
+        { error: "Não autorizado. Faça login novamente." },
+        { status: 401 },
+      );
     }
 
     const body = await request.json();
-    const { 
+    const {
       type, // 'activation' | 'tokens' | 'contract'
       method, // 'mbway' | 'multibanco' | 'cc'
       amount,
@@ -34,11 +41,17 @@ export async function POST(request: NextRequest) {
 
     // Validate
     if (!type || !method || !amount) {
-      return NextResponse.json({ error: 'Campos obrigatórios não preenchidos.' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Campos obrigatórios não preenchidos." },
+        { status: 400 },
+      );
     }
 
-    if (!['mbway', 'multibanco', 'cc'].includes(method)) {
-      return NextResponse.json({ error: 'Método de pagamento inválido.' }, { status: 400 });
+    if (!["mbway", "multibanco", "cc"].includes(method)) {
+      return NextResponse.json(
+        { error: "Método de pagamento inválido." },
+        { status: 400 },
+      );
     }
 
     // Get user data
@@ -48,50 +61,64 @@ export async function POST(request: NextRequest) {
             LEFT JOIN ProfileFamily pf ON u.id = pf.userId
             LEFT JOIN ProfileCaregiver pc ON u.id = pc.userId
             WHERE u.id = ?`,
-      args: [session.user.id]
+      args: [session.user.id],
     });
 
     if (userResult.rows.length === 0) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const user = userResult.rows[0];
 
     // CAREGIVER users don't pay for activation - registration is FREE
-    if (type === 'activation' && user.role === 'CAREGIVER') {
-      return NextResponse.json({
-        error: 'Cuidadores não precisam pagar pela ativação da conta',
-        details: 'O registo de cuidadores é gratuito. A sua conta será ativada automaticamente após verificação.'
-      }, { status: 403 });
+    if (type === "activation" && user.role === "CAREGIVER") {
+      return NextResponse.json(
+        {
+          error: "Cuidadores não precisam pagar pela ativação da conta",
+          details:
+            "O registo de cuidadores é gratuito. A sua conta será ativada automaticamente após verificação.",
+        },
+        { status: 403 },
+      );
     }
     const transactionKey = generateId();
     const paymentId = generateId();
     const now = new Date().toISOString();
 
     // Determine payment type and amount
-    let description = '';
+    let description = "";
     let contractId = null;
 
     switch (type) {
-      case 'activation':
+      case "activation":
         description = `Ativação de conta ${APP_NAME}`;
         break;
-      case 'tokens':
+      case "tokens":
         description = `Carregamento de saldo - €${Math.floor(amount)}`;
         break;
-      case 'contract':
+      case "contract":
         description = `Pagamento de contrato ${APP_NAME}`;
         // Contract-specific logic would go here
         break;
       default:
-        return NextResponse.json({ error: 'Invalid payment type' }, { status: 400 });
+        return NextResponse.json(
+          { error: "Invalid payment type" },
+          { status: 400 },
+        );
     }
 
     // Create payment record in database
     await db.execute({
       sql: `INSERT INTO Payment (id, userId, type, status, provider, amountEurCents, description, createdAt)
             VALUES (?, ?, ?, 'PENDING', 'EASYPAY', ?, ?, ?)`,
-      args: [paymentId, session.user.id, type.toUpperCase(), Math.floor(amount * 100), description, now]
+      args: [
+        paymentId,
+        session.user.id,
+        type.toUpperCase(),
+        Math.floor(amount * 100),
+        description,
+        now,
+      ],
     });
 
     // Create Easypay payment
@@ -99,16 +126,19 @@ export async function POST(request: NextRequest) {
       id: session.user.id,
       name: user.name as string,
       email: user.email as string,
-      phone: phone || (user.phone as string) || '',
+      phone: phone || (user.phone as string) || "",
       fiscalNumber: nif,
     };
 
     let easypayResponse;
 
     switch (method) {
-      case 'mbway':
+      case "mbway":
         if (!customer.phone) {
-          return NextResponse.json({ error: 'Phone number required for MB Way' }, { status: 400 });
+          return NextResponse.json(
+            { error: "Phone number required for MB Way" },
+            { status: 400 },
+          );
         }
         easypayResponse = await easypayService.createMBWayPayment({
           transactionKey,
@@ -118,7 +148,7 @@ export async function POST(request: NextRequest) {
         });
         break;
 
-      case 'multibanco':
+      case "multibanco":
         easypayResponse = await easypayService.createMultibancoReference({
           transactionKey,
           amount,
@@ -127,7 +157,7 @@ export async function POST(request: NextRequest) {
         });
         break;
 
-      case 'cc':
+      case "cc":
         easypayResponse = await easypayService.createCardPayment({
           transactionKey,
           amount,
@@ -144,13 +174,13 @@ export async function POST(request: NextRequest) {
       sql: `UPDATE Payment SET stripeCheckoutSessionId = ?, metadata = ? WHERE id = ?`,
       args: [
         easypayResponse.uid,
-        JSON.stringify({ 
+        JSON.stringify({
           easypayId: easypayResponse.id,
           transactionKey,
           method,
         }),
-        paymentId
-      ]
+        paymentId,
+      ],
     });
 
     // Return response based on method
@@ -160,40 +190,58 @@ export async function POST(request: NextRequest) {
       method,
       transactionKey,
       easypayUid: easypayResponse.uid,
-      
-      // Method-specific data
-      mbway: easypayResponse.mbway ? {
-        requestId: easypayResponse.mbway.request_id,
-        alias: easypayResponse.mbway.alias,
-      } : undefined,
-      
-      multibanco: easypayResponse.multibanco ? {
-        entity: easypayResponse.multibanco.entity,
-        reference: easypayResponse.multibanco.reference,
-        amount: easypayResponse.multibanco.amount,
-        expiresAt: easypayResponse.multibanco.expires_at,
-      } : undefined,
-      
-      creditcard: easypayResponse.creditcard ? {
-        url: easypayResponse.creditcard.url,
-      } : undefined,
-    });
 
+      // Method-specific data
+      mbway: easypayResponse.mbway
+        ? {
+            requestId: easypayResponse.mbway.request_id,
+            alias: easypayResponse.mbway.alias,
+          }
+        : undefined,
+
+      multibanco: easypayResponse.multibanco
+        ? {
+            entity: easypayResponse.multibanco.entity,
+            reference: easypayResponse.multibanco.reference,
+            amount: easypayResponse.multibanco.amount,
+            expiresAt: easypayResponse.multibanco.expires_at,
+          }
+        : undefined,
+
+      creditcard: easypayResponse.creditcard
+        ? {
+            url: easypayResponse.creditcard.url,
+          }
+        : undefined,
+    });
   } catch (error) {
-    console.error('Error creating Easypay payment:', error);
-    
-    const errorMessage = error instanceof Error ? error.message : '';
-    
-    if (errorMessage.includes('Unauthorized') || errorMessage.includes('Invalid API')) {
-      return NextResponse.json({ 
-        error: "Pagamento temporariamente indisponível",
-        details: "As credenciais de pagamento não estão configuradas corretamente. Entre em contato com o suporte." 
-      }, { status: 503 });
+    console.error("Error creating Easypay payment:", error);
+
+    const errorMessage = error instanceof Error ? error.message : "";
+
+    if (
+      errorMessage.includes("Unauthorized") ||
+      errorMessage.includes("Invalid API")
+    ) {
+      return NextResponse.json(
+        {
+          error: "Pagamento temporariamente indisponível",
+          details:
+            "As credenciais de pagamento não estão configuradas corretamente. Entre em contato com o suporte.",
+        },
+        { status: 503 },
+      );
     }
-    
-    return NextResponse.json({ 
-      error: error instanceof Error ? error.message : 'Erro ao processar pagamento. Tente novamente.' 
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Erro ao processar pagamento. Tente novamente.",
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -201,47 +249,50 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const paymentId = searchParams.get('paymentId');
-    const transactionKey = searchParams.get('transactionKey');
+    const paymentId = searchParams.get("paymentId");
+    const transactionKey = searchParams.get("transactionKey");
 
     if (!paymentId && !transactionKey) {
-      return NextResponse.json({ error: 'Payment ID or transaction key required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Payment ID or transaction key required" },
+        { status: 400 },
+      );
     }
 
     // Get payment from database
     let payment;
-    
+
     if (paymentId) {
       const result = await db.execute({
         sql: `SELECT * FROM Payment WHERE id = ? AND userId = ?`,
-        args: [paymentId, session.user.id]
+        args: [paymentId, session.user.id],
       });
       payment = result.rows[0];
     } else if (transactionKey) {
       const result = await db.execute({
         sql: `SELECT * FROM Payment WHERE metadata LIKE ? AND userId = ?`,
-        args: [`%"transactionKey":"${transactionKey}"%`, session.user.id]
+        args: [`%"transactionKey":"${transactionKey}"%`, session.user.id],
       });
       payment = result.rows[0];
     }
 
     if (!payment) {
-      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
     }
 
     // Get status from Easypay
     const easypayUid = payment.stripeCheckoutSessionId as string;
-    
+
     if (easypayUid) {
       try {
         const easypayStatus = await easypayService.getPayment(easypayUid);
-        
+
         return NextResponse.json({
           paymentId: payment.id,
           status: payment.status,
@@ -250,14 +301,16 @@ export async function GET(request: NextRequest) {
           method: easypayStatus.method,
           createdAt: payment.createdAt,
           paidAt: payment.paidAt,
-          multibanco: easypayStatus.multibanco ? {
-            entity: easypayStatus.multibanco.entity,
-            reference: easypayStatus.multibanco.reference,
-            expiresAt: easypayStatus.multibanco.expires_at,
-          } : undefined,
+          multibanco: easypayStatus.multibanco
+            ? {
+                entity: easypayStatus.multibanco.entity,
+                reference: easypayStatus.multibanco.reference,
+                expiresAt: easypayStatus.multibanco.expires_at,
+              }
+            : undefined,
         });
       } catch (easypayError) {
-        console.error('Error fetching Easypay status:', easypayError);
+        console.error("Error fetching Easypay status:", easypayError);
       }
     }
 
@@ -268,9 +321,11 @@ export async function GET(request: NextRequest) {
       createdAt: payment.createdAt,
       paidAt: payment.paidAt,
     });
-
   } catch (error) {
-    console.error('Error checking payment status:', error);
-    return NextResponse.json({ error: 'Failed to check payment status' }, { status: 500 });
+    console.error("Error checking payment status:", error);
+    return NextResponse.json(
+      { error: "Failed to check payment status" },
+      { status: 500 },
+    );
   }
 }

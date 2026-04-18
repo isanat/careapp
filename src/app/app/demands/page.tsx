@@ -1,26 +1,29 @@
-'use client';
+"use client";
 
-import { Suspense } from 'react';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { AppShell } from '@/components/layout/app-shell';
-import { BloomSectionHeader, BloomEmpty, BloomCard, BloomBadge } from '@/components/bloom-custom';
+import { Suspense } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { AppShell } from "@/components/layout/app-shell";
+import {
+  BloomSectionHeader,
+  BloomEmpty,
+  BloomCard,
+} from "@/components/bloom-custom";
 import { useToast } from "@/hooks/use-toast";
-import { getServiceTypeLabel } from '@/lib/service-types';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { getServiceTypeLabel } from "@/lib/service-types";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   IconMapPin,
   IconClock,
@@ -35,7 +38,7 @@ import {
   IconArrowRight,
   IconLoader2,
   IconX,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface Demand {
   id: string;
@@ -75,33 +78,33 @@ function DemandsContent() {
   const [demands, setDemands] = useState<Demand[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchCity, setSearchCity] = useState('');
-  const [selectedService, setSelectedService] = useState('');
+  const [searchCity, setSearchCity] = useState("");
+  const [selectedService, setSelectedService] = useState("");
   const [wizard, setWizard] = useState<ProposalWizardState>({
     demandId: null,
     step: 1,
-    message: '',
-    expectedRate: '',
-    aboutYou: '',
+    message: "",
+    expectedRate: "",
+    aboutYou: "",
     isSubmitting: false,
     error: null,
   });
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status !== "authenticated") return;
 
     const fetchDemands = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        let url = '/api/demands?limit=50';
+        let url = "/api/demands?limit=50";
         if (searchCity) {
           url += `&city=${encodeURIComponent(searchCity)}`;
         }
@@ -110,11 +113,11 @@ function DemandsContent() {
         }
 
         const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to fetch demands');
+        if (!res.ok) throw new Error("Failed to fetch demands");
         const data = await res.json();
         setDemands(data.demands);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -128,9 +131,9 @@ function DemandsContent() {
     setWizard({
       demandId,
       step: 1,
-      message: '',
-      expectedRate: '',
-      aboutYou: '',
+      message: "",
+      expectedRate: "",
+      aboutYou: "",
       isSubmitting: false,
       error: null,
     });
@@ -140,9 +143,9 @@ function DemandsContent() {
     setWizard({
       demandId: null,
       step: 1,
-      message: '',
-      expectedRate: '',
-      aboutYou: '',
+      message: "",
+      expectedRate: "",
+      aboutYou: "",
       isSubmitting: false,
       error: null,
     });
@@ -150,37 +153,39 @@ function DemandsContent() {
 
   const handleSubmitProposal = async () => {
     if (!wizard.demandId) return;
-    setWizard(prev => ({ ...prev, isSubmitting: true, error: null }));
+    setWizard((prev) => ({ ...prev, isSubmitting: true, error: null }));
 
     try {
-      const res = await fetch('/api/proposals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           demandId: wizard.demandId,
           message: wizard.message,
-          expectedRate: wizard.expectedRate ? parseFloat(wizard.expectedRate) : undefined,
+          expectedRate: wizard.expectedRate
+            ? parseFloat(wizard.expectedRate)
+            : undefined,
           aboutYou: wizard.aboutYou,
         }),
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Falha ao enviar proposta');
+        throw new Error(errorData.error || "Falha ao enviar proposta");
       }
 
       handleCloseProposalWizard();
       toast({ title: "Sucesso", description: "Proposta enviada com sucesso!" });
     } catch (err) {
-      setWizard(prev => ({
+      setWizard((prev) => ({
         ...prev,
-        error: err instanceof Error ? err.message : 'Erro inesperado',
+        error: err instanceof Error ? err.message : "Erro inesperado",
         isSubmitting: false,
       }));
     }
   };
 
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="space-y-2">
@@ -188,7 +193,7 @@ function DemandsContent() {
           <div className="h-5 bg-muted rounded-xl w-96 animate-pulse" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1,2,3,4,5,6].map(i => (
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="h-64 bg-muted rounded-3xl animate-pulse" />
           ))}
         </div>
@@ -197,16 +202,16 @@ function DemandsContent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <BloomSectionHeader
           title="Marketplace de Demandas"
           desc="Explore oportunidades de trabalho disponíveis e envie suas propostas."
         />
-        <BloomBadge variant="primary" className="px-3 py-1 text-[10px] font-display font-black rounded-lg uppercase tracking-widest shrink-0">
+        <span className="px-3 py-1 text-[10px] font-display font-black rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
           {demands.length} vagas
-        </BloomBadge>
+        </span>
       </div>
 
       {/* Error */}
@@ -218,30 +223,43 @@ function DemandsContent() {
       )}
 
       {/* Filters */}
-      <BloomCard className="p-5 sm:p-6 md:p-7">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center text-primary shadow-sm border border-border shrink-0">
+      <BloomCard className="p-5 sm:p-7">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center text-primary shadow-sm border border-border">
             <IconFilter className="h-5 w-5" />
           </div>
-          <div className="min-w-0">
-            <p className="font-display font-black text-foreground text-sm uppercase">Filtros</p>
-            <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">Refine sua busca de oportunidades</p>
+          <div>
+            <p className="font-display font-black text-foreground text-sm uppercase">
+              Filtros
+            </p>
+            <p className="text-[10px] font-display font-medium text-muted-foreground uppercase tracking-widest">
+              Refine sua busca de oportunidades
+            </p>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Localidade</label>
+            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+              Localidade
+            </label>
             <Input
               type="text"
               value={searchCity}
-              onChange={e => setSearchCity(e.target.value)}
+              onChange={(e) => setSearchCity(e.target.value)}
               placeholder="Ex: Lisboa, Porto, Covilhã..."
               className="bg-secondary border-border/50"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Tipo de Serviço</label>
-            <Select value={selectedService || "ALL"} onValueChange={(value) => setSelectedService(value === "ALL" ? "" : value)}>
+            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+              Tipo de Serviço
+            </label>
+            <Select
+              value={selectedService || "ALL"}
+              onValueChange={(value) =>
+                setSelectedService(value === "ALL" ? "" : value)
+              }
+            >
               <SelectTrigger className="h-11 rounded-xl bg-secondary border-border/50">
                 <SelectValue placeholder="Todos os serviços" />
               </SelectTrigger>
@@ -252,9 +270,13 @@ function DemandsContent() {
                 <SelectItem value="MOBILITY">Mobilidade</SelectItem>
                 <SelectItem value="COMPANIONSHIP">Companhia</SelectItem>
                 <SelectItem value="MEAL_PREPARATION">Refeições</SelectItem>
-                <SelectItem value="LIGHT_HOUSEWORK">Tarefas Domésticas</SelectItem>
+                <SelectItem value="LIGHT_HOUSEWORK">
+                  Tarefas Domésticas
+                </SelectItem>
                 <SelectItem value="TRANSPORTATION">Transporte</SelectItem>
-                <SelectItem value="COGNITIVE_SUPPORT">Estimulação Cognitiva</SelectItem>
+                <SelectItem value="COGNITIVE_SUPPORT">
+                  Estimulação Cognitiva
+                </SelectItem>
                 <SelectItem value="NIGHT_CARE">Cuidados Noturnos</SelectItem>
               </SelectContent>
             </Select>
@@ -270,326 +292,356 @@ function DemandsContent() {
           description="Tente ajustar seus filtros para encontrar mais oportunidades"
         />
       ) : (
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {demands.map((demand, idx) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {demands.map((demand) => {
             const createdDate = new Date(demand.createdAt);
-            const daysAgo = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+            const daysAgo = Math.floor(
+              (Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24),
+            );
 
-            const visibilityBadgeVariant = demand.visibilityPackage === 'URGENT'
-              ? 'destructive'
-              : demand.visibilityPackage === 'PREMIUM'
-              ? 'primary'
-              : demand.visibilityPackage === 'BASIC'
-              ? 'success'
-              : null;
-
-            const visibilityLabel = demand.visibilityPackage === 'URGENT'
-              ? 'URGENTE'
-              : demand.visibilityPackage === 'PREMIUM'
-              ? 'DESTACADO'
-              : demand.visibilityPackage === 'BASIC'
-              ? 'VISÍVEL'
-              : null;
+            const visibilityBadge =
+              demand.visibilityPackage === "URGENT"
+                ? {
+                    label: "URGENTE",
+                    classes: "bg-destructive/10 text-destructive",
+                  }
+                : demand.visibilityPackage === "PREMIUM"
+                  ? {
+                      label: "DESTACADO",
+                      classes: "bg-primary/10 text-primary",
+                    }
+                  : demand.visibilityPackage === "BASIC"
+                    ? {
+                        label: "VISÍVEL",
+                        classes: "bg-success/10 text-success",
+                      }
+                    : null;
 
             return (
-              <motion.div
+              <BloomCard
                 key={demand.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                variant="interactive"
+                className="p-5 sm:p-7 cursor-pointer group flex flex-col h-full"
               >
-                <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7 cursor-pointer group flex flex-col h-full">
-                  {/* Header */}
-                  <div className="flex items-start justify-between gap-4 mb-4 sm:mb-5">
-                    <div className="flex-1 min-w-0">
-                      <Link href={`/app/demands/${demand.id}`}>
-                        <h3 className="text-base font-display font-black text-foreground group-hover:text-primary transition-colors truncate">{demand.title}</h3>
-                      </Link>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <IconMapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] font-medium text-muted-foreground truncate">{demand.city}{demand.postalCode && ` (${demand.postalCode})`}</span>
-                      </div>
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3 mb-5">
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/app/demands/${demand.id}`}>
+                      <h3 className="text-base font-display font-black text-foreground group-hover:text-primary transition-colors truncate">
+                        {demand.title}
+                      </h3>
+                    </Link>
+                    <div className="flex items-center gap-1 mt-1">
+                      <IconMapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-[11px] font-medium text-muted-foreground truncate">
+                        {demand.city}
+                        {demand.postalCode && ` (${demand.postalCode})`}
+                      </span>
                     </div>
-                    {visibilityBadgeVariant && (
-                      <BloomBadge variant={visibilityBadgeVariant} className="px-3 py-1 text-[10px] font-semibold rounded-lg shrink-0">
-                        {visibilityLabel}
-                      </BloomBadge>
+                  </div>
+                  {visibilityBadge && (
+                    <span
+                      className={`px-3 py-1 text-[10px] font-semibold rounded-lg shrink-0 ${visibilityBadge.classes}`}
+                    >
+                      {visibilityBadge.label}
+                    </span>
+                  )}
+                </div>
+
+                {/* Description */}
+                <div className="flex-1 mb-5">
+                  <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-2">
+                    {demand.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {demand.serviceTypes.slice(0, 3).map((service, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-lg"
+                      >
+                        {getServiceTypeLabel(service)}
+                      </span>
+                    ))}
+                    {demand.serviceTypes.length > 3 && (
+                      <span className="text-[10px] font-medium text-muted-foreground border border-border px-2 py-0.5 rounded-lg">
+                        +{demand.serviceTypes.length - 3}
+                      </span>
                     )}
                   </div>
+                </div>
 
-                  {/* Description */}
-                  <div className="flex-1 mb-4 sm:mb-5 space-y-3">
-                    <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-2">{demand.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {demand.serviceTypes.slice(0, 3).map((service, idx) => (
-                        <BloomBadge key={idx} variant="outline" className="text-[10px] font-medium">
-                          {getServiceTypeLabel(service)}
-                        </BloomBadge>
-                      ))}
-                      {demand.serviceTypes.length > 3 && (
-                        <BloomBadge variant="outline" className="text-[10px] font-medium">
-                          +{demand.serviceTypes.length - 3}
-                        </BloomBadge>
-                      )}
+                {/* Stats row */}
+                <div className="flex items-center justify-between pt-5 border-t border-border">
+                  <div className="flex items-center gap-4">
+                    {demand.hoursPerWeek && (
+                      <div className="flex items-center gap-1.5">
+                        <IconClock className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[11px] font-medium text-muted-foreground">
+                          {demand.hoursPerWeek}h/sem
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <IconEye className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-[11px] font-medium text-muted-foreground">
+                        {demand.viewCount}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <IconMessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-[11px] font-medium text-muted-foreground">
+                        {demand.proposalCount}
+                      </span>
                     </div>
                   </div>
-
-                  {/* Stats row */}
-                  <div className="flex items-center justify-between pt-4 sm:pt-5 border-t border-border gap-4">
-                    <div className="flex items-center gap-4 flex-wrap">
-                      {demand.hoursPerWeek && (
-                        <div className="flex items-center gap-1.5">
-                          <IconClock className="h-3.5 w-3.5 text-primary shrink-0" />
-                          <span className="text-[11px] font-medium text-muted-foreground">{demand.hoursPerWeek}h/sem</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1.5">
-                        <IconEye className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] font-medium text-muted-foreground">{demand.viewCount}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <IconMessageSquare className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        <span className="text-[11px] font-medium text-muted-foreground">{demand.proposalCount}</span>
-                      </div>
-                    </div>
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleOpenProposalWizard(demand.id);
-                      }}
-                      size="sm"
-                      variant="dark"
-                      className="shrink-0"
-                    >
-                      Propor
-                      <IconChevronRight className="h-3.5 w-3.5 ml-1" />
-                    </Button>
-                  </div>
-                </BloomCard>
-              </motion.div>
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleOpenProposalWizard(demand.id);
+                    }}
+                    size="sm"
+                    variant="dark"
+                  >
+                    Propor
+                    <IconChevronRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </div>
+              </BloomCard>
             );
           })}
-        </motion.div>
+        </div>
       )}
 
       {/* Proposal Wizard Modal */}
       {wizard.demandId && (
-        <motion.div
-          className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          >
-            <BloomCard className="w-full sm:max-w-lg max-h-[90vh] overflow-y-auto p-5 sm:p-6 md:p-7">
-              <div className="space-y-4 sm:space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <h2 className="text-xl font-display font-black text-foreground uppercase tracking-tighter">Sua Proposta</h2>
-                    <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mt-1">Passo {wizard.step} de 3</p>
-                  </div>
-                  <button
-                    onClick={handleCloseProposalWizard}
-                    className="h-9 w-9 rounded-xl bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors shrink-0"
-                  >
-                    <IconX className="h-5 w-5" />
-                  </button>
-                </div>
-
-                {/* Progress Bar */}
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-card rounded-3xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto shadow-elevated border border-border">
+            <div className="p-5 sm:p-7 space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between">
                 <div>
-                  <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-primary rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(wizard.step / 3) * 100}%` }}
-                      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-                    />
-                  </div>
+                  <h2 className="text-xl font-display font-black text-foreground uppercase tracking-tighter">
+                    Sua Proposta
+                  </h2>
+                  <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mt-1">
+                    Passo {wizard.step} de 3
+                  </p>
                 </div>
+                <button
+                  onClick={handleCloseProposalWizard}
+                  className="h-9 w-9 rounded-xl bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
+                >
+                  <IconX className="h-5 w-5" />
+                </button>
+              </div>
 
-                {/* Step 1 */}
-                {wizard.step === 1 && (
-                  <motion.div
-                    className="space-y-4 sm:space-y-5"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
+              {/* Progress Bar */}
+              <div>
+                <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary rounded-full transition-all duration-500"
+                    style={{ width: `${(wizard.step / 3) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Step 1 */}
+              {wizard.step === 1 && (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="font-display font-black text-foreground uppercase text-sm">
+                      Quem você é?
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Compartilhe informações sobre sua experiência e
+                      qualificações
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+                      Sobre você
+                    </label>
+                    <Textarea
+                      value={wizard.aboutYou}
+                      onChange={(e) =>
+                        setWizard((prev) => ({
+                          ...prev,
+                          aboutYou: e.target.value,
+                        }))
+                      }
+                      placeholder="Ex: Tenho 10 anos de experiência em cuidados domiciliares..."
+                      rows={4}
+                      className="rounded-xl text-sm resize-none bg-secondary border-border/50"
+                    />
+                    <p className="text-[10px] text-muted-foreground text-right">
+                      {wizard.aboutYou.length}/500
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => setWizard((prev) => ({ ...prev, step: 2 }))}
+                    disabled={wizard.aboutYou.trim().length === 0}
+                    size="lg"
+                    className="w-full"
                   >
-                    <div>
-                      <h3 className="font-display font-black text-foreground uppercase text-sm">Quem você é?</h3>
-                      <p className="text-xs text-muted-foreground mt-1">Compartilhe informações sobre sua experiência e qualificações</p>
-                    </div>
+                    Continuar <IconArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              )}
+
+              {/* Step 2 */}
+              {wizard.step === 2 && (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="font-display font-black text-foreground uppercase text-sm">
+                      Sua proposta
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Por que você é ideal para esta demanda?
+                    </p>
+                  </div>
+                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Sobre você</label>
+                      <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+                        Mensagem para a família
+                      </label>
                       <Textarea
-                        value={wizard.aboutYou}
-                        onChange={e => setWizard(prev => ({ ...prev, aboutYou: e.target.value }))}
-                        placeholder="Ex: Tenho 10 anos de experiência em cuidados domiciliares..."
+                        value={wizard.message}
+                        onChange={(e) =>
+                          setWizard((prev) => ({
+                            ...prev,
+                            message: e.target.value,
+                          }))
+                        }
+                        placeholder="Descreva por que você é um bom encaixe..."
                         rows={4}
                         className="rounded-xl text-sm resize-none bg-secondary border-border/50"
                       />
-                      <p className="text-[10px] text-muted-foreground text-right">{wizard.aboutYou.length}/500</p>
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+                        Taxa por hora (€)
+                      </label>
+                      <Input
+                        type="number"
+                        value={wizard.expectedRate}
+                        onChange={(e) =>
+                          setWizard((prev) => ({
+                            ...prev,
+                            expectedRate: e.target.value,
+                          }))
+                        }
+                        placeholder="Ex: 18.50"
+                        step="0.50"
+                        min="0"
+                        className="h-11 rounded-xl bg-secondary border-border/50"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
                     <Button
-                      onClick={() => setWizard(prev => ({ ...prev, step: 2 }))}
-                      disabled={wizard.aboutYou.trim().length === 0}
+                      variant="outline"
+                      onClick={() =>
+                        setWizard((prev) => ({ ...prev, step: 1 }))
+                      }
                       size="lg"
-                      className="w-full"
+                      className="h-11 px-4"
                     >
-                      Continuar <IconArrowRight className="h-4 w-4 ml-2" />
+                      <IconArrowLeft className="h-4 w-4" />
                     </Button>
-                  </motion.div>
-                )}
+                    <Button
+                      onClick={() =>
+                        setWizard((prev) => ({ ...prev, step: 3 }))
+                      }
+                      disabled={
+                        wizard.message.trim().length === 0 ||
+                        !wizard.expectedRate
+                      }
+                      size="lg"
+                      className="flex-1"
+                    >
+                      Revisar <IconArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              )}
 
-                {/* Step 2 */}
-                {wizard.step === 2 && (
-                  <motion.div
-                    className="space-y-4 sm:space-y-5"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
+              {/* Step 3 */}
+              {wizard.step === 3 && (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="font-display font-black text-foreground uppercase text-sm">
+                      Revisar proposta
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Verifique suas informações antes de enviar
+                    </p>
+                  </div>
+                  <div className="space-y-3 bg-secondary rounded-2xl border border-border/50 p-5">
+                    <div className="border-b border-border/50 pb-3">
+                      <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
+                        Sobre você
+                      </p>
+                      <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
+                    </div>
+                    <div className="border-b border-border/50 pb-3">
+                      <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
+                        Mensagem
+                      </p>
+                      <p className="text-sm line-clamp-3">{wizard.message}</p>
+                    </div>
                     <div>
-                      <h3 className="font-display font-black text-foreground uppercase text-sm">Sua proposta</h3>
-                      <p className="text-xs text-muted-foreground mt-1">Por que você é ideal para esta demanda?</p>
+                      <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
+                        Taxa horária
+                      </p>
+                      <p className="text-2xl font-display font-black text-foreground tracking-tighter">
+                        €{parseFloat(wizard.expectedRate || "0").toFixed(2)}/h
+                      </p>
                     </div>
-                    <div className="space-y-4">
-                      <motion.div
-                        className="space-y-2"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                      >
-                        <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Mensagem para a família</label>
-                        <Textarea
-                          value={wizard.message}
-                          onChange={e => setWizard(prev => ({ ...prev, message: e.target.value }))}
-                          placeholder="Descreva por que você é um bom encaixe..."
-                          rows={4}
-                          className="rounded-xl text-sm resize-none bg-secondary border-border/50"
-                        />
-                      </motion.div>
-                      <motion.div
-                        className="space-y-2"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15 }}
-                      >
-                        <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">Taxa por hora (€)</label>
-                        <Input
-                          type="number"
-                          value={wizard.expectedRate}
-                          onChange={e => setWizard(prev => ({ ...prev, expectedRate: e.target.value }))}
-                          placeholder="Ex: 18.50"
-                          step="0.50"
-                          min="0"
-                          className="h-11 rounded-xl bg-secondary border-border/50"
-                        />
-                      </motion.div>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button variant="outline" onClick={() => setWizard(prev => ({ ...prev, step: 1 }))} size="lg" className="h-11 px-4">
-                        <IconArrowLeft className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        onClick={() => setWizard(prev => ({ ...prev, step: 3 }))}
-                        disabled={wizard.message.trim().length === 0 || !wizard.expectedRate}
-                        size="lg"
-                        className="flex-1"
-                      >
-                        Revisar <IconArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
+                  </div>
 
-                {/* Step 3 */}
-                {wizard.step === 3 && (
-                  <motion.div
-                    className="space-y-4 sm:space-y-5"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div>
-                      <h3 className="font-display font-black text-foreground uppercase text-sm">Revisar proposta</h3>
-                      <p className="text-xs text-muted-foreground mt-1">Verifique suas informações antes de enviar</p>
+                  {wizard.error && (
+                    <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl">
+                      <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                      <p className="text-sm text-destructive">{wizard.error}</p>
                     </div>
-                    <div className="space-y-3 bg-secondary rounded-2xl border border-border/50 p-4 sm:p-5">
-                      <motion.div
-                        className="border-b border-border/50 pb-3"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                      >
-                        <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Sobre você</p>
-                        <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
-                      </motion.div>
-                      <motion.div
-                        className="border-b border-border/50 pb-3"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15 }}
-                      >
-                        <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Mensagem</p>
-                        <p className="text-sm line-clamp-3">{wizard.message}</p>
-                      </motion.div>
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">Taxa horária</p>
-                        <p className="text-2xl font-display font-black text-foreground tracking-tighter">€{parseFloat(wizard.expectedRate || '0').toFixed(2)}/h</p>
-                      </motion.div>
-                    </div>
+                  )}
 
-                    {wizard.error && (
-                      <motion.div
-                        className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-2xl"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                        <p className="text-sm text-destructive">{wizard.error}</p>
-                      </motion.div>
-                    )}
-
-                    <div className="flex gap-3">
-                      <Button variant="outline" onClick={() => setWizard(prev => ({ ...prev, step: 2 }))} size="lg" className="h-11 px-4" disabled={wizard.isSubmitting}>
-                        <IconArrowLeft className="h-4 w-4" />
-                      </Button>
-                      <Button onClick={handleSubmitProposal} disabled={wizard.isSubmitting} size="lg" className="flex-1">
-                        {wizard.isSubmitting ? (
-                          <><IconLoader2 className="h-4 w-4 animate-spin mr-2" />Enviando...</>
-                        ) : (
-                          <>Enviar Proposta <IconArrowRight className="h-4 w-4 ml-2" /></>
-                        )}
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            </BloomCard>
-          </motion.div>
-        </motion.div>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        setWizard((prev) => ({ ...prev, step: 2 }))
+                      }
+                      size="lg"
+                      className="h-11 px-4"
+                      disabled={wizard.isSubmitting}
+                    >
+                      <IconArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={handleSubmitProposal}
+                      disabled={wizard.isSubmitting}
+                      size="lg"
+                      className="flex-1"
+                    >
+                      {wizard.isSubmitting ? (
+                        <>
+                          <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          Enviar Proposta{" "}
+                          <IconArrowRight className="h-4 w-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
-import Stripe from 'stripe';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
+import Stripe from "stripe";
 
 // Lazy-load Stripe to avoid initialization errors during build
 let stripeInstance: Stripe | null = null;
@@ -10,7 +10,7 @@ function getStripe(): Stripe {
   if (!stripeInstance) {
     const apiKey = process.env.STRIPE_SECRET_KEY;
     if (!apiKey) {
-      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
     }
     stripeInstance = new Stripe(apiKey);
   }
@@ -18,13 +18,24 @@ function getStripe(): Stripe {
 }
 
 interface BoostRequest {
-  package: 'BASIC' | 'PREMIUM' | 'URGENT';
+  package: "BASIC" | "PREMIUM" | "URGENT";
 }
 
-const BOOST_PACKAGES: Record<string, { price: number; durationDays: number; label: string }> = {
-  BASIC: { price: 300, durationDays: 7, label: 'Visibilidade Básica (7 dias)' },
-  PREMIUM: { price: 800, durationDays: 30, label: 'Visibilidade Premium (30 dias)' },
-  URGENT: { price: 1500, durationDays: 3, label: 'Visibilidade Urgente (3 dias)' },
+const BOOST_PACKAGES: Record<
+  string,
+  { price: number; durationDays: number; label: string }
+> = {
+  BASIC: { price: 300, durationDays: 7, label: "Visibilidade Básica (7 dias)" },
+  PREMIUM: {
+    price: 800,
+    durationDays: 30,
+    label: "Visibilidade Premium (30 dias)",
+  },
+  URGENT: {
+    price: 1500,
+    durationDays: 3,
+    label: "Visibilidade Urgente (3 dias)",
+  },
 };
 
 /**
@@ -33,12 +44,12 @@ const BOOST_PACKAGES: Record<string, { price: number; durationDays: number; labe
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || !session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -46,7 +57,7 @@ export async function POST(
     const { package: boostPackage } = body;
 
     if (!boostPackage || !(boostPackage in BOOST_PACKAGES)) {
-      return NextResponse.json({ error: 'Invalid package' }, { status: 400 });
+      return NextResponse.json({ error: "Invalid package" }, { status: 400 });
     }
 
     const packageInfo = BOOST_PACKAGES[boostPackage];
@@ -58,23 +69,23 @@ export async function POST(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
     const demand = demandResult.rows[0];
     if (demand.familyUserId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Create Stripe checkout session
     const checkoutSession = await getStripe().checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
+      mode: "payment",
+      payment_method_types: ["card"],
       customer_email: session.user.email,
       line_items: [
         {
           price_data: {
-            currency: 'eur',
+            currency: "eur",
             product_data: {
               name: packageInfo.label,
               description: `Aumentar visibilidade da demanda: "${demand.title}"`,
@@ -95,7 +106,9 @@ export async function POST(
 
     // Store VisibilityPurchase with PENDING status
     const purchaseId = crypto.randomUUID();
-    const expiresAt = new Date(Date.now() + packageInfo.durationDays * 24 * 60 * 60 * 1000).toISOString();
+    const expiresAt = new Date(
+      Date.now() + packageInfo.durationDays * 24 * 60 * 60 * 1000,
+    ).toISOString();
 
     await db.execute({
       sql: `
@@ -111,7 +124,7 @@ export async function POST(
         boostPackage,
         packageInfo.price,
         checkoutSession.id,
-        'PENDING',
+        "PENDING",
         expiresAt,
       ],
     });
@@ -121,10 +134,10 @@ export async function POST(
       sessionId: checkoutSession.id,
     });
   } catch (error) {
-    console.error('[Boost API] POST error:', error);
+    console.error("[Boost API] POST error:", error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
+      { error: "Failed to create checkout session" },
+      { status: 500 },
     );
   }
 }
@@ -135,12 +148,12 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -159,14 +172,14 @@ export async function GET(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
     const demand = demandResult.rows[0];
 
     // Verify ownership - only the demand creator can check boost status
     if (demand.familyUserId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Check if there's an active boost
@@ -195,10 +208,10 @@ export async function GET(
       activeBoost,
     });
   } catch (error) {
-    console.error('[Boost API] GET error:', error);
+    console.error("[Boost API] GET error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch boost status' },
-      { status: 500 }
+      { error: "Failed to fetch boost status" },
+      { status: 500 },
     );
   }
 }

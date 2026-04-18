@@ -1,19 +1,21 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { DataTable, Column } from "@/components/admin/common/data-table";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,12 +36,11 @@ import {
   IconCalendar,
   IconEuro,
   IconCoins,
-  IconAlertCircle
+  IconAlertCircle,
 } from "@/components/icons";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
-import { pageTransitionVariants, containerVariants, itemVariants } from "@/lib/animations";
 
 interface CaregiverDetails {
   id: string;
@@ -140,8 +141,8 @@ export default function AdminCaregiverDetailPage() {
     }
   }, [params.id]);
 
-  const handleVerify = async (action: 'verify' | 'reject') => {
-    if (action === 'reject' && !rejectReason.trim()) {
+  const handleVerify = async (action: "verify" | "reject") => {
+    if (action === "reject" && !rejectReason.trim()) {
       toast({
         title: "Erro",
         description: "Informe o motivo da rejeição",
@@ -152,21 +153,22 @@ export default function AdminCaregiverDetailPage() {
 
     setActionLoading(true);
     try {
-      const response = await apiFetch('/api/admin/caregivers/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await apiFetch("/api/admin/caregivers/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caregiverId: params.id,
           action,
-          reason: action === 'reject' ? rejectReason : undefined,
+          reason: action === "reject" ? rejectReason : undefined,
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to update');
+      if (!response.ok) throw new Error("Failed to update");
 
       toast({
         title: "Sucesso",
-        description: action === 'verify' ? "KYC aprovado com sucesso" : "KYC rejeitado",
+        description:
+          action === "verify" ? "KYC aprovado com sucesso" : "KYC rejeitado",
       });
       setShowRejectModal(false);
       setRejectReason("");
@@ -185,13 +187,16 @@ export default function AdminCaregiverDetailPage() {
   const handleFeature = async (featured: boolean) => {
     setActionLoading(true);
     try {
-      const response = await apiFetch(`/api/admin/caregivers/${params.id}/feature`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ featured }),
-      });
+      const response = await apiFetch(
+        `/api/admin/caregivers/${params.id}/feature`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ featured }),
+        },
+      );
 
-      if (!response.ok) throw new Error('Failed to update');
+      if (!response.ok) throw new Error("Failed to update");
 
       toast({
         title: "Sucesso",
@@ -226,22 +231,33 @@ export default function AdminCaregiverDetailPage() {
     });
   };
 
-  const getStatusBadgeVariant = (status: string): "pending" | "verified" | "unverified" | "rejected" => {
+  const getStatusBadgeVariant = (
+    status: string,
+  ): "pending" | "verified" | "unverified" | "rejected" => {
     switch (status) {
-      case 'VERIFIED': return 'verified';
-      case 'PENDING': return 'pending';
-      case 'REJECTED': return 'rejected';
-      default: return 'unverified';
+      case "VERIFIED":
+        return "verified";
+      case "PENDING":
+        return "pending";
+      case "REJECTED":
+        return "rejected";
+      default:
+        return "unverified";
     }
   };
 
   const getContractStatusBadge = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return <StatusBadge status="active" />;
-      case 'COMPLETED': return <StatusBadge status="completed" />;
-      case 'CANCELLED': return <StatusBadge status="cancelled" />;
-      case 'DISPUTED': return <StatusBadge status="disputed" />;
-      default: return <StatusBadge status="pending" />;
+      case "ACTIVE":
+        return <StatusBadge status="active" />;
+      case "COMPLETED":
+        return <StatusBadge status="completed" />;
+      case "CANCELLED":
+        return <StatusBadge status="cancelled" />;
+      case "DISPUTED":
+        return <StatusBadge status="disputed" />;
+      default:
+        return <StatusBadge status="pending" />;
     }
   };
 
@@ -261,7 +277,7 @@ export default function AdminCaregiverDetailPage() {
     );
   }
 
-  const contractColumns: Column<CaregiverDetails['contracts'][0]>[] = [
+  const contractColumns: Column<CaregiverDetails["contracts"][0]>[] = [
     {
       key: "title",
       header: "Título",
@@ -285,7 +301,11 @@ export default function AdminCaregiverDetailPage() {
     {
       key: "createdAt",
       header: "Criado",
-      render: (c) => <span className="text-sm text-muted-foreground">{formatDate(c.createdAt)}</span>,
+      render: (c) => (
+        <span className="text-sm text-muted-foreground">
+          {formatDate(c.createdAt)}
+        </span>
+      ),
     },
     {
       key: "actions",
@@ -300,7 +320,7 @@ export default function AdminCaregiverDetailPage() {
     },
   ];
 
-  const reviewColumns: Column<CaregiverDetails['reviews'][0]>[] = [
+  const reviewColumns: Column<CaregiverDetails["reviews"][0]>[] = [
     {
       key: "fromUserName",
       header: "De",
@@ -328,18 +348,16 @@ export default function AdminCaregiverDetailPage() {
     {
       key: "createdAt",
       header: "Data",
-      render: (r) => <span className="text-sm text-muted-foreground">{formatDate(r.createdAt)}</span>,
+      render: (r) => (
+        <span className="text-sm text-muted-foreground">
+          {formatDate(r.createdAt)}
+        </span>
+      ),
     },
   ];
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={pageTransitionVariants}
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       <PageHeader
         title={caregiver.name}
         description="Detalhes do cuidador"
@@ -349,63 +367,53 @@ export default function AdminCaregiverDetailPage() {
         ]}
         actions={
           <Link href="/admin/caregivers">
-            <Button variant="outline">
-              Voltar
-            </Button>
+            <Button variant="outline">Voltar</Button>
           </Link>
         }
       />
 
       {/* Stats */}
-      <motion.div
-        className="grid gap-4 md:grid-cols-4"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={itemVariants}>
-          <StatsCard
-            title="Contratos"
-            value={caregiver.totalContracts || 0}
-            icon={<IconBriefcase className="h-5 w-5" />}
-          />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <StatsCard
-            title="Horas Trabalhadas"
-            value={caregiver.totalHoursWorked || 0}
-            icon={<IconClock className="h-5 w-5" />}
-          />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <StatsCard
-            title="Avaliação"
-            value={caregiver.averageRating?.toFixed(1) || "-"}
-            description={`${caregiver.totalReviews || 0} avaliações`}
-            icon={<IconStar className="h-5 w-5" />}
-          />
-        </motion.div>
-      </motion.div>
+      <div className="grid gap-4 md:grid-cols-4">
+        <StatsCard
+          title="Contratos"
+          value={caregiver.totalContracts || 0}
+          icon={<IconBriefcase className="h-5 w-5" />}
+        />
+        <StatsCard
+          title="Horas Trabalhadas"
+          value={caregiver.totalHoursWorked || 0}
+          icon={<IconClock className="h-5 w-5" />}
+        />
+        <StatsCard
+          title="Avaliação"
+          value={caregiver.averageRating?.toFixed(1) || "-"}
+          description={`${caregiver.totalReviews || 0} avaliações`}
+          icon={<IconStar className="h-5 w-5" />}
+        />
+      </div>
 
-      <motion.div
-        className="grid gap-6 lg:grid-cols-3"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
-      >
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* User Info Card */}
-        <motion.div variants={itemVariants}>
-          <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
-            <BloomSectionHeader title="Informações Pessoais" />
-            <div className="space-y-4">
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <IconUser className="h-5 w-5" />
+              Informações Pessoais
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${caregiver.name}`} />
+                <AvatarImage
+                  src={`https://api.dicebear.com/7.x/initials/svg?seed=${caregiver.name}`}
+                />
                 <AvatarFallback>{caregiver.name?.charAt(0)}</AvatarFallback>
               </Avatar>
-              <div className="flex-1">
+              <div>
                 <p className="font-medium text-lg">{caregiver.name}</p>
-                <p className="text-sm text-muted-foreground">{caregiver.title || "Sem título"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {caregiver.title || "Sem título"}
+                </p>
               </div>
             </div>
 
@@ -425,7 +433,9 @@ export default function AdminCaregiverDetailPage() {
               {caregiver.city && (
                 <div className="flex items-center gap-2 text-sm">
                   <IconMapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{caregiver.city}, {caregiver.country || "Portugal"}</span>
+                  <span>
+                    {caregiver.city}, {caregiver.country || "Portugal"}
+                  </span>
                 </div>
               )}
               <div className="flex items-center gap-2 text-sm">
@@ -436,18 +446,26 @@ export default function AdminCaregiverDetailPage() {
 
             <Separator />
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Experiência</span>
-                <span className="font-medium">{caregiver.experienceYears || 0} anos</span>
+                <span className="font-medium">
+                  {caregiver.experienceYears || 0} anos
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Taxa/Hora</span>
-                <span className="font-medium">{formatCurrency(caregiver.hourlyRateEur ? caregiver.hourlyRateEur * 100 : 0)}</span>
+                <span className="font-medium">
+                  {formatCurrency(
+                    caregiver.hourlyRateEur ? caregiver.hourlyRateEur * 100 : 0,
+                  )}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Mín. Horas</span>
-                <span className="font-medium">{caregiver.minimumHours || 1}h</span>
+                <span className="font-medium">
+                  {caregiver.minimumHours || 1}h
+                </span>
               </div>
             </div>
 
@@ -456,7 +474,9 @@ export default function AdminCaregiverDetailPage() {
                 <Separator />
                 <div>
                   <p className="text-sm font-medium mb-1">Sobre</p>
-                  <p className="text-sm text-muted-foreground">{caregiver.bio}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {caregiver.bio}
+                  </p>
                 </div>
               </>
             )}
@@ -472,26 +492,31 @@ export default function AdminCaregiverDetailPage() {
                 </div>
               </>
             )}
-            </div>
-          </BloomCard>
-        </motion.div>
+          </CardContent>
+        </Card>
 
         {/* KYC Verification Panel */}
-        <motion.div variants={itemVariants}>
-          <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
-            <BloomSectionHeader
-              title="Verificação KYC"
-              desc="Status da verificação de identidade"
-            />
-            <div className="space-y-4">
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <IconShield className="h-5 w-5" />
+              Verificação KYC
+            </CardTitle>
+            <CardDescription>
+              Status da verificação de identidade
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status</span>
-              <StatusBadge status={getStatusBadgeVariant(caregiver.verificationStatus)} />
+              <StatusBadge
+                status={getStatusBadgeVariant(caregiver.verificationStatus)}
+              />
             </div>
 
             <Separator />
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Documento</span>
                 <span>{caregiver.documentType || "-"}</span>
@@ -519,12 +544,18 @@ export default function AdminCaregiverDetailPage() {
               {caregiver.backgroundCheckStatus && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Antecedentes</span>
-                  <StatusBadge status={caregiver.backgroundCheckStatus === 'CLEARED' ? 'verified' : 'pending'} />
+                  <StatusBadge
+                    status={
+                      caregiver.backgroundCheckStatus === "CLEARED"
+                        ? "verified"
+                        : "pending"
+                    }
+                  />
                 </div>
               )}
             </div>
 
-            {caregiver.verificationStatus === 'PENDING' && (
+            {caregiver.verificationStatus === "PENDING" && (
               <>
                 <Separator />
                 <div className="space-y-3">
@@ -532,7 +563,7 @@ export default function AdminCaregiverDetailPage() {
                   <div className="flex gap-2">
                     <Button
                       className="flex-1 bg-success hover:bg-success/90"
-                      onClick={() => handleVerify('verify')}
+                      onClick={() => handleVerify("verify")}
                       disabled={actionLoading}
                     >
                       {actionLoading ? (
@@ -558,68 +589,61 @@ export default function AdminCaregiverDetailPage() {
 
             {/* Reject Modal */}
             {showRejectModal && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-              >
-                <motion.div
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <BloomCard className="w-full max-w-md mx-4 p-5 sm:p-6 md:p-7">
-                    <BloomSectionHeader
-                      title="Rejeitar KYC"
-                      desc="Informe o motivo da rejeição"
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <Card className="w-full max-w-md mx-4">
+                  <CardHeader>
+                    <CardTitle>Rejeitar KYC</CardTitle>
+                    <CardDescription>
+                      Informe o motivo da rejeição
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Textarea
+                      placeholder="Motivo da rejeição..."
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                      rows={4}
                     />
-                    <div className="space-y-4">
-                      <Textarea
-                        placeholder="Motivo da rejeição..."
-                        value={rejectReason}
-                        onChange={(e) => setRejectReason(e.target.value)}
-                        rows={4}
-                      />
-                      <div className="flex gap-2 justify-end">
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setShowRejectModal(false);
-                            setRejectReason("");
-                          }}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleVerify('reject')}
-                          disabled={actionLoading || !rejectReason.trim()}
-                        >
-                          {actionLoading ? (
-                            <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
-                          ) : null}
-                          Rejeitar
-                        </Button>
-                      </div>
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setShowRejectModal(false);
+                          setRejectReason("");
+                        }}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleVerify("reject")}
+                        disabled={actionLoading || !rejectReason.trim()}
+                      >
+                        {actionLoading ? (
+                          <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : null}
+                        Rejeitar
+                      </Button>
                     </div>
-                  </BloomCard>
-                </motion.div>
-              </motion.div>
+                  </CardContent>
+                </Card>
+              </div>
             )}
-            </div>
-          </BloomCard>
-        </motion.div>
+          </CardContent>
+        </Card>
 
         {/* Featured Status */}
-        <motion.div variants={itemVariants}>
-          <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
-            <BloomSectionHeader
-              title="Destaque"
-              desc="Gerencie a visibilidade do cuidador"
-            />
-            <div className="space-y-4">
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <IconStar className="h-5 w-5" />
+              Destaque
+            </CardTitle>
+            <CardDescription>
+              Gerencie a visibilidade do cuidador
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <p className="text-sm font-medium">Cuidador em Destaque</p>
@@ -643,15 +667,17 @@ export default function AdminCaregiverDetailPage() {
                   Indica disponibilidade imediata
                 </p>
               </div>
-              <BloomBadge variant={caregiver.availableNow ? "success" : "secondary"}>
+              <Badge variant={caregiver.availableNow ? "default" : "secondary"}>
                 {caregiver.availableNow ? "Sim" : "Não"}
-              </BloomBadge>
+              </Badge>
             </div>
 
             <Separator />
 
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Estatísticas de Visibilidade</p>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">
+                Estatísticas de Visibilidade
+              </p>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Visualizações</span>
                 <span>-</span>
@@ -661,40 +687,45 @@ export default function AdminCaregiverDetailPage() {
                 <span>-</span>
               </div>
             </div>
-            </div>
-          </BloomCard>
-        </motion.div>
-      </motion.div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Contracts */}
-      <motion.div variants={itemVariants}>
-        <BloomCard className="p-5 sm:p-6 md:p-7">
-          <BloomSectionHeader title={`Contratos (${caregiver.contracts?.length || 0})`} />
-          <div className="pt-4">
-            <DataTable
-              columns={contractColumns}
-              data={caregiver.contracts || []}
-              keyExtractor={(c) => c.id}
-              emptyMessage="Nenhum contrato encontrado"
-            />
-          </div>
-        </BloomCard>
-      </motion.div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <IconBriefcase className="h-5 w-5" />
+            Contratos ({caregiver.contracts?.length || 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={contractColumns}
+            data={caregiver.contracts || []}
+            keyExtractor={(c) => c.id}
+            emptyMessage="Nenhum contrato encontrado"
+          />
+        </CardContent>
+      </Card>
 
       {/* Reviews */}
-      <motion.div variants={itemVariants}>
-        <BloomCard className="p-5 sm:p-6 md:p-7">
-          <BloomSectionHeader title={`Avaliações (${caregiver.reviews?.length || 0})`} />
-          <div className="pt-4">
-            <DataTable
-              columns={reviewColumns}
-              data={caregiver.reviews || []}
-              keyExtractor={(r) => r.id}
-              emptyMessage="Nenhuma avaliação encontrada"
-            />
-          </div>
-        </BloomCard>
-      </motion.div>
-    </motion.div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <IconStar className="h-5 w-5" />
+            Avaliações ({caregiver.reviews?.length || 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={reviewColumns}
+            data={caregiver.reviews || []}
+            keyExtractor={(r) => r.id}
+            emptyMessage="Nenhuma avaliação encontrada"
+          />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

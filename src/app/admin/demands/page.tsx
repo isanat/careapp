@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { PageHeader } from '@/components/admin/common/page-header';
-import { StatsCard } from '@/components/admin/common/stats-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { PageHeader } from "@/components/admin/common/page-header";
+import { StatsCard } from "@/components/admin/common/stats-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   IconCoins,
   IconHeartHandshake,
@@ -16,7 +16,7 @@ import {
   IconBarChart,
   IconCheck,
   IconEye,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface KPIs {
   totalDemandsCreated: number;
@@ -62,22 +62,24 @@ export default function AdminDemandsPage() {
   const { toast } = useToast();
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [period, setPeriod] = useState<'today' | 'week' | 'month'>('week');
+  const [error, setError] = useState("");
+  const [period, setPeriod] = useState<"today" | "week" | "month">("week");
 
-  const fetchMetrics = async (p: 'today' | 'week' | 'month') => {
+  const fetchMetrics = async (p: "today" | "week" | "month") => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const res = await fetch(`/api/admin/demands/metrics?period=${p}`);
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to fetch metrics');
+        throw new Error(errorData.error || "Failed to fetch metrics");
       }
       const responseData = await res.json();
       setData(responseData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar métricas');
+      setError(
+        err instanceof Error ? err.message : "Erro ao carregar métricas",
+      );
     } finally {
       setLoading(false);
     }
@@ -93,42 +95,56 @@ export default function AdminDemandsPage() {
 
       const { kpis, dailyRevenueData } = data;
       const rows = [
-        ['Dashboard de Demandas - Relatório'],
-        [`Período: ${period === 'week' ? 'Últimos 7 dias' : period === 'month' ? 'Últimos 30 dias' : 'Hoje'}`],
+        ["Dashboard de Demandas - Relatório"],
+        [
+          `Período: ${period === "week" ? "Últimos 7 dias" : period === "month" ? "Últimos 30 dias" : "Hoje"}`,
+        ],
         [],
-        ['MÉTRICAS GLOBAIS'],
-        ['Receita Total', `€${kpis.totalRevenueEur}`],
-        ['Demandas Criadas', kpis.totalDemandsCreated.toString()],
-        ['Taxa Conversão (views→propostas)', `${kpis.conversionRatePercentage}%`],
-        ['Taxa Conversão (demandas→boosts)', `${kpis.boostConversionPercentage}%`],
-        ['Ticket Médio', `€${kpis.avgTicketEur}`],
-        ['Visualizações Totais', kpis.totalViews.toString()],
-        ['Propostas Totais', kpis.totalProposals.toString()],
+        ["MÉTRICAS GLOBAIS"],
+        ["Receita Total", `€${kpis.totalRevenueEur}`],
+        ["Demandas Criadas", kpis.totalDemandsCreated.toString()],
+        [
+          "Taxa Conversão (views→propostas)",
+          `${kpis.conversionRatePercentage}%`,
+        ],
+        [
+          "Taxa Conversão (demandas→boosts)",
+          `${kpis.boostConversionPercentage}%`,
+        ],
+        ["Ticket Médio", `€${kpis.avgTicketEur}`],
+        ["Visualizações Totais", kpis.totalViews.toString()],
+        ["Propostas Totais", kpis.totalProposals.toString()],
         [],
-        ['RECEITA DIÁRIA'],
-        ['Data', 'Receita'],
-        ...dailyRevenueData.map(d => [d.date, `€${d.revenueEur}`]),
+        ["RECEITA DIÁRIA"],
+        ["Data", "Receita"],
+        ...dailyRevenueData.map((d) => [d.date, `€${d.revenueEur}`]),
       ];
 
-      const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const csvContent = rows
+        .map((row) => row.map((cell) => `"${cell}"`).join(","))
+        .join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `demands-report-${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `demands-report-${new Date().toISOString().split("T")[0]}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      toast({ title: "Erro", description: "Erro ao exportar CSV", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Erro ao exportar CSV",
+        variant: "destructive",
+      });
     }
   };
 
   const formatCurrency = (valueStr: string) => {
-    return new Intl.NumberFormat('pt-PT', {
-      style: 'currency',
-      currency: 'EUR',
+    return new Intl.NumberFormat("pt-PT", {
+      style: "currency",
+      currency: "EUR",
     }).format(parseFloat(valueStr));
   };
 
@@ -139,11 +155,19 @@ export default function AdminDemandsPage() {
         description="Análise de demandas, visibilidade e receita"
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => fetchMetrics(period)} disabled={loading}>
+            <Button
+              variant="outline"
+              onClick={() => fetchMetrics(period)}
+              disabled={loading}
+            >
               <IconRefresh className="mr-2 h-4 w-4" />
               Atualizar
             </Button>
-            <Button variant="outline" onClick={handleExportCSV} disabled={loading || !data}>
+            <Button
+              variant="outline"
+              onClick={handleExportCSV}
+              disabled={loading || !data}
+            >
               <IconDownload className="mr-2 h-4 w-4" />
               Exportar
             </Button>
@@ -159,16 +183,16 @@ export default function AdminDemandsPage() {
 
       {/* Period Selector */}
       <div className="flex gap-2">
-        {['today', 'week', 'month'].map((p) => (
+        {["today", "week", "month"].map((p) => (
           <Button
             key={p}
-            variant={period === p ? 'default' : 'outline'}
-            onClick={() => setPeriod(p as 'today' | 'week' | 'month')}
+            variant={period === p ? "default" : "outline"}
+            onClick={() => setPeriod(p as "today" | "week" | "month")}
             disabled={loading}
           >
-            {p === 'week' && 'Últimos 7 dias'}
-            {p === 'month' && 'Últimos 30 dias'}
-            {p === 'today' && 'Hoje'}
+            {p === "week" && "Últimos 7 dias"}
+            {p === "month" && "Últimos 30 dias"}
+            {p === "today" && "Hoje"}
           </Button>
         ))}
       </div>
@@ -176,7 +200,9 @@ export default function AdminDemandsPage() {
       {/* Loading State */}
       {loading && (
         <div className="rounded-lg border border-border p-8 text-center">
-          <p className="text-sm text-muted-foreground">Carregando métricas...</p>
+          <p className="text-sm text-muted-foreground">
+            Carregando métricas...
+          </p>
         </div>
       )}
 
@@ -228,12 +254,14 @@ export default function AdminDemandsPage() {
             <div className="space-y-4">
               {data.dailyRevenueData.map((point, idx) => (
                 <div key={idx} className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{point.date}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {point.date}
+                  </span>
                   <div className="flex items-center gap-4">
                     <div
                       className="h-2 bg-primary rounded-full"
                       style={{
-                        width: `${(point.revenueCents / Math.max(...data.dailyRevenueData.map(d => d.revenueCents || 1)) * 200) || 2}px`,
+                        width: `${(point.revenueCents / Math.max(...data.dailyRevenueData.map((d) => d.revenueCents || 1))) * 200 || 2}px`,
                       }}
                     />
                     <span className="text-sm font-medium text-foreground w-20 text-right">
@@ -261,16 +289,26 @@ export default function AdminDemandsPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Visualizações</span>
+                  <span className="text-sm text-muted-foreground">
+                    Visualizações
+                  </span>
                   <span className="font-semibold">{data.kpis.totalViews}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Propostas Enviadas</span>
-                  <span className="font-semibold">{data.kpis.totalProposals}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Propostas Enviadas
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.totalProposals}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Propostas Aceitas</span>
-                  <span className="font-semibold">{data.kpis.acceptedProposals}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Propostas Aceitas
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.acceptedProposals}
+                  </span>
                 </div>
                 <div className="border-t pt-4 flex justify-between items-center">
                   <span className="text-sm font-medium">Taxa de Conversão</span>
@@ -295,16 +333,20 @@ export default function AdminDemandsPage() {
                 {data.packageBreakdown.map((pkg, idx) => (
                   <div key={idx} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Badge variant={pkg.package === 'NONE' ? 'outline' : 'default'}>
-                        {pkg.package === 'NONE' && 'Sem Boost'}
-                        {pkg.package === 'BASIC' && '7 dias'}
-                        {pkg.package === 'PREMIUM' && '30 dias'}
-                        {pkg.package === 'URGENT' && 'Urgente'}
+                      <Badge
+                        variant={pkg.package === "NONE" ? "outline" : "default"}
+                      >
+                        {pkg.package === "NONE" && "Sem Boost"}
+                        {pkg.package === "BASIC" && "7 dias"}
+                        {pkg.package === "PREMIUM" && "30 dias"}
+                        {pkg.package === "URGENT" && "Urgente"}
                       </Badge>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">{pkg.count}</div>
-                      <div className="text-xs text-muted-foreground">€{pkg.revenueEur.toFixed(2)}</div>
+                      <div className="text-xs text-muted-foreground">
+                        €{pkg.revenueEur.toFixed(2)}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -324,15 +366,25 @@ export default function AdminDemandsPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Ativas</span>
-                  <span className="font-semibold text-success">{data.kpis.activeDemands}</span>
+                  <span className="font-semibold text-success">
+                    {data.kpis.activeDemands}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Fechadas</span>
-                  <span className="font-semibold">{data.kpis.closedDemands}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Fechadas
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.closedDemands}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Pausadas</span>
-                  <span className="font-semibold">{data.kpis.pausedDemands}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Pausadas
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.pausedDemands}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -349,16 +401,28 @@ export default function AdminDemandsPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Views/Demanda</span>
-                  <span className="font-semibold">{data.kpis.avgViewsPerDemand}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Views/Demanda
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.avgViewsPerDemand}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Propostas/Demanda</span>
-                  <span className="font-semibold">{data.kpis.avgProposalsPerDemand}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Propostas/Demanda
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.avgProposalsPerDemand}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Compras Pendentes</span>
-                  <span className="font-semibold">{data.kpis.pendingPurchases}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Compras Pendentes
+                  </span>
+                  <span className="font-semibold">
+                    {data.kpis.pendingPurchases}
+                  </span>
                 </div>
               </div>
             </CardContent>

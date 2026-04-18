@@ -1,20 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { RtcTokenBuilder, RtcRole } from 'agora-token';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { RtcTokenBuilder, RtcRole } from "agora-token";
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { channelName } = await request.json();
 
     if (!channelName) {
-      return NextResponse.json({ error: 'Channel name is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Channel name is required" },
+        { status: 400 },
+      );
     }
 
     const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
@@ -22,8 +25,8 @@ export async function POST(request: NextRequest) {
 
     if (!appId || !appCertificate) {
       return NextResponse.json(
-        { error: 'Agora credentials not configured' },
-        { status: 500 }
+        { error: "Agora credentials not configured" },
+        { status: 500 },
       );
     }
 
@@ -40,7 +43,7 @@ export async function POST(request: NextRequest) {
       0,
       RtcRole.PUBLISHER,
       privilegeExpiredTs,
-      privilegeExpiredTs
+      privilegeExpiredTs,
     );
 
     return NextResponse.json({
@@ -48,10 +51,13 @@ export async function POST(request: NextRequest) {
       appId,
       channelName,
       uid: 0,
-      expiresIn: expirationTimeInSeconds
+      expiresIn: expirationTimeInSeconds,
     });
   } catch (error) {
-    console.error('Error generating Agora token:', error);
-    return NextResponse.json({ error: 'Failed to generate token' }, { status: 500 });
+    console.error("Error generating Agora token:", error);
+    return NextResponse.json(
+      { error: "Failed to generate token" },
+      { status: 500 },
+    );
   }
 }

@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Não autorizado. Faça login para continuar." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         {
           error: "Apenas profissionais podem escanear códigos QR",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
         {
           status: 429,
           headers: { "Retry-After": "60" },
-        }
+        },
       );
     }
 
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
         {
           status: 429,
           headers: { "Retry-After": "60" },
-        }
+        },
       );
     }
 
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     if (!qrCode || typeof qrCode !== "string") {
       return NextResponse.json(
         { error: "Campo 'qrCode' é obrigatório e deve ser uma string" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     if (!isValidQRCodeFormat(qrCode)) {
       return NextResponse.json(
         { error: "Formato de código QR inválido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,15 +106,17 @@ export async function POST(request: NextRequest) {
       qrCode,
       session.user.id,
       ipAddress,
-      userAgent
+      userAgent,
     );
 
     // Create notification for family
-    const notificationId = Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+    const notificationId =
+      Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
     const notificationTime = new Date().toISOString();
-    const scanTimeDate = typeof result.scannedAt === "string"
-      ? new Date(result.scannedAt)
-      : result.scannedAt;
+    const scanTimeDate =
+      typeof result.scannedAt === "string"
+        ? new Date(result.scannedAt)
+        : result.scannedAt;
     const scanTime = scanTimeDate.toLocaleTimeString("pt-PT");
 
     await db.execute({
@@ -147,15 +149,13 @@ export async function POST(request: NextRequest) {
           status: result.status,
         },
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[QR Scan] Error:", error);
 
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao processar código QR";
+      error instanceof Error ? error.message : "Erro ao processar código QR";
 
     const statusCode =
       message.includes("expirou") ||
@@ -167,9 +167,6 @@ export async function POST(request: NextRequest) {
           ? 403
           : 500;
 
-    return NextResponse.json(
-      { error: message },
-      { status: statusCode }
-    );
+    return NextResponse.json({ error: message }, { status: statusCode });
   }
 }

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db-turso";
 
 /**
  * Public API endpoint for caregivers to find families looking for care.
@@ -9,9 +9,9 @@ import { db } from '@/lib/db-turso';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const city = searchParams.get('city');
-    const service = searchParams.get('service');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const city = searchParams.get("city");
+    const service = searchParams.get("service");
+    const limit = parseInt(searchParams.get("limit") || "20");
 
     let sql = `
       SELECT
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     const result = await db.execute({ sql, args });
 
-    const families = result.rows.map(row => ({
+    const families = result.rows.map((row) => ({
       id: row.id,
       name: row.name,
       profileImage: row.profileImage,
@@ -55,7 +55,9 @@ export async function GET(request: NextRequest) {
       elderNeeds: row.elderNeeds,
       medicalConditions: row.medicalConditions,
       mobilityLevel: row.mobilityLevel,
-      preferredServices: row.preferredServices ? String(row.preferredServices).split(',') : [],
+      preferredServices: row.preferredServices
+        ? String(row.preferredServices).split(",")
+        : [],
       preferredSchedule: row.preferredSchedule,
       budgetRange: row.budgetRange,
       latitude: row.latitude ? Number(row.latitude) : null,
@@ -63,10 +65,16 @@ export async function GET(request: NextRequest) {
     }));
 
     const response = NextResponse.json({ families });
-    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    response.headers.set(
+      "Cache-Control",
+      "public, s-maxage=60, stale-while-revalidate=300",
+    );
     return response;
   } catch (error) {
-    console.error('Error fetching families:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching families:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

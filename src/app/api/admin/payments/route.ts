@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - List payments
 export async function GET(request: NextRequest) {
@@ -9,10 +9,10 @@ export async function GET(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
-    const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const type = searchParams.get("type");
+    const status = searchParams.get("status");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
     const offset = (page - 1) * limit;
 
     let sql = `SELECT
@@ -54,16 +54,19 @@ export async function GET(request: NextRequest) {
         COUNT(*) as total,
         SUM(CASE WHEN status = 'COMPLETED' THEN amountEurCents ELSE 0 END) as totalRevenue
       FROM Payment`,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
       payments: result.rows,
       totals: totalsResult.rows[0],
-      pagination: { page, limit }
+      pagination: { page, limit },
     });
   } catch (error) {
-    console.error('Error fetching payments:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching payments:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

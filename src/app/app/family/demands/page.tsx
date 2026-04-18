@@ -1,16 +1,21 @@
-'use client';
+"use client";
 
-import { Suspense } from 'react';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { AppShell } from '@/components/layout/app-shell';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { DemandActionsDropdown } from '@/components/demands/demand-actions-dropdown';
-import { BloomCard, BloomBadge, BloomStatBlock, BloomSectionDivider, BloomEmpty } from '@/components/bloom-custom';
+import { Suspense } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { AppShell } from "@/components/layout/app-shell";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { DemandActionsDropdown } from "@/components/demands/demand-actions-dropdown";
+import {
+  BloomCard,
+  BloomBadge,
+  BloomStatBlock,
+  BloomSectionDivider,
+  BloomEmpty,
+} from "@/components/bloom-custom";
 import {
   IconPlus,
   IconMapPin,
@@ -25,7 +30,7 @@ import {
   IconBarChart,
   IconCalendar,
   IconTrendingDown,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface DemandMetrics {
   viewCount: number;
@@ -62,33 +67,35 @@ function FamilyDemandsContent() {
   const [analytics, setAnalytics] = useState<FamilyAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('ACTIVE');
+  const [statusFilter, setStatusFilter] = useState<string>("ACTIVE");
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status !== "authenticated") return;
 
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const demandsRes = await fetch(`/api/family/demands?status=${statusFilter}`);
-        if (!demandsRes.ok) throw new Error('Failed to fetch demands');
+        const demandsRes = await fetch(
+          `/api/family/demands?status=${statusFilter}`,
+        );
+        if (!demandsRes.ok) throw new Error("Failed to fetch demands");
         const demandsData = await demandsRes.json();
         setDemands(demandsData.demands);
 
-        const analyticsRes = await fetch('/api/family/demands/analytics');
-        if (!analyticsRes.ok) throw new Error('Failed to fetch analytics');
+        const analyticsRes = await fetch("/api/family/demands/analytics");
+        if (!analyticsRes.ok) throw new Error("Failed to fetch analytics");
         const analyticsData = await analyticsRes.json();
         setAnalytics(analyticsData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -97,7 +104,7 @@ function FamilyDemandsContent() {
     fetchData();
   }, [status, statusFilter]);
 
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-7xl mx-auto space-y-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -119,53 +126,30 @@ function FamilyDemandsContent() {
     );
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35,  },
-    },
-  };
-
   return (
-    <motion.div
-      className="max-w-7xl mx-auto space-y-8"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header Section */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter leading-none">Suas Demandas</h1>
+          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 tracking-tighter leading-none">
+            Suas Demandas
+          </h1>
           <p className="text-base text-muted-foreground font-medium">
             Gerencie e acompanhe todas as suas demandas de serviços de cuidados
           </p>
         </div>
-        <Button asChild className="rounded-2xl gap-2 h-10 shrink-0">
+        <Button asChild className="rounded-2xl gap-2 h-10">
           <Link href="/app/family/demands/new">
             <IconPlus className="h-4 w-4" />
             <span className="hidden sm:inline">Criar Demanda</span>
             <span className="sm:hidden">Nova</span>
           </Link>
         </Button>
-      </motion.div>
+      </div>
 
       {/* Analytics Cards */}
       {analytics && (
-        <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
           <BloomStatBlock
             label="Ativas"
             value={analytics.activeDemands}
@@ -200,21 +184,33 @@ function FamilyDemandsContent() {
             icon={<IconEye className="h-6 w-6" />}
             colorClass="text-secondary"
           />
-        </motion.div>
+        </div>
       )}
 
       {/* Tabs Section */}
-      <motion.div variants={itemVariants}>
-        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full space-y-6">
+      <Tabs
+        value={statusFilter}
+        onValueChange={setStatusFilter}
+        className="w-full space-y-6"
+      >
         <TabsList className="w-full grid grid-cols-3 h-11 rounded-2xl bg-muted/50 p-1 border border-border/30">
-          <TabsTrigger value="ACTIVE" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
-            Ativas ({demands.filter(d => d.status === 'ACTIVE').length})
+          <TabsTrigger
+            value="ACTIVE"
+            className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all"
+          >
+            Ativas ({demands.filter((d) => d.status === "ACTIVE").length})
           </TabsTrigger>
-          <TabsTrigger value="CLOSED" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
-            Fechadas ({demands.filter(d => d.status === 'CLOSED').length})
+          <TabsTrigger
+            value="CLOSED"
+            className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all"
+          >
+            Fechadas ({demands.filter((d) => d.status === "CLOSED").length})
           </TabsTrigger>
-          <TabsTrigger value="PAUSED" className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">
-            Pausadas ({demands.filter(d => d.status === 'PAUSED').length})
+          <TabsTrigger
+            value="PAUSED"
+            className="rounded-xl text-xs font-display font-black uppercase tracking-widest data-[state=active]:shadow-sm data-[state=active]:bg-background data-[state=active]:text-foreground transition-all"
+          >
+            Pausadas ({demands.filter((d) => d.status === "PAUSED").length})
           </TabsTrigger>
         </TabsList>
 
@@ -222,43 +218,61 @@ function FamilyDemandsContent() {
           {demands.length === 0 ? (
             <BloomEmpty
               icon={
-                statusFilter === 'ACTIVE' ? <IconStar className="h-8 w-8" /> :
-                statusFilter === 'CLOSED' ? <IconCheck className="h-8 w-8" /> :
-                <IconCalendar className="h-8 w-8" />
+                statusFilter === "ACTIVE" ? (
+                  <IconStar className="h-8 w-8" />
+                ) : statusFilter === "CLOSED" ? (
+                  <IconCheck className="h-8 w-8" />
+                ) : (
+                  <IconCalendar className="h-8 w-8" />
+                )
               }
               title="Nenhuma demanda neste status"
               description={
-                statusFilter === 'ACTIVE' ? 'Crie sua primeira demanda para atrair cuidadores qualificados' :
-                statusFilter === 'CLOSED' ? 'Aqui aparecerão suas demandas concluídas e fechadas' :
-                'Você ainda não pausou nenhuma demanda'
+                statusFilter === "ACTIVE"
+                  ? "Crie sua primeira demanda para atrair cuidadores qualificados"
+                  : statusFilter === "CLOSED"
+                    ? "Aqui aparecerão suas demandas concluídas e fechadas"
+                    : "Você ainda não pausou nenhuma demanda"
               }
             />
           ) : (
-            <motion.div
-              className="space-y-3"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {demands.map(demand => {
-                const visibilityConfig: Record<string, { badgeVariant: 'primary' | 'success' | 'warning' | 'destructive' | 'secondary' | 'info' | 'muted', label: string }> = {
-                  'URGENT': { badgeVariant: 'destructive', label: 'Urgente' },
-                  'PREMIUM': { badgeVariant: 'primary', label: 'Premium' },
-                  'BASIC': { badgeVariant: 'secondary', label: 'Básico' },
+            <div className="space-y-3">
+              {demands.map((demand) => {
+                const visibilityConfig: Record<
+                  string,
+                  {
+                    badgeVariant:
+                      | "primary"
+                      | "success"
+                      | "warning"
+                      | "destructive"
+                      | "secondary"
+                      | "info"
+                      | "muted";
+                    label: string;
+                  }
+                > = {
+                  URGENT: { badgeVariant: "destructive", label: "Urgente" },
+                  PREMIUM: { badgeVariant: "primary", label: "Premium" },
+                  BASIC: { badgeVariant: "secondary", label: "Básico" },
                 };
 
-                const config = visibilityConfig[demand.visibilityPackage as keyof typeof visibilityConfig] || { badgeVariant: 'muted' as const, label: '' };
+                const config = visibilityConfig[
+                  demand.visibilityPackage as keyof typeof visibilityConfig
+                ] || { badgeVariant: "muted" as const, label: "" };
 
                 return (
-                  <motion.div key={demand.id} variants={itemVariants}>
-                    <Link href={`/app/family/demands/${demand.id}`} className="group">
-                      <motion.div
-                        whileHover={{ scale: 1.02, y: -4 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <BloomCard variant="interactive" className="p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-                        {/* Left: Title, Description, Badge */}
-                        <div className="flex-1 space-y-3 min-w-0">
+                  <Link
+                    key={demand.id}
+                    href={`/app/family/demands/${demand.id}`}
+                    className="group"
+                  >
+                    <BloomCard
+                      variant="interactive"
+                      className="p-5 sm:p-7 flex flex-col md:flex-row md:items-center md:justify-between gap-5"
+                    >
+                      {/* Left: Title, Description, Badge */}
+                      <div className="flex-1 space-y-3 min-w-0">
                         <div className="space-y-2">
                           <h3 className="text-lg font-display font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                             {demand.title}
@@ -282,78 +296,82 @@ function FamilyDemandsContent() {
                         <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                           {demand.description}
                         </p>
-                        </div>
+                      </div>
 
-                        {/* Right: Metrics & Actions */}
-                        <div className="flex items-center justify-between md:flex-col md:items-end gap-4 md:gap-3 flex-shrink-0">
-                          {/* Metrics Row */}
-                          <div className="flex justify-between gap-4 md:justify-end md:w-full">
-                            <div className="flex flex-col items-center gap-1">
-                              <IconEye className="h-4 w-4 text-secondary" />
-                              <p className="text-sm font-display font-black text-foreground">{demand.metrics.viewCount}</p>
-                              <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Vistas</p>
-                            </div>
-
-                            <div className="flex flex-col items-center gap-1">
-                              <IconMessageSquare className="h-4 w-4 text-accent" />
-                              <p className="text-sm font-display font-black text-foreground">{demand.metrics.proposalCount}</p>
-                              <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Propostas</p>
-                            </div>
-
-                            <div className="flex flex-col items-center gap-1">
-                              <IconEuro className="h-4 w-4 text-primary" />
-                              <p className="text-sm font-display font-black text-foreground">€{demand.metrics.visibilitySpent}</p>
-                              <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">Investido</p>
-                            </div>
+                      {/* Right: Metrics & Actions */}
+                      <div className="flex items-center justify-between md:flex-col md:items-end gap-4 md:gap-3 flex-shrink-0">
+                        {/* Metrics Row */}
+                        <div className="flex justify-between gap-4 md:justify-end md:w-full">
+                          <div className="flex flex-col items-center gap-1">
+                            <IconEye className="h-4 w-4 text-secondary" />
+                            <p className="text-sm font-display font-black text-foreground">
+                              {demand.metrics.viewCount}
+                            </p>
+                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">
+                              Vistas
+                            </p>
                           </div>
 
-                          {/* Action Buttons */}
-                          <div className="flex gap-2 w-full md:w-auto">
-                            <Link
-                              href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
+                          <div className="flex flex-col items-center gap-1">
+                            <IconMessageSquare className="h-4 w-4 text-accent" />
+                            <p className="text-sm font-display font-black text-foreground">
+                              {demand.metrics.proposalCount}
+                            </p>
+                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">
+                              Propostas
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col items-center gap-1">
+                            <IconEuro className="h-4 w-4 text-primary" />
+                            <p className="text-sm font-display font-black text-foreground">
+                              €{demand.metrics.visibilitySpent}
+                            </p>
+                            <p className="text-[9px] text-muted-foreground font-display font-black uppercase tracking-widest">
+                              Investido
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 w-full md:w-auto">
+                          <Link
+                            href={`/app/family/demands/${demand.id}/boost?package=BASIC`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex-1 md:flex-none"
+                          >
+                            <Button
+                              size="sm"
+                              className="w-full md:w-auto rounded-xl"
                               onClick={(e) => e.stopPropagation()}
-                              className="flex-1 md:flex-none"
                             >
-                              <Button
-                                size="sm"
-                                className="w-full md:w-auto rounded-xl"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <IconEuro className="h-3.5 w-3.5 mr-1.5" />
-                                <span className="hidden xs:inline">Boost</span>
-                              </Button>
-                            </Link>
-                            <div onClick={(e) => e.stopPropagation()} className="shrink-0">
-                              <DemandActionsDropdown
-                                demandId={demand.id}
-                                demandTitle={demand.title}
-                                onActionComplete={() => {}}
-                              />
-                            </div>
+                              <IconEuro className="h-3.5 w-3.5 mr-1.5" />
+                              <span className="hidden xs:inline">Boost</span>
+                            </Button>
+                          </Link>
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="shrink-0"
+                          >
+                            <DemandActionsDropdown
+                              demandId={demand.id}
+                              demandTitle={demand.title}
+                              onActionComplete={() => {}}
+                            />
                           </div>
                         </div>
-                      </BloomCard>
-                      </motion.div>
-                    </Link>
-                  </motion.div>
+                      </div>
+                    </BloomCard>
+                  </Link>
                 );
               })}
-            </motion.div>
+            </div>
           )}
         </TabsContent>
       </Tabs>
-      </motion.div>
-    </motion.div>
+    </div>
   );
 }
-
-const pageVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.5 },
-  },
-};
 
 export default function FamilyDemandsPage() {
   return (

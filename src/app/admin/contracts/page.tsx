@@ -1,20 +1,20 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
   IconFile,
@@ -25,7 +25,7 @@ import {
   IconClock,
   IconEuro,
   IconUsers,
-  IconLoader2
+  IconLoader2,
 } from "@/components/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -59,7 +59,12 @@ export default function AdminContractsPage() {
   const { toast } = useToast();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
-  const [stats, setStats] = useState<Stats>({ total: 0, active: 0, disputed: 0, completed: 0 });
+  const [stats, setStats] = useState<Stats>({
+    total: 0,
+    active: 0,
+    disputed: 0,
+    completed: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [pagination, setPagination] = useState({
@@ -80,7 +85,7 @@ export default function AdminContractsPage() {
       const data = await response.json();
       setContracts(data.contracts || []);
       setStatusCounts(data.statusCounts || {});
-      setPagination(prev => ({
+      setPagination((prev) => ({
         ...prev,
         total: data.pagination?.total || 0,
       }));
@@ -88,10 +93,13 @@ export default function AdminContractsPage() {
       // Calculate stats
       const counts = data.statusCounts || {};
       setStats({
-        total: Object.values(counts).reduce((a: number, b: unknown) => a + (b as number), 0) as number,
-        active: counts['ACTIVE'] || 0,
-        disputed: counts['DISPUTED'] || 0,
-        completed: counts['COMPLETED'] || 0,
+        total: Object.values(counts).reduce(
+          (a: number, b: unknown) => a + (b as number),
+          0,
+        ) as number,
+        active: counts["ACTIVE"] || 0,
+        disputed: counts["DISPUTED"] || 0,
+        completed: counts["COMPLETED"] || 0,
       });
     } catch (error) {
       console.error("Error fetching contracts:", error);
@@ -110,7 +118,10 @@ export default function AdminContractsPage() {
   }, [statusFilter, pagination.page]);
 
   const formatCurrency = (cents: number) =>
-    new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(cents / 100);
+    new Intl.NumberFormat("pt-PT", {
+      style: "currency",
+      currency: "EUR",
+    }).format(cents / 100);
 
   const formatDate = (date: string | null) => {
     if (!date) return "-";
@@ -119,27 +130,36 @@ export default function AdminContractsPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return <StatusBadge status="active" />;
-      case 'COMPLETED': return <StatusBadge status="completed" />;
-      case 'CANCELLED': return <StatusBadge status="cancelled" />;
-      case 'DISPUTED': return <StatusBadge status="disputed" />;
-      case 'PENDING_ACCEPTANCE': return <StatusBadge status="pending" />;
-      default: return <BloomBadge variant="secondary">{status}</BloomBadge>;
+      case "ACTIVE":
+        return <StatusBadge status="active" />;
+      case "COMPLETED":
+        return <StatusBadge status="completed" />;
+      case "CANCELLED":
+        return <StatusBadge status="cancelled" />;
+      case "DISPUTED":
+        return <StatusBadge status="disputed" />;
+      case "PENDING_ACCEPTANCE":
+        return <StatusBadge status="pending" />;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
   const handleCancel = async (contractId: string) => {
-    const reason = prompt('Motivo do cancelamento:');
+    const reason = prompt("Motivo do cancelamento:");
     if (!reason) return;
 
     try {
-      const response = await apiFetch(`/api/admin/contracts/${contractId}/cancel`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason }),
-      });
+      const response = await apiFetch(
+        `/api/admin/contracts/${contractId}/cancel`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reason }),
+        },
+      );
 
-      if (!response.ok) throw new Error('Failed to cancel');
+      if (!response.ok) throw new Error("Failed to cancel");
 
       toast({
         title: "Sucesso",
@@ -172,11 +192,14 @@ export default function AdminContractsPage() {
       render: (c) => (
         <div>
           <p className="font-medium">{c.title}</p>
-          {c.status === 'DISPUTED' && (
-            <BloomBadge variant="destructive" className="mt-1 text-xs">
+          {c.status === "DISPUTED" && (
+            <Badge
+              variant="destructive"
+              className="mt-1 text-xs bg-destructive text-destructive-foreground"
+            >
               <IconAlertCircle className="h-3 w-3 mr-1" />
               Em disputa
-            </BloomBadge>
+            </Badge>
           )}
         </div>
       ),
@@ -187,7 +210,9 @@ export default function AdminContractsPage() {
       render: (c) => (
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${c.familyName}`} />
+            <AvatarImage
+              src={`https://api.dicebear.com/7.x/initials/svg?seed=${c.familyName}`}
+            />
             <AvatarFallback>{c.familyName?.charAt(0) || "F"}</AvatarFallback>
           </Avatar>
           <div>
@@ -203,7 +228,9 @@ export default function AdminContractsPage() {
       render: (c) => (
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${c.caregiverName}`} />
+            <AvatarImage
+              src={`https://api.dicebear.com/7.x/initials/svg?seed=${c.caregiverName}`}
+            />
             <AvatarFallback>{c.caregiverName?.charAt(0) || "C"}</AvatarFallback>
           </Avatar>
           <div>
@@ -225,7 +252,9 @@ export default function AdminContractsPage() {
         <div>
           <p className="font-medium">{formatCurrency(c.totalEurCents)}</p>
           {c.totalTokens > 0 && (
-            <p className="text-xs text-muted-foreground">{c.totalTokens} tokens</p>
+            <p className="text-xs text-muted-foreground">
+              {c.totalTokens} tokens
+            </p>
           )}
         </div>
       ),
@@ -236,7 +265,9 @@ export default function AdminContractsPage() {
       render: (c) => (
         <div className="text-sm">
           <p>{formatDate(c.startDate)}</p>
-          {c.endDate && <p className="text-muted-foreground">até {formatDate(c.endDate)}</p>}
+          {c.endDate && (
+            <p className="text-muted-foreground">até {formatDate(c.endDate)}</p>
+          )}
         </div>
       ),
     },
@@ -263,7 +294,7 @@ export default function AdminContractsPage() {
           >
             <IconEye className="h-4 w-4" />
           </Button>
-          {(c.status === 'ACTIVE' || c.status === 'PENDING_ACCEPTANCE') && (
+          {(c.status === "ACTIVE" || c.status === "PENDING_ACCEPTANCE") && (
             <Button
               size="sm"
               variant="destructive"
@@ -273,7 +304,7 @@ export default function AdminContractsPage() {
               <IconX className="h-4 w-4" />
             </Button>
           )}
-          {c.status === 'DISPUTED' && (
+          {c.status === "DISPUTED" && (
             <Link href={`/admin/contracts/${c.id}?tab=dispute`}>
               <Button size="sm" variant="default" className="h-8 px-2">
                 Resolver
@@ -289,7 +320,12 @@ export default function AdminContractsPage() {
     { key: "", label: "Todos", icon: IconFile },
     { key: "PENDING_ACCEPTANCE", label: "Pendente", icon: IconClock },
     { key: "ACTIVE", label: "Ativos", icon: IconCheck },
-    { key: "DISPUTED", label: "Disputas", icon: IconAlertCircle, count: statusCounts['DISPUTED'] },
+    {
+      key: "DISPUTED",
+      label: "Disputas",
+      icon: IconAlertCircle,
+      count: statusCounts["DISPUTED"],
+    },
     { key: "COMPLETED", label: "Concluídos", icon: IconCheck },
     { key: "CANCELLED", label: "Cancelados", icon: IconX },
   ];
@@ -339,9 +375,12 @@ export default function AdminContractsPage() {
             <tab.icon className="h-4 w-4" />
             {tab.label}
             {tab.count !== undefined && tab.count > 0 && (
-              <BloomBadge variant="destructive" className="ml-1">
+              <Badge
+                variant="destructive"
+                className="ml-1 bg-destructive text-destructive-foreground"
+              >
                 {tab.count}
-              </BloomBadge>
+              </Badge>
             )}
           </Button>
         ))}
@@ -359,7 +398,7 @@ export default function AdminContractsPage() {
           page: pagination.page,
           pageSize: pagination.limit,
           total: pagination.total,
-          onPageChange: (page) => setPagination(prev => ({ ...prev, page })),
+          onPageChange: (page) => setPagination((prev) => ({ ...prev, page })),
         }}
       />
     </div>

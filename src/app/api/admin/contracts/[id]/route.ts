@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - Get contract details
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -23,11 +23,14 @@ export async function GET(
         JOIN User uc ON c.caregiverUserId = uc.id
         WHERE c.id = ?
       `,
-      args: [id]
+      args: [id],
     });
 
     if (contract.rows.length === 0) {
-      return NextResponse.json({ error: 'Contract not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
     }
 
     // Get acceptance info from contract itself
@@ -40,19 +43,19 @@ export async function GET(
     // Get payments
     const payments = await db.execute({
       sql: `SELECT * FROM Payment WHERE contractId = ? ORDER BY createdAt`,
-      args: [id]
+      args: [id],
     });
 
     // Get escrow
     const escrow = await db.execute({
       sql: `SELECT * FROM EscrowPayment WHERE contractId = ?`,
-      args: [id]
+      args: [id],
     });
 
     // Get reviews
     const reviews = await db.execute({
       sql: `SELECT r.*, u.name as fromUserName FROM Review r JOIN User u ON r.fromUserId = u.id WHERE r.contractId = ?`,
-      args: [id]
+      args: [id],
     });
 
     return NextResponse.json({
@@ -60,10 +63,13 @@ export async function GET(
       acceptance,
       payments: payments.rows,
       escrow: escrow.rows[0] || null,
-      reviews: reviews.rows
+      reviews: reviews.rows,
     });
   } catch (error) {
-    console.error('Error fetching contract:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching contract:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

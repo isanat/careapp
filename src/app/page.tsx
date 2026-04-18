@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PublicLayout } from "@/components/layout/public-layout";
-import { 
-  IconCare, 
+import {
+  IconCare,
   IconTrust,
   IconChevronRight,
   IconShield,
   IconStar,
-  IconContract
+  IconContract,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -40,11 +40,16 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
-                QR code diário. Contratos assinados. Pagamentos seguros. Tudo online. Sem ligar para perguntar todo o dia. Sem surpresas.
+                QR code diário. Contratos assinados. Pagamentos seguros. Tudo
+                online. Sem ligar para perguntar todo o dia. Sem surpresas.
               </p>
 
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
+                <Button
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700"
+                  asChild
+                >
                   <Link href="/auth/register">
                     Sou Família
                     <IconChevronRight className="ml-2 h-4 w-4" />
@@ -61,15 +66,21 @@ export default function LandingPage() {
               <div className="grid grid-cols-3 gap-4 pt-8 border-t mt-8">
                 <div>
                   <p className="text-3xl font-bold text-primary">50+</p>
-                  <p className="text-sm text-muted-foreground">{t.landing.stats.caregivers}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.landing.stats.caregivers}
+                  </p>
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-primary">100+</p>
-                  <p className="text-sm text-muted-foreground">{t.landing.stats.families}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.landing.stats.families}
+                  </p>
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-primary">4.9★</p>
-                  <p className="text-sm text-muted-foreground">{t.dashboard.rating}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.dashboard.rating}
+                  </p>
                 </div>
               </div>
             </div>
@@ -81,29 +92,46 @@ export default function LandingPage() {
                   <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <IconCare className="h-10 w-10 text-blue-600" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">Porque a Evyra é diferente</h3>
+                  <h3 className="text-2xl font-bold mb-2">
+                    Porque a Evyra é diferente
+                  </h3>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 p-4 bg-blue-500/5 rounded-lg border border-blue-200/30">
                     <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Profissionais verificados</p>
-                      <p className="text-xs text-muted-foreground">Verificação de identidade, antecedentes e qualificações antes de qualquer contrato.</p>
+                      <p className="font-bold text-sm">
+                        Profissionais verificados
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Verificação de identidade, antecedentes e qualificações
+                        antes de qualquer contrato.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-teal-500/5 rounded-lg border border-teal-200/30">
                     <div className="w-2 h-2 bg-teal-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Acompanhamento centralizado</p>
-                      <p className="text-xs text-muted-foreground">Toda a informação do cuidado acessível à família — mesmo a quilómetros de distância.</p>
+                      <p className="font-bold text-sm">
+                        Acompanhamento centralizado
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Toda a informação do cuidado acessível à família — mesmo
+                        a quilómetros de distância.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-slate-500/5 rounded-lg border border-slate-200/30">
                     <div className="w-2 h-2 bg-slate-600 rounded-full mt-2 shrink-0"></div>
                     <div>
-                      <p className="font-bold text-sm">Contratos e pagamentos seguros</p>
-                      <p className="text-xs text-muted-foreground">Documentação legal clara, pagamentos protegidos, conformidade com RGPD europeu.</p>
+                      <p className="font-bold text-sm">
+                        Contratos e pagamentos seguros
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Documentação legal clara, pagamentos protegidos,
+                        conformidade com RGPD europeu.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -117,7 +145,9 @@ export default function LandingPage() {
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.landing.howItWorks.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t.landing.howItWorks.title}
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t.landing.howItWorks.subtitle}
             </p>
@@ -129,7 +159,9 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-primary">1</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{t.landing.howItWorks.step1.title}</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                {t.landing.howItWorks.step1.title}
+              </h3>
               <p className="text-muted-foreground">
                 {t.landing.howItWorks.step1.description}
               </p>
@@ -140,7 +172,9 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-primary">2</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{t.landing.howItWorks.step2.title}</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                {t.landing.howItWorks.step2.title}
+              </h3>
               <p className="text-muted-foreground">
                 {t.landing.howItWorks.step2.description}
               </p>
@@ -151,7 +185,9 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-primary">3</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{t.landing.howItWorks.step3.title}</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                {t.landing.howItWorks.step3.title}
+              </h3>
               <p className="text-muted-foreground">
                 {t.landing.howItWorks.step3.description}
               </p>
@@ -162,7 +198,9 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-primary">4</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{t.landing.howItWorks.step4.title}</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                {t.landing.howItWorks.step4.title}
+              </h3>
               <p className="text-muted-foreground">
                 {t.landing.howItWorks.step4.description}
               </p>
@@ -175,7 +213,9 @@ export default function LandingPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.landing.features.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t.landing.features.title}
+            </h2>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -185,9 +225,13 @@ export default function LandingPage() {
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <IconShield className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold">{t.landing.features.verified.title}</h3>
+                  <h3 className="font-semibold">
+                    {t.landing.features.verified.title}
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t.landing.features.verified.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t.landing.features.verified.description}
+                </p>
               </CardContent>
             </Card>
 
@@ -197,9 +241,13 @@ export default function LandingPage() {
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <IconContract className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold">{t.landing.features.contracts.title}</h3>
+                  <h3 className="font-semibold">
+                    {t.landing.features.contracts.title}
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t.landing.features.contracts.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t.landing.features.contracts.description}
+                </p>
               </CardContent>
             </Card>
 
@@ -209,9 +257,13 @@ export default function LandingPage() {
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <IconTrust className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold">{t.landing.features.security.title}</h3>
+                  <h3 className="font-semibold">
+                    {t.landing.features.security.title}
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t.landing.features.security.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t.landing.features.security.description}
+                </p>
               </CardContent>
             </Card>
 
@@ -221,9 +273,13 @@ export default function LandingPage() {
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <IconCare className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold">{t.landing.features.support.title}</h3>
+                  <h3 className="font-semibold">
+                    {t.landing.features.support.title}
+                  </h3>
                 </div>
-                <p className="text-sm text-muted-foreground">{t.landing.features.support.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t.landing.features.support.description}
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -241,11 +297,14 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" variant="secondary" asChild>
-              <Link href="/auth/register">
-                {t.landing.hero.ctaFamily}
-              </Link>
+              <Link href="/auth/register">{t.landing.hero.ctaFamily}</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" asChild>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
+              asChild
+            >
               <Link href="/auth/register?role=caregiver">
                 {t.landing.hero.ctaCaregiver}
               </Link>

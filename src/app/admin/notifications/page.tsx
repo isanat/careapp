@@ -1,20 +1,17 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   IconBell,
   IconRefresh,
   IconCheck,
+  IconTrash,
   IconAlertTriangle,
   IconInfo,
   IconAlertCircle,
@@ -69,8 +66,8 @@ export default function AdminNotificationsPage() {
         method: "POST",
       });
       if (response.ok) {
-        setNotifications(prev =>
-          prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
         );
       }
     } catch (error) {
@@ -84,9 +81,12 @@ export default function AdminNotificationsPage() {
 
   const markAllAsRead = async () => {
     try {
-      const unreadIds = notifications.filter(n => !n.isRead).map(n => n.id);
-      await Promise.all(unreadIds.map(id => markAsRead(id)));
-      toast({ title: "Sucesso", description: "Todas notificações marcadas como lidas" });
+      const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n.id);
+      await Promise.all(unreadIds.map((id) => markAsRead(id)));
+      toast({
+        title: "Sucesso",
+        description: "Todas notificações marcadas como lidas",
+      });
     } catch (error) {
       toast({
         title: "Erro",
@@ -118,24 +118,15 @@ export default function AdminNotificationsPage() {
     }
   };
 
-  const filteredNotifications = filter === "unread"
-    ? notifications.filter(n => !n.isRead)
-    : notifications;
+  const filteredNotifications =
+    filter === "unread"
+      ? notifications.filter((n) => !n.isRead)
+      : notifications;
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Notificações"
         description="Alertas e notificações do sistema"
@@ -156,9 +147,9 @@ export default function AdminNotificationsPage() {
       />
 
       {/* Stats */}
-      <motion.div variants={itemVariants} className="grid gap-4 md:grid-cols-3">
-        <BloomCard variant="gradient">
-          <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="flex items-center gap-4 p-6">
             <div className="p-3 bg-primary/20 rounded-full">
               <IconBell className="h-6 w-6 text-primary" />
             </div>
@@ -166,10 +157,10 @@ export default function AdminNotificationsPage() {
               <p className="text-2xl font-bold">{notifications.length}</p>
               <p className="text-sm text-muted-foreground">Total</p>
             </div>
-          </div>
-        </BloomCard>
-        <BloomCard variant="warning">
-          <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-4 p-6">
             <div className="p-3 bg-warning/20 rounded-full">
               <IconAlertTriangle className="h-6 w-6 text-warning" />
             </div>
@@ -177,83 +168,90 @@ export default function AdminNotificationsPage() {
               <p className="text-2xl font-bold">{unreadCount}</p>
               <p className="text-sm text-muted-foreground">Não Lidas</p>
             </div>
-          </div>
-        </BloomCard>
-        <BloomCard>
-          <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-4 p-6">
             <div className="p-3 bg-destructive/20 rounded-full">
               <IconAlertCircle className="h-6 w-6 text-destructive" />
             </div>
             <div>
               <p className="text-2xl font-bold">
-                {notifications.filter(n => n.severity === "CRITICAL").length}
+                {notifications.filter((n) => n.severity === "CRITICAL").length}
               </p>
               <p className="text-sm text-muted-foreground">Críticas</p>
             </div>
-          </div>
-        </BloomCard>
-      </motion.div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Tabs */}
-      <motion.div variants={itemVariants}>
-        <Tabs value={filter} onValueChange={(v) => setFilter(v as "all" | "unread")}>
-          <TabsList>
-            <TabsTrigger value="all">
-              Todas
-              <BloomBadge variant="secondary" className="ml-2">
-                {notifications.length}
-              </BloomBadge>
-            </TabsTrigger>
-            <TabsTrigger value="unread">
-              Não Lidas
-              {unreadCount > 0 && (
-                <BloomBadge className="ml-2 bg-warning">{unreadCount}</BloomBadge>
-              )}
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </motion.div>
+      <Tabs
+        value={filter}
+        onValueChange={(v) => setFilter(v as "all" | "unread")}
+      >
+        <TabsList>
+          <TabsTrigger value="all">
+            Todas
+            <Badge variant="secondary" className="ml-2">
+              {notifications.length}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="unread">
+            Não Lidas
+            {unreadCount > 0 && (
+              <Badge className="ml-2 bg-warning">{unreadCount}</Badge>
+            )}
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Notifications List */}
-      <motion.div variants={itemVariants} className="space-y-3">
+      <div className="space-y-3">
         {loading ? (
           Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-24 w-full" />
           ))
         ) : filteredNotifications.length === 0 ? (
-          <BloomCard>
-            <div className="py-12 text-center text-slate-500 p-5 sm:p-6 md:p-7">
+          <Card>
+            <CardContent className="py-12 text-center text-slate-500">
               <IconBell className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhuma notificação</p>
-            </div>
-          </BloomCard>
+            </CardContent>
+          </Card>
         ) : (
           filteredNotifications.map((notification) => (
-            <BloomCard
+            <Card
               key={notification.id}
               className={`border-l-4 ${getSeverityColor(notification.severity)} ${
                 notification.isRead ? "opacity-60" : ""
               }`}
             >
-              <div className="p-5 sm:p-6 md:p-7">
+              <CardContent className="p-4">
                 <div className="flex items-start gap-4">
-                  <div className="mt-1">{getSeverityIcon(notification.severity)}</div>
+                  <div className="mt-1">
+                    {getSeverityIcon(notification.severity)}
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-medium">{notification.title}</h3>
                       {notification.isRead && (
-                        <BloomBadge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs">
                           Lida
-                        </BloomBadge>
+                        </Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {notification.message}
                     </p>
                     <p className="text-xs text-muted-foreground mt-2">
-                      {format(new Date(notification.createdAt), "dd 'de' MMMM, HH:mm", {
-                        locale: pt,
-                      })}
+                      {format(
+                        new Date(notification.createdAt),
+                        "dd 'de' MMMM, HH:mm",
+                        {
+                          locale: pt,
+                        },
+                      )}
                     </p>
                   </div>
                   {!notification.isRead && (
@@ -266,11 +264,11 @@ export default function AdminNotificationsPage() {
                     </Button>
                   )}
                 </div>
-              </div>
-            </BloomCard>
+              </CardContent>
+            </Card>
           ))
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

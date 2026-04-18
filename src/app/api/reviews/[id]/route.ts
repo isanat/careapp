@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 // Types for the review data
 interface ReviewData {
@@ -33,13 +33,13 @@ interface ReviewData {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -66,7 +66,7 @@ export async function GET(
     });
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ error: 'Review not found' }, { status: 404 });
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
     const row = result.rows[0];
@@ -77,7 +77,7 @@ export async function GET(
     const isReviewedUser = row.toUserId === session.user.id;
 
     if (!isPublic && !isAuthor && !isReviewedUser) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const review: ReviewData = {
@@ -104,8 +104,11 @@ export async function GET(
 
     return NextResponse.json({ review });
   } catch (error) {
-    console.error('Error fetching review:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching review:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -123,13 +126,13 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -151,31 +154,49 @@ export async function PUT(
     });
 
     if (reviewResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Review not found' }, { status: 404 });
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
     const review = reviewResult.rows[0];
 
     // Only the author can update the review
     if (review.fromUserId !== session.user.id) {
-      return NextResponse.json({ 
-        error: 'Only the author can update this review' 
-      }, { status: 403 });
+      return NextResponse.json(
+        {
+          error: "Only the author can update this review",
+        },
+        { status: 403 },
+      );
     }
 
     // Validate ratings if provided
     if (rating !== undefined && (rating < 1 || rating > 5)) {
-      return NextResponse.json({ 
-        error: 'Rating must be between 1 and 5' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "Rating must be between 1 and 5",
+        },
+        { status: 400 },
+      );
     }
 
-    const optionalRatings = [punctualityRating, professionalismRating, communicationRating, qualityRating];
+    const optionalRatings = [
+      punctualityRating,
+      professionalismRating,
+      communicationRating,
+      qualityRating,
+    ];
     for (const optRating of optionalRatings) {
-      if (optRating !== undefined && optRating !== null && (optRating < 1 || optRating > 5)) {
-        return NextResponse.json({ 
-          error: 'All ratings must be between 1 and 5' 
-        }, { status: 400 });
+      if (
+        optRating !== undefined &&
+        optRating !== null &&
+        (optRating < 1 || optRating > 5)
+      ) {
+        return NextResponse.json(
+          {
+            error: "All ratings must be between 1 and 5",
+          },
+          { status: 400 },
+        );
       }
     }
 
@@ -184,56 +205,59 @@ export async function PUT(
     const args: (string | number | null)[] = [];
 
     if (rating !== undefined) {
-      updates.push('rating = ?');
+      updates.push("rating = ?");
       args.push(rating);
     }
 
     if (comment !== undefined) {
-      updates.push('comment = ?');
+      updates.push("comment = ?");
       args.push(comment || null);
     }
 
     if (punctualityRating !== undefined) {
-      updates.push('punctualityRating = ?');
+      updates.push("punctualityRating = ?");
       args.push(punctualityRating || null);
     }
 
     if (professionalismRating !== undefined) {
-      updates.push('professionalismRating = ?');
+      updates.push("professionalismRating = ?");
       args.push(professionalismRating || null);
     }
 
     if (communicationRating !== undefined) {
-      updates.push('communicationRating = ?');
+      updates.push("communicationRating = ?");
       args.push(communicationRating || null);
     }
 
     if (qualityRating !== undefined) {
-      updates.push('qualityRating = ?');
+      updates.push("qualityRating = ?");
       args.push(qualityRating || null);
     }
 
     if (isPublic !== undefined) {
-      updates.push('isPublic = ?');
+      updates.push("isPublic = ?");
       args.push(isPublic ? 1 : 0);
     }
 
     if (updates.length === 0) {
-      return NextResponse.json({ 
-        error: 'No fields to update' 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "No fields to update",
+        },
+        { status: 400 },
+      );
     }
 
     // Add updatedAt
     const now = new Date().toISOString();
-    updates.push('updatedAt = ?');
+    updates.push("updatedAt = ?");
     args.push(now);
 
     // Add the review id to args
     args.push(id);
 
     await db.execute({
-      sql: `UPDATE Review SET ${updates.join(', ')} WHERE id = ?`,
+      sql: `UPDATE Review SET ${updates.join(", ")} WHERE id = ?`,
       args,
     });
 
@@ -241,13 +265,16 @@ export async function PUT(
     const toUserId = review.toUserId as string;
     await updateUserAverageRating(toUserId);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Review updated successfully' 
+    return NextResponse.json({
+      success: true,
+      message: "Review updated successfully",
     });
   } catch (error) {
-    console.error('Error updating review:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error updating review:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -257,13 +284,13 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -275,16 +302,19 @@ export async function DELETE(
     });
 
     if (reviewResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Review not found' }, { status: 404 });
+      return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
     const review = reviewResult.rows[0];
 
     // Only the author can delete the review
     if (review.fromUserId !== session.user.id) {
-      return NextResponse.json({ 
-        error: 'Only the author can delete this review' 
-      }, { status: 403 });
+      return NextResponse.json(
+        {
+          error: "Only the author can delete this review",
+        },
+        { status: 403 },
+      );
     }
 
     const toUserId = review.toUserId as string;
@@ -298,13 +328,16 @@ export async function DELETE(
     // Update the average rating for the reviewed user
     await updateUserAverageRating(toUserId);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Review deleted successfully' 
+    return NextResponse.json({
+      success: true,
+      message: "Review deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting review:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error deleting review:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -330,8 +363,9 @@ async function updateUserAverageRating(userId: string) {
       });
     } else {
       // Calculate average rating
-      const ratings = result.rows.map(row => row.rating as number);
-      const averageRating = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+      const ratings = result.rows.map((row) => row.rating as number);
+      const averageRating =
+        ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
 
       await db.execute({
         sql: `UPDATE ProfileCaregiver 
@@ -341,6 +375,6 @@ async function updateUserAverageRating(userId: string) {
       });
     }
   } catch (error) {
-    console.error('Error updating user average rating:', error);
+    console.error("Error updating user average rating:", error);
   }
 }

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { getPlatformFeePercent } from '@/lib/services/platform-fees';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { getPlatformFeePercent } from "@/lib/services/platform-fees";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,20 +9,23 @@ export async function GET(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email')?.trim();
+    const email = searchParams.get("email")?.trim();
 
     if (!email) {
-      return NextResponse.json({ error: 'Email obrigatorio' }, { status: 400 });
+      return NextResponse.json({ error: "Email obrigatorio" }, { status: 400 });
     }
 
     // 1. Find user
     const userResult = await db.execute({
       sql: `SELECT id, email, name, role, status, createdAt, phone, nif FROM User WHERE email = ?`,
-      args: [email]
+      args: [email],
     });
 
     if (userResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Utilizador nao encontrado' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Utilizador nao encontrado" },
+        { status: 404 },
+      );
     }
 
     const user = userResult.rows[0] as any;
@@ -36,7 +39,7 @@ export async function GET(request: NextRequest) {
             FROM Payment WHERE userId = ?
             GROUP BY type, status
             ORDER BY type, status`,
-      args: [userId]
+      args: [userId],
     });
 
     // 4. Summary: total deposits (COMPLETED payments that are cash-in)
@@ -55,7 +58,7 @@ export async function GET(request: NextRequest) {
               COUNT(*) as totalTransactions,
               COUNT(CASE WHEN status = 'COMPLETED' THEN 1 END) as completedTransactions
             FROM Payment WHERE userId = ?`,
-      args: [userId]
+      args: [userId],
     });
     const summary = depositsResult.rows[0] as any;
 
@@ -69,7 +72,7 @@ export async function GET(request: NextRequest) {
             WHERE p.userId = ?
             ORDER BY p.createdAt DESC
             LIMIT 100`,
-      args: [userId]
+      args: [userId],
     });
 
     // 7. Contracts where user is involved
@@ -84,7 +87,7 @@ export async function GET(request: NextRequest) {
             LEFT JOIN User uc ON c.caregiverUserId = uc.id
             WHERE c.familyUserId = ? OR c.caregiverUserId = ?
             ORDER BY c.createdAt DESC`,
-      args: [userId, userId]
+      args: [userId, userId],
     });
 
     // 8. Escrow payments
@@ -95,7 +98,7 @@ export async function GET(request: NextRequest) {
             INNER JOIN Contract c ON e.contractId = c.id
             WHERE c.familyUserId = ? OR c.caregiverUserId = ?
             ORDER BY e.createdAt DESC`,
-      args: [userId, userId]
+      args: [userId, userId],
     });
 
     // 9. Receipts
@@ -104,7 +107,7 @@ export async function GET(request: NextRequest) {
               periodStart, periodEnd, hoursWorked, status, createdAt
             FROM Receipt WHERE familyUserId = ? OR caregiverUserId = ?
             ORDER BY createdAt DESC`,
-      args: [userId, userId]
+      args: [userId, userId],
     });
 
     // 11. Recurring payments
@@ -113,7 +116,7 @@ export async function GET(request: NextRequest) {
               status, lastPaymentAt, nextPaymentAt, billingDay
             FROM RecurringPayment WHERE familyUserId = ? OR caregiverUserId = ?
             ORDER BY createdAt DESC`,
-      args: [userId, userId]
+      args: [userId, userId],
     });
 
     // 12. Cross-check calculation
@@ -126,10 +129,12 @@ export async function GET(request: NextRequest) {
 
     // Calculate per-contract platform earnings using dynamic platform fee
     const platformFeePercent = await getPlatformFeePercent();
-    const contractProfits = (contracts.rows as any[]).map(c => {
+    const contractProfits = (contracts.rows as any[]).map((c) => {
       // Use contract's stored platformFeePct if available, otherwise use current platform fee
       const feePercent = Number(c.platformFeePct || platformFeePercent);
-      const platformCut = Math.round(Number(c.totalEurCents || 0) * feePercent / 100);
+      const platformCut = Math.round(
+        (Number(c.totalEurCents || 0) * feePercent) / 100,
+      );
       return {
         id: c.id,
         title: c.title,
@@ -137,9 +142,14 @@ export async function GET(request: NextRequest) {
         totalValue: Number(c.totalEurCents || 0),
         platformFeePct: feePercent,
         platformCut,
-        otherParty: userId === c.familyUserId
-          ? { name: c.caregiverName, email: c.caregiverEmail, role: 'CAREGIVER' }
-          : { name: c.familyName, email: c.familyEmail, role: 'FAMILY' },
+        otherParty:
+          userId === c.familyUserId
+            ? {
+                name: c.caregiverName,
+                email: c.caregiverEmail,
+                role: "CAREGIVER",
+              }
+            : { name: c.familyName, email: c.familyEmail, role: "FAMILY" },
       };
     });
 
@@ -171,8 +181,14 @@ export async function GET(request: NextRequest) {
       platformProfit: {
         totalFeesCollected: platformProfit,
         contractProfits,
-        totalEscrowFees: (escrows.rows as any[]).reduce((sum, e) => sum + Number(e.platformFeeCents || 0), 0),
-        totalReceiptFees: (receipts.rows as any[]).reduce((sum, r) => sum + Number(r.platformFeeCents || 0), 0),
+        totalEscrowFees: (escrows.rows as any[]).reduce(
+          (sum, e) => sum + Number(e.platformFeeCents || 0),
+          0,
+        ),
+        totalReceiptFees: (receipts.rows as any[]).reduce(
+          (sum, r) => sum + Number(r.platformFeeCents || 0),
+          0,
+        ),
       },
       paymentsGrouped: paymentsGrouped.rows,
       payments: allPayments.rows,
@@ -182,7 +198,7 @@ export async function GET(request: NextRequest) {
       recurring: recurring.rows,
     });
   } catch (error) {
-    console.error('Error in customer audit:', error);
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
+    console.error("Error in customer audit:", error);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

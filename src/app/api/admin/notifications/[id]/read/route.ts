@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 import {
   markNotificationAsRead,
   deleteAdminNotification,
-} from '@/lib/services/admin-tables';
-import { generateId } from '@/lib/utils/id';
+} from "@/lib/services/admin-tables";
+import { generateId } from "@/lib/utils/id";
 
 // POST - Mark single notification as read
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -30,13 +30,13 @@ export async function POST(
     await markNotificationAsRead(id, adminUserId);
 
     // Log action
-    const actionId = generateId('action');
+    const actionId = generateId("action");
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, createdAt)
         VALUES (?, ?, 'MARK_READ', 'ADMIN_NOTIFICATION', ?, ?, ?, CURRENT_TIMESTAMP)`,
       args: [
         actionId,
-        adminProfileId || '',
+        adminProfileId || "",
         id,
         JSON.stringify({ isRead: false }),
         JSON.stringify({ isRead: true, readBy: adminUserId }),
@@ -45,7 +45,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: 'Notification marked as read',
+      message: "Notification marked as read",
       notification: {
         id,
         isRead: true,
@@ -54,15 +54,18 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error('Error marking notification as read:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error marking notification as read:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
 // DELETE - Dismiss/delete notification
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -82,19 +85,22 @@ export async function DELETE(
     await deleteAdminNotification(id);
 
     // Log action
-    const actionId = generateId('action');
+    const actionId = generateId("action");
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, createdAt)
         VALUES (?, ?, 'DELETE_NOTIFICATION', 'ADMIN_NOTIFICATION', ?, CURRENT_TIMESTAMP)`,
-      args: [actionId, adminProfileId || '', id],
+      args: [actionId, adminProfileId || "", id],
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Notification deleted',
+      message: "Notification deleted",
     });
   } catch (error) {
-    console.error('Error deleting notification:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error deleting notification:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

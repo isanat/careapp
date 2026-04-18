@@ -73,7 +73,7 @@ function ResetPasswordContent() {
       setIsSuccess(true);
     } catch (err) {
       setErrorMessage(
-        err instanceof Error ? err.message : "Erro ao redefinir senha"
+        err instanceof Error ? err.message : "Erro ao redefinir senha",
       );
     } finally {
       setIsLoading(false);

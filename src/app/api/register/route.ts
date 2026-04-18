@@ -12,24 +12,28 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid input", details: parsed.error.flatten() },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const { name, email, phone, password, role, acceptTerms } = parsed.data;
 
     // Get IP address and user agent for legal proof
-    const ipAddress = request.headers.get('x-forwarded-for') ||
-                      request.headers.get('x-real-ip') ||
-                      'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    const ipAddress =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+    const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Verify Turnstile CAPTCHA (skipped if not configured)
     const turnstileToken = body.turnstileToken as string | undefined;
-    const turnstileValid = await verifyTurnstileToken(turnstileToken, ipAddress);
+    const turnstileValid = await verifyTurnstileToken(
+      turnstileToken,
+      ipAddress,
+    );
     if (!turnstileValid) {
       return NextResponse.json(
         { error: "CAPTCHA verification failed. Please try again." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,20 +41,20 @@ export async function POST(request: NextRequest) {
     if (!acceptTerms) {
       return NextResponse.json(
         { error: "Terms acceptance is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Check if user already exists (using Turso)
     const existingUserResult = await db.execute({
       sql: `SELECT id FROM User WHERE email = ?`,
-      args: [email.toLowerCase()]
+      args: [email.toLowerCase()],
     });
 
     if (existingUserResult.rows.length > 0) {
       return NextResponse.json(
         { error: "Email already registered" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -73,8 +77,8 @@ export async function POST(request: NextRequest) {
         passwordHash,
         role,
         "PENDING",
-        "UNVERIFIED"
-      ]
+        "UNVERIFIED",
+      ],
     });
 
     // Create profile based on role (using Turso)
@@ -83,7 +87,7 @@ export async function POST(request: NextRequest) {
       await db.execute({
         sql: `INSERT INTO ProfileFamily (id, userId, country, createdAt, updatedAt)
               VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
-        args: [profileId, userId, "PT"]
+        args: [profileId, userId, "PT"],
       });
     } else {
       // CAREGIVER
@@ -96,27 +100,31 @@ export async function POST(request: NextRequest) {
           userId,
           "PT",
           1500, // €15 default (in cents)
-          20,   // 20km radius
+          20, // 20km radius
           "UNVERIFIED",
           0,
           0,
           0,
-          0
-        ]
+          0,
+        ],
       });
     }
 
     // Register terms acceptance for legal protection
     // Accept: terms_of_use, privacy_policy, mediation_policy
-    const requiredTerms = ['terms_of_use', 'privacy_policy', 'mediation_policy'];
-    
+    const requiredTerms = [
+      "terms_of_use",
+      "privacy_policy",
+      "mediation_policy",
+    ];
+
     for (const termsType of requiredTerms) {
       const acceptanceId = generateId("ta");
-      
+
       await db.execute({
         sql: `INSERT INTO TermsAcceptance (id, userId, termsType, termsVersion, ipAddress, userAgent, acceptedAt)
               VALUES (?, ?, ?, '1.0', ?, ?, ?)`,
-        args: [acceptanceId, userId, termsType, ipAddress, userAgent, now]
+        args: [acceptanceId, userId, termsType, ipAddress, userAgent, now],
       });
     }
 
@@ -125,14 +133,21 @@ export async function POST(request: NextRequest) {
       userId: userId,
       termsAccepted: requiredTerms,
       acceptedAt: now,
-      ipAddress: ipAddress !== 'unknown' ? ipAddress : null, // Don't return 'unknown' to client
+      ipAddress: ipAddress !== "unknown" ? ipAddress : null, // Don't return 'unknown' to client
     });
   } catch (error) {
-    const msg = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-    console.error("Registration error:", msg, error instanceof Error ? error.stack : '');
+    const msg =
+      error instanceof Error
+        ? `${error.name}: ${error.message}`
+        : String(error);
+    console.error(
+      "Registration error:",
+      msg,
+      error instanceof Error ? error.stack : "",
+    );
     return NextResponse.json(
       { error: "Internal server error", detail: msg },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

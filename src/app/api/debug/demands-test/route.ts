@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 /**
  * GET /api/debug/demands-test
@@ -10,13 +10,13 @@ import { db } from '@/lib/db-turso';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.id || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Test simple SELECT
     const result = await db.execute({
-      sql: 'SELECT COUNT(*) as count FROM Demand LIMIT 1',
+      sql: "SELECT COUNT(*) as count FROM Demand LIMIT 1",
       args: [],
     });
 
@@ -36,14 +36,14 @@ export async function GET(request: NextRequest) {
         args: [
           demandId,
           session.user.id,
-          'Test Title',
-          'A'.repeat(100),
-          JSON.stringify(['PERSONAL_CARE']),
-          'Lisboa',
-          'INTERMEDIATE',
-          'RECURRING',
-          'NONE',
-          'ACTIVE',
+          "Test Title",
+          "A".repeat(100),
+          JSON.stringify(["PERSONAL_CARE"]),
+          "Lisboa",
+          "INTERMEDIATE",
+          "RECURRING",
+          "NONE",
+          "ACTIVE",
           now,
           now,
         ],
@@ -51,20 +51,23 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: 'Test INSERT successful',
+        message: "Test INSERT successful",
         demandId,
         totalDemands: result.rows[0],
       });
     } catch (insertError) {
       return NextResponse.json({
         success: false,
-        error: 'INSERT failed',
-        details: insertError instanceof Error ? insertError.message : String(insertError),
+        error: "INSERT failed",
+        details:
+          insertError instanceof Error
+            ? insertError.message
+            : String(insertError),
       });
     }
   } catch (error) {
     return NextResponse.json({
-      error: 'Debug test failed',
+      error: "Debug test failed",
       details: error instanceof Error ? error.message : String(error),
     });
   }

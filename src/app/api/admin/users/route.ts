@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
     const kyc = searchParams.get("kyc") || "all";
     const page = parseInt(searchParams.get("page") || "1");
     // Accept both 'limit' and 'pageSize' parameters
-    const pageSize = parseInt(searchParams.get("limit") || searchParams.get("pageSize") || "20");
+    const pageSize = parseInt(
+      searchParams.get("limit") || searchParams.get("pageSize") || "20",
+    );
     const offset = (page - 1) * pageSize;
 
     // Build query conditions
@@ -45,7 +47,8 @@ export async function GET(request: NextRequest) {
       args.push(kyc);
     }
 
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
     // Get total count
     const countResult = await db.execute({
@@ -81,7 +84,11 @@ export async function GET(request: NextRequest) {
       email: row.email as string,
       role: row.role as "FAMILY" | "CAREGIVER" | "ADMIN",
       status: row.status as "ACTIVE" | "PENDING" | "SUSPENDED" | "INACTIVE",
-      verificationStatus: (row.kycStatus || "UNVERIFIED") as "VERIFIED" | "UNVERIFIED" | "PENDING" | "REJECTED",
+      verificationStatus: (row.kycStatus || "UNVERIFIED") as
+        | "VERIFIED"
+        | "UNVERIFIED"
+        | "PENDING"
+        | "REJECTED",
       walletBalance: 0,
       createdAt: row.createdAt as string,
       lastLoginAt: null,
@@ -107,7 +114,7 @@ export async function GET(request: NextRequest) {
     console.error("Admin users list error:", error);
     return NextResponse.json(
       { error: "Failed to fetch users" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -120,10 +127,10 @@ export async function POST(request: NextRequest) {
     const { adminUserId } = auth;
 
     const body = await request.json();
-    const { 
-      name, 
-      email, 
-      password, 
+    const {
+      name,
+      email,
+      password,
       role = "FAMILY",
       phone,
       sendWelcomeEmail = true,
@@ -133,7 +140,7 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "Name, email, and password are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -142,7 +149,7 @@ export async function POST(request: NextRequest) {
     if (!validRoles.includes(role)) {
       return NextResponse.json(
         { error: "Invalid role. Must be FAMILY, CAREGIVER, or ADMIN" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -150,7 +157,7 @@ export async function POST(request: NextRequest) {
     if (password.length < 8) {
       return NextResponse.json(
         { error: "Password must be at least 8 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -163,7 +170,7 @@ export async function POST(request: NextRequest) {
     if (existingUserResult.rows.length > 0) {
       return NextResponse.json(
         { error: "Email already registered" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -178,9 +185,10 @@ export async function POST(request: NextRequest) {
     const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     // Get IP and user agent
-    const ipAddress = request.headers.get("x-forwarded-for") || 
-                      request.headers.get("x-real-ip") || 
-                      "unknown";
+    const ipAddress =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     const userId = randomUUID();
@@ -269,26 +277,29 @@ export async function POST(request: NextRequest) {
 
     const newUser = newUserResult.rows[0];
 
-    return NextResponse.json({
-      success: true,
-      message: "User created successfully",
-      user: {
-        id: newUser?.id,
-        name: newUser?.name,
-        email: newUser?.email,
-        phone: newUser?.phone,
-        role: newUser?.role,
-        status: newUser?.status,
-        createdAt: newUser?.createdAt,
+    return NextResponse.json(
+      {
+        success: true,
+        message: "User created successfully",
+        user: {
+          id: newUser?.id,
+          name: newUser?.name,
+          email: newUser?.email,
+          phone: newUser?.phone,
+          role: newUser?.role,
+          status: newUser?.status,
+          createdAt: newUser?.createdAt,
+        },
+        temporaryPassword: password, // Return for admin to share with user
+        sendWelcomeEmail,
       },
-      temporaryPassword: password, // Return for admin to share with user
-      sendWelcomeEmail,
-    }, { status: 201 });
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Admin create user error:", error);
     return NextResponse.json(
       { error: "Failed to create user" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,14 +1,10 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { PageHeader } from "@/components/admin/common/page-header";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -126,18 +122,8 @@ export default function AdminLogsPage() {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
-
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+    <div className="space-y-6">
       <PageHeader
         title="Logs de Auditoria"
         description="Histórico de todas as ações administrativas"
@@ -150,57 +136,69 @@ export default function AdminLogsPage() {
       />
 
       {/* Filters */}
-      <motion.div variants={itemVariants}>
-        <BloomCard>
-          <div className="p-5 sm:p-6 md:p-7">
-            <div className="flex flex-col gap-4 md:flex-row">
-              <Select value={actionFilter} onValueChange={setActionFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Ação" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as Ações</SelectItem>
-                  <SelectItem value="CREATE">Criar</SelectItem>
-                  <SelectItem value="UPDATE">Atualizar</SelectItem>
-                  <SelectItem value="DELETE">Excluir</SelectItem>
-                  <SelectItem value="SUSPEND">Suspender</SelectItem>
-                  <SelectItem value="ACTIVATE">Ativar</SelectItem>
-                  <SelectItem value="VERIFY_KYC">Verificar KYC</SelectItem>
-                  <SelectItem value="REFUND">Reembolsar</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={entityFilter} onValueChange={setEntityFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Entidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as Entidades</SelectItem>
-                  <SelectItem value="USER">Usuário</SelectItem>
-                  <SelectItem value="CONTRACT">Contrato</SelectItem>
-                  <SelectItem value="PAYMENT">Pagamento</SelectItem>
-                  <SelectItem value="TOKEN">Token</SelectItem>
-                  <SelectItem value="CAREGIVER">Cuidador</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <Select value={actionFilter} onValueChange={setActionFilter}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Ação" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as Ações</SelectItem>
+                <SelectItem value="CREATE">Criar</SelectItem>
+                <SelectItem value="UPDATE">Atualizar</SelectItem>
+                <SelectItem value="DELETE">Excluir</SelectItem>
+                <SelectItem value="SUSPEND">Suspender</SelectItem>
+                <SelectItem value="ACTIVATE">Ativar</SelectItem>
+                <SelectItem value="VERIFY_KYC">Verificar KYC</SelectItem>
+                <SelectItem value="REFUND">Reembolsar</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={entityFilter} onValueChange={setEntityFilter}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Entidade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as Entidades</SelectItem>
+                <SelectItem value="USER">Usuário</SelectItem>
+                <SelectItem value="CONTRACT">Contrato</SelectItem>
+                <SelectItem value="PAYMENT">Pagamento</SelectItem>
+                <SelectItem value="TOKEN">Token</SelectItem>
+                <SelectItem value="CAREGIVER">Cuidador</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </BloomCard>
-      </motion.div>
+        </CardContent>
+      </Card>
 
       {/* Logs Table */}
-      <motion.div variants={itemVariants}>
-        <BloomCard>
+      <Card>
+        <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-slate-50 dark:bg-slate-800">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Data/Hora</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Admin</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Ação</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Entidade</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">ID</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">IP</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Motivo</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    Data/Hora
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    Admin
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    Ação
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    Entidade
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    IP
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium">
+                    Motivo
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -216,26 +214,36 @@ export default function AdminLogsPage() {
                   ))
                 ) : logs.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
+                    <td
+                      colSpan={7}
+                      className="px-4 py-8 text-center text-slate-500"
+                    >
                       Nenhum log encontrado
                     </td>
                   </tr>
                 ) : (
                   logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <tr
+                      key={log.id}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    >
                       <td className="px-4 py-3 text-sm">
-                        {format(new Date(log.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}
+                        {format(new Date(log.createdAt), "dd/MM/yyyy HH:mm", {
+                          locale: pt,
+                        })}
                       </td>
                       <td className="px-4 py-3">
                         <div>
                           <p className="font-medium text-sm">{log.adminName}</p>
-                          <p className="text-xs text-slate-500">{log.adminEmail}</p>
+                          <p className="text-xs text-slate-500">
+                            {log.adminEmail}
+                          </p>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <BloomBadge className={getActionColor(log.action)}>
+                        <Badge className={getActionColor(log.action)}>
                           {log.action}
-                        </BloomBadge>
+                        </Badge>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -258,11 +266,11 @@ export default function AdminLogsPage() {
               </tbody>
             </table>
           </div>
-        </BloomCard>
-      </motion.div>
+        </CardContent>
+      </Card>
 
       {/* Pagination */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <p className="text-sm text-slate-500">
           Mostrando {logs.length} de {total} logs
         </p>
@@ -270,7 +278,7 @@ export default function AdminLogsPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
             Anterior
@@ -278,13 +286,13 @@ export default function AdminLogsPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(p => p + 1)}
+            onClick={() => setPage((p) => p + 1)}
             disabled={logs.length < 50}
           >
             Próximo
           </Button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

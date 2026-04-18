@@ -4,14 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  IconCaregiver, 
+import {
+  IconCaregiver,
   IconEuro,
   IconStar,
   IconShield,
   IconChevronRight,
   IconCheck,
-  IconTrust
+  IconTrust,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -32,7 +32,9 @@ export default function CuidadoresPage() {
                     <Badge className="bg-primary text-primary-foreground mb-4">
                       {t.forCaregiversPage.benefits.title}
                     </Badge>
-                    <h3 className="text-2xl font-bold">{t.forCaregiversPage.cta.button}</h3>
+                    <h3 className="text-2xl font-bold">
+                      {t.forCaregiversPage.cta.button}
+                    </h3>
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 p-4 bg-background/50 rounded-xl">
@@ -41,7 +43,9 @@ export default function CuidadoresPage() {
                       </div>
                       <div>
                         <p className="font-semibold">90%</p>
-                        <p className="text-sm text-muted-foreground">{t.forCaregiversPage.earnings.receive}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {t.forCaregiversPage.earnings.receive}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background/50 rounded-xl">
@@ -49,8 +53,12 @@ export default function CuidadoresPage() {
                         <IconStar className="h-6 w-6 text-yellow-600" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.forCaregiversPage.benefits.verified.title}</p>
-                        <p className="text-sm text-muted-foreground">{t.forCaregiversPage.benefits.verified.description}</p>
+                        <p className="font-semibold">
+                          {t.forCaregiversPage.benefits.verified.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {t.forCaregiversPage.benefits.verified.description}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-background/50 rounded-xl">
@@ -58,8 +66,12 @@ export default function CuidadoresPage() {
                         <IconTrust className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold">{t.forCaregiversPage.benefits.profile.title}</p>
-                        <p className="text-sm text-muted-foreground">{t.forCaregiversPage.benefits.profile.description}</p>
+                        <p className="font-semibold">
+                          {t.forCaregiversPage.benefits.profile.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {t.forCaregiversPage.benefits.profile.description}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -75,19 +87,24 @@ export default function CuidadoresPage() {
                 O seu trabalho merece reconhecimento.
               </h1>
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                Na Evyra, o apoio domiciliário é uma profissão respeitada. Construa uma carreira sustentável com compensação justa, crescimento profissional e a dignidade que merece. 90% de cada pagamento vai directamente para si.
+                Na Evyra, o apoio domiciliário é uma profissão respeitada.
+                Construa uma carreira sustentável com compensação justa,
+                crescimento profissional e a dignidade que merece. 90% de cada
+                pagamento vai directamente para si.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button size="lg" className="bg-teal-600 hover:bg-teal-700" asChild>
+                <Button
+                  size="lg"
+                  className="bg-teal-600 hover:bg-teal-700"
+                  asChild
+                >
                   <Link href="/auth/register?role=caregiver">
                     Iniciar Carreira
                     <IconChevronRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="/como-funciona">
-                    Como Funciona
-                  </Link>
+                  <Link href="/como-funciona">Como Funciona</Link>
                 </Button>
               </div>
             </div>
@@ -99,7 +116,9 @@ export default function CuidadoresPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forCaregiversPage.benefits.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t.forCaregiversPage.benefits.title}
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {t.forCaregiversPage.benefits.description}
             </p>
@@ -111,7 +130,9 @@ export default function CuidadoresPage() {
                 <div className="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center mb-4">
                   <IconCaregiver className="h-7 w-7 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.profile.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  {t.forCaregiversPage.benefits.profile.title}
+                </h3>
                 <p className="text-muted-foreground">
                   {t.forCaregiversPage.benefits.profile.description}
                 </p>
@@ -123,7 +144,9 @@ export default function CuidadoresPage() {
                 <div className="w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-4">
                   <IconShield className="h-7 w-7 text-yellow-600" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.verified.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  {t.forCaregiversPage.benefits.verified.title}
+                </h3>
                 <p className="text-muted-foreground">
                   {t.forCaregiversPage.benefits.verified.description}
                 </p>
@@ -135,7 +158,9 @@ export default function CuidadoresPage() {
                 <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
                   <IconTrust className="h-7 w-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{t.forCaregiversPage.benefits.support.title}</h3>
+                <h3 className="text-xl font-semibold mb-2">
+                  {t.forCaregiversPage.benefits.support.title}
+                </h3>
                 <p className="text-muted-foreground">
                   {t.forCaregiversPage.benefits.support.description}
                 </p>
@@ -150,19 +175,25 @@ export default function CuidadoresPage() {
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.forCaregiversPage.earnings.title}</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                {t.forCaregiversPage.earnings.title}
+              </h2>
               <p className="text-muted-foreground mb-8">
                 {t.forCaregiversPage.earnings.description}
               </p>
-              
+
               <Card>
                 <CardHeader>
-                  <CardTitle>{t.forCaregiversPage.earnings.feesTitle}</CardTitle>
+                  <CardTitle>
+                    {t.forCaregiversPage.earnings.feesTitle}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span>{t.forCaregiversPage.earnings.profile}</span>
-                    <Badge variant="secondary">{t.forCaregiversPage.earnings.activation}</Badge>
+                    <Badge variant="secondary">
+                      {t.forCaregiversPage.earnings.activation}
+                    </Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
                     <span>{t.forCaregiversPage.earnings.contractFee}</span>
@@ -174,7 +205,9 @@ export default function CuidadoresPage() {
                   </div>
                   <div className="flex justify-between items-center p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
                     <span>{t.forCaregiversPage.earnings.tipsValue}</span>
-                    <Badge className="bg-yellow-600">{t.forFamiliesPage.pricing.optional}</Badge>
+                    <Badge className="bg-yellow-600">
+                      {t.forFamiliesPage.pricing.optional}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -182,19 +215,29 @@ export default function CuidadoresPage() {
 
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardContent className="p-8">
-                <h3 className="text-xl font-semibold mb-6 text-center">{t.forCaregiversPage.earnings.example.title}</h3>
+                <h3 className="text-xl font-semibold mb-6 text-center">
+                  {t.forCaregiversPage.earnings.example.title}
+                </h3>
                 <div className="space-y-6">
                   <div className="text-center p-6 bg-background/50 rounded-xl">
-                    <p className="text-sm text-muted-foreground mb-2">{t.forCaregiversPage.earnings.example.hours}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {t.forCaregiversPage.earnings.example.hours}
+                    </p>
                     <p className="text-4xl font-bold text-primary">€1.080</p>
-                    <p className="text-sm text-muted-foreground">{t.forCaregiversPage.earnings.example.perMonth}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t.forCaregiversPage.earnings.example.perMonth}
+                    </p>
                   </div>
                   <div className="text-center p-6 bg-background/50 rounded-xl">
-                    <p className="text-sm text-muted-foreground mb-2">{t.forCaregiversPage.earnings.example.averageTips}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {t.forCaregiversPage.earnings.example.averageTips}
+                    </p>
                     <p className="text-4xl font-bold text-yellow-600">+€100</p>
                   </div>
                   <div className="border-t pt-4 text-center">
-                    <p className="text-sm text-muted-foreground mb-2">{t.forCaregiversPage.earnings.example.total}</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {t.forCaregiversPage.earnings.example.total}
+                    </p>
                     <p className="text-5xl font-bold text-green-600">€1.180</p>
                   </div>
                 </div>
@@ -208,14 +251,18 @@ export default function CuidadoresPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.forCaregiversPage.features.title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t.forCaregiversPage.features.title}
+            </h2>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6 text-center">
                 <IconStar className="h-10 w-10 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.reputation.title}</h3>
+                <h3 className="font-semibold mb-2">
+                  {t.forCaregiversPage.features.reputation.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   {t.forCaregiversPage.features.reputation.description}
                 </p>
@@ -224,7 +271,9 @@ export default function CuidadoresPage() {
             <Card>
               <CardContent className="p-6 text-center">
                 <IconShield className="h-10 w-10 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.protected.title}</h3>
+                <h3 className="font-semibold mb-2">
+                  {t.forCaregiversPage.features.protected.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   {t.forCaregiversPage.features.protected.description}
                 </p>
@@ -233,7 +282,9 @@ export default function CuidadoresPage() {
             <Card>
               <CardContent className="p-6 text-center">
                 <IconEuro className="h-10 w-10 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.payments.title}</h3>
+                <h3 className="font-semibold mb-2">
+                  {t.forCaregiversPage.features.payments.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   {t.forCaregiversPage.features.payments.description}
                 </p>
@@ -242,7 +293,9 @@ export default function CuidadoresPage() {
             <Card>
               <CardContent className="p-6 text-center">
                 <IconTrust className="h-10 w-10 text-primary mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">{t.forCaregiversPage.features.support.title}</h3>
+                <h3 className="font-semibold mb-2">
+                  {t.forCaregiversPage.features.support.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   {t.forCaregiversPage.features.support.description}
                 </p>
@@ -255,7 +308,9 @@ export default function CuidadoresPage() {
       {/* CTA Section */}
       <section className="py-16 bg-primary text-primary-foreground">
         <div className="container px-4 mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">{t.forCaregiversPage.cta.title}</h2>
+          <h2 className="text-3xl font-bold mb-4">
+            {t.forCaregiversPage.cta.title}
+          </h2>
           <p className="text-lg opacity-90 max-w-xl mx-auto mb-8">
             {t.forCaregiversPage.cta.description}
           </p>

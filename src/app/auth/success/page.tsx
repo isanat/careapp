@@ -28,7 +28,9 @@ function SuccessPageContent() {
         <CardContent className="space-y-6">
           <div className="text-center text-muted-foreground">
             <p>{t.success.message}</p>
-            <p>{t.success.readyToStart} {APP_NAME}.</p>
+            <p>
+              {t.success.readyToStart} {APP_NAME}.
+            </p>
           </div>
 
           <div className="space-y-3">
@@ -41,9 +43,7 @@ function SuccessPageContent() {
           </div>
 
           <Button asChild className="w-full" size="lg">
-            <Link href="/app/dashboard">
-              {t.success.goToDashboard}
-            </Link>
+            <Link href="/app/dashboard">{t.success.goToDashboard}</Link>
           </Button>
         </CardContent>
       </Card>
@@ -53,17 +53,19 @@ function SuccessPageContent() {
 
 export default function SuccessPage() {
   const { t } = useI18n();
-  
+
   return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <Card className="w-full max-w-lg">
-          <CardContent className="py-12 text-center">
-            <p>{t.loading}</p>
-          </CardContent>
-        </Card>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+          <Card className="w-full max-w-lg">
+            <CardContent className="py-12 text-center">
+              <p>{t.loading}</p>
+            </CardContent>
+          </Card>
+        </main>
+      }
+    >
       <SuccessPageContent />
     </Suspense>
   );

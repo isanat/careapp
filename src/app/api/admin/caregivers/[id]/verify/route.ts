@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // POST - Approve KYC verification
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -20,27 +20,36 @@ export async function POST(
     // Update verification status
     await db.execute({
       sql: `UPDATE User SET verificationStatus = 'VERIFIED', updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     await db.execute({
       sql: `UPDATE ProfileCaregiver SET verificationStatus = 'VERIFIED', updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
-      args: [id]
+      args: [id],
     });
 
     // Log action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, ipAddress, createdAt)
             VALUES (?, ?, 'VERIFY_KYC', 'CAREGIVER', ?, '{"verificationStatus": "VERIFIED"}', ?, ?, CURRENT_TIMESTAMP)`,
-      args: [generateId("action"), adminUserId, id, reason || 'KYC approved', request.headers.get('x-forwarded-for') || 'unknown']
+      args: [
+        generateId("action"),
+        adminUserId,
+        id,
+        reason || "KYC approved",
+        request.headers.get("x-forwarded-for") || "unknown",
+      ],
     });
 
     return NextResponse.json({
       success: true,
-      message: 'KYC verification approved'
+      message: "KYC verification approved",
     });
   } catch (error) {
-    console.error('Error approving KYC:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error approving KYC:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

@@ -56,19 +56,19 @@ const SidebarLink = ({
     className={cn(
       "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group border border-transparent",
       active
-        ? "bg-primary text-primary-foreground border-primary shadow-sm"
-        : "text-sidebar-foreground hover:bg-primary/10 hover:text-primary"
+        ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-accent shadow-sm"
+        : "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
     )}
   >
     <div className="flex items-center gap-3">
       <Icon className={cn(
         "h-5 w-5",
-        active ? "text-primary-foreground" : variant === 'danger' ? "text-destructive" : "text-sidebar-foreground group-hover:text-primary transition-colors"
+        active ? "text-sidebar-accent-foreground" : variant === 'danger' ? "text-destructive" : "text-sidebar-foreground group-hover:text-sidebar-primary transition-colors"
       )} />
       {isOpen && (
         <span className={cn(
           "text-sm font-display font-bold tracking-tight",
-          active ? "text-primary-foreground" : variant === 'danger' ? "text-destructive" : "text-foreground"
+          active ? "text-sidebar-accent-foreground" : variant === 'danger' ? "text-destructive" : "text-foreground"
         )}>
           {label}
         </span>

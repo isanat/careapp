@@ -16,6 +16,7 @@ export const pageTransitionVariants: Variants = {
     y: 0,
     transition: {
       duration: 0.3,
+      ease: [0.4, 0, 0.2, 1],
     },
   },
   exit: {
@@ -23,6 +24,7 @@ export const pageTransitionVariants: Variants = {
     y: -10,
     transition: {
       duration: 0.2,
+      ease: [0.4, 0, 0.2, 1],
     },
   },
 };
@@ -82,6 +84,7 @@ export const modalVariants: Variants = {
     scale: 1,
     transition: {
       duration: 0.2,
+      ease: [0.4, 0, 0.2, 1],
     },
   },
   exit: {
@@ -89,6 +92,7 @@ export const modalVariants: Variants = {
     scale: 0.95,
     transition: {
       duration: 0.15,
+      ease: [0.4, 0, 0.2, 1],
     },
   },
 };

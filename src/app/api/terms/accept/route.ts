@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // Accept terms during registration (before user is fully authenticated)
 export async function POST(request: NextRequest) {
@@ -9,23 +9,27 @@ export async function POST(request: NextRequest) {
     const { userId, termsTypes } = body;
 
     if (!userId || !termsTypes || !Array.isArray(termsTypes)) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
     }
 
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                      request.headers.get('x-real-ip') || 
-                      'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    const ipAddress =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+    const userAgent = request.headers.get("user-agent") || "unknown";
     const now = new Date().toISOString();
 
     // Accept all specified terms
     for (const termsType of termsTypes) {
       const acceptanceId = generateId("ta");
-      
+
       await db.execute({
         sql: `INSERT INTO TermsAcceptance (id, userId, termsType, termsVersion, ipAddress, userAgent, acceptedAt)
               VALUES (?, ?, ?, '1.0', ?, ?, ?)`,
-        args: [acceptanceId, userId, termsType, ipAddress, userAgent, now]
+        args: [acceptanceId, userId, termsType, ipAddress, userAgent, now],
       });
     }
 
@@ -33,10 +37,13 @@ export async function POST(request: NextRequest) {
       success: true,
       acceptedTerms: termsTypes,
       acceptedAt: now,
-      ipAddress
+      ipAddress,
     });
   } catch (error) {
-    console.error('Error accepting terms during registration:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error accepting terms during registration:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

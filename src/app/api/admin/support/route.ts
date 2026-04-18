@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching support tickets:", error);
     return NextResponse.json(
       { error: "Failed to fetch support tickets" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     if (!userId || !subject || !message) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -182,15 +182,7 @@ export async function POST(request: NextRequest) {
         INSERT INTO SupportTicket (id, userId, subject, message, priority, status, createdAt, updatedAt)
         VALUES (?, ?, ?, ?, ?, 'OPEN', ?, ?)
       `,
-      args: [
-        id,
-        userId,
-        subject,
-        message,
-        priority || "NORMAL",
-        now,
-        now,
-      ],
+      args: [id, userId, subject, message, priority || "NORMAL", now, now],
     });
 
     return NextResponse.json({
@@ -209,7 +201,7 @@ export async function POST(request: NextRequest) {
     console.error("Error creating support ticket:", error);
     return NextResponse.json(
       { error: "Failed to create support ticket" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - User analytics and growth charts
 export async function GET(request: NextRequest) {
@@ -10,19 +10,19 @@ export async function GET(request: NextRequest) {
     const { session, adminUserId } = auth;
 
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || '30d';
-    const groupBy = searchParams.get('groupBy') || 'day'; // day, week, month
+    const period = searchParams.get("period") || "30d";
+    const groupBy = searchParams.get("groupBy") || "day"; // day, week, month
 
     let daysAgo = 30;
-    if (period === '7d') daysAgo = 7;
-    else if (period === '90d') daysAgo = 90;
-    else if (period === '1y') daysAgo = 365;
+    if (period === "7d") daysAgo = 7;
+    else if (period === "90d") daysAgo = 90;
+    else if (period === "1y") daysAgo = 365;
 
     // === User Growth Over Time ===
     let dateFormat = "DATE(createdAt)";
-    if (groupBy === 'week') {
+    if (groupBy === "week") {
       dateFormat = "strftime('%Y-%W', createdAt)";
-    } else if (groupBy === 'month') {
+    } else if (groupBy === "month") {
       dateFormat = "strftime('%Y-%m', createdAt)";
     }
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       WHERE createdAt >= datetime('now', '-' || ? || ' days')
       GROUP BY ${dateFormat}, role
       ORDER BY date`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // === Cumulative User Count ===
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       WHERE createdAt >= datetime('now', '-12 months')
       GROUP BY strftime('%Y-%m', createdAt), role
       ORDER BY month`,
-      args: []
+      args: [],
     });
 
     // === User Status Distribution ===
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       FROM User
       GROUP BY status, role
       ORDER BY role, status`,
-      args: []
+      args: [],
     });
 
     // === User Activity (Last Login) ===
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
           WHEN 'last90days' THEN 4
           ELSE 5
         END`,
-      args: []
+      args: [],
     });
 
     // === Geographic Distribution ===
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
       GROUP BY COALESCE(pf.city, pc.city), COALESCE(pf.country, pc.country, 'PT'), u.role
       ORDER BY userCount DESC
       LIMIT 20`,
-      args: []
+      args: [],
     });
 
     // === Caregiver Specific Analytics ===
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
         AVG(averageRating) as avgRating
       FROM ProfileCaregiver
       GROUP BY verificationStatus`,
-      args: []
+      args: [],
     });
 
     // === Top Performers (Caregivers) ===
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
       WHERE pc.totalContracts > 0
       ORDER BY pc.totalContracts DESC, pc.averageRating DESC
       LIMIT 10`,
-      args: []
+      args: [],
     });
 
     // === Family Engagement ===
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
       JOIN ProfileFamily pf ON u.id = pf.userId
       ORDER BY totalContracts DESC
       LIMIT 10`,
-      args: []
+      args: [],
     });
 
     // === Registration Sources (if tracked) ===
@@ -172,7 +172,7 @@ export async function GET(request: NextRequest) {
       WHERE createdAt >= datetime('now', '-6 months')
       GROUP BY strftime('%Y-%m', createdAt), role
       ORDER BY cohortMonth DESC`,
-      args: []
+      args: [],
     });
 
     // === Summary Stats ===
@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
         (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-30 days')) as activeLast30Days,
         (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-7 days')) as activeLast7Days,
         (SELECT COUNT(*) FROM User WHERE lastLoginAt >= datetime('now', '-1 day')) as activeToday`,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
@@ -229,7 +229,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching user analytics:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching user analytics:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

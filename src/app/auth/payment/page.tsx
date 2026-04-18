@@ -6,7 +6,13 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,7 +25,7 @@ import {
   IconLoader2,
   IconSmartphone,
   IconBuilding,
-  IconCreditCard
+  IconCreditCard,
 } from "@/components/icons";
 import { APP_NAME, ACTIVATION_COST_EUR_CENTS } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -33,17 +39,26 @@ function PaymentPageContent() {
   const { t } = useI18n();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(cancelled ? t.payment.paymentCancelled : "");
-  const [paymentMethod, setPaymentMethod] = useState<"mbway" | "multibanco" | "cc">("multibanco");
+  const [error, setError] = useState(
+    cancelled ? t.payment.paymentCancelled : "",
+  );
+  const [paymentMethod, setPaymentMethod] = useState<
+    "mbway" | "multibanco" | "cc"
+  >("multibanco");
   const [phone, setPhone] = useState("");
   const [nif, setNif] = useState("");
-  
+
   // Payment result states
   const [paymentResult, setPaymentResult] = useState<{
     success: boolean;
     method: string;
     mbway?: { requestId: string; alias: string };
-    multibanco?: { entity: string; reference: string; amount: number; expiresAt: string };
+    multibanco?: {
+      entity: string;
+      reference: string;
+      amount: number;
+      expiresAt: string;
+    };
     creditcard?: { url: string };
   } | null>(null);
 
@@ -78,7 +93,7 @@ function PaymentPageContent() {
       const response = await apiFetch("/api/payments/easypay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           userId: userId || session?.user?.id,
           type: "activation",
           method: paymentMethod,
@@ -93,7 +108,10 @@ function PaymentPageContent() {
       if (!response.ok) {
         // Handle specific error status codes
         if (response.status === 503) {
-          throw new Error(data.error || "Pagamento temporariamente indisponível. Por favor, tente novamente mais tarde ou entre em contato com o suporte.");
+          throw new Error(
+            data.error ||
+              "Pagamento temporariamente indisponível. Por favor, tente novamente mais tarde ou entre em contato com o suporte.",
+          );
         }
         throw new Error(data.error || t.payment.paymentError);
       }
@@ -131,7 +149,9 @@ function PaymentPageContent() {
               <IconCheck className="h-12 w-12 text-green-500" />
             </div>
             <div>
-              <CardTitle className="text-2xl text-green-600">{t.payment.paymentCreated}</CardTitle>
+              <CardTitle className="text-2xl text-green-600">
+                {t.payment.paymentCreated}
+              </CardTitle>
               <CardDescription>{t.payment.followInstructions}</CardDescription>
             </div>
           </CardHeader>
@@ -141,36 +161,49 @@ function PaymentPageContent() {
                 <IconSmartphone className="h-8 w-8 mx-auto text-blue-500 mb-2" />
                 <p className="font-medium">MB Way</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {t.payment.checkPhone} <strong>{paymentResult.mbway.alias}</strong>
+                  {t.payment.checkPhone}{" "}
+                  <strong>{paymentResult.mbway.alias}</strong>
                 </p>
               </div>
             )}
 
-            {paymentResult.method === "multibanco" && paymentResult.multibanco && (
-              <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  <IconBuilding className="h-6 w-6 text-orange-500" />
-                  <span className="font-medium">Multibanco</span>
+            {paymentResult.method === "multibanco" &&
+              paymentResult.multibanco && (
+                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <IconBuilding className="h-6 w-6 text-orange-500" />
+                    <span className="font-medium">Multibanco</span>
+                  </div>
+                  <div className="space-y-3 text-center">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Entidade</p>
+                      <p className="text-2xl font-bold">
+                        {paymentResult.multibanco.entity}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Referência
+                      </p>
+                      <p className="text-2xl font-bold tracking-wider">
+                        {paymentResult.multibanco.reference}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Valor</p>
+                      <p className="text-xl font-bold">
+                        €{(paymentResult.multibanco.amount / 100).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-center text-muted-foreground mt-4">
+                    {t.payment.expiresAt}:{" "}
+                    {new Date(
+                      paymentResult.multibanco.expiresAt,
+                    ).toLocaleDateString("pt-PT")}
+                  </p>
                 </div>
-                <div className="space-y-3 text-center">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Entidade</p>
-                    <p className="text-2xl font-bold">{paymentResult.multibanco.entity}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Referência</p>
-                    <p className="text-2xl font-bold tracking-wider">{paymentResult.multibanco.reference}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Valor</p>
-                    <p className="text-xl font-bold">€{(paymentResult.multibanco.amount / 100).toFixed(2)}</p>
-                  </div>
-                </div>
-                <p className="text-xs text-center text-muted-foreground mt-4">
-                  {t.payment.expiresAt}: {new Date(paymentResult.multibanco.expiresAt).toLocaleDateString('pt-PT')}
-                </p>
-              </div>
-            )}
+              )}
 
             <div className="p-4 bg-muted rounded-lg">
               <p className="text-sm text-center text-muted-foreground">
@@ -195,14 +228,15 @@ function PaymentPageContent() {
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 mx-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 mx-auto"
+          >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
             <CardTitle className="text-2xl">{t.payment.title}</CardTitle>
-            <CardDescription>
-              {t.payment.description}
-            </CardDescription>
+            <CardDescription>{t.payment.description}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -216,7 +250,9 @@ function PaymentPageContent() {
           {/* Payment Summary */}
           <div className="p-4 bg-muted rounded-lg space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">{t.payment.activationFee}</span>
+              <span className="text-muted-foreground">
+                {t.payment.activationFee}
+              </span>
               <Badge variant="secondary">€{activationCostEur}</Badge>
             </div>
           </div>
@@ -224,38 +260,59 @@ function PaymentPageContent() {
           {/* Payment Method Selection */}
           <div className="space-y-3">
             <Label>{t.payment.selectMethod}</Label>
-            <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as typeof paymentMethod)}>
+            <RadioGroup
+              value={paymentMethod}
+              onValueChange={(v) => setPaymentMethod(v as typeof paymentMethod)}
+            >
               <div className="grid gap-3">
-                <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                  paymentMethod === "multibanco" ? "border-primary bg-primary/5" : "hover:border-primary/50"
-                }`}>
+                <label
+                  className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                    paymentMethod === "multibanco"
+                      ? "border-primary bg-primary/5"
+                      : "hover:border-primary/50"
+                  }`}
+                >
                   <RadioGroupItem value="multibanco" />
                   <IconBuilding className="h-5 w-5 text-orange-500" />
                   <div>
                     <p className="font-medium">Multibanco</p>
-                    <p className="text-xs text-muted-foreground">{t.payment.multibancoDesc}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t.payment.multibancoDesc}
+                    </p>
                   </div>
                 </label>
 
-                <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                  paymentMethod === "mbway" ? "border-primary bg-primary/5" : "hover:border-primary/50"
-                }`}>
+                <label
+                  className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                    paymentMethod === "mbway"
+                      ? "border-primary bg-primary/5"
+                      : "hover:border-primary/50"
+                  }`}
+                >
                   <RadioGroupItem value="mbway" />
                   <IconSmartphone className="h-5 w-5 text-blue-500" />
                   <div>
                     <p className="font-medium">MB Way</p>
-                    <p className="text-xs text-muted-foreground">{t.payment.mbwayDesc}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t.payment.mbwayDesc}
+                    </p>
                   </div>
                 </label>
 
-                <label className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                  paymentMethod === "cc" ? "border-primary bg-primary/5" : "hover:border-primary/50"
-                }`}>
+                <label
+                  className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                    paymentMethod === "cc"
+                      ? "border-primary bg-primary/5"
+                      : "hover:border-primary/50"
+                  }`}
+                >
                   <RadioGroupItem value="cc" />
                   <IconCreditCard className="h-5 w-5 text-purple-500" />
                   <div>
                     <p className="font-medium">{t.payment.creditCard}</p>
-                    <p className="text-xs text-muted-foreground">{t.payment.creditCardDesc}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t.payment.creditCardDesc}
+                    </p>
                   </div>
                 </label>
               </div>
@@ -273,7 +330,9 @@ function PaymentPageContent() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">{t.payment.mbwayPhoneHint}</p>
+              <p className="text-xs text-muted-foreground">
+                {t.payment.mbwayPhoneHint}
+              </p>
             </div>
           )}
 
@@ -288,7 +347,9 @@ function PaymentPageContent() {
                 onChange={(e) => setNif(e.target.value)}
                 maxLength={9}
               />
-              <p className="text-xs text-muted-foreground">{t.payment.nifHint}</p>
+              <p className="text-xs text-muted-foreground">
+                {t.payment.nifHint}
+              </p>
             </div>
           )}
 
@@ -300,14 +361,18 @@ function PaymentPageContent() {
                 <IconCheck className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="font-medium">{t.payment.accountActivated}</p>
-                  <p className="text-sm text-muted-foreground">{t.payment.accountActivatedDesc}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.payment.accountActivatedDesc}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <IconShield className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
                   <p className="font-medium">{t.payment.securePayment}</p>
-                  <p className="text-sm text-muted-foreground">{t.payment.processedByEasypay}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.payment.processedByEasypay}
+                  </p>
                 </div>
               </div>
             </div>
@@ -318,7 +383,9 @@ function PaymentPageContent() {
             <IconShield className="h-5 w-5 text-primary shrink-0" />
             <div className="text-sm">
               <p className="font-medium">{t.payment.securePayment}</p>
-              <p className="text-muted-foreground">{t.payment.processedByEasypay}</p>
+              <p className="text-muted-foreground">
+                {t.payment.processedByEasypay}
+              </p>
             </div>
           </div>
 
@@ -345,7 +412,10 @@ function PaymentPageContent() {
               {t.footer.terms}
             </Link>{" "}
             {t.payment.and}{" "}
-            <Link href="/privacidade" className="underline hover:text-foreground">
+            <Link
+              href="/privacidade"
+              className="underline hover:text-foreground"
+            >
               {t.footer.privacy}
             </Link>
           </div>
@@ -357,17 +427,19 @@ function PaymentPageContent() {
 
 export default function PaymentPage() {
   const { t } = useI18n();
-  
+
   return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <Card className="w-full max-w-lg">
-          <CardContent className="py-12 text-center">
-            <p>{t.loading}</p>
-          </CardContent>
-        </Card>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+          <Card className="w-full max-w-lg">
+            <CardContent className="py-12 text-center">
+              <p>{t.loading}</p>
+            </CardContent>
+          </Card>
+        </main>
+      }
+    >
       <PaymentPageContent />
     </Suspense>
   );

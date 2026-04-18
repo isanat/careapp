@@ -9,7 +9,10 @@ import { generateId } from "@/lib/utils/id";
  * GET /api/contracts/{id}/weekly-approvals
  * Fetch all weekly payment approvals for a contract
  */
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
@@ -27,13 +30,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     });
 
     if (contractResult.rows.length === 0) {
-      return NextResponse.json({ error: "Contract not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
     }
 
     const contract = contractResult.rows[0] as any;
 
     // Verify user is family or caregiver in this contract
-    if (session.user.id !== contract.familyUserId && session.user.id !== contract.caregiverUserId) {
+    if (
+      session.user.id !== contract.familyUserId &&
+      session.user.id !== contract.caregiverUserId
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
@@ -60,8 +69,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       approvedAt: row.approvedAt,
       capturedAt: row.capturedAt,
       familyNotes: row.familyNotes,
-      canApprove: session.user.id === contract.familyUserId && row.status === "PENDING",
-      canDispute: session.user.id === contract.familyUserId && row.status === "PENDING",
+      canApprove:
+        session.user.id === contract.familyUserId && row.status === "PENDING",
+      canDispute:
+        session.user.id === contract.familyUserId && row.status === "PENDING",
     }));
 
     return NextResponse.json({
@@ -75,7 +86,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     console.error("Error fetching weekly approvals:", error);
     return NextResponse.json(
       { error: "Failed to fetch weekly approvals" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -85,7 +96,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
  * Create weekly payment approvals for a contract
  * Called after contract fee is paid
  */
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
@@ -103,7 +117,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
 
     if (contractResult.rows.length === 0) {
-      return NextResponse.json({ error: "Contract not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
     }
 
     const contract = contractResult.rows[0] as any;
@@ -116,8 +133,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // Check if contract is in right status
     if (contract.status !== "ACTIVE" && contract.status !== "PENDING_PAYMENT") {
       return NextResponse.json(
-        { error: `Cannot create weekly approvals for contract in ${contract.status} status` },
-        { status: 400 }
+        {
+          error: `Cannot create weekly approvals for contract in ${contract.status} status`,
+        },
+        { status: 400 },
       );
     }
 
@@ -125,7 +144,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (contract.weeklyPaymentEnabled) {
       return NextResponse.json(
         { error: "Weekly payment approvals already created for this contract" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,7 +152,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const startDate = new Date(contract.startDate);
 
     // Create 4 weekly payment approvals
-    const weeklyApprovals: Array<{ id: string; weekNumber: number; amount: number; dueAt: string }> = [];
+    const weeklyApprovals: Array<{
+      id: string;
+      weekNumber: number;
+      amount: number;
+      dueAt: string;
+    }> = [];
     const platformFeePct = 15; // 15% platform fee
 
     for (let week = 1; week <= 4; week++) {
@@ -143,7 +167,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
       // Approval due at Friday 5 PM
       const approvalDueAt = new Date(weekStartDate);
-      approvalDueAt.setDate(approvalDueAt.getDate() + ((5 - approvalDueAt.getDay() + 7) % 7)); // Next Friday
+      approvalDueAt.setDate(
+        approvalDueAt.getDate() + ((5 - approvalDueAt.getDay() + 7) % 7),
+      ); // Next Friday
       approvalDueAt.setHours(17, 0, 0, 0); // 5 PM
 
       // Calculate actual days in week (week 1 might be partial, others are 7 days)
@@ -151,7 +177,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       if (week === 1) {
         const weekEndDate = new Date(weekStartDate);
         weekEndDate.setDate(weekEndDate.getDate() + 6);
-        daysInWeek = Math.min(7, Math.ceil((approvalDueAt.getTime() - weekStartDate.getTime()) / (1000 * 60 * 60 * 24)));
+        daysInWeek = Math.min(
+          7,
+          Math.ceil(
+            (approvalDueAt.getTime() - weekStartDate.getTime()) /
+              (1000 * 60 * 60 * 24),
+          ),
+        );
         if (daysInWeek === 0) daysInWeek = 1; // At least 1 day
       }
 
@@ -201,7 +233,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           contractId,
           contract.familyUserId,
           week1.amount,
-          1
+          1,
         );
 
         // Store Stripe payment hold ID in first week
@@ -225,7 +257,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     console.error("Error creating weekly approvals:", error);
     return NextResponse.json(
       { error: "Failed to create weekly approvals" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

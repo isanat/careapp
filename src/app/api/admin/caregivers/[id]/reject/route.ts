@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // POST - Reject KYC verification
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -18,33 +18,45 @@ export async function POST(
     const { reason } = body;
 
     if (!reason) {
-      return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Reason is required" },
+        { status: 400 },
+      );
     }
 
     // Update verification status
     await db.execute({
       sql: `UPDATE User SET verificationStatus = 'REJECTED', updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     await db.execute({
       sql: `UPDATE ProfileCaregiver SET verificationStatus = 'REJECTED', updatedAt = CURRENT_TIMESTAMP WHERE userId = ?`,
-      args: [id]
+      args: [id],
     });
 
     // Log action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, newValue, reason, ipAddress, createdAt)
             VALUES (?, ?, 'REJECT_KYC', 'CAREGIVER', ?, '{"verificationStatus": "REJECTED"}', ?, ?, CURRENT_TIMESTAMP)`,
-      args: [generateId("action"), adminUserId, id, reason, request.headers.get('x-forwarded-for') || 'unknown']
+      args: [
+        generateId("action"),
+        adminUserId,
+        id,
+        reason,
+        request.headers.get("x-forwarded-for") || "unknown",
+      ],
     });
 
     return NextResponse.json({
       success: true,
-      message: 'KYC verification rejected'
+      message: "KYC verification rejected",
     });
   } catch (error) {
-    console.error('Error rejecting KYC:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error rejecting KYC:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
