@@ -1,9 +1,9 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
-export const dynamic = 'force-dynamic';
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { BloomCard } from "@/components/bloom-custom/BloomCard";
