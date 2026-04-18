@@ -38,7 +38,6 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import { EvyraHeader } from "@/components/layout/EvyraHeader";
 import { EvyraSidebar } from "@/components/layout/EvyraSidebar";
-import { PageTransition } from "@/components/layout/PageTransition";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -166,9 +165,7 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
 
         {/* Content Area */}
         <div className="p-4 md:p-6 lg:p-10 max-w-7xl mx-auto w-full">
-          <PageTransition>
-            {children}
-          </PageTransition>
+          {children}
         </div>
 
         {/* Mobile Bottom Navigation (Evyra specific) */}
