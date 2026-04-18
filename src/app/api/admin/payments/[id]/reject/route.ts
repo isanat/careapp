@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { sendEmail } from '@/lib/services/email';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { sendEmail } from "@/lib/services/email";
 
 /**
  * POST /api/admin/payments/[id]/reject
@@ -9,7 +9,7 @@ import { sendEmail } from '@/lib/services/email';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -20,10 +20,10 @@ export async function POST(
     const body = await request.json();
     const { reason } = body;
 
-    if (!reason || typeof reason !== 'string') {
+    if (!reason || typeof reason !== "string") {
       return NextResponse.json(
-        { error: 'Rejection reason is required' },
-        { status: 400 }
+        { error: "Rejection reason is required" },
+        { status: 400 },
       );
     }
 
@@ -35,23 +35,20 @@ export async function POST(
         JOIN User u ON p.userId = u.id
         WHERE p.id = ?
       `,
-      args: [id]
+      args: [id],
     });
 
     if (paymentResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Payment not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Payment not found" }, { status: 404 });
     }
 
     const payment = paymentResult.rows[0];
 
     // Only reject PENDING payments
-    if (payment.status !== 'PENDING') {
+    if (payment.status !== "PENDING") {
       return NextResponse.json(
-        { error: 'Only pending payments can be rejected' },
-        { status: 400 }
+        { error: "Only pending payments can be rejected" },
+        { status: 400 },
       );
     }
 
@@ -65,25 +62,25 @@ export async function POST(
         WHERE id = ?
       `,
       args: [
-        'FAILED',
+        "FAILED",
         JSON.stringify({
           rejectionReason: reason,
           rejectedAt: now,
           rejectedByAdminId: adminId,
         }),
-        id
-      ]
+        id,
+      ],
     });
 
     // If this is a visibility boost, mark purchase as failed
-    if (payment.type === 'VISIBILITY_BOOST' && payment.demandId) {
+    if (payment.type === "VISIBILITY_BOOST" && payment.demandId) {
       await db.execute({
         sql: `
           UPDATE VisibilityPurchase
           SET status = ?
           WHERE demandId = ? AND status = 'PENDING'
         `,
-        args: ['FAILED', payment.demandId]
+        args: ["FAILED", payment.demandId],
       });
     }
 
@@ -92,7 +89,7 @@ export async function POST(
       if (payment.userEmail) {
         await sendEmail({
           to: String(payment.userEmail),
-          subject: 'Pagamento Rejeitado - Evyra',
+          subject: "Pagamento Rejeitado - Evyra",
           html: `
             <p>Olá ${payment.userName},</p>
             <p>Seu pagamento de €${(Number(payment.amountEurCents) / 100).toFixed(2)} foi rejeitado.</p>
@@ -102,24 +99,24 @@ export async function POST(
         });
       }
     } catch (emailError) {
-      console.error('Error sending rejection email:', emailError);
+      console.error("Error sending rejection email:", emailError);
       // Don't fail the request due to email error
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Payment rejected',
+      message: "Payment rejected",
       payment: {
         id: payment.id,
-        status: 'FAILED',
+        status: "FAILED",
         rejectionReason: reason,
       },
     });
   } catch (error: any) {
-    console.error('Error rejecting payment:', error);
+    console.error("Error rejecting payment:", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to reject payment' },
-      { status: 500 }
+      { error: error.message || "Failed to reject payment" },
+      { status: 500 },
     );
   }
 }

@@ -1,15 +1,12 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatusBadge } from "@/components/admin/common/status-badge";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -101,7 +98,11 @@ export default function AdminUserDetailPage() {
       if (!response.ok) throw new Error("Failed to suspend");
       router.refresh();
     } catch (error) {
-      toast({ title: "Erro", description: "Erro ao suspender utilizador", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Erro ao suspender utilizador",
+        variant: "destructive",
+      });
     }
   };
 
@@ -113,7 +114,11 @@ export default function AdminUserDetailPage() {
       if (!response.ok) throw new Error("Failed to activate");
       router.refresh();
     } catch (error) {
-      toast({ title: "Erro", description: "Erro ao ativar utilizador", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Erro ao ativar utilizador",
+        variant: "destructive",
+      });
     }
   };
 
@@ -141,13 +146,7 @@ export default function AdminUserDetailPage() {
   }
 
   return (
-    <div
-     
-     
-      exit="exit"
-     
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       <PageHeader
         title="Detalhes do Utilizador"
         breadcrumbs={[
@@ -177,15 +176,10 @@ export default function AdminUserDetailPage() {
         }
       />
 
-      <div
-        className="grid gap-6 md:grid-cols-3"
-       
-       
-       
-      >
+      <div className="grid gap-6 md:grid-cols-3">
         {/* User Info Card */}
-        <div>
-          <BloomCard variant="default" className="p-5 sm:p-6 md:p-7">
+        <Card className="md:col-span-1">
+          <CardContent className="pt-6">
             <div className="flex flex-col items-center text-center">
               <Avatar className="h-20 w-20">
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl">
@@ -195,28 +189,28 @@ export default function AdminUserDetailPage() {
               <h2 className="mt-4 text-xl font-bold">{user.name}</h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>
               <div className="mt-2 flex gap-2">
-                <BloomBadge
-                  variant={
+                <Badge
+                  className={
                     user.role === "FAMILY"
-                      ? "primary"
+                      ? "bg-primary/10 text-primary"
                       : user.role === "CAREGIVER"
-                      ? "success"
-                      : "primary"
+                        ? "bg-success/10 text-success"
+                        : "bg-primary/10 text-primary"
                   }
                 >
                   {user.role === "FAMILY"
                     ? "Família"
                     : user.role === "CAREGIVER"
-                    ? "Cuidador"
-                    : "Admin"}
-                </BloomBadge>
+                      ? "Cuidador"
+                      : "Admin"}
+                </Badge>
                 <StatusBadge
                   status={
                     user.status === "ACTIVE"
                       ? "active"
                       : user.status === "SUSPENDED"
-                      ? "suspended"
-                      : "pending"
+                        ? "suspended"
+                        : "pending"
                   }
                 />
               </div>
@@ -236,7 +230,8 @@ export default function AdminUserDetailPage() {
               <div className="flex items-center gap-2 text-muted-foreground">
                 <IconCalendar className="h-4 w-4" />
                 <span>
-                  Membro desde {new Date(user.createdAt).toLocaleDateString("pt-PT")}
+                  Membro desde{" "}
+                  {new Date(user.createdAt).toLocaleDateString("pt-PT")}
                 </span>
               </div>
               {user.lastLoginAt && (
@@ -258,14 +253,14 @@ export default function AdminUserDetailPage() {
                     user.verificationStatus === "VERIFIED"
                       ? "verified"
                       : user.verificationStatus === "PENDING"
-                      ? "pending"
-                      : "unverified"
+                        ? "pending"
+                        : "unverified"
                   }
                 />
               </div>
             </div>
-          </BloomCard>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Main Content */}
         <div className="md:col-span-2">
@@ -276,29 +271,28 @@ export default function AdminUserDetailPage() {
               <TabsTrigger value="contracts">Contratos</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="mt-4 space-y-6">
+            <TabsContent value="overview" className="mt-4 space-y-4">
               {/* Stats */}
-              <div
-                className="grid gap-4 sm:grid-cols-2"
-               
-               
-               
-              >
-                <div>
-                  <BloomCard variant="success" className="p-5 sm:p-6 md:p-7">
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Card>
+                  <CardContent className="pt-6">
                     <div className="flex items-center gap-3">
                       <div className="rounded-full bg-primary/10 p-2">
                         <IconFileText className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold">{user.contractsCount}</p>
-                        <p className="text-sm text-muted-foreground">Contratos</p>
+                        <p className="text-2xl font-bold">
+                          {user.contractsCount}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Contratos
+                        </p>
                       </div>
                     </div>
-                  </BloomCard>
-                </div>
-                <div>
-                  <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7">
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
                     <div className="flex items-center gap-3">
                       <div className="rounded-full bg-warning/10 p-2">
                         <IconCreditCard className="h-5 w-5 text-warning" />
@@ -307,19 +301,22 @@ export default function AdminUserDetailPage() {
                         <p className="text-2xl font-bold">
                           €{(user.totalSpent / 100).toFixed(2)}
                         </p>
-                        <p className="text-sm text-muted-foreground">Total gasto</p>
+                        <p className="text-sm text-muted-foreground">
+                          Total gasto
+                        </p>
                       </div>
                     </div>
-                  </BloomCard>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Profile Info */}
               {user.profileFamily && (
-                <div>
-                  <BloomCard className="p-5 sm:p-6 md:p-7">
-                    <BloomSectionHeader title="Perfil Familiar" />
-                    <div className="space-y-2 text-sm">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Perfil Familiar</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
                     {user.profileFamily.elderName && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Idoso</span>
@@ -338,22 +335,24 @@ export default function AdminUserDetailPage() {
                     )}
                     {user.profileFamily.elderNeeds && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Necessidades</span>
+                        <span className="text-muted-foreground">
+                          Necessidades
+                        </span>
                         <span className="max-w-xs text-right">
                           {user.profileFamily.elderNeeds}
                         </span>
                       </div>
                     )}
-                    </div>
-                  </BloomCard>
-                </div>
+                  </CardContent>
+                </Card>
               )}
 
               {user.profileCaregiver && (
-                <div>
-                  <BloomCard className="p-5 sm:p-6 md:p-7">
-                    <BloomSectionHeader title="Perfil Cuidador" />
-                    <div className="space-y-2 text-sm">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Perfil Cuidador</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
                     {user.profileCaregiver.title && (
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Título</span>
@@ -384,50 +383,53 @@ export default function AdminUserDetailPage() {
                         <p className="mt-1">{user.profileCaregiver.bio}</p>
                       </div>
                     )}
-                    </div>
-                  </BloomCard>
-                </div>
+                  </CardContent>
+                </Card>
               )}
             </TabsContent>
 
-            <TabsContent value="wallet" className="mt-4 space-y-6">
-              <div>
-                <BloomCard className="p-5 sm:p-6 md:p-7">
-                  <BloomSectionHeader title="Carteira" />
-                  <div className="space-y-4">
-                    {user.wallet ? (
-                      <>
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Saldo</p>
-                            <p className="text-2xl font-bold">
-                              €{(user.wallet.balanceEurCents / 100).toFixed(2)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground">Endereço</p>
-                            <p className="font-mono text-xs break-all">
-                              {user.wallet.address}
-                            </p>
-                          </div>
+            <TabsContent value="wallet" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Carteira</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {user.wallet ? (
+                    <>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Saldo</p>
+                          <p className="text-2xl font-bold">
+                            €{(user.wallet.balanceEurCents / 100).toFixed(2)}
+                          </p>
                         </div>
-                      </>
-                    ) : (
-                      <p className="text-muted-foreground">Carteira não encontrada</p>
-                    )}
-                  </div>
-                </BloomCard>
-              </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Endereço
+                          </p>
+                          <p className="font-mono text-xs break-all">
+                            {user.wallet.address}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Carteira não encontrada
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
 
-            <TabsContent value="contracts" className="mt-4 space-y-6">
-              <div>
-                <BloomCard className="p-5 sm:p-6 md:p-7">
+            <TabsContent value="contracts" className="mt-4">
+              <Card>
+                <CardContent className="pt-6">
                   <p className="text-center text-muted-foreground">
                     {user.contractsCount} contrato(s) encontrado(s)
                   </p>
-                </BloomCard>
-              </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

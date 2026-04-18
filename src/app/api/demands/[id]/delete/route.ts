@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 /**
  * DELETE /api/demands/[id]
@@ -9,12 +9,12 @@ import { db } from '@/lib/db-turso';
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -28,19 +28,22 @@ export async function DELETE(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
     const demand = demandResult.rows[0] as any;
 
     // Verify ownership
     if (demand.familyUserId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Check if already deleted
     if (demand.deletedAt) {
-      return NextResponse.json({ error: 'Demand already deleted' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Demand already deleted" },
+        { status: 400 },
+      );
     }
 
     // Soft delete: set deletedAt and deletionReason
@@ -53,12 +56,12 @@ export async function DELETE(
       args: [reason || null, demandId],
     });
 
-    return NextResponse.json({ message: 'Demanda deletada com sucesso' });
+    return NextResponse.json({ message: "Demanda deletada com sucesso" });
   } catch (error) {
-    console.error('[Demands API] Delete error:', error);
+    console.error("[Demands API] Delete error:", error);
     return NextResponse.json(
-      { error: 'Failed to delete demand' },
-      { status: 500 }
+      { error: "Failed to delete demand" },
+      { status: 500 },
     );
   }
 }

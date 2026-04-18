@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 // POST - Activate user (unsuspend)
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -36,7 +36,7 @@ export async function POST(
     if (userBefore.status === "ACTIVE") {
       return NextResponse.json(
         { error: "User is already active" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -49,9 +49,10 @@ export async function POST(
     const adminProfileId = adminProfileResult.rows[0]?.id as string | null;
 
     // Get IP and user agent
-    const ipAddress = request.headers.get("x-forwarded-for") ||
-                      request.headers.get("x-real-ip") ||
-                      "unknown";
+    const ipAddress =
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Update user status to ACTIVE
@@ -125,7 +126,7 @@ export async function POST(
     console.error("User activation error:", error);
     return NextResponse.json(
       { error: "Failed to activate user" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

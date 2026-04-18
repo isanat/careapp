@@ -88,13 +88,17 @@ export async function GET(request: NextRequest) {
       openSupportTickets,
       pendingModeration,
       // Computed totals for convenience
-      totalPendingActions: pendingCaregivers + disputedContracts + openSupportTickets + pendingModeration,
+      totalPendingActions:
+        pendingCaregivers +
+        disputedContracts +
+        openSupportTickets +
+        pendingModeration,
     });
   } catch (error) {
     console.error("Admin stats error:", error);
     return NextResponse.json(
       { error: "Failed to fetch admin stats" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

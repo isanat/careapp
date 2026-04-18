@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 @theme inline {
   --color-background: hsl(var(--background));
@@ -58,14 +58,14 @@
 @layer base {
   :root {
     /* Background & Text - Modern Light Mode */
-    --background: 210 20% 98%;      /* #F7F9FB */
-    --foreground: 210 16% 12%;      /* #1A1F2E */
+    --background: 210 20% 98%; /* #F7F9FB */
+    --foreground: 210 16% 12%; /* #1A1F2E */
 
     /* Card Styling */
-    --card: 0 0% 100%;              /* #FFFFFF - Pure white */
+    --card: 0 0% 100%; /* #FFFFFF - Pure white */
     --card-foreground: 215 28% 10%; /* #1A1F2E */
 
-    --popover: 0 0% 100%;           /* #FFFFFF - Pure white */
+    --popover: 0 0% 100%; /* #FFFFFF - Pure white */
     --popover-foreground: 215 28% 10%; /* #1A1F2E */
 
     /* PRIMARY - Blue (#3B82F6) */
@@ -77,11 +77,11 @@
     --secondary-foreground: 215 28% 17%;
 
     /* MUTED - Light Gray (same as secondary) */
-    --muted: 210 20% 96%;           /* #F3F4F6 */
+    --muted: 210 20% 96%; /* #F3F4F6 */
     --muted-foreground: 215 16% 47%; /* #78838B */
 
     /* ACCENT - Light Gray */
-    --accent: 210 20% 96%;          /* #F3F4F6 */
+    --accent: 210 20% 96%; /* #F3F4F6 */
     --accent-foreground: 215 28% 17%;
 
     /* DESTRUCTIVE - Red (#FF6B6B) */
@@ -101,45 +101,49 @@
     --info-foreground: 0 0% 100%;
 
     /* BORDERS & INPUTS */
-    --border: 214 32% 91%;          /* #DDDFE5 */
-    --input: 214 32% 91%;           /* #DDDFE5 */
-    --ring: 221 83% 53%;            /* Primary blue */
+    --border: 214 32% 91%; /* #DDDFE5 */
+    --input: 214 32% 91%; /* #DDDFE5 */
+    --ring: 221 83% 53%; /* Primary blue */
 
     --radius: 0.75rem;
 
     /* SIDEBAR */
-    --sidebar-background: 0 0% 100%;      /* #FFFFFF */
-    --sidebar-foreground: 215 16% 47%;    /* #6B7280 */
-    --sidebar-primary: 221 83% 53%;       /* #3B82F6 */
+    --sidebar-background: 0 0% 100%; /* #FFFFFF */
+    --sidebar-foreground: 215 16% 47%; /* #6B7280 */
+    --sidebar-primary: 221 83% 53%; /* #3B82F6 */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 221 83% 96%;        /* soft blue accent */
+    --sidebar-accent: 221 83% 96%; /* soft blue accent */
     --sidebar-accent-foreground: 221 83% 53%;
     --sidebar-border: 214 32% 94%;
-    --sidebar-ring: 221 83% 53%;          /* #3B82F6 */
+    --sidebar-ring: 221 83% 53%; /* #3B82F6 */
 
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
 
     /* SHADOWS with blue primary color */
-    --shadow-card: 0 1px 3px 0 hsl(215 28% 10% / 0.04), 0 1px 2px -1px hsl(215 28% 10% / 0.04);
-    --shadow-elevated: 0 10px 40px -10px hsl(221 83% 53% / 0.12), 0 4px 16px -4px hsl(215 28% 10% / 0.06);
+    --shadow-card:
+      0 1px 3px 0 hsl(215 28% 10% / 0.04),
+      0 1px 2px -1px hsl(215 28% 10% / 0.04);
+    --shadow-elevated:
+      0 10px 40px -10px hsl(221 83% 53% / 0.12),
+      0 4px 16px -4px hsl(215 28% 10% / 0.06);
     --shadow-glow: 0 0 30px -5px hsl(221 83% 53% / 0.25);
   }
 
   .dark {
     /* Dark Mode - Bloom Elements parity */
-    --background: 222 47% 6%;       /* #090D1A */
-    --foreground: 210 40% 98%;      /* #F8FAFC */
+    --background: 222 47% 6%; /* #090D1A */
+    --foreground: 210 40% 98%; /* #F8FAFC */
 
     /* Card Styling - Dark */
-    --card: 222 47% 8%;             /* #0D1222 */
+    --card: 222 47% 8%; /* #0D1222 */
     --card-foreground: 210 40% 98%; /* #F8FAFC */
 
     --popover: 222 47% 8%;
     --popover-foreground: 210 40% 98%;
 
     /* PRIMARY - Blue (same as light mode for consistency) */
-    --primary: 221 83% 53%;         /* #3B82F6 */
+    --primary: 221 83% 53%; /* #3B82F6 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217 33% 14%;
@@ -191,7 +195,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
   }
 }
@@ -206,7 +215,11 @@
   }
 
   .text-gradient-primary {
-    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--info)));
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--primary)),
+      hsl(var(--info))
+    );
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
@@ -231,5 +244,4 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
 }

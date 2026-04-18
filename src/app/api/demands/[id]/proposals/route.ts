@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
-import { notifyFamilyNewProposal } from '@/lib/services/email';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
+import { notifyFamilyNewProposal } from "@/lib/services/email";
 
 /**
  * POST /api/demands/[id]/proposals
@@ -10,32 +10,31 @@ import { notifyFamilyNewProposal } from '@/lib/services/email';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Only CAREGIVER users can send proposals
-    if (session.user.role !== 'CAREGIVER') {
-      return NextResponse.json({ error: 'Only caregivers can send proposals' }, { status: 403 });
+    if (session.user.role !== "CAREGIVER") {
+      return NextResponse.json(
+        { error: "Only caregivers can send proposals" },
+        { status: 403 },
+      );
     }
 
     const { id: demandId } = await params;
     const body = await request.json();
-    const {
-      message,
-      proposedHourlyRate,
-      estimatedStartDate,
-    } = body;
+    const { message, proposedHourlyRate, estimatedStartDate } = body;
 
     // Validation
     if (!message || message.length < 20) {
       return NextResponse.json(
-        { error: 'Message must be at least 20 characters' },
-        { status: 400 }
+        { error: "Message must be at least 20 characters" },
+        { status: 400 },
       );
     }
 
@@ -46,7 +45,10 @@ export async function POST(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found or inactive' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Demand not found or inactive" },
+        { status: 404 },
+      );
     }
 
     const demand = demandResult.rows[0];
@@ -59,8 +61,8 @@ export async function POST(
 
     if (existingResult.rows.length > 0) {
       return NextResponse.json(
-        { error: 'You have already proposed for this demand' },
-        { status: 400 }
+        { error: "You have already proposed for this demand" },
+        { status: 400 },
       );
     }
 
@@ -81,7 +83,7 @@ export async function POST(
         message,
         proposedHourlyRate || null,
         estimatedStartDate || null,
-        'PENDING',
+        "PENDING",
         now,
         now,
       ],
@@ -90,7 +92,7 @@ export async function POST(
     // Create notification for family
     try {
       const notificationId = crypto.randomUUID();
-      const caregiverName = session.user.name || 'Cuidador';
+      const caregiverName = session.user.name || "Cuidador";
 
       await db.execute({
         sql: `
@@ -102,10 +104,10 @@ export async function POST(
         args: [
           notificationId,
           String(demand.familyUserId),
-          'PROPOSAL',
-          'Nova Proposta Recebida',
+          "PROPOSAL",
+          "Nova Proposta Recebida",
           `${caregiverName} enviou uma proposta para "${String(demand.title)}"`,
-          'PROPOSAL',
+          "PROPOSAL",
           proposalId,
           false,
           false,
@@ -113,7 +115,7 @@ export async function POST(
         ],
       });
     } catch (notifError) {
-      console.warn('[Proposals] Failed to create notification:', notifError);
+      console.warn("[Proposals] Failed to create notification:", notifError);
       // Don't fail the request if notification creation fails
     }
 
@@ -132,15 +134,15 @@ export async function POST(
 
       if (familyResult.rows.length > 0) {
         const family = familyResult.rows[0];
-        const email = String(family.email || '');
-        const name = String(family.name || 'Família');
+        const email = String(family.email || "");
+        const name = String(family.name || "Família");
 
         if (email) {
           await notifyFamilyNewProposal(
             email,
             name,
-            { id: demandId, title: String(demand.title || '') },
-            { caregiverName: session.user.name || 'Cuidador', message }
+            { id: demandId, title: String(demand.title || "") },
+            { caregiverName: session.user.name || "Cuidador", message },
           );
 
           // Mark notification as email sent
@@ -150,27 +152,33 @@ export async function POST(
               args: [proposalId],
             });
           } catch (e) {
-            console.warn('[Proposals] Failed to mark notification email sent:', e);
+            console.warn(
+              "[Proposals] Failed to mark notification email sent:",
+              e,
+            );
           }
         }
       }
     } catch (emailError) {
-      console.warn('[Proposals] Failed to send notification email:', emailError);
+      console.warn(
+        "[Proposals] Failed to send notification email:",
+        emailError,
+      );
       // Don't fail the request if email fails
     }
 
     return NextResponse.json(
       {
         id: proposalId,
-        message: 'Proposta enviada com sucesso! A família foi notificada.',
+        message: "Proposta enviada com sucesso! A família foi notificada.",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error('[Proposals API] POST error:', error);
+    console.error("[Proposals API] POST error:", error);
     return NextResponse.json(
-      { error: 'Failed to send proposal' },
-      { status: 500 }
+      { error: "Failed to send proposal" },
+      { status: 500 },
     );
   }
 }
@@ -181,12 +189,12 @@ export async function POST(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -198,19 +206,20 @@ export async function GET(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
-    const isAdmin = session.user.role === 'ADMIN';
-    const isOwner = String(demandResult.rows[0].familyUserId) === String(session.user.id);
+    const isAdmin = session.user.role === "ADMIN";
+    const isOwner =
+      String(demandResult.rows[0].familyUserId) === String(session.user.id);
 
     if (!isAdmin && !isOwner) {
-      console.error('[Proposals GET] Forbidden:', {
+      console.error("[Proposals GET] Forbidden:", {
         familyUserId: demandResult.rows[0].familyUserId,
         sessionUserId: session.user.id,
         role: session.user.role,
       });
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const result = await db.execute({
@@ -239,14 +248,16 @@ export async function GET(
       args: [demandId],
     });
 
-    const proposals = result.rows.map(row => ({
+    const proposals = result.rows.map((row) => ({
       id: row.id,
       demandId: row.demandId,
       caregiverId: row.caregiverId,
       caregiverName: row.caregiverName,
       caregiverEmail: row.caregiverEmail,
       experienceYears: row.experienceYears,
-      certifications: row.certifications ? JSON.parse(String(row.certifications)) : [],
+      certifications: row.certifications
+        ? JSON.parse(String(row.certifications))
+        : [],
       standardHourlyRate: null,
       message: row.message,
       proposedHourlyRate: row.proposedHourlyRate,
@@ -259,10 +270,10 @@ export async function GET(
 
     return NextResponse.json({ proposals });
   } catch (error) {
-    console.error('[Proposals API] GET error:', error);
+    console.error("[Proposals API] GET error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch proposals' },
-      { status: 500 }
+      { error: "Failed to fetch proposals" },
+      { status: 500 },
     );
   }
 }

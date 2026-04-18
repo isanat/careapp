@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Await params (Next.js 16+)
@@ -26,7 +26,7 @@ export async function POST(
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Não autorizado. Faça login para continuar." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(
     if (user?.role !== "FAMILY") {
       return NextResponse.json(
         { error: "Apenas famílias podem gerar QR codes" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -50,11 +50,10 @@ export async function POST(
     if (!checkRateLimit(rateLimitKey, 5, 60 * 60 * 1000)) {
       return NextResponse.json(
         {
-          error:
-            "Limite de gerações de QR excedido. Máximo 5 por hora.",
+          error: "Limite de gerações de QR excedido. Máximo 5 por hora.",
           retryAfter: 3600,
         },
-        { status: 429, headers: { "Retry-After": "3600" } }
+        { status: 429, headers: { "Retry-After": "3600" } },
       );
     }
 
@@ -69,14 +68,14 @@ export async function POST(
     if (!contract) {
       return NextResponse.json(
         { error: "Contrato não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (contract.familyUserId !== session.user.id) {
       return NextResponse.json(
         { error: "Você não tem permissão para acessar este contrato" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -84,9 +83,7 @@ export async function POST(
     const qrData = await generateOrGetQRCode(contract.id);
 
     const expiresAtDate = new Date(qrData.qrExpiresAt);
-    const expiresIn = Math.floor(
-      (expiresAtDate.getTime() - Date.now()) / 1000
-    );
+    const expiresIn = Math.floor((expiresAtDate.getTime() - Date.now()) / 1000);
 
     return NextResponse.json(
       {
@@ -98,7 +95,7 @@ export async function POST(
         generatedAt: qrData.qrGeneratedAt,
         contractId: contract.id,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[QR Generate] Error:", error);
@@ -106,9 +103,6 @@ export async function POST(
     const message =
       error instanceof Error ? error.message : "Erro ao gerar QR code";
 
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

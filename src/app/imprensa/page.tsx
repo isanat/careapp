@@ -10,70 +10,66 @@ export const metadata: Metadata = {
 
 export default function ImprensaPage() {
   return (
-    
-      <div className="container px-4 py-12 mx-auto max-w-3xl">
-        <h1 className="text-3xl font-bold mb-6">Imprensa</h1>
-        
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Sobre o Evyra</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              O Evyra é uma plataforma europeia de apoio domiciliário.
-              Conectamos famílias a profissionais verificados, com pagamentos transparentes
-              e contratos digitais seguros.
-            </p>
-          </CardContent>
-        </Card>
+    <div className="container px-4 py-12 mx-auto max-w-3xl">
+      <h1 className="text-3xl font-bold mb-6">Imprensa</h1>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Contato de Imprensa</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Email</h3>
-              <p className="text-muted-foreground">imprensa@seniorcare.com</p>
-            </div>
-            <div>
-              <h3 className="font-semibold">Telefone</h3>
-              <p className="text-muted-foreground">+351 21 234 5678</p>
-            </div>
-          </CardContent>
-        </Card>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Sobre o Evyra</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            O Evyra é uma plataforma europeia de apoio domiciliário. Conectamos
+            famílias a profissionais verificados, com pagamentos transparentes e
+            contratos digitais seguros.
+          </p>
+        </CardContent>
+      </Card>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Kit de Mídia</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              Para obter nosso kit de mídia com logos, fotos e informações corporativas, 
-              entre em contato pelo email de imprensa.
-            </p>
-            <Button variant="outline">
-              Solicitar Kit de Mídia
-            </Button>
-          </CardContent>
-        </Card>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Contato de Imprensa</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h3 className="font-semibold">Email</h3>
+            <p className="text-muted-foreground">imprensa@seniorcare.com</p>
+          </div>
+          <div>
+            <h3 className="font-semibold">Telefone</h3>
+            <p className="text-muted-foreground">+351 21 234 5678</p>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Fatos Rápidos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
-              <li>Fundado em 2024</li>
-              <li>Sede em Lisboa, Portugal</li>
-              <li>Operando em Portugal e Europa</li>
-              <li>Sistema de pagamentos seguro</li>
-              <li>Verificação de identidade KYC</li>
-              <li>Mais de 500 cuidadores cadastrados</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-    
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Kit de Mídia</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-muted-foreground">
+            Para obter nosso kit de mídia com logos, fotos e informações
+            corporativas, entre em contato pelo email de imprensa.
+          </p>
+          <Button variant="outline">Solicitar Kit de Mídia</Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Fatos Rápidos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+            <li>Fundado em 2024</li>
+            <li>Sede em Lisboa, Portugal</li>
+            <li>Operando em Portugal e Europa</li>
+            <li>Sistema de pagamentos seguro</li>
+            <li>Verificação de identidade KYC</li>
+            <li>Mais de 500 cuidadores cadastrados</li>
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

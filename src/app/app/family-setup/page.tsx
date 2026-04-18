@@ -37,10 +37,12 @@ const MOBILITY_LEVELS = [
   { value: "acamado", label: "Acamado" },
 ];
 
-const SERVICE_TYPE_OPTIONS = Object.entries(SERVICE_TYPES).map(([id, label]) => ({
-  id,
-  label,
-}));
+const SERVICE_TYPE_OPTIONS = Object.entries(SERVICE_TYPES).map(
+  ([id, label]) => ({
+    id,
+    label,
+  }),
+);
 
 const LANGUAGE_OPTIONS = [
   { id: "pt", label: "Portugues" },
@@ -143,7 +145,9 @@ function FamilySetupContent() {
     }
   }, [status, userId, router]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -187,7 +191,9 @@ function FamilySetupContent() {
   const handleScheduleDurationToggle = (durationId: string) => {
     setFormData((prev) => ({
       ...prev,
-      preferredScheduleDuration: prev.preferredScheduleDuration.includes(durationId)
+      preferredScheduleDuration: prev.preferredScheduleDuration.includes(
+        durationId,
+      )
         ? prev.preferredScheduleDuration.filter((d) => d !== durationId)
         : [...prev.preferredScheduleDuration, durationId],
     }));
@@ -294,7 +300,9 @@ function FamilySetupContent() {
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
         <div className="w-full max-w-2xl bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center space-y-6 py-12">
           <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-          <p className="text-sm text-muted-foreground font-medium">Carregando...</p>
+          <p className="text-sm text-muted-foreground font-medium">
+            Carregando...
+          </p>
         </div>
       </main>
     );
@@ -305,7 +313,10 @@ function FamilySetupContent() {
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center justify-center gap-2">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2"
+          >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div className="space-y-2">
@@ -328,8 +339,8 @@ function FamilySetupContent() {
                     s < step
                       ? "bg-success text-success-foreground shadow-md"
                       : s === step
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "bg-secondary text-muted-foreground border border-border"
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : "bg-secondary text-muted-foreground border border-border"
                   }`}
                 >
                   {s < step ? <IconCheck className="h-5 w-5" /> : s}
@@ -348,23 +359,29 @@ function FamilySetupContent() {
           {/* Step Labels */}
           <div className="grid grid-cols-3 text-center gap-4 px-4">
             <div>
-              <p className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
-                step >= 1 ? "text-foreground" : "text-muted-foreground"
-              }`}>
+              <p
+                className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
+                  step >= 1 ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
                 Dados do Idoso
               </p>
             </div>
             <div>
-              <p className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
-                step >= 2 ? "text-foreground" : "text-muted-foreground"
-              }`}>
+              <p
+                className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
+                  step >= 2 ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
                 Necessidades
               </p>
             </div>
             <div>
-              <p className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
-                step >= 3 ? "text-foreground" : "text-muted-foreground"
-              }`}>
+              <p
+                className={`text-[10px] font-display font-black uppercase tracking-widest transition-colors ${
+                  step >= 3 ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
                 Emergencia
               </p>
             </div>
@@ -377,7 +394,9 @@ function FamilySetupContent() {
             <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
               <IconAlert className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="font-display font-bold text-foreground text-sm">Erro</p>
+                <p className="font-display font-bold text-foreground text-sm">
+                  Erro
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">{error}</p>
               </div>
             </div>
@@ -397,7 +416,10 @@ function FamilySetupContent() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="elderName" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                  <Label
+                    htmlFor="elderName"
+                    className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                  >
                     Nome do Idoso *
                   </Label>
                   <Input
@@ -412,7 +434,10 @@ function FamilySetupContent() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="elderAge" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    <Label
+                      htmlFor="elderAge"
+                      className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                    >
                       Idade
                     </Label>
                     <Input
@@ -428,12 +453,17 @@ function FamilySetupContent() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="mobilityLevel" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    <Label
+                      htmlFor="mobilityLevel"
+                      className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                    >
                       Nivel de Mobilidade
                     </Label>
                     <Select
                       value={formData.mobilityLevel}
-                      onValueChange={(v) => setFormData((p) => ({ ...p, mobilityLevel: v }))}
+                      onValueChange={(v) =>
+                        setFormData((p) => ({ ...p, mobilityLevel: v }))
+                      }
                     >
                       <SelectTrigger className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground">
                         <SelectValue placeholder="Selecione" />
@@ -469,10 +499,16 @@ function FamilySetupContent() {
                         }`}
                       >
                         <Checkbox
-                          checked={formData.medicalConditions.includes(condition.id)}
-                          onCheckedChange={() => handleMedicalConditionToggle(condition.id)}
+                          checked={formData.medicalConditions.includes(
+                            condition.id,
+                          )}
+                          onCheckedChange={() =>
+                            handleMedicalConditionToggle(condition.id)
+                          }
                         />
-                        <span className="text-sm text-foreground">{condition.label}</span>
+                        <span className="text-sm text-foreground">
+                          {condition.label}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -480,7 +516,12 @@ function FamilySetupContent() {
                     <Textarea
                       placeholder="Descreva outras condições médicas..."
                       value={formData.medicalConditionsNotes}
-                      onChange={(e) => setFormData({...formData, medicalConditionsNotes: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          medicalConditionsNotes: e.target.value,
+                        })
+                      }
                       rows={2}
                       className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
                     />
@@ -507,10 +548,16 @@ function FamilySetupContent() {
                         }`}
                       >
                         <Checkbox
-                          checked={formData.dietaryRestrictions.includes(restriction.id)}
-                          onCheckedChange={() => handleDietaryRestrictionToggle(restriction.id)}
+                          checked={formData.dietaryRestrictions.includes(
+                            restriction.id,
+                          )}
+                          onCheckedChange={() =>
+                            handleDietaryRestrictionToggle(restriction.id)
+                          }
                         />
-                        <span className="text-sm text-foreground">{restriction.label}</span>
+                        <span className="text-sm text-foreground">
+                          {restriction.label}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -518,7 +565,12 @@ function FamilySetupContent() {
                     <Textarea
                       placeholder="Descreva as alergias e restrições específicas..."
                       value={formData.dietaryRestrictionsNotes}
-                      onChange={(e) => setFormData({...formData, dietaryRestrictionsNotes: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dietaryRestrictionsNotes: e.target.value,
+                        })
+                      }
                       rows={2}
                       className="bg-secondary border border-border rounded-2xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
                     />
@@ -557,9 +609,13 @@ function FamilySetupContent() {
                       >
                         <Checkbox
                           checked={formData.servicesNeeded.includes(service.id)}
-                          onCheckedChange={() => handleServiceToggle(service.id)}
+                          onCheckedChange={() =>
+                            handleServiceToggle(service.id)
+                          }
                         />
-                        <span className="text-sm font-medium text-foreground">{service.label}</span>
+                        <span className="text-sm font-medium text-foreground">
+                          {service.label}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -585,10 +641,16 @@ function FamilySetupContent() {
                             }`}
                           >
                             <Checkbox
-                              checked={formData.preferredScheduleDays.includes(day.id)}
-                              onCheckedChange={() => handleScheduleDayToggle(day.id)}
+                              checked={formData.preferredScheduleDays.includes(
+                                day.id,
+                              )}
+                              onCheckedChange={() =>
+                                handleScheduleDayToggle(day.id)
+                              }
                             />
-                            <span className="text-sm text-foreground">{day.label}</span>
+                            <span className="text-sm text-foreground">
+                              {day.label}
+                            </span>
                           </label>
                         ))}
                       </div>
@@ -609,10 +671,16 @@ function FamilySetupContent() {
                             }`}
                           >
                             <Checkbox
-                              checked={formData.preferredScheduleTimes.includes(time.id)}
-                              onCheckedChange={() => handleScheduleTimeToggle(time.id)}
+                              checked={formData.preferredScheduleTimes.includes(
+                                time.id,
+                              )}
+                              onCheckedChange={() =>
+                                handleScheduleTimeToggle(time.id)
+                              }
                             />
-                            <span className="text-sm text-foreground">{time.label}</span>
+                            <span className="text-sm text-foreground">
+                              {time.label}
+                            </span>
                           </label>
                         ))}
                       </div>
@@ -627,16 +695,24 @@ function FamilySetupContent() {
                           <label
                             key={duration.id}
                             className={`flex items-center gap-3 p-3 border rounded-2xl text-sm cursor-pointer transition-all ${
-                              formData.preferredScheduleDuration.includes(duration.id)
+                              formData.preferredScheduleDuration.includes(
+                                duration.id,
+                              )
                                 ? "border-primary bg-primary/5"
                                 : "border-border hover:border-primary/30"
                             }`}
                           >
                             <Checkbox
-                              checked={formData.preferredScheduleDuration.includes(duration.id)}
-                              onCheckedChange={() => handleScheduleDurationToggle(duration.id)}
+                              checked={formData.preferredScheduleDuration.includes(
+                                duration.id,
+                              )}
+                              onCheckedChange={() =>
+                                handleScheduleDurationToggle(duration.id)
+                              }
                             />
-                            <span className="text-sm text-foreground">{duration.label}</span>
+                            <span className="text-sm text-foreground">
+                              {duration.label}
+                            </span>
                           </label>
                         ))}
                       </div>
@@ -659,10 +735,14 @@ function FamilySetupContent() {
                         }`}
                       >
                         <Checkbox
-                          checked={formData.preferredLanguages.includes(lang.id)}
+                          checked={formData.preferredLanguages.includes(
+                            lang.id,
+                          )}
                           onCheckedChange={() => handleLanguageToggle(lang.id)}
                         />
-                        <span className="text-sm text-foreground">{lang.label}</span>
+                        <span className="text-sm text-foreground">
+                          {lang.label}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -685,7 +765,10 @@ function FamilySetupContent() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContactName" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                  <Label
+                    htmlFor="emergencyContactName"
+                    className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                  >
                     Nome do Contato *
                   </Label>
                   <Input
@@ -700,7 +783,10 @@ function FamilySetupContent() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactPhone" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    <Label
+                      htmlFor="emergencyContactPhone"
+                      className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                    >
                       Telefone *
                     </Label>
                     <Input
@@ -714,7 +800,10 @@ function FamilySetupContent() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContactRelationship" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    <Label
+                      htmlFor="emergencyContactRelationship"
+                      className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                    >
                       Parentesco
                     </Label>
                     <Input
@@ -730,7 +819,10 @@ function FamilySetupContent() {
 
                 <div className="border-t border-border pt-6">
                   <div className="space-y-2">
-                    <Label htmlFor="city" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    <Label
+                      htmlFor="city"
+                      className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                    >
                       Endereco / Cidade
                     </Label>
                     <Input
@@ -744,7 +836,10 @@ function FamilySetupContent() {
                   </div>
 
                   <div className="space-y-2 mt-6">
-                    <Label htmlFor="additionalNotes" className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                    <Label
+                      htmlFor="additionalNotes"
+                      className="text-xs font-display font-bold text-foreground uppercase tracking-widest"
+                    >
                       Notas Adicionais
                     </Label>
                     <Textarea
@@ -766,26 +861,43 @@ function FamilySetupContent() {
                   </h4>
                   <div className="bg-secondary rounded-2xl p-5 space-y-3 border border-border/50">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Idoso</span>
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Idoso
+                      </span>
                       <span className="text-sm font-display font-bold text-foreground">
-                        {formData.elderName}{formData.elderAge ? `, ${formData.elderAge} anos` : ""}
+                        {formData.elderName}
+                        {formData.elderAge ? `, ${formData.elderAge} anos` : ""}
                       </span>
                     </div>
                     {formData.mobilityLevel && (
                       <div className="flex justify-between items-center">
-                        <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Mobilidade</span>
+                        <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          Mobilidade
+                        </span>
                         <span className="text-sm font-display font-bold text-foreground">
-                          {MOBILITY_LEVELS.find((l) => l.value === formData.mobilityLevel)?.label}
+                          {
+                            MOBILITY_LEVELS.find(
+                              (l) => l.value === formData.mobilityLevel,
+                            )?.label
+                          }
                         </span>
                       </div>
                     )}
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Servicos</span>
-                      <span className="text-sm font-display font-bold text-foreground">{formData.servicesNeeded.length} selecionados</span>
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Servicos
+                      </span>
+                      <span className="text-sm font-display font-bold text-foreground">
+                        {formData.servicesNeeded.length} selecionados
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Emergencia</span>
-                      <span className="text-sm font-display font-bold text-foreground">{formData.emergencyContactName || "-"}</span>
+                      <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        Emergencia
+                      </span>
+                      <span className="text-sm font-display font-bold text-foreground">
+                        {formData.emergencyContactName || "-"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -796,7 +908,10 @@ function FamilySetupContent() {
                 {step > 1 && (
                   <Button
                     variant="outline"
-                    onClick={() => { setError(""); setStep(step - 1); }}
+                    onClick={() => {
+                      setError("");
+                      setStep(step - 1);
+                    }}
                     className="flex-1 rounded-2xl"
                   >
                     <IconArrowLeft className="h-4 w-4 mr-2" />
@@ -804,10 +919,7 @@ function FamilySetupContent() {
                   </Button>
                 )}
                 {step < 3 ? (
-                  <Button
-                    onClick={handleNext}
-                    className="flex-1 rounded-2xl"
-                  >
+                  <Button onClick={handleNext} className="flex-1 rounded-2xl">
                     Continuar
                     <IconArrowRight className="h-4 w-4 ml-2" />
                   </Button>
@@ -819,8 +931,8 @@ function FamilySetupContent() {
                   >
                     {isLoading ? (
                       <>
-                        <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                        A guardar...
+                        <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />A
+                        guardar...
                       </>
                     ) : (
                       <>
@@ -849,13 +961,15 @@ function FamilySetupContent() {
 
 export default function FamilySetupPage() {
   return (
-    <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-        <div className="w-full max-w-2xl bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center py-12">
-          <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-        </div>
-      </main>
-    }>
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+          <div className="w-full max-w-2xl bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center py-12">
+            <IconLoader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          </div>
+        </main>
+      }
+    >
       <FamilySetupContent />
     </Suspense>
   );

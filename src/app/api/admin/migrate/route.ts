@@ -1,5 +1,5 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   if (!session?.user?.id || session.user.role !== "ADMIN") {
     return NextResponse.json(
       { error: "Unauthorized. Admin access required." },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -20,15 +20,13 @@ export async function POST(request: NextRequest) {
     if (!tursoUrl || !tursoToken) {
       return NextResponse.json(
         { error: "Turso credentials not configured" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Extract the HTTP endpoint from the libsql URL
     // libsql://idosolink-isanat.aws-us-east-1.turso.io => https://idosolink-isanat.aws-us-east-1.turso.io
-    const httpUrl = tursoUrl
-      .replace("libsql://", "https://")
-      .split("?")[0];
+    const httpUrl = tursoUrl.replace("libsql://", "https://").split("?")[0];
 
     // SQL statements to execute
     const statements = [
@@ -100,7 +98,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

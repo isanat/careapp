@@ -12,7 +12,7 @@ import { generateId } from "@/lib/utils/id";
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string; weekNumber: string }> }
+  { params }: { params: Promise<{ id: string; weekNumber: string }> },
 ) {
   const { id, weekNumber: weekNumberStr } = await params;
   try {
@@ -25,7 +25,10 @@ export async function POST(
     const weekNumber = parseInt(weekNumberStr);
 
     if (isNaN(weekNumber) || weekNumber < 1 || weekNumber > 4) {
-      return NextResponse.json({ error: "Invalid week number" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid week number" },
+        { status: 400 },
+      );
     }
 
     // Get contract
@@ -35,7 +38,10 @@ export async function POST(
     });
 
     if (contractResult.rows.length === 0) {
-      return NextResponse.json({ error: "Contract not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
     }
 
     const contract = contractResult.rows[0] as any;
@@ -57,7 +63,7 @@ export async function POST(
     if (approvalResult.rows.length === 0) {
       return NextResponse.json(
         { error: "Weekly approval not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -66,15 +72,17 @@ export async function POST(
     // Check status
     if (approval.status !== "PENDING") {
       return NextResponse.json(
-        { error: `Cannot approve week ${weekNumber}: status is ${approval.status}` },
-        { status: 400 }
+        {
+          error: `Cannot approve week ${weekNumber}: status is ${approval.status}`,
+        },
+        { status: 400 },
       );
     }
 
     if (approval.familyDecision !== null) {
       return NextResponse.json(
         { error: `Family has already made a decision for week ${weekNumber}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -85,7 +93,7 @@ export async function POST(
     if (approval.stripePaymentHoldId) {
       try {
         const captureResult = await stripeService.capturePaymentHold(
-          approval.stripePaymentHoldId as string
+          approval.stripePaymentHoldId as string,
         );
         chargeId = captureResult.chargeId;
 
@@ -105,7 +113,7 @@ export async function POST(
               {
                 contractId,
                 weekNumber,
-              }
+              },
             );
             transferId = transfer.transferId;
           } catch (error) {
@@ -117,7 +125,7 @@ export async function POST(
         console.error("Error capturing payment:", error);
         return NextResponse.json(
           { error: "Failed to capture payment" },
-          { status: 500 }
+          { status: 500 },
         );
       }
     }
@@ -145,7 +153,8 @@ export async function POST(
           contract.caregiverUserId,
           contractId,
           approval.weeklyAmountCents as number,
-          (approval.weeklyAmountCents as number) - (approval.caregiverAmountCents as number),
+          (approval.weeklyAmountCents as number) -
+            (approval.caregiverAmountCents as number),
           approval.caregiverAmountCents as number,
           transferId,
         ],
@@ -191,7 +200,7 @@ export async function POST(
             contractId,
             contract.familyUserId,
             nextWeek.weeklyAmountCents as number,
-            weekNumber + 1
+            weekNumber + 1,
           );
 
           await db.execute({
@@ -218,7 +227,7 @@ export async function POST(
     console.error("Error approving weekly payment:", error);
     return NextResponse.json(
       { error: "Failed to approve weekly payment" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

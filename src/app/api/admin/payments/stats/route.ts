@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
     console.error("Admin payments stats error:", error);
     return NextResponse.json(
       { error: "Failed to fetch payment stats" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect, use } from 'react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { AppShell } from '@/components/layout/app-shell';
-import { BoostVisibilityModal } from '@/components/demands/boost-visibility-modal';
-import { getServiceTypeLabel } from '@/lib/service-types';
+import { useState, useEffect, use } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AppShell } from "@/components/layout/app-shell";
+import { BoostVisibilityModal } from "@/components/demands/boost-visibility-modal";
+import { getServiceTypeLabel } from "@/lib/service-types";
 
 interface DemandMetrics {
   viewCount: number;
@@ -52,7 +52,11 @@ interface Demand {
   metrics: DemandMetrics;
 }
 
-export default function FamilyDemandDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function FamilyDemandDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const resolvedParams = use(params);
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -65,14 +69,14 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
   const [boostSuccess, setBoostSuccess] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
     // Check if boost was successful
-    if (searchParams.get('boost') === 'success') {
+    if (searchParams.get("boost") === "success") {
       setBoostSuccess(true);
       // Remove query param
       router.replace(`/app/family/demands/${resolvedParams.id}`);
@@ -80,7 +84,7 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
   }, [searchParams, resolvedParams.id, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated') return;
+    if (status !== "authenticated") return;
 
     const fetchData = async () => {
       try {
@@ -89,25 +93,33 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
 
         // Fetch demand details
         const demandRes = await fetch(`/api/demands/${resolvedParams.id}`);
-        if (!demandRes.ok) throw new Error('Demanda não encontrada');
+        if (!demandRes.ok) throw new Error("Demanda não encontrada");
         const demandData = await demandRes.json();
         setDemand(demandData);
 
         // Verify ownership
         if (demandData.familyUserId !== session?.user?.id) {
-          throw new Error('Acesso negado');
+          throw new Error("Acesso negado");
         }
 
         // Fetch proposals
-        const proposalsRes = await fetch(`/api/demands/${resolvedParams.id}/proposals`);
+        const proposalsRes = await fetch(
+          `/api/demands/${resolvedParams.id}/proposals`,
+        );
         if (proposalsRes.ok) {
           const proposalsData = await proposalsRes.json();
           setProposals(proposalsData.proposals || []);
         } else {
-          console.error('[FamilyDemand] Proposals fetch failed:', proposalsRes.status, await proposalsRes.text());
+          console.error(
+            "[FamilyDemand] Proposals fetch failed:",
+            proposalsRes.status,
+            await proposalsRes.text(),
+          );
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar demanda');
+        setError(
+          err instanceof Error ? err.message : "Erro ao carregar demanda",
+        );
       } finally {
         setLoading(false);
       }
@@ -134,10 +146,13 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
             <div className="text-destructive font-display font-bold text-sm flex-1">
-              {error || 'Demanda não encontrada'}
+              {error || "Demanda não encontrada"}
             </div>
           </div>
-          <Link href="/app/family/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
+          <Link
+            href="/app/family/demands"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+          >
             ← Voltar
           </Link>
         </div>
@@ -145,51 +160,54 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
     );
   }
 
-  const visibilityBadge = demand.visibilityPackage === 'URGENT'
-    ? { bg: 'bg-destructive/10', text: 'text-destructive', label: 'URGENTE' }
-    : demand.visibilityPackage === 'PREMIUM'
-    ? { bg: 'bg-info/10', text: 'text-info', label: 'DESTACADO' }
-    : demand.visibilityPackage === 'BASIC'
-    ? { bg: 'bg-success/10', text: 'text-success', label: 'VISÍVEL' }
-    : { bg: 'bg-muted', text: 'text-muted-foreground', label: 'NORMAL' };
+  const visibilityBadge =
+    demand.visibilityPackage === "URGENT"
+      ? { bg: "bg-destructive/10", text: "text-destructive", label: "URGENTE" }
+      : demand.visibilityPackage === "PREMIUM"
+        ? { bg: "bg-info/10", text: "text-info", label: "DESTACADO" }
+        : demand.visibilityPackage === "BASIC"
+          ? { bg: "bg-success/10", text: "text-success", label: "VISÍVEL" }
+          : { bg: "bg-muted", text: "text-muted-foreground", label: "NORMAL" };
 
   const getProposalStatusBadge = (status: string) => {
     switch (status) {
-      case 'PENDING':
-        return { bg: 'bg-warning/10', text: 'text-warning', label: 'PENDENTE' };
-      case 'ACCEPTED':
-        return { bg: 'bg-success/10', text: 'text-success', label: 'ACEITE' };
-      case 'REJECTED':
-        return { bg: 'bg-destructive/10', text: 'text-destructive', label: 'REJEITADO' };
+      case "PENDING":
+        return { bg: "bg-warning/10", text: "text-warning", label: "PENDENTE" };
+      case "ACCEPTED":
+        return { bg: "bg-success/10", text: "text-success", label: "ACEITE" };
+      case "REJECTED":
+        return {
+          bg: "bg-destructive/10",
+          text: "text-destructive",
+          label: "REJEITADO",
+        };
       default:
-        return { bg: 'bg-muted', text: 'text-muted-foreground', label: status };
+        return { bg: "bg-muted", text: "text-muted-foreground", label: status };
     }
   };
 
-
-
   return (
     <AppShell>
-      <div
-        className="space-y-8 pb-8"
-       
-       
-       
-      >
+      <div className="space-y-8 pb-8">
         <div className="max-w-5xl mx-auto px-4 space-y-8">
           {/* Back Button */}
-          <div>
-            <Link href="/app/family/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
-              ← Voltar
-            </Link>
-          </div>
+          <Link
+            href="/app/family/demands"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+          >
+            ← Voltar
+          </Link>
 
           {/* Success Message */}
           {boostSuccess && (
             <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
               <div className="flex-1">
-                <p className="font-display font-bold text-foreground text-sm">Boost de visibilidade ativado com sucesso!</p>
-                <p className="text-xs text-muted-foreground mt-1">Sua demanda agora tem maior visibilidade no marketplace.</p>
+                <p className="font-display font-bold text-foreground text-sm">
+                  Boost de visibilidade ativado com sucesso!
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Sua demanda agora tem maior visibilidade no marketplace.
+                </p>
               </div>
             </div>
           )}
@@ -202,13 +220,19 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                   {demand.title}
                 </h1>
                 <div className="flex items-center gap-4 text-sm">
-                  <span className="text-muted-foreground">📍 {demand.city}</span>
+                  <span className="text-muted-foreground">
+                    📍 {demand.city}
+                  </span>
                   <span className="text-muted-foreground">•</span>
-                  <span className="text-foreground font-display font-bold">Status: {demand.status}</span>
+                  <span className="text-foreground font-display font-bold">
+                    Status: {demand.status}
+                  </span>
                 </div>
               </div>
               {visibilityBadge && (
-                <span className={`px-4 py-2 rounded-lg font-display font-bold text-[10px] uppercase tracking-widest whitespace-nowrap ${visibilityBadge.bg} ${visibilityBadge.text}`}>
+                <span
+                  className={`px-4 py-2 rounded-lg font-display font-bold text-[10px] uppercase tracking-widest whitespace-nowrap ${visibilityBadge.bg} ${visibilityBadge.text}`}
+                >
                   {visibilityBadge.label}
                 </span>
               )}
@@ -334,7 +358,13 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                         Datas
                       </span>
                       <span className="text-sm font-display font-black text-foreground tracking-tighter">
-                        {new Date(demand.desiredStartDate).toLocaleDateString('pt-PT')} • {new Date(demand.desiredEndDate).toLocaleDateString('pt-PT')}
+                        {new Date(demand.desiredStartDate).toLocaleDateString(
+                          "pt-PT",
+                        )}{" "}
+                        •{" "}
+                        {new Date(demand.desiredEndDate).toLocaleDateString(
+                          "pt-PT",
+                        )}
                       </span>
                     </div>
                   </div>
@@ -354,19 +384,20 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                   <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
                     <span className="text-2xl">✉️</span>
                   </div>
-                  <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma proposta ainda</h4>
+                  <h4 className="font-display font-bold text-foreground text-lg mb-2">
+                    Nenhuma proposta ainda
+                  </h4>
                   <p className="text-sm text-muted-foreground mb-6">
                     Aumente a visibilidade para atrair mais cuidadores
                   </p>
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">
-                  {proposals.map(proposal => {
+                  {proposals.map((proposal) => {
                     const statusBadge = getProposalStatusBadge(proposal.status);
                     return (
                       <div
                         key={proposal.id}
-                       
                         className="p-5 sm:p-7 hover:bg-secondary/30 transition-colors group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
@@ -378,7 +409,9 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                               {proposal.caregiverEmail}
                             </p>
                           </div>
-                          <span className={`px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest whitespace-nowrap ${statusBadge.bg} ${statusBadge.text}`}>
+                          <span
+                            className={`px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest whitespace-nowrap ${statusBadge.bg} ${statusBadge.text}`}
+                          >
                             {statusBadge.label}
                           </span>
                         </div>
@@ -390,7 +423,8 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                               Experiência
                             </div>
                             <div className="text-lg font-display font-black text-foreground tracking-tighter">
-                              {proposal.experienceYears || 0} {proposal.experienceYears === 1 ? 'ano' : 'anos'}
+                              {proposal.experienceYears || 0}{" "}
+                              {proposal.experienceYears === 1 ? "ano" : "anos"}
                             </div>
                           </div>
                           <div>
@@ -398,7 +432,10 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                               Taxa Horária
                             </div>
                             <div className="text-lg font-display font-black text-primary tracking-tighter">
-                              €{proposal.proposedHourlyRate ? (proposal.proposedHourlyRate / 100).toFixed(2) : proposal.standardHourlyRate}
+                              €
+                              {proposal.proposedHourlyRate
+                                ? (proposal.proposedHourlyRate / 100).toFixed(2)
+                                : proposal.standardHourlyRate}
                             </div>
                           </div>
                           <div>
@@ -407,8 +444,10 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                             </div>
                             <div className="text-lg font-display font-black text-foreground tracking-tighter">
                               {proposal.estimatedStartDate
-                                ? new Date(proposal.estimatedStartDate).toLocaleDateString('pt-PT')
-                                : '—'}
+                                ? new Date(
+                                    proposal.estimatedStartDate,
+                                  ).toLocaleDateString("pt-PT")
+                                : "—"}
                             </div>
                           </div>
                         </div>

@@ -36,7 +36,10 @@ export default function GlobalError({
           )}
           <div className="flex gap-3 justify-center">
             <Button onClick={reset}>Tentar novamente</Button>
-            <Button variant="outline" onClick={() => (window.location.href = "/")}>
+            <Button
+              variant="outline"
+              onClick={() => (window.location.href = "/")}
+            >
               Ir para o início
             </Button>
           </div>

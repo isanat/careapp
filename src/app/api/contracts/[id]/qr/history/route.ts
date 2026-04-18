@@ -20,7 +20,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Await params (Next.js 16+)
@@ -32,7 +32,7 @@ export async function GET(
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Não autorizado. Faça login para continuar." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -47,7 +47,7 @@ export async function GET(
     if (!contract) {
       return NextResponse.json(
         { error: "Contrato não encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -58,7 +58,7 @@ export async function GET(
     if (!isOwner && !isAssignedCaregiver) {
       return NextResponse.json(
         { error: "Você não tem permissão para acessar este contrato" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -66,7 +66,7 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams;
     const limit = Math.min(
       parseInt(searchParams.get("limit") || "30", 10),
-      100
+      100,
     );
     const offset = Math.max(parseInt(searchParams.get("offset") || "0", 10), 0);
     const status = searchParams.get("status") || "all";
@@ -120,7 +120,7 @@ export async function GET(
         offset: historyData.offset,
         history: formattedHistory,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("[QR History] Error:", error);
@@ -128,9 +128,6 @@ export async function GET(
     const message =
       error instanceof Error ? error.message : "Erro ao buscar histórico";
 
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -36,7 +36,10 @@ export default function AdminError({
           )}
           <div className="flex gap-3 justify-center">
             <Button onClick={reset}>Tentar novamente</Button>
-            <Button variant="outline" onClick={() => (window.location.href = "/admin/dashboard")}>
+            <Button
+              variant="outline"
+              onClick={() => (window.location.href = "/admin/dashboard")}
+            >
               Voltar ao Dashboard
             </Button>
           </div>

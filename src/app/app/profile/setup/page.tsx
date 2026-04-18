@@ -9,8 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -20,8 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  IconLogo, 
+import {
+  IconLogo,
   IconUser,
   IconCamera,
   IconBriefcase,
@@ -36,25 +42,73 @@ import {
   IconPill,
   IconHome,
   IconCare,
-  IconStar
+  IconStar,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 
 // Service types available for caregivers
 const SERVICE_TYPES = [
-  { id: "PERSONAL_CARE", label: "Cuidados Pessoais", description: "Higiene, banho, alimentação" },
-  { id: "MEDICATION", label: "Administração de Medicação", description: "Controlo e aplicação de medicamentos" },
-  { id: "MOBILITY", label: "Mobilidade", description: "Ajuda com locomoção e exercícios" },
-  { id: "COMPANIONSHIP", label: "Companhia", description: "Conversa, passeios, actividades" },
-  { id: "MEAL_PREPARATION", label: "Preparação de Refeições", description: "Cozinha e nutrição" },
-  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas", description: "Limpeza leve, organização" },
-  { id: "TRANSPORTATION", label: "Transporte", description: "Consultas, compras, passeios" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva", description: "Actividades mentais, memória" },
-  { id: "NIGHT_CARE", label: "Cuidados Noturnos", description: "Acompanhamento durante a noite" },
-  { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos", description: "Suporte e conforto" },
-  { id: "PHYSIOTHERAPY", label: "Fisioterapia", description: "Exercícios e reabilitação" },
-  { id: "NURSING_CARE", label: "Enfermagem", description: "Procedimentos técnicos" },
+  {
+    id: "PERSONAL_CARE",
+    label: "Cuidados Pessoais",
+    description: "Higiene, banho, alimentação",
+  },
+  {
+    id: "MEDICATION",
+    label: "Administração de Medicação",
+    description: "Controlo e aplicação de medicamentos",
+  },
+  {
+    id: "MOBILITY",
+    label: "Mobilidade",
+    description: "Ajuda com locomoção e exercícios",
+  },
+  {
+    id: "COMPANIONSHIP",
+    label: "Companhia",
+    description: "Conversa, passeios, actividades",
+  },
+  {
+    id: "MEAL_PREPARATION",
+    label: "Preparação de Refeições",
+    description: "Cozinha e nutrição",
+  },
+  {
+    id: "LIGHT_HOUSEWORK",
+    label: "Tarefas Domésticas",
+    description: "Limpeza leve, organização",
+  },
+  {
+    id: "TRANSPORTATION",
+    label: "Transporte",
+    description: "Consultas, compras, passeios",
+  },
+  {
+    id: "COGNITIVE_SUPPORT",
+    label: "Estimulação Cognitiva",
+    description: "Actividades mentais, memória",
+  },
+  {
+    id: "NIGHT_CARE",
+    label: "Cuidados Noturnos",
+    description: "Acompanhamento durante a noite",
+  },
+  {
+    id: "PALLIATIVE_CARE",
+    label: "Cuidados Paliativos",
+    description: "Suporte e conforto",
+  },
+  {
+    id: "PHYSIOTHERAPY",
+    label: "Fisioterapia",
+    description: "Exercícios e reabilitação",
+  },
+  {
+    id: "NURSING_CARE",
+    label: "Enfermagem",
+    description: "Procedimentos técnicos",
+  },
 ];
 
 const EXPERIENCE_LEVELS = [
@@ -107,7 +161,9 @@ function ProfileSetupContent() {
     }
   }, [status, userId, router]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
@@ -212,7 +268,10 @@ function ProfileSetupContent() {
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 mb-6"
+          >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
@@ -344,7 +403,9 @@ function ProfileSetupContent() {
                 </label>
                 <Select
                   value={profileData.experienceYears}
-                  onValueChange={(v) => setProfileData((p) => ({ ...p, experienceYears: v }))}
+                  onValueChange={(v) =>
+                    setProfileData((p) => ({ ...p, experienceYears: v }))
+                  }
                 >
                   <SelectTrigger className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground">
                     <SelectValue placeholder="Selecione a sua experiência" />
@@ -464,8 +525,12 @@ function ProfileSetupContent() {
                           )}
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-display font-bold text-foreground uppercase">{service.label}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{service.description}</p>
+                          <p className="text-sm font-display font-bold text-foreground uppercase">
+                            {service.label}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {service.description}
+                          </p>
                         </div>
                       </div>
                       <input
@@ -503,7 +568,8 @@ function ProfileSetupContent() {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Valor sugerido: €12-20/hora para cuidados básicos, €15-25/hora para especializados
+                  Valor sugerido: €12-20/hora para cuidados básicos, €15-25/hora
+                  para especializados
                 </p>
               </div>
             </div>
@@ -540,7 +606,9 @@ function ProfileSetupContent() {
                           <IconCheck className="h-3 w-3 text-primary" />
                         )}
                       </div>
-                      <span className="text-sm font-medium text-foreground">{avail.label}</span>
+                      <span className="text-sm font-medium text-foreground">
+                        {avail.label}
+                      </span>
                       <input
                         type="checkbox"
                         checked={profileData.availability.includes(avail.id)}
@@ -556,29 +624,45 @@ function ProfileSetupContent() {
 
               {/* Summary */}
               <div className="bg-secondary rounded-2xl p-5 space-y-4">
-                <h3 className="text-sm font-display font-bold text-foreground uppercase tracking-widest">Resumo do Perfil</h3>
+                <h3 className="text-sm font-display font-bold text-foreground uppercase tracking-widest">
+                  Resumo do Perfil
+                </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center justify-between py-2">
                     <span className="text-muted-foreground">Título:</span>
-                    <span className="font-medium text-foreground">{profileData.title}</span>
+                    <span className="font-medium text-foreground">
+                      {profileData.title}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-t border-border/50">
                     <span className="text-muted-foreground">Experiência:</span>
                     <span className="font-medium text-foreground">
-                      {EXPERIENCE_LEVELS.find((l) => l.value === profileData.experienceYears)?.label}
+                      {
+                        EXPERIENCE_LEVELS.find(
+                          (l) => l.value === profileData.experienceYears,
+                        )?.label
+                      }
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-t border-border/50">
                     <span className="text-muted-foreground">Serviços:</span>
-                    <span className="font-medium text-foreground">{profileData.services.length} selecionados</span>
+                    <span className="font-medium text-foreground">
+                      {profileData.services.length} selecionados
+                    </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-t border-border/50">
                     <span className="text-muted-foreground">Valor/hora:</span>
-                    <span className="font-medium text-foreground">€{profileData.hourlyRate}</span>
+                    <span className="font-medium text-foreground">
+                      €{profileData.hourlyRate}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between py-2 border-t border-border/50">
-                    <span className="text-muted-foreground">Disponibilidade:</span>
-                    <span className="font-medium text-foreground">{profileData.availability.length} horários</span>
+                    <span className="text-muted-foreground">
+                      Disponibilidade:
+                    </span>
+                    <span className="font-medium text-foreground">
+                      {profileData.availability.length} horários
+                    </span>
                   </div>
                 </div>
               </div>
@@ -586,9 +670,12 @@ function ProfileSetupContent() {
               <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
                 <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="font-display font-bold text-foreground text-sm uppercase">Registo Gratuito</p>
+                  <p className="font-display font-bold text-foreground text-sm uppercase">
+                    Registo Gratuito
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Como cuidador(a), não precisa de pagar para se registar. Após completar o seu perfil, passará por verificação.
+                    Como cuidador(a), não precisa de pagar para se registar.
+                    Após completar o seu perfil, passará por verificação.
                   </p>
                 </div>
               </div>
@@ -598,7 +685,11 @@ function ProfileSetupContent() {
           {/* Navigation */}
           <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
             {step > 1 && (
-              <Button variant="outline" onClick={() => setStep(step - 1)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setStep(step - 1)}
+                className="flex-1"
+              >
                 <IconArrowLeft className="h-4 w-4 mr-2" />
                 Voltar
               </Button>
@@ -609,11 +700,15 @@ function ProfileSetupContent() {
                 <IconArrowRight className="h-4 w-4 ml-2" />
               </Button>
             ) : (
-              <Button onClick={handleSubmit} disabled={isLoading} className="flex-1">
+              <Button
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="flex-1"
+              >
                 {isLoading ? (
                   <>
-                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                    A guardar...
+                    <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />A
+                    guardar...
                   </>
                 ) : (
                   <>

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db-turso';
-import { validateAdminKey } from '@/lib/admin-auth';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db-turso";
+import { validateAdminKey } from "@/lib/admin-auth";
 
 /**
  * Admin endpoint to create/sync users from Didit KYC data
@@ -22,18 +22,15 @@ interface DiditUserData {
   documentIssueDate: string; // ISO format
   documentExpiryDate: string; // ISO format
   kycSessionId: string;
-  role?: 'FAMILY' | 'CAREGIVER';
+  role?: "FAMILY" | "CAREGIVER";
 }
 
 export async function POST(request: NextRequest) {
   try {
     // Verify admin access
-    const auth = request.headers.get('authorization');
+    const auth = request.headers.get("authorization");
     if (!validateAdminKey(auth)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body: DiditUserData = await request.json();
@@ -50,21 +47,24 @@ export async function POST(request: NextRequest) {
       documentIssueDate,
       documentExpiryDate,
       kycSessionId,
-      role = 'CAREGIVER'
+      role = "CAREGIVER",
     } = body;
 
     // Validate required fields
     if (!email || !firstName || !lastName || !kycSessionId) {
       return NextResponse.json(
-        { error: 'Missing required fields: email, firstName, lastName, kycSessionId' },
-        { status: 400 }
+        {
+          error:
+            "Missing required fields: email, firstName, lastName, kycSessionId",
+        },
+        { status: 400 },
       );
     }
 
     // Check if user already exists
     const existing = await db.execute({
-      sql: 'SELECT id FROM User WHERE email = ?',
-      args: [email]
+      sql: "SELECT id FROM User WHERE email = ?",
+      args: [email],
     });
 
     let userId: string;
@@ -95,8 +95,8 @@ export async function POST(request: NextRequest) {
           new Date(documentIssueDate).toISOString(),
           new Date(documentExpiryDate).toISOString(),
           documentIssuer,
-          'VERIFIED',
-          'ACTIVE',
+          "VERIFIED",
+          "ACTIVE",
           now,
           JSON.stringify({
             email,
@@ -109,20 +109,20 @@ export async function POST(request: NextRequest) {
             documentIssuer,
             documentIssueDate,
             documentExpiryDate,
-            syncedAt: now
+            syncedAt: now,
           }),
-          now
-        ]
+          now,
+        ],
       });
 
       console.log(`[Admin] Updated user ${userId} with Didit KYC data`);
 
       return NextResponse.json({
         success: true,
-        action: 'updated',
+        action: "updated",
         userId,
         email,
-        message: 'User updated with Didit KYC data'
+        message: "User updated with Didit KYC data",
       });
     } else {
       // Create new user with KYC data
@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
           firstName,
           lastName,
           role,
-          'ACTIVE',
-          'VERIFIED',
+          "ACTIVE",
+          "VERIFIED",
           kycSessionId,
           new Date(birthDate).toISOString(),
           nationality,
@@ -177,36 +177,39 @@ export async function POST(request: NextRequest) {
             documentIssuer,
             documentIssueDate,
             documentExpiryDate,
-            syncedAt: now
+            syncedAt: now,
           }),
           now,
-          now
-        ]
+          now,
+        ],
       });
 
       console.log(`[Admin] Created new user ${newId} with Didit KYC data`);
 
-      return NextResponse.json({
-        success: true,
-        action: 'created',
-        userId: newId,
-        email,
-        role,
-        message: 'User created from Didit KYC data'
-      }, { status: 201 });
+      return NextResponse.json(
+        {
+          success: true,
+          action: "created",
+          userId: newId,
+          email,
+          role,
+          message: "User created from Didit KYC data",
+        },
+        { status: 201 },
+      );
     }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error('[Admin] Error syncing Didit user:', errorMsg);
+    console.error("[Admin] Error syncing Didit user:", errorMsg);
 
     // Return detailed error for debugging
     return NextResponse.json(
       {
-        error: 'Failed to sync user from Didit data',
+        error: "Failed to sync user from Didit data",
         details: errorMsg,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

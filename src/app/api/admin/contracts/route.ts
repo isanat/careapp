@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - List contracts with filters
 export async function GET(request: NextRequest) {
@@ -9,9 +9,9 @@ export async function GET(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const status = searchParams.get("status");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
     const offset = (page - 1) * limit;
 
     let sql = `SELECT 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     // Get counts by status
     const countsResult = await db.execute({
       sql: `SELECT status, COUNT(*) as count FROM Contract GROUP BY status`,
-      args: []
+      args: [],
     });
 
     const statusCounts: Record<string, number> = {};
@@ -50,10 +50,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       contracts: result.rows,
       statusCounts,
-      pagination: { page, limit }
+      pagination: { page, limit },
     });
   } catch (error) {
-    console.error('Error fetching contracts:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching contracts:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 /**
  * GET /api/admin/demands/metrics
@@ -12,25 +12,25 @@ import { db } from '@/lib/db-turso';
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user?.id || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const period = searchParams.get('period') || 'week';
+    const period = searchParams.get("period") || "week";
 
     // Calculate date range based on period
     const now = new Date();
     let startDate: Date;
 
     switch (period) {
-      case 'today':
+      case "today":
         startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         break;
-      case 'month':
+      case "month":
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         break;
-      case 'week':
+      case "week":
       default:
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
@@ -40,11 +40,16 @@ export async function GET(request: NextRequest) {
     const endDateStr = now.toISOString();
 
     // Get all metrics in parallel
-    const [demandsResult, visibilityResult, proposalsResult, viewsResult, revenueByPackageResult] =
-      await Promise.all([
-        // Total demands created in period
-        db.execute({
-          sql: `
+    const [
+      demandsResult,
+      visibilityResult,
+      proposalsResult,
+      viewsResult,
+      revenueByPackageResult,
+    ] = await Promise.all([
+      // Total demands created in period
+      db.execute({
+        sql: `
             SELECT
               COUNT(*) as total,
               COUNT(CASE WHEN status = 'ACTIVE' THEN 1 END) as active,
@@ -53,12 +58,12 @@ export async function GET(request: NextRequest) {
             FROM Demand
             WHERE createdAt >= ? AND createdAt <= ?
           `,
-          args: [startDateStr, endDateStr],
-        }),
+        args: [startDateStr, endDateStr],
+      }),
 
-        // Visibility purchases (revenue)
-        db.execute({
-          sql: `
+      // Visibility purchases (revenue)
+      db.execute({
+        sql: `
             SELECT
               COUNT(*) as totalPurchases,
               COUNT(CASE WHEN status = 'COMPLETED' THEN 1 END) as completedPurchases,
@@ -68,12 +73,12 @@ export async function GET(request: NextRequest) {
             FROM VisibilityPurchase
             WHERE purchasedAt >= ? AND purchasedAt <= ?
           `,
-          args: [startDateStr, endDateStr],
-        }),
+        args: [startDateStr, endDateStr],
+      }),
 
-        // Proposals data
-        db.execute({
-          sql: `
+      // Proposals data
+      db.execute({
+        sql: `
             SELECT
               COUNT(*) as totalProposals,
               COUNT(CASE WHEN status = 'PENDING' THEN 1 END) as pendingProposals,
@@ -82,22 +87,22 @@ export async function GET(request: NextRequest) {
             FROM Proposal
             WHERE createdAt >= ? AND createdAt <= ?
           `,
-          args: [startDateStr, endDateStr],
-        }),
+        args: [startDateStr, endDateStr],
+      }),
 
-        // View counts
-        db.execute({
-          sql: `
+      // View counts
+      db.execute({
+        sql: `
             SELECT COUNT(*) as totalViews
             FROM DemandView
             WHERE viewedAt >= ? AND viewedAt <= ?
           `,
-          args: [startDateStr, endDateStr],
-        }),
+        args: [startDateStr, endDateStr],
+      }),
 
-        // Revenue breakdown by visibility package
-        db.execute({
-          sql: `
+      // Revenue breakdown by visibility package
+      db.execute({
+        sql: `
             SELECT
               package,
               COUNT(*) as count,
@@ -106,9 +111,9 @@ export async function GET(request: NextRequest) {
             WHERE purchasedAt >= ? AND purchasedAt <= ? AND status = 'COMPLETED'
             GROUP BY package
           `,
-          args: [startDateStr, endDateStr],
-        }),
-      ]);
+        args: [startDateStr, endDateStr],
+      }),
+    ]);
 
     // Extract results
     const demandsRow = demandsResult.rows[0];
@@ -126,16 +131,19 @@ export async function GET(request: NextRequest) {
     const avgConversionRate =
       totalDemands > 0 && totalViews > 0
         ? ((totalProposals / totalViews) * 100).toFixed(1)
-        : '0';
+        : "0";
 
     const conversionToBoost =
       totalDemands > 0
-        ? ((Number(visibilityRow.totalPurchases || 0) / totalDemands) * 100).toFixed(1)
-        : '0';
+        ? (
+            (Number(visibilityRow.totalPurchases || 0) / totalDemands) *
+            100
+          ).toFixed(1)
+        : "0";
 
     // Package breakdown
     const packageBreakdown = packageRows.map((row: any) => ({
-      package: row.package || 'NONE',
+      package: row.package || "NONE",
       count: Number(row.count || 0),
       revenueCents: Number(row.revenueCents || 0),
       revenueEur: Number(row.revenueCents || 0) / 100,
@@ -148,7 +156,7 @@ export async function GET(request: NextRequest) {
       revenueEur: string;
     };
     let dailyRevenueData: DailyRevenue[] = [];
-    if (period === 'week') {
+    if (period === "week") {
       const dailyResult = await db.execute({
         sql: `
           SELECT
@@ -183,14 +191,16 @@ export async function GET(request: NextRequest) {
         pendingPurchases: Number(visibilityRow.pendingPurchases || 0),
         avgTicketEur: visibilityRow.avgTicketCents
           ? (Number(visibilityRow.avgTicketCents) / 100).toFixed(2)
-          : '0',
+          : "0",
         totalViews,
         totalProposals,
         acceptedProposals: Number(proposalsRow.acceptedProposals || 0),
         conversionRatePercentage: avgConversionRate,
         boostConversionPercentage: conversionToBoost,
-        avgViewsPerDemand: totalDemands > 0 ? (totalViews / totalDemands).toFixed(1) : '0',
-        avgProposalsPerDemand: totalDemands > 0 ? (totalProposals / totalDemands).toFixed(1) : '0',
+        avgViewsPerDemand:
+          totalDemands > 0 ? (totalViews / totalDemands).toFixed(1) : "0",
+        avgProposalsPerDemand:
+          totalDemands > 0 ? (totalProposals / totalDemands).toFixed(1) : "0",
       },
       packageBreakdown,
       dailyRevenueData,
@@ -201,14 +211,16 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Admin Demands Metrics API] GET error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("[Admin Demands Metrics API] GET error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       {
-        error: 'Failed to fetch metrics',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+        error: "Failed to fetch metrics",
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,45 +1,53 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id;
-    const isCaregiver = session.user.role === 'CAREGIVER';
+    const isCaregiver = session.user.role === "CAREGIVER";
 
     // Get user status
     const userResult = await db.execute({
       sql: `SELECT status, verificationStatus FROM User WHERE id = ?`,
-      args: [userId]
+      args: [userId],
     });
 
-    const userStatus = userResult.rows.length > 0 ? {
-      status: userResult.rows[0].status,
-      verificationStatus: userResult.rows[0].verificationStatus,
-    } : null;
+    const userStatus =
+      userResult.rows.length > 0
+        ? {
+            status: userResult.rows[0].status,
+            verificationStatus: userResult.rows[0].verificationStatus,
+          }
+        : null;
 
     // Check if profile is complete
     let profileComplete = false;
     if (isCaregiver) {
       const profileResult = await db.execute({
         sql: `SELECT title, bio, city, services FROM ProfileCaregiver WHERE userId = ?`,
-        args: [userId]
+        args: [userId],
       });
       if (profileResult.rows.length > 0) {
         const profile = profileResult.rows[0];
-        profileComplete = !!(profile.title && profile.bio && profile.city && profile.services);
+        profileComplete = !!(
+          profile.title &&
+          profile.bio &&
+          profile.city &&
+          profile.services
+        );
       }
     } else {
       const profileResult = await db.execute({
         sql: `SELECT elderName, city FROM ProfileFamily WHERE userId = ?`,
-        args: [userId]
+        args: [userId],
       });
       if (profileResult.rows.length > 0) {
         const profile = profileResult.rows[0];
@@ -50,14 +58,15 @@ export async function GET(request: NextRequest) {
     // Get contracts count
     const contractsResult = await db.execute({
       sql: `SELECT COUNT(*) as count FROM Contract 
-            WHERE ${isCaregiver ? 'caregiverUserId' : 'familyUserId'} = ? 
+            WHERE ${isCaregiver ? "caregiverUserId" : "familyUserId"} = ? 
             AND status = 'ACTIVE'`,
-      args: [userId]
+      args: [userId],
     });
-    
-    const activeContracts = contractsResult.rows.length > 0 
-      ? Number(contractsResult.rows[0].count) || 0 
-      : 0;
+
+    const activeContracts =
+      contractsResult.rows.length > 0
+        ? Number(contractsResult.rows[0].count) || 0
+        : 0;
 
     // Get caregiver-specific stats
     let stats: Record<string, any> = {
@@ -69,7 +78,7 @@ export async function GET(request: NextRequest) {
       const profileResult = await db.execute({
         sql: `SELECT averageRating, totalReviews, totalHoursWorked 
               FROM ProfileCaregiver WHERE userId = ?`,
-        args: [userId]
+        args: [userId],
       });
 
       if (profileResult.rows.length > 0) {
@@ -96,7 +105,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching stats:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching stats:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

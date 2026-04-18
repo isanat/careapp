@@ -7,17 +7,20 @@
  * clears all data, and creates admin user.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@libsql/client';
-import * as bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@libsql/client";
+import * as bcrypt from "bcryptjs";
 
-const TURSO_URL = process.env.TURSO_DATABASE_URL || 'libsql://idosolink-isanat.aws-us-east-1.turso.io';
-const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || '';
+const TURSO_URL =
+  process.env.TURSO_DATABASE_URL ||
+  "libsql://idosolink-isanat.aws-us-east-1.turso.io";
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || "";
 
 // Generate secure temporary password for initial setup
 function generateTemporaryPassword(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  let password = "";
   for (let i = 0; i < 16; i++) {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -663,13 +666,13 @@ const SCHEMA_STATEMENTS = [
 ];
 
 async function rebuildSchema(db: any) {
-  console.log('🔨 Rebuilding complete database schema (32 tables)...');
+  console.log("🔨 Rebuilding complete database schema (32 tables)...");
 
-  await db.execute('PRAGMA foreign_keys = OFF');
+  await db.execute("PRAGMA foreign_keys = OFF");
 
   // First: drop ALL existing tables to ensure clean schema
   const existingTables = await db.execute(
-    `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`
+    `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`,
   );
   const tableNames = (existingTables.rows || []).map((r: any) => r.name);
   console.log(`Dropping ${tableNames.length} existing tables...`);
@@ -696,22 +699,24 @@ async function rebuildSchema(db: any) {
     }
   }
 
-  await db.execute('PRAGMA foreign_keys = ON');
+  await db.execute("PRAGMA foreign_keys = ON");
 
-  console.log(`✅ Schema rebuilt: ${created} statements executed, ${errors} warnings`);
+  console.log(
+    `✅ Schema rebuilt: ${created} statements executed, ${errors} warnings`,
+  );
   return { created, errors };
 }
 
 async function clearAllData(db: any) {
-  console.log('🗑️ Clearing all data...');
+  console.log("🗑️ Clearing all data...");
 
   const tablesResult = await db.execute(
-    `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != '_prisma_migrations'`
+    `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != '_prisma_migrations'`,
   );
 
   const tables = (tablesResult.rows || []).map((row: any) => row.name);
 
-  await db.execute('PRAGMA foreign_keys = OFF');
+  await db.execute("PRAGMA foreign_keys = OFF");
 
   for (const table of tables) {
     try {
@@ -721,7 +726,7 @@ async function clearAllData(db: any) {
     }
   }
 
-  await db.execute('PRAGMA foreign_keys = ON');
+  await db.execute("PRAGMA foreign_keys = ON");
 
   console.log(`✅ Cleared data from ${tables.length} tables`);
   return tables.length;
@@ -734,36 +739,57 @@ async function createAdminUser(db: any) {
   const now = new Date().toISOString();
   const userId = `user_admin_${Date.now()}`;
   const adminId = `admin_${Date.now()}`;
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
 
   await db.execute({
     sql: `INSERT INTO "User" ("id","email","name","passwordHash","role","status","verificationStatus","preferredLanguage","timezone","createdAt","updatedAt","kycConfidence")
           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
-    args: [userId, adminEmail, 'Administrator', passwordHash, 'ADMIN', 'ACTIVE', 'VERIFIED', 'pt', 'Europe/Lisbon', now, now, 0],
+    args: [
+      userId,
+      adminEmail,
+      "Administrator",
+      passwordHash,
+      "ADMIN",
+      "ACTIVE",
+      "VERIFIED",
+      "pt",
+      "Europe/Lisbon",
+      now,
+      now,
+      0,
+    ],
   });
 
   await db.execute({
     sql: `INSERT INTO "AdminUser" ("id","userId","role","isActive","twoFactorEnabled","createdAt","updatedAt")
           VALUES (?,?,?,?,?,?,?)`,
-    args: [adminId, userId, 'ADMIN', 1, 0, now, now],
+    args: [adminId, userId, "ADMIN", 1, 0, now, now],
   });
 
   // Return setup confirmation without exposing the password in responses
   // Admin should use password reset email or secure setup flow
-  return { email: adminEmail, setupCompleted: true, note: 'Use password reset email to set admin password' };
+  return {
+    email: adminEmail,
+    setupCompleted: true,
+    note: "Use password reset email to set admin password",
+  };
 }
 
 async function handleSync(request: NextRequest) {
   try {
-    const authToken = request.headers.get('X-Admin-Token');
-    const expectedToken = process.env.SYNC_ADMIN_TOKEN || 'sync-turso-token-2024';
+    const authToken = request.headers.get("X-Admin-Token");
+    const expectedToken =
+      process.env.SYNC_ADMIN_TOKEN || "sync-turso-token-2024";
 
     if (authToken !== expectedToken) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     if (!TURSO_TOKEN) {
-      return NextResponse.json({ error: 'TURSO_AUTH_TOKEN not configured' }, { status: 500 });
+      return NextResponse.json(
+        { error: "TURSO_AUTH_TOKEN not configured" },
+        { status: 500 },
+      );
     }
 
     const db = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
@@ -779,13 +805,13 @@ async function handleSync(request: NextRequest) {
 
     // Step 4: Verify tables exist
     const verification = await db.execute(
-      `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name`
+      `SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name`,
     );
     const tableNames = (verification.rows || []).map((r: any) => r.name);
 
     return NextResponse.json({
       success: true,
-      message: 'Turso database fully rebuilt and synchronized',
+      message: "Turso database fully rebuilt and synchronized",
       status: {
         schemaRebuilt: true,
         statementsExecuted: schemaResult.created,
@@ -799,13 +825,20 @@ async function handleSync(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Sync error:', error);
+    console.error("Sync error:", error);
     return NextResponse.json(
-      { error: 'Synchronization failed', details: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
+      {
+        error: "Synchronization failed",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
     );
   }
 }
 
-export async function GET(request: NextRequest) { return handleSync(request); }
-export async function POST(request: NextRequest) { return handleSync(request); }
+export async function GET(request: NextRequest) {
+  return handleSync(request);
+}
+export async function POST(request: NextRequest) {
+  return handleSync(request);
+}

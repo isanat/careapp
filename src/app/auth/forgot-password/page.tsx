@@ -5,7 +5,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { IconLogo, IconMail, IconAlert, IconCheck } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -37,7 +43,7 @@ export default function ForgotPasswordPage() {
       setIsSuccess(true);
     } catch (err) {
       setErrorMessage(
-        err instanceof Error ? err.message : t.forgotPassword.sendError
+        err instanceof Error ? err.message : t.forgotPassword.sendError,
       );
     } finally {
       setIsLoading(false);
@@ -48,14 +54,15 @@ export default function ForgotPasswordPage() {
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
-          <Link href="/" className="inline-flex items-center justify-center gap-2 mx-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 mx-auto"
+          >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
             <CardTitle className="text-2xl">{t.forgotPassword.title}</CardTitle>
-            <CardDescription>
-              {t.forgotPassword.description}
-            </CardDescription>
+            <CardDescription>{t.forgotPassword.description}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -72,7 +79,9 @@ export default function ForgotPasswordPage() {
                 <IconCheck className="h-8 w-8 text-green-500" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">{t.forgotPassword.emailSent}</h2>
+                <h2 className="font-semibold text-lg">
+                  {t.forgotPassword.emailSent}
+                </h2>
                 <p className="text-muted-foreground text-sm mt-2">
                   {t.forgotPassword.checkInbox}
                 </p>
@@ -100,12 +109,17 @@ export default function ForgotPasswordPage() {
               </div>
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? t.forgotPassword.sending : t.forgotPassword.sendReset}
+                {isLoading
+                  ? t.forgotPassword.sending
+                  : t.forgotPassword.sendReset}
               </Button>
 
               <div className="text-center text-sm text-muted-foreground">
                 {t.forgotPassword.rememberedPassword}{" "}
-                <Link href="/auth/login" className="text-primary hover:underline font-medium">
+                <Link
+                  href="/auth/login"
+                  className="text-primary hover:underline font-medium"
+                >
                   {t.forgotPassword.loginLink}
                 </Link>
               </div>

@@ -4,18 +4,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  IconLogo, 
-  IconCare, 
-  IconFamily, 
-  IconCaregiver, 
+import {
+  IconLogo,
+  IconCare,
+  IconFamily,
+  IconCaregiver,
   IconTrust,
   IconContract,
   IconChevronRight,
   IconShield,
   IconCreditCard,
   IconCheck,
-  IconEuro
+  IconEuro,
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
@@ -54,7 +54,9 @@ export default function ComoFuncionaPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-2">{t.howItWorksPage.steps.signup.title}</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                  {t.howItWorksPage.steps.signup.title}
+                </h2>
                 <p className="text-muted-foreground mb-4">
                   {t.howItWorksPage.steps.signup.description}
                 </p>
@@ -64,15 +66,23 @@ export default function ComoFuncionaPage() {
                       <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
                         <IconFamily className="h-8 w-8 text-primary" />
                         <div>
-                          <p className="font-semibold">{t.howItWorksPage.steps.signup.family}</p>
-                          <p className="text-sm text-muted-foreground">{t.howItWorksPage.steps.signup.familyDesc}</p>
+                          <p className="font-semibold">
+                            {t.howItWorksPage.steps.signup.family}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {t.howItWorksPage.steps.signup.familyDesc}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
                         <IconCaregiver className="h-8 w-8 text-primary" />
                         <div>
-                          <p className="font-semibold">{t.howItWorksPage.steps.signup.caregiver}</p>
-                          <p className="text-sm text-muted-foreground">{t.howItWorksPage.steps.signup.caregiverDesc}</p>
+                          <p className="font-semibold">
+                            {t.howItWorksPage.steps.signup.caregiver}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {t.howItWorksPage.steps.signup.caregiverDesc}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -89,7 +99,9 @@ export default function ComoFuncionaPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-2">{t.howItWorksPage.steps.activation.title}</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                  {t.howItWorksPage.steps.activation.title}
+                </h2>
                 <p className="text-muted-foreground mb-4">
                   {t.howItWorksPage.steps.activation.description}
                 </p>
@@ -100,10 +112,12 @@ export default function ComoFuncionaPage() {
                         <IconShield className="h-8 w-8 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold">Taxa de Ativação (apenas Famílias)</p>
+                        <p className="font-semibold">
+                          Taxa de Ativação (apenas Famílias)
+                        </p>
                         <p className="text-sm text-muted-foreground">
-                          Pagamento único de €35 para ter acesso completo à plataforma.
-                          Cuidadores não pagam taxa de ativação.
+                          Pagamento único de €35 para ter acesso completo à
+                          plataforma. Cuidadores não pagam taxa de ativação.
                         </p>
                       </div>
                       <Badge className="bg-primary">€35</Badge>
@@ -121,19 +135,23 @@ export default function ComoFuncionaPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-2">{t.howItWorksPage.steps.match.title}</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                  {t.howItWorksPage.steps.match.title}
+                </h2>
                 <p className="text-muted-foreground mb-4">
                   {t.howItWorksPage.steps.match.description}
                 </p>
                 <Card>
                   <CardContent className="p-4">
                     <div className="space-y-3">
-                      {t.howItWorksPage.steps.match.features.map((feature: string, index: number) => (
-                        <div key={index} className="flex items-center gap-3">
-                          <IconCheck className="h-5 w-5 text-green-500" />
-                          <span>{feature}</span>
-                        </div>
-                      ))}
+                      {t.howItWorksPage.steps.match.features.map(
+                        (feature: string, index: number) => (
+                          <div key={index} className="flex items-center gap-3">
+                            <IconCheck className="h-5 w-5 text-green-500" />
+                            <span>{feature}</span>
+                          </div>
+                        ),
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -148,7 +166,9 @@ export default function ComoFuncionaPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-2">{t.howItWorksPage.steps.contract.title}</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                  {t.howItWorksPage.steps.contract.title}
+                </h2>
                 <p className="text-muted-foreground mb-4">
                   {t.howItWorksPage.steps.contract.description}
                 </p>
@@ -157,7 +177,9 @@ export default function ComoFuncionaPage() {
                     <div className="flex items-center gap-4">
                       <IconContract className="h-10 w-10 text-primary" />
                       <div className="flex-1">
-                        <p className="font-semibold">{t.howItWorksPage.steps.contract.immutable}</p>
+                        <p className="font-semibold">
+                          {t.howItWorksPage.steps.contract.immutable}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           {t.howItWorksPage.steps.contract.immutableDesc}
                         </p>
@@ -177,7 +199,9 @@ export default function ComoFuncionaPage() {
                 </div>
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-2">{t.howItWorksPage.steps.payments.title}</h2>
+                <h2 className="text-2xl font-bold mb-2">
+                  {t.howItWorksPage.steps.payments.title}
+                </h2>
                 <p className="text-muted-foreground mb-4">
                   {t.howItWorksPage.steps.payments.description}
                 </p>
@@ -185,22 +209,30 @@ export default function ComoFuncionaPage() {
                   <Card className="bg-green-500/5 border-green-500/20">
                     <CardContent className="p-4 text-center">
                       <IconCreditCard className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                      <p className="font-semibold text-green-700">Pagamento Seguro</p>
-                      <p className="text-xs text-muted-foreground">Sistema protegido com Stripe e MB Way</p>
+                      <p className="font-semibold text-green-700">
+                        Pagamento Seguro
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Sistema protegido com Stripe e MB Way
+                      </p>
                     </CardContent>
                   </Card>
                   <Card className="bg-yellow-500/5 border-yellow-500/20">
                     <CardContent className="p-4 text-center">
                       <IconEuro className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
                       <p className="font-semibold text-yellow-700">Gorjetas</p>
-                      <p className="text-xs text-muted-foreground">Recompense bons cuidados</p>
+                      <p className="text-xs text-muted-foreground">
+                        Recompense bons cuidados
+                      </p>
                     </CardContent>
                   </Card>
                   <Card className="bg-primary/5 border-primary/20">
                     <CardContent className="p-4 text-center">
                       <IconTrust className="h-8 w-8 text-primary mx-auto mb-2" />
                       <p className="font-semibold text-primary">Garantia</p>
-                      <p className="text-xs text-muted-foreground">100% seguro e transparente</p>
+                      <p className="text-xs text-muted-foreground">
+                        100% seguro e transparente
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
@@ -213,7 +245,9 @@ export default function ComoFuncionaPage() {
       {/* CTA Section */}
       <section className="py-16 bg-primary text-primary-foreground">
         <div className="container px-4 mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">{t.howItWorksPage.cta.title}</h2>
+          <h2 className="text-3xl font-bold mb-4">
+            {t.howItWorksPage.cta.title}
+          </h2>
           <p className="text-lg opacity-90 max-w-xl mx-auto mb-8">
             {t.howItWorksPage.cta.description}
           </p>
@@ -224,7 +258,12 @@ export default function ComoFuncionaPage() {
                 <IconChevronRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10" asChild>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10"
+              asChild
+            >
               <Link href="/auth/register?role=caregiver">
                 {t.landing.hero.ctaCaregiver}
                 <IconChevronRight className="ml-2 h-4 w-4" />

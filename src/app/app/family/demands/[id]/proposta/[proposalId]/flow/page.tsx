@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { Suspense } from 'react';
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
-import { AppShell } from '@/components/layout/app-shell';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
-import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import React, { Suspense } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { AppShell } from "@/components/layout/app-shell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -28,7 +28,7 @@ import {
   IconStar,
   IconFileText,
   IconInfo,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface ProposalData {
   id: string;
@@ -70,33 +70,35 @@ function ProposalFlowContent() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [flowState, setFlowState] = useState<FlowState>({
-    chatMessage: '',
-    interviewDate: '',
-    interviewTime: '',
-    interviewNotes: '',
+    chatMessage: "",
+    interviewDate: "",
+    interviewTime: "",
+    interviewNotes: "",
     agreedTerms: false,
     isSubmitting: false,
   });
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated' || !proposalId) return;
+    if (status !== "authenticated" || !proposalId) return;
 
     const fetchProposal = async () => {
       try {
         setLoading(true);
         setError(null);
         const res = await fetch(`/api/proposals/${proposalId}`);
-        if (!res.ok) throw new Error('Proposta não encontrada');
+        if (!res.ok) throw new Error("Proposta não encontrada");
         const data = await res.json();
         setProposal(data.proposal);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar proposta');
+        setError(
+          err instanceof Error ? err.message : "Erro ao carregar proposta",
+        );
       } finally {
         setLoading(false);
       }
@@ -107,37 +109,41 @@ function ProposalFlowContent() {
 
   const handleSendMessage = async () => {
     if (!flowState.chatMessage.trim() || !proposalId) return;
-    setFlowState(prev => ({ ...prev, isSubmitting: true }));
+    setFlowState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
       const res = await fetch(`/api/proposals/${proposalId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: flowState.chatMessage }),
       });
 
-      if (!res.ok) throw new Error('Erro ao enviar mensagem');
+      if (!res.ok) throw new Error("Erro ao enviar mensagem");
 
-      setFlowState(prev => ({ ...prev, chatMessage: '', isSubmitting: false }));
+      setFlowState((prev) => ({
+        ...prev,
+        chatMessage: "",
+        isSubmitting: false,
+      }));
       setStep(2);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Erro inesperado');
-      setFlowState(prev => ({ ...prev, isSubmitting: false }));
+      setSubmitError(err instanceof Error ? err.message : "Erro inesperado");
+      setFlowState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
   const handleScheduleInterview = async () => {
     if (!flowState.interviewDate || !flowState.interviewTime || !proposalId) {
-      setSubmitError('Data e hora são obrigatórias');
+      setSubmitError("Data e hora são obrigatórias");
       return;
     }
 
-    setFlowState(prev => ({ ...prev, isSubmitting: true }));
+    setFlowState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
       const res = await fetch(`/api/proposals/${proposalId}/interview`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           interviewDate: flowState.interviewDate,
           interviewTime: flowState.interviewTime,
@@ -145,66 +151,66 @@ function ProposalFlowContent() {
         }),
       });
 
-      if (!res.ok) throw new Error('Erro ao agendar entrevista');
+      if (!res.ok) throw new Error("Erro ao agendar entrevista");
 
-      setFlowState(prev => ({ ...prev, isSubmitting: false }));
+      setFlowState((prev) => ({ ...prev, isSubmitting: false }));
       setStep(3);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Erro inesperado');
-      setFlowState(prev => ({ ...prev, isSubmitting: false }));
+      setSubmitError(err instanceof Error ? err.message : "Erro inesperado");
+      setFlowState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
   const handleApproveProposal = async () => {
     if (!flowState.agreedTerms || !proposalId) {
-      setSubmitError('Você deve concordar com os termos');
+      setSubmitError("Você deve concordar com os termos");
       return;
     }
 
-    setFlowState(prev => ({ ...prev, isSubmitting: true }));
+    setFlowState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
       const res = await fetch(`/api/proposals/${proposalId}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
 
-      if (!res.ok) throw new Error('Erro ao aprovar proposta');
+      if (!res.ok) throw new Error("Erro ao aprovar proposta");
 
-      setFlowState(prev => ({ ...prev, isSubmitting: false }));
+      setFlowState((prev) => ({ ...prev, isSubmitting: false }));
       setStep(4);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Erro inesperado');
-      setFlowState(prev => ({ ...prev, isSubmitting: false }));
+      setSubmitError(err instanceof Error ? err.message : "Erro inesperado");
+      setFlowState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
   const handleCreateContract = async () => {
     if (!proposalId || !demandId) return;
 
-    setFlowState(prev => ({ ...prev, isSubmitting: true }));
+    setFlowState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
-      const res = await fetch('/api/contracts/from-proposal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/contracts/from-proposal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           proposalId,
           demandId,
         }),
       });
 
-      if (!res.ok) throw new Error('Erro ao criar contrato');
+      if (!res.ok) throw new Error("Erro ao criar contrato");
 
       const data = await res.json();
       setStep(5);
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Erro inesperado');
-      setFlowState(prev => ({ ...prev, isSubmitting: false }));
+      setSubmitError(err instanceof Error ? err.message : "Erro inesperado");
+      setFlowState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -221,9 +227,13 @@ function ProposalFlowContent() {
         <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-5 flex items-start gap-4">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-display font-bold text-destructive">{error || 'Proposta não encontrada'}</p>
+            <p className="text-sm font-display font-bold text-destructive">
+              {error || "Proposta não encontrada"}
+            </p>
             <Button asChild className="mt-4 h-10 rounded-xl text-sm">
-              <Link href={`/app/family/demands/${demandId}`}>Voltar para Demanda</Link>
+              <Link href={`/app/family/demands/${demandId}`}>
+                Voltar para Demanda
+              </Link>
             </Button>
           </div>
         </div>
@@ -262,18 +272,22 @@ function ProposalFlowContent() {
           {[1, 2, 3, 4, 5].map((stepNum) => (
             <React.Fragment key={stepNum}>
               <div className="flex flex-col items-center gap-2">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-display font-bold transition-all ${
-                  stepNum < step
-                    ? 'bg-success text-success-foreground'
-                    : stepNum === step
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'bg-secondary text-muted-foreground border border-border'
-                }`}>
-                  {stepNum < step ? '✓' : stepNum}
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-display font-bold transition-all ${
+                    stepNum < step
+                      ? "bg-success text-success-foreground"
+                      : stepNum === step
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : "bg-secondary text-muted-foreground border border-border"
+                  }`}
+                >
+                  {stepNum < step ? "✓" : stepNum}
                 </div>
               </div>
               {stepNum < 5 && (
-                <div className={`flex-1 h-0.5 mx-2 rounded-full transition-all ${stepNum < step ? 'bg-success' : 'bg-border'}`} />
+                <div
+                  className={`flex-1 h-0.5 mx-2 rounded-full transition-all ${stepNum < step ? "bg-success" : "bg-border"}`}
+                />
               )}
             </React.Fragment>
           ))}
@@ -285,14 +299,22 @@ function ProposalFlowContent() {
         <div className="flex items-center gap-4">
           <Avatar className="w-16 h-16 rounded-2xl flex-shrink-0">
             <AvatarFallback className="bg-primary/10 text-primary font-display font-black text-base rounded-2xl">
-              {caregiver.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+              {caregiver.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-lg font-display font-bold text-foreground">{caregiver.name}</p>
-            <p className="text-sm text-muted-foreground mt-0.5">{caregiver.title}</p>
+            <p className="text-lg font-display font-bold text-foreground">
+              {caregiver.name}
+            </p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {caregiver.title}
+            </p>
             <div className="flex items-center gap-1.5 mt-2">
-              <IconStar className="h-3.5 w-3.5 text-warning fill-warning flex-shrink-0" />
+              <IconStar className="h-3.5 w-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
               <span className="text-sm font-display font-bold text-foreground">
                 {caregiver.averageRating.toFixed(1)}
               </span>
@@ -310,7 +332,9 @@ function ProposalFlowContent() {
         <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
           <IconAlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-display font-bold text-destructive">Erro</p>
+            <p className="text-sm font-display font-bold text-destructive">
+              Erro
+            </p>
             <p className="text-sm text-muted-foreground mt-1">{submitError}</p>
           </div>
         </div>
@@ -320,7 +344,9 @@ function ProposalFlowContent() {
       {step === 1 && (
         <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Chat Inicial</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">
+              Chat Inicial
+            </h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Converse com o cuidador sobre a oportunidade
             </p>
@@ -336,12 +362,14 @@ function ProposalFlowContent() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{caregiver.name}</p>
+                <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                  {caregiver.name}
+                </p>
                 <div className="bg-secondary rounded-3xl px-4 py-3 mt-1 border border-border/30">
                   <p className="text-sm text-foreground">{proposal.message}</p>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  {new Date(proposal.createdAt).toLocaleDateString('pt-PT')}
+                  {new Date(proposal.createdAt).toLocaleDateString("pt-PT")}
                 </p>
               </div>
             </div>
@@ -349,10 +377,17 @@ function ProposalFlowContent() {
 
           {/* Message Input */}
           <div className="space-y-2">
-            <label className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">Sua Mensagem</label>
+            <label className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
+              Sua Mensagem
+            </label>
             <Textarea
               value={flowState.chatMessage}
-              onChange={e => setFlowState(prev => ({ ...prev, chatMessage: e.target.value }))}
+              onChange={(e) =>
+                setFlowState((prev) => ({
+                  ...prev,
+                  chatMessage: e.target.value,
+                }))
+              }
               placeholder="Responda ao cuidador com questões ou comentários..."
               rows={3}
               className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm resize-none transition-all"
@@ -384,7 +419,9 @@ function ProposalFlowContent() {
       {step === 2 && (
         <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Agendar Entrevista</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">
+              Agendar Entrevista
+            </h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Combine data e hora para uma chamada de vídeo
             </p>
@@ -392,39 +429,63 @@ function ProposalFlowContent() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="date" className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
+              <label
+                htmlFor="date"
+                className="text-xs font-display font-bold uppercase tracking-widest mb-2 block"
+              >
                 Data da Entrevista
               </label>
               <Input
                 id="date"
                 type="date"
                 value={flowState.interviewDate}
-                onChange={e => setFlowState(prev => ({ ...prev, interviewDate: e.target.value }))}
+                onChange={(e) =>
+                  setFlowState((prev) => ({
+                    ...prev,
+                    interviewDate: e.target.value,
+                  }))
+                }
                 className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary h-11 text-sm transition-all"
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="time" className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
+              <label
+                htmlFor="time"
+                className="text-xs font-display font-bold uppercase tracking-widest mb-2 block"
+              >
                 Hora da Entrevista
               </label>
               <Input
                 id="time"
                 type="time"
                 value={flowState.interviewTime}
-                onChange={e => setFlowState(prev => ({ ...prev, interviewTime: e.target.value }))}
+                onChange={(e) =>
+                  setFlowState((prev) => ({
+                    ...prev,
+                    interviewTime: e.target.value,
+                  }))
+                }
                 className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary h-11 text-sm transition-all"
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="notes" className="text-xs font-display font-bold uppercase tracking-widest mb-2 block">
+              <label
+                htmlFor="notes"
+                className="text-xs font-display font-bold uppercase tracking-widest mb-2 block"
+              >
                 Notas (opcional)
               </label>
               <Textarea
                 id="notes"
                 value={flowState.interviewNotes}
-                onChange={e => setFlowState(prev => ({ ...prev, interviewNotes: e.target.value }))}
+                onChange={(e) =>
+                  setFlowState((prev) => ({
+                    ...prev,
+                    interviewNotes: e.target.value,
+                  }))
+                }
                 placeholder="Qualquer informação adicional para o cuidador..."
                 rows={3}
                 className="bg-secondary border border-border rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm resize-none transition-all"
@@ -437,7 +498,8 @@ function ProposalFlowContent() {
               <div>
                 <p className="text-sm font-display font-bold text-info">Dica</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Um link de vídeo será gerado automaticamente e compartilhado com o cuidador.
+                  Um link de vídeo será gerado automaticamente e compartilhado
+                  com o cuidador.
                 </p>
               </div>
             </div>
@@ -455,7 +517,11 @@ function ProposalFlowContent() {
             </Button>
             <Button
               onClick={handleScheduleInterview}
-              disabled={!flowState.interviewDate || !flowState.interviewTime || flowState.isSubmitting}
+              disabled={
+                !flowState.interviewDate ||
+                !flowState.interviewTime ||
+                flowState.isSubmitting
+              }
               size="lg"
               className="flex-1 h-11 rounded-2xl font-display font-bold gap-2 shadow-glow"
             >
@@ -479,7 +545,9 @@ function ProposalFlowContent() {
       {step === 3 && (
         <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Revisar Termos Propostos</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">
+              Revisar Termos Propostos
+            </h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Verifique a disponibilidade e taxa horária propostas
             </p>
@@ -493,9 +561,11 @@ function ProposalFlowContent() {
               </p>
               <div className="bg-card rounded-3xl p-5 border border-border/50 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Taxa Horária Proposta:</span>
+                  <span className="text-sm text-muted-foreground">
+                    Taxa Horária Proposta:
+                  </span>
                   <span className="text-lg font-display font-black text-primary tracking-tighter">
-                    €{(proposal.expectedRate).toFixed(2)}/h
+                    €{proposal.expectedRate.toFixed(2)}/h
                   </span>
                 </div>
               </div>
@@ -506,7 +576,9 @@ function ProposalFlowContent() {
                 Sobre o Cuidador
               </p>
               <div className="bg-card rounded-3xl p-5 border border-border/50">
-                <p className="text-sm text-foreground line-clamp-4">{proposal.aboutYou}</p>
+                <p className="text-sm text-foreground line-clamp-4">
+                  {proposal.aboutYou}
+                </p>
               </div>
             </section>
 
@@ -515,7 +587,9 @@ function ProposalFlowContent() {
                 Mensagem da Proposta
               </p>
               <div className="bg-card rounded-3xl p-5 border border-border/50">
-                <p className="text-sm text-foreground line-clamp-4">{proposal.message}</p>
+                <p className="text-sm text-foreground line-clamp-4">
+                  {proposal.message}
+                </p>
               </div>
             </section>
           </div>
@@ -523,17 +597,20 @@ function ProposalFlowContent() {
           {/* Terms Agreement */}
           <div className="space-y-2">
             <label className="flex items-start gap-3 p-4 bg-secondary rounded-2xl border border-border/50 cursor-pointer hover:border-primary/30 transition-colors group">
-              <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
-                flowState.agreedTerms
-                  ? 'bg-primary border-primary'
-                  : 'border-border group-hover:border-primary'
-              }`}>
+              <div
+                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all ${
+                  flowState.agreedTerms
+                    ? "bg-primary border-primary"
+                    : "border-border group-hover:border-primary"
+                }`}
+              >
                 {flowState.agreedTerms && (
                   <IconCheck className="h-3 w-3 text-primary-foreground" />
                 )}
               </div>
               <span className="text-sm text-foreground font-medium">
-                Concordo em revisar estes termos e prosseguir para a criação do contrato
+                Concordo em revisar estes termos e prosseguir para a criação do
+                contrato
               </span>
             </label>
           </div>
@@ -574,7 +651,9 @@ function ProposalFlowContent() {
       {step === 4 && (
         <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Criar Contrato</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">
+              Criar Contrato
+            </h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               Agora vamos formalizar o contrato com todos os detalhes
             </p>
@@ -583,9 +662,12 @@ function ProposalFlowContent() {
           <div className="flex items-start gap-4 p-5 bg-primary/5 border border-primary/20 rounded-2xl">
             <IconFileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-display font-bold text-foreground">Contrato Pronto</p>
+              <p className="text-sm font-display font-bold text-foreground">
+                Contrato Pronto
+              </p>
               <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                Os detalhes da demanda e proposta serão usados para preencher automaticamente o contrato.
+                Os detalhes da demanda e proposta serão usados para preencher
+                automaticamente o contrato.
               </p>
             </div>
           </div>
@@ -629,7 +711,9 @@ function ProposalFlowContent() {
             <div className="w-16 h-16 bg-success/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
               <IconCheck className="h-8 w-8 text-success" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">Tudo Pronto!</h2>
+            <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter">
+              Tudo Pronto!
+            </h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
               O contrato foi criado com sucesso
             </p>
@@ -638,12 +722,16 @@ function ProposalFlowContent() {
           <div className="bg-card rounded-3xl p-5 border border-border/50 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Cuidador:</span>
-              <span className="text-sm font-display font-bold text-foreground">{caregiver.name}</span>
+              <span className="text-sm font-display font-bold text-foreground">
+                {caregiver.name}
+              </span>
             </div>
             <div className="border-t border-border/50 pt-3 flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Taxa Horária:</span>
+              <span className="text-sm text-muted-foreground">
+                Taxa Horária:
+              </span>
               <span className="text-lg font-display font-black text-primary tracking-tighter">
-                €{(proposal.expectedRate).toFixed(2)}/h
+                €{proposal.expectedRate.toFixed(2)}/h
               </span>
             </div>
           </div>
@@ -664,9 +752,7 @@ function ProposalFlowContent() {
               size="lg"
               className="flex-1 h-11 rounded-2xl font-display font-bold border border-border"
             >
-              <Link href="/app/contracts">
-                Ver Contratos
-              </Link>
+              <Link href="/app/contracts">Ver Contratos</Link>
             </Button>
           </div>
         </div>

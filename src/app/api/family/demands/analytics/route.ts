@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 /**
  * GET /api/family/demands/analytics
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Total visibility spent
@@ -24,7 +24,8 @@ export async function GET(request: NextRequest) {
       `,
       args: [session.user.id],
     });
-    const totalVisibilitySpent = (Number(visibilityResult.rows[0]?.totalSpent || 0)) / 100;
+    const totalVisibilitySpent =
+      Number(visibilityResult.rows[0]?.totalSpent || 0) / 100;
 
     // Average proposals per demand
     const avgProposalsResult = await db.execute({
@@ -40,7 +41,9 @@ export async function GET(request: NextRequest) {
       `,
       args: [session.user.id],
     });
-    const avgProposalsPerDemand = Math.round((Number(avgProposalsResult.rows[0]?.avgProposals || 0)) * 100) / 100;
+    const avgProposalsPerDemand =
+      Math.round(Number(avgProposalsResult.rows[0]?.avgProposals || 0) * 100) /
+      100;
 
     // Average views per demand
     const avgViewsResult = await db.execute({
@@ -56,7 +59,8 @@ export async function GET(request: NextRequest) {
       `,
       args: [session.user.id],
     });
-    const avgViewsPerDemand = Math.round((Number(avgViewsResult.rows[0]?.avgViews || 0)) * 100) / 100;
+    const avgViewsPerDemand =
+      Math.round(Number(avgViewsResult.rows[0]?.avgViews || 0) * 100) / 100;
 
     // Total active demands
     const activeDemandResult = await db.execute({
@@ -80,10 +84,10 @@ export async function GET(request: NextRequest) {
       closedDemands,
     });
   } catch (error) {
-    console.error('[Family Demands Analytics API] GET error:', error);
+    console.error("[Family Demands Analytics API] GET error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch analytics' },
-      { status: 500 }
+      { error: "Failed to fetch analytics" },
+      { status: 500 },
     );
   }
 }

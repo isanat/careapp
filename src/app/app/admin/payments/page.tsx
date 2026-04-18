@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { apiFetch } from '@/lib/api-client';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +15,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { AppShell } from '@/components/layout/app-shell';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { AppShell } from "@/components/layout/app-shell";
 import {
   IconCheck,
   IconX,
@@ -28,7 +28,7 @@ import {
   IconTrendingUp,
   IconClock,
   IconCheckCircle,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface Payment {
   id: string;
@@ -47,26 +47,54 @@ interface Payment {
 }
 
 const typeLabels: Record<string, string> = {
-  VISIBILITY_BOOST: 'Boost de Visibilidade',
-  CONTRACT_FEE: 'Taxa de Contrato',
-  SERVICE_PAYMENT: 'Pagamento de Serviço',
-  ACTIVATION: 'Ativação',
+  VISIBILITY_BOOST: "Boost de Visibilidade",
+  CONTRACT_FEE: "Taxa de Contrato",
+  SERVICE_PAYMENT: "Pagamento de Serviço",
+  ACTIVATION: "Ativação",
 };
 
-const statusColors: Record<string, { bg: string; text: string; border: string; icon: string }> = {
-  PENDING: { bg: 'bg-warning/10', text: 'text-warning', border: 'border-warning/30', icon: 'warning' },
-  PROCESSING: { bg: 'bg-info/10', text: 'text-info', border: 'border-info/30', icon: 'info' },
-  COMPLETED: { bg: 'bg-success/10', text: 'text-success', border: 'border-success/30', icon: 'success' },
-  FAILED: { bg: 'bg-destructive/10', text: 'text-destructive', border: 'border-destructive/30', icon: 'destructive' },
-  REFUNDED: { bg: 'bg-muted', text: 'text-muted-foreground', border: 'border-border/30', icon: 'muted' },
+const statusColors: Record<
+  string,
+  { bg: string; text: string; border: string; icon: string }
+> = {
+  PENDING: {
+    bg: "bg-warning/10",
+    text: "text-warning",
+    border: "border-warning/30",
+    icon: "warning",
+  },
+  PROCESSING: {
+    bg: "bg-info/10",
+    text: "text-info",
+    border: "border-info/30",
+    icon: "info",
+  },
+  COMPLETED: {
+    bg: "bg-success/10",
+    text: "text-success",
+    border: "border-success/30",
+    icon: "success",
+  },
+  FAILED: {
+    bg: "bg-destructive/10",
+    text: "text-destructive",
+    border: "border-destructive/30",
+    icon: "destructive",
+  },
+  REFUNDED: {
+    bg: "bg-muted",
+    text: "text-muted-foreground",
+    border: "border-border/30",
+    icon: "muted",
+  },
 };
 
 const statusLabels: Record<string, string> = {
-  PENDING: 'Pendente',
-  PROCESSING: 'Processando',
-  COMPLETED: 'Completo',
-  FAILED: 'Falhou',
-  REFUNDED: 'Reembolsado',
+  PENDING: "Pendente",
+  PROCESSING: "Processando",
+  COMPLETED: "Completo",
+  FAILED: "Falhou",
+  REFUNDED: "Reembolsado",
 };
 
 export default function AdminPaymentsPage() {
@@ -80,22 +108,22 @@ export default function AdminPaymentsPage() {
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
+  const [rejectReason, setRejectReason] = useState("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState('');
-  const [filterStatus, setFilterStatus] = useState('PENDING');
+  const [filterType, setFilterType] = useState("");
+  const [filterStatus, setFilterStatus] = useState("PENDING");
 
   // Calculate stats
   const stats = {
     total: payments.reduce((sum, p) => sum + p.amountEurCents, 0),
-    pending: payments.filter(p => p.status === 'PENDING').length,
-    completed: payments.filter(p => p.status === 'COMPLETED').length,
+    pending: payments.filter((p) => p.status === "PENDING").length,
+    completed: payments.filter((p) => p.status === "COMPLETED").length,
   };
 
   useEffect(() => {
-    if (status === 'authenticated' && session?.user?.role !== 'ADMIN') {
-      router.push('/app/dashboard');
-    } else if (status === 'authenticated') {
+    if (status === "authenticated" && session?.user?.role !== "ADMIN") {
+      router.push("/app/dashboard");
+    } else if (status === "authenticated") {
       fetchPayments();
     }
   }, [status, filterType, filterStatus]);
@@ -105,11 +133,13 @@ export default function AdminPaymentsPage() {
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (filterType) params.append('type', filterType);
-      if (filterStatus) params.append('status', filterStatus);
+      if (filterType) params.append("type", filterType);
+      if (filterStatus) params.append("status", filterStatus);
 
-      const response = await apiFetch(`/api/admin/payments?${params.toString()}`);
-      if (!response.ok) throw new Error('Erro ao carregar pagamentos');
+      const response = await apiFetch(
+        `/api/admin/payments?${params.toString()}`,
+      );
+      if (!response.ok) throw new Error("Erro ao carregar pagamentos");
 
       const data = await response.json();
       setPayments(data.payments || []);
@@ -127,14 +157,14 @@ export default function AdminPaymentsPage() {
       const response = await apiFetch(
         `/api/admin/payments/${selectedPayment.id}/approve`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        }
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        },
       );
 
-      if (!response.ok) throw new Error('Erro ao aprovar pagamento');
+      if (!response.ok) throw new Error("Erro ao aprovar pagamento");
 
-      setSuccessMessage('Pagamento aprovado com sucesso!');
+      setSuccessMessage("Pagamento aprovado com sucesso!");
       setApproveDialogOpen(false);
       fetchPayments();
     } catch (err: any) {
@@ -146,7 +176,7 @@ export default function AdminPaymentsPage() {
 
   const confirmReject = async () => {
     if (!selectedPayment || !rejectReason.trim()) {
-      setError('Motivo da rejeição é obrigatório');
+      setError("Motivo da rejeição é obrigatório");
       return;
     }
     setActionLoading(selectedPayment.id);
@@ -154,17 +184,17 @@ export default function AdminPaymentsPage() {
       const response = await apiFetch(
         `/api/admin/payments/${selectedPayment.id}/reject`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ reason: rejectReason }),
-        }
+        },
       );
 
-      if (!response.ok) throw new Error('Erro ao rejeitar pagamento');
+      if (!response.ok) throw new Error("Erro ao rejeitar pagamento");
 
-      setSuccessMessage('Pagamento rejeitado.');
+      setSuccessMessage("Pagamento rejeitado.");
       setRejectDialogOpen(false);
-      setRejectReason('');
+      setRejectReason("");
       fetchPayments();
     } catch (err: any) {
       setError(err.message);
@@ -173,7 +203,7 @@ export default function AdminPaymentsPage() {
     }
   };
 
-  if (status === 'authenticated' && session?.user?.role !== 'ADMIN') {
+  if (status === "authenticated" && session?.user?.role !== "ADMIN") {
     return null;
   }
 
@@ -194,8 +224,12 @@ export default function AdminPaymentsPage() {
           <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl animate-fade-in">
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="font-display font-bold text-foreground text-sm">Sucesso</p>
-              <p className="text-xs text-muted-foreground mt-1">{successMessage}</p>
+              <p className="font-display font-bold text-foreground text-sm">
+                Sucesso
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {successMessage}
+              </p>
             </div>
           </div>
         )}
@@ -204,7 +238,9 @@ export default function AdminPaymentsPage() {
           <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl animate-fade-in">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="font-display font-bold text-foreground text-sm">Erro</p>
+              <p className="font-display font-bold text-foreground text-sm">
+                Erro
+              </p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
             </div>
           </div>
@@ -270,7 +306,10 @@ export default function AdminPaymentsPage() {
               Taxa de Sucesso
             </div>
             <div className="text-2xl sm:text-3xl font-display font-black tracking-tighter text-foreground mb-2">
-              {payments.length > 0 ? Math.round((stats.completed / payments.length) * 100) : 0}%
+              {payments.length > 0
+                ? Math.round((stats.completed / payments.length) * 100)
+                : 0}
+              %
             </div>
             <div className="text-[9px] text-info font-medium">
               De todas as transações
@@ -295,7 +334,9 @@ export default function AdminPaymentsPage() {
                 <option value="FAILED">Rejeitados</option>
                 <option value="">Todos</option>
               </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-sm">▾</div>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-sm">
+                ▾
+              </div>
             </div>
 
             <div className="relative flex-1 min-w-[200px]">
@@ -309,7 +350,9 @@ export default function AdminPaymentsPage() {
                 <option value="CONTRACT_FEE">Taxas de Contrato</option>
                 <option value="SERVICE_PAYMENT">Pagamento de Serviço</option>
               </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-sm">▾</div>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-sm">
+                ▾
+              </div>
             </div>
           </div>
         </div>
@@ -364,7 +407,10 @@ export default function AdminPaymentsPage() {
                     </div>
                     {payment.demandTitle && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        <span className="font-medium text-foreground">Demanda:</span> {payment.demandTitle}
+                        <span className="font-medium text-foreground">
+                          Demanda:
+                        </span>{" "}
+                        {payment.demandTitle}
                       </p>
                     )}
                     {payment.description && (
@@ -376,9 +422,11 @@ export default function AdminPaymentsPage() {
 
                   {/* Middle: Badges */}
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`px-3 py-1 text-[9px] font-display font-bold rounded-lg uppercase tracking-widest ${
-                      statusColors[payment.status]?.bg || 'bg-muted'
-                    } ${statusColors[payment.status]?.text || 'text-muted-foreground'}`}>
+                    <span
+                      className={`px-3 py-1 text-[9px] font-display font-bold rounded-lg uppercase tracking-widest ${
+                        statusColors[payment.status]?.bg || "bg-muted"
+                      } ${statusColors[payment.status]?.text || "text-muted-foreground"}`}
+                    >
                       {statusLabels[payment.status] || payment.status}
                     </span>
                     <span className="px-3 py-1 text-[9px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
@@ -397,19 +445,19 @@ export default function AdminPaymentsPage() {
                       </p>
                     </div>
                     <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">
-                      {new Date(payment.createdAt).toLocaleDateString('pt-PT')}
+                      {new Date(payment.createdAt).toLocaleDateString("pt-PT")}
                     </p>
                   </div>
 
                   {/* Actions */}
-                  {payment.status === 'PENDING' && (
+                  {payment.status === "PENDING" && (
                     <div className="flex gap-2 sm:ml-auto">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => {
                           setSelectedPayment(payment);
-                          setRejectReason('');
+                          setRejectReason("");
                           setRejectDialogOpen(true);
                         }}
                         disabled={actionLoading !== null}
@@ -450,24 +498,36 @@ export default function AdminPaymentsPage() {
                 Aprovar Pagamento?
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-2">
-                <span className="font-medium text-foreground">{selectedPayment?.userName}</span> • €{selectedPayment ? (Number(selectedPayment.amountEurCents) / 100).toFixed(2) : '0.00'}
+                <span className="font-medium text-foreground">
+                  {selectedPayment?.userName}
+                </span>{" "}
+                • €
+                {selectedPayment
+                  ? (Number(selectedPayment.amountEurCents) / 100).toFixed(2)
+                  : "0.00"}
               </DialogDescription>
             </DialogHeader>
             <div className="p-4 bg-secondary/40 rounded-2xl border border-border/50 space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground font-medium">Tipo:</span>
                 <span className="font-medium text-foreground">
-                  {typeLabels[selectedPayment?.type || ''] ||
+                  {typeLabels[selectedPayment?.type || ""] ||
                     selectedPayment?.type}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-medium">Email:</span>
-                <span className="text-xs text-foreground font-medium">{selectedPayment?.userEmail}</span>
+                <span className="text-muted-foreground font-medium">
+                  Email:
+                </span>
+                <span className="text-xs text-foreground font-medium">
+                  {selectedPayment?.userEmail}
+                </span>
               </div>
               {selectedPayment?.demandTitle && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground font-medium">Demanda:</span>
+                  <span className="text-muted-foreground font-medium">
+                    Demanda:
+                  </span>
                   <span className="text-xs text-foreground font-medium">
                     {selectedPayment.demandTitle}
                   </span>
@@ -507,7 +567,9 @@ export default function AdminPaymentsPage() {
                 Rejeitar Pagamento
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-2">
-                <span className="font-medium text-foreground">{selectedPayment?.userName}</span>
+                <span className="font-medium text-foreground">
+                  {selectedPayment?.userName}
+                </span>
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">

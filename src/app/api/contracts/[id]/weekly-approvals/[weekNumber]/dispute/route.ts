@@ -12,7 +12,7 @@ import { generateId } from "@/lib/utils/id";
  */
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string; weekNumber: string }> }
+  { params }: { params: Promise<{ id: string; weekNumber: string }> },
 ) {
   const { id, weekNumber: weekNumberStr } = await params;
   try {
@@ -27,11 +27,17 @@ export async function POST(
     const { reason } = body;
 
     if (isNaN(weekNumber) || weekNumber < 1 || weekNumber > 4) {
-      return NextResponse.json({ error: "Invalid week number" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid week number" },
+        { status: 400 },
+      );
     }
 
     if (!reason || typeof reason !== "string" || reason.trim().length === 0) {
-      return NextResponse.json({ error: "Dispute reason is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Dispute reason is required" },
+        { status: 400 },
+      );
     }
 
     // Get contract
@@ -41,7 +47,10 @@ export async function POST(
     });
 
     if (contractResult.rows.length === 0) {
-      return NextResponse.json({ error: "Contract not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
     }
 
     const contract = contractResult.rows[0];
@@ -62,7 +71,7 @@ export async function POST(
     if (approvalResult.rows.length === 0) {
       return NextResponse.json(
         { error: "Weekly approval not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -71,22 +80,26 @@ export async function POST(
     // Check status
     if (approval.status !== "PENDING") {
       return NextResponse.json(
-        { error: `Cannot dispute week ${weekNumber}: status is ${approval.status}` },
-        { status: 400 }
+        {
+          error: `Cannot dispute week ${weekNumber}: status is ${approval.status}`,
+        },
+        { status: 400 },
       );
     }
 
     if (approval.familyDecision !== null) {
       return NextResponse.json(
         { error: `Family has already made a decision for week ${weekNumber}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Void Stripe payment hold
     if (approval.stripePaymentHoldId) {
       try {
-        await stripeService.voidPaymentHold(approval.stripePaymentHoldId as string);
+        await stripeService.voidPaymentHold(
+          approval.stripePaymentHoldId as string,
+        );
       } catch (error) {
         console.error("Error voiding payment hold:", error);
         // Continue anyway - hold will expire naturally
@@ -120,7 +133,13 @@ Por favor, mediar entre as partes.
     await db.execute({
       sql: `INSERT INTO SupportTicket (id, userId, subject, description, status, priority, type, contractId, createdAt)
             VALUES (?, ?, ?, ?, 'OPEN', 'HIGH', 'DISPUTE', ?, datetime('now'))`,
-      args: [ticketId, contract.familyUserId, ticketTitle, ticketMessage, contractId],
+      args: [
+        ticketId,
+        contract.familyUserId,
+        ticketTitle,
+        ticketMessage,
+        contractId,
+      ],
     });
 
     // Notify caregiver about dispute
@@ -152,7 +171,12 @@ Por favor, mediar entre as partes.
         await db.execute({
           sql: `INSERT INTO Notification (id, userId, type, title, message, referenceType, referenceId, createdAt)
                 VALUES (?, ?, 'admin', 'Disputa de Pagamento Requerendo Mediação', ?, 'SupportTicket', ?, datetime('now'))`,
-          args: [notifId, adminResult.rows[0].id, `Ticket ${ticketId}`, ticketId],
+          args: [
+            notifId,
+            adminResult.rows[0].id,
+            `Ticket ${ticketId}`,
+            ticketId,
+          ],
         });
       }
     } catch (error) {
@@ -171,7 +195,7 @@ Por favor, mediar entre as partes.
     console.error("Error disputing weekly payment:", error);
     return NextResponse.json(
       { error: "Failed to create dispute" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

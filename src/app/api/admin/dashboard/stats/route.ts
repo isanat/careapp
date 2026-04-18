@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         args: [],
       });
       pendingKyc = Number(pendingKycResult.rows[0]?.count || 0);
-      
+
       const verifiedResult = await db.execute({
         sql: "SELECT COUNT(*) as count FROM ProfileCaregiver WHERE verificationStatus = 'VERIFIED'",
         args: [],
@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
         args: [],
       });
       totalRevenueEur = Number(revenueResult.rows[0]?.total || 0);
-      
+
       // Today's revenue
       const today = new Date().toISOString().split("T")[0];
       const todayResult = await db.execute({
@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
       activities = activityResult.rows.map((row, index) => ({
         id: `activity-${index}`,
         type: "user_registered",
-        description: `${row.name || 'User'} registado como ${row.role === 'FAMILY' ? 'Família' : row.role === 'CAREGIVER' ? 'Cuidador' : 'Admin'}`,
+        description: `${row.name || "User"} registado como ${row.role === "FAMILY" ? "Família" : row.role === "CAREGIVER" ? "Cuidador" : "Admin"}`,
         timestamp: row.createdAt as string,
         userId: row.id as string,
         userName: row.name as string,
@@ -188,13 +188,13 @@ export async function GET(request: NextRequest) {
         `,
         args: [],
       });
-      
+
       // Create a map of existing data
       const revenueMap = new Map<string, number>();
-      revenueByDay.rows.forEach(row => {
+      revenueByDay.rows.forEach((row) => {
         revenueMap.set(row.date as string, Number(row.amount || 0));
       });
-      
+
       // Fill in all 30 days
       for (let i = 29; i >= 0; i--) {
         const date = new Date();
@@ -231,13 +231,13 @@ export async function GET(request: NextRequest) {
         `,
         args: [],
       });
-      
+
       // Create a map of existing data
       const usersMap = new Map<string, number>();
-      usersByDay.rows.forEach(row => {
+      usersByDay.rows.forEach((row) => {
         usersMap.set(row.date as string, Number(row.count || 0));
       });
-      
+
       // Fill in all 30 days
       for (let i = 29; i >= 0; i--) {
         const date = new Date();
@@ -306,8 +306,11 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Admin dashboard stats error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch dashboard stats", details: error instanceof Error ? error.message : "Unknown error" },
-      { status: 500 }
+      {
+        error: "Failed to fetch dashboard stats",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
     );
   }
 }

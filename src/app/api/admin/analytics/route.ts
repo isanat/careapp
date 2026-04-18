@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - Analytics data
 export async function GET(request: NextRequest) {
@@ -10,11 +10,11 @@ export async function GET(request: NextRequest) {
     const { session, adminUserId } = auth;
 
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || '30d'; // 7d, 30d, 90d
+    const period = searchParams.get("period") || "30d"; // 7d, 30d, 90d
 
     let daysAgo = 30;
-    if (period === '7d') daysAgo = 7;
-    if (period === '90d') daysAgo = 90;
+    if (period === "7d") daysAgo = 7;
+    if (period === "90d") daysAgo = 90;
 
     // User growth
     const userGrowthResult = await db.execute({
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       WHERE createdAt >= datetime('now', '-' || ? || ' days')
       GROUP BY date(createdAt), role
       ORDER BY date`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // Revenue over time
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       WHERE status = 'COMPLETED' AND paidAt >= datetime('now', '-' || ? || ' days')
       GROUP BY date(paidAt), type
       ORDER BY date`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // Contract stats
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
         SUM(totalEurCents) as totalValue
       FROM Contract
       GROUP BY status`,
-      args: []
+      args: [],
     });
 
     // Geographic distribution
@@ -67,13 +67,13 @@ export async function GET(request: NextRequest) {
       GROUP BY COALESCE(pf.city, pc.city), u.role
       ORDER BY count DESC
       LIMIT 20`,
-      args: []
+      args: [],
     });
 
     // Service distribution (from caregiver profiles)
     const serviceRawResult = await db.execute({
       sql: `SELECT services FROM ProfileCaregiver WHERE services IS NOT NULL AND services != ''`,
-      args: []
+      args: [],
     });
     const serviceCounts: Record<string, number> = {};
     for (const row of serviceRawResult.rows) {
@@ -84,13 +84,15 @@ export async function GET(request: NextRequest) {
             serviceCounts[s] = (serviceCounts[s] || 0) + 1;
           }
         }
-      } catch { /* skip malformed JSON */ }
+      } catch {
+        /* skip malformed JSON */
+      }
     }
     const serviceResult = {
       rows: Object.entries(serviceCounts)
         .map(([service, count]) => ({ service, count }))
         .sort((a, b) => b.count - a.count)
-        .slice(0, 10)
+        .slice(0, 10),
     };
 
     // Summary stats
@@ -102,7 +104,7 @@ export async function GET(request: NextRequest) {
         (SELECT COUNT(*) FROM Contract) as totalContracts,
         (SELECT COALESCE(SUM(amountEurCents), 0) FROM Payment WHERE status = 'COMPLETED') as totalRevenue,
         (SELECT COUNT(*) FROM Payment WHERE status = 'COMPLETED') as totalTransactions`,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
@@ -115,7 +117,10 @@ export async function GET(request: NextRequest) {
       summary: summaryResult.rows[0],
     });
   } catch (error) {
-    console.error('Error fetching analytics:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching analytics:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

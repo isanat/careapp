@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Valid email is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const email = parsed.data.email.trim().toLowerCase();
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         console.error("NEXT_PUBLIC_APP_URL is not configured");
         return NextResponse.json(
           { error: "Internal server error" },
-          { status: 500 }
+          { status: 500 },
         );
       }
       const resetUrl = `${baseUrl}/auth/reset-password?token=${rawToken}&email=${encodeURIComponent(email)}`;
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     console.error("Error in forgot-password:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

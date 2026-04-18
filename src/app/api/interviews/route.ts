@@ -2,37 +2,45 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
-import { generateRoomName, generateJitsiRoomUrl } from "@/lib/services/interview";
+import {
+  generateRoomName,
+  generateJitsiRoomUrl,
+} from "@/lib/services/interview";
 
 // POST: Create a new interview
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { caregiverUserId, contractId, scheduledAt, durationMinutes = 30 } = body;
+    const {
+      caregiverUserId,
+      contractId,
+      scheduledAt,
+      durationMinutes = 30,
+    } = body;
 
     if (!caregiverUserId || !scheduledAt) {
       return NextResponse.json(
         { error: "Caregiver ID and scheduled time are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Verify user is a family
     const userResult = await db.execute({
       sql: `SELECT role FROM User WHERE id = ?`,
-      args: [session.user.id]
+      args: [session.user.id],
     });
 
     if (userResult.rows[0]?.role !== "FAMILY") {
       return NextResponse.json(
         { error: "Only families can schedule interviews" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -42,13 +50,13 @@ export async function POST(request: NextRequest) {
             FROM User u 
             JOIN ProfileCaregiver pc ON u.id = pc.userId 
             WHERE u.id = ? AND u.role = 'CAREGIVER'`,
-      args: [caregiverUserId]
+      args: [caregiverUserId],
     });
 
     if (caregiverResult.rows.length === 0) {
       return NextResponse.json(
         { error: "Caregiver not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -74,8 +82,8 @@ export async function POST(request: NextRequest) {
         videoRoomUrl,
         "jitsi",
         new Date().toISOString(),
-        new Date().toISOString()
-      ]
+        new Date().toISOString(),
+      ],
     });
 
     // Create notification for caregiver
@@ -88,8 +96,8 @@ export async function POST(request: NextRequest) {
         "interview",
         "New Interview Scheduled",
         `A family has scheduled an interview with you for ${new Date(scheduledAt).toLocaleString()}`,
-        new Date().toISOString()
-      ]
+        new Date().toISOString(),
+      ],
     });
 
     return NextResponse.json({
@@ -99,14 +107,14 @@ export async function POST(request: NextRequest) {
         videoRoomUrl,
         scheduledAt,
         durationMinutes,
-        status: "SCHEDULED"
-      }
+        status: "SCHEDULED",
+      },
     });
   } catch (error) {
     console.error("Error creating interview:", error);
     return NextResponse.json(
       { error: "Failed to create interview" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -115,7 +123,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -139,7 +147,12 @@ export async function GET(request: NextRequest) {
       JOIN User cg ON i.caregiverUserId = cg.id
       WHERE (i.familyUserId = ? OR i.caregiverUserId = ?)`;
 
-    const args: (string | null)[] = [session.user.id, session.user.id, session.user.id, session.user.id];
+    const args: (string | null)[] = [
+      session.user.id,
+      session.user.id,
+      session.user.id,
+      session.user.id,
+    ];
 
     if (status) {
       sql += ` AND i.status = ?`;
@@ -159,15 +172,17 @@ export async function GET(request: NextRequest) {
         videoRoomUrl: row.videoRoomUrl,
         otherPartyName: row.other_party_name,
         otherPartyRole: row.other_party_role,
-        questionnaire: row.questionnaireJson ? JSON.parse(String(row.questionnaireJson)) : null,
-        createdAt: row.createdAt
-      }))
+        questionnaire: row.questionnaireJson
+          ? JSON.parse(String(row.questionnaireJson))
+          : null,
+        createdAt: row.createdAt,
+      })),
     });
   } catch (error) {
     console.error("Error fetching interviews:", error);
     return NextResponse.json(
       { error: "Failed to fetch interviews" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

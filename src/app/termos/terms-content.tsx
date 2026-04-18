@@ -39,7 +39,9 @@ export function TermsContent() {
             <CardContent className="p-8 prose prose-lg max-w-none dark:prose-invert">
               <h2>{t.terms.sections.introduction.title}</h2>
               <p>
-                {tFn('terms.sections.introduction.content', { appName: APP_NAME })}
+                {tFn("terms.sections.introduction.content", {
+                  appName: APP_NAME,
+                })}
               </p>
 
               <h2>{t.terms.sections.eligibility.title}</h2>

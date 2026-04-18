@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
+import { pageTransitionVariants } from "@/lib/animations";
 
 interface PageTransitionProps {
   children: React.ReactNode;

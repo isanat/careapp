@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 /**
  * POST /api/demands/[id]/close
@@ -9,12 +9,12 @@ import { db } from '@/lib/db-turso';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -28,14 +28,14 @@ export async function POST(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
     const demand = demandResult.rows[0];
 
     // Verify ownership
     if (demand.familyUserId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Update demand status to CLOSED
@@ -48,12 +48,12 @@ export async function POST(
       args: [reason || null, demandId],
     });
 
-    return NextResponse.json({ message: 'Demanda encerrada com sucesso' });
+    return NextResponse.json({ message: "Demanda encerrada com sucesso" });
   } catch (error) {
-    console.error('[Demands API] Close error:', error);
+    console.error("[Demands API] Close error:", error);
     return NextResponse.json(
-      { error: 'Failed to close demand' },
-      { status: 500 }
+      { error: "Failed to close demand" },
+      { status: 500 },
     );
   }
 }

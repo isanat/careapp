@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
-import { getDemandMetrics } from '@/lib/demands/metrics';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
+import { getDemandMetrics } from "@/lib/demands/metrics";
 
 /**
  * GET /api/demands/[id]
@@ -10,12 +10,12 @@ import { getDemandMetrics } from '@/lib/demands/metrics';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -60,7 +60,7 @@ export async function GET(
     });
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
     const row = result.rows[0];
@@ -78,7 +78,8 @@ export async function GET(
     }
 
     // Check if user is the family who created the demand or has an active contract
-    const isFamily = session.user.role === 'FAMILY' && session.user.id === row.familyUserId;
+    const isFamily =
+      session.user.role === "FAMILY" && session.user.id === row.familyUserId;
     const showPrivateDetails = isFamily;
 
     const demand = {
@@ -88,7 +89,7 @@ export async function GET(
       familyCity: row.familyCity,
       title: row.title,
       description: row.description,
-      serviceTypes: JSON.parse(String(row.serviceTypes || '[]')),
+      serviceTypes: JSON.parse(String(row.serviceTypes || "[]")),
       // Privacy: Only show address to the family who created it or after contract is finalized
       address: showPrivateDetails ? row.address : null,
       city: row.city,
@@ -99,14 +100,20 @@ export async function GET(
       latitude: showPrivateDetails ? row.latitude : null,
       longitude: showPrivateDetails ? row.longitude : null,
       requiredExperienceLevel: row.requiredExperienceLevel,
-      requiredCertifications: row.requiredCertifications ? JSON.parse(String(row.requiredCertifications)) : [],
+      requiredCertifications: row.requiredCertifications
+        ? JSON.parse(String(row.requiredCertifications))
+        : [],
       careType: row.careType,
       desiredStartDate: row.desiredStartDate,
       desiredEndDate: row.desiredEndDate,
       hoursPerWeek: row.hoursPerWeek,
-      scheduleJson: row.scheduleJson ? JSON.parse(String(row.scheduleJson)) : null,
+      scheduleJson: row.scheduleJson
+        ? JSON.parse(String(row.scheduleJson))
+        : null,
       budgetEurCents: showPrivateDetails ? row.budgetEurCents : null,
-      minimumHourlyRateEur: showPrivateDetails ? row.minimumHourlyRateEur : null,
+      minimumHourlyRateEur: showPrivateDetails
+        ? row.minimumHourlyRateEur
+        : null,
       visibilityPackage: row.visibilityPackage,
       visibilityExpiresAt: row.visibilityExpiresAt,
       status: row.status,
@@ -117,10 +124,13 @@ export async function GET(
 
     return NextResponse.json(demand);
   } catch (error) {
-    console.error('[Demands API] GET detail error:', error);
+    console.error("[Demands API] GET detail error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch demand', details: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
+      {
+        error: "Failed to fetch demand",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
     );
   }
 }
@@ -131,12 +141,12 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id: demandId } = await params;
@@ -149,16 +159,23 @@ export async function PUT(
     });
 
     if (demandResult.rows.length === 0) {
-      return NextResponse.json({ error: 'Demand not found' }, { status: 404 });
+      return NextResponse.json({ error: "Demand not found" }, { status: 404 });
     }
 
     const demand = demandResult.rows[0];
     if (demand.familyUserId !== session.user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Only allow updating certain fields
-    const allowedFields = ['title', 'description', 'status', 'hoursPerWeek', 'desiredStartDate', 'desiredEndDate'];
+    const allowedFields = [
+      "title",
+      "description",
+      "status",
+      "hoursPerWeek",
+      "desiredStartDate",
+      "desiredEndDate",
+    ];
     const updates: string[] = [];
     const args: (string | number | null)[] = [];
 
@@ -171,25 +188,25 @@ export async function PUT(
 
     if (updates.length === 0) {
       return NextResponse.json(
-        { error: 'No fields to update' },
-        { status: 400 }
+        { error: "No fields to update" },
+        { status: 400 },
       );
     }
 
-    updates.push('updatedAt = CURRENT_TIMESTAMP');
+    updates.push("updatedAt = CURRENT_TIMESTAMP");
     args.push(demandId);
 
     await db.execute({
-      sql: `UPDATE Demand SET ${updates.join(', ')} WHERE id = ?`,
+      sql: `UPDATE Demand SET ${updates.join(", ")} WHERE id = ?`,
       args,
     });
 
-    return NextResponse.json({ message: 'Demand updated successfully' });
+    return NextResponse.json({ message: "Demand updated successfully" });
   } catch (error) {
-    console.error('[Demands API] PUT error:', error);
+    console.error("[Demands API] PUT error:", error);
     return NextResponse.json(
-      { error: 'Failed to update demand' },
-      { status: 500 }
+      { error: "Failed to update demand" },
+      { status: 500 },
     );
   }
 }

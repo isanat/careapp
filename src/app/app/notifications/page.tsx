@@ -93,7 +93,10 @@ export default function NotificationsPage() {
   const handleNotificationClick = (notification: Notification) => {
     if (notification.referenceType === "contract" && notification.referenceId) {
       router.push(`/app/contracts/${notification.referenceId}`);
-    } else if (notification.referenceType === "chat" && notification.referenceId) {
+    } else if (
+      notification.referenceType === "chat" &&
+      notification.referenceId
+    ) {
       router.push("/app/chat");
     }
   };
@@ -105,7 +108,11 @@ export default function NotificationsPage() {
         <div className="flex items-center justify-between gap-4">
           <BloomSectionHeader
             title="Notificações"
-            description={unreadCount > 0 ? `${unreadCount} nova${unreadCount !== 1 ? "s" : ""}` : "Você receberá notificações sobre contratos e propostas"}
+            description={
+              unreadCount > 0
+                ? `${unreadCount} nova${unreadCount !== 1 ? "s" : ""}`
+                : "Você receberá notificações sobre contratos e propostas"
+            }
           />
           {unreadCount > 0 && (
             <Button size="sm" onClick={markAllAsRead} className="h-10 text-xs">
@@ -139,7 +146,12 @@ export default function NotificationsPage() {
 
               // Determine notification type color scheme
               const getColorScheme = (type: string) => {
-                if (type.includes("approved") || type.includes("received") || type.includes("accepted") || type.includes("completed")) {
+                if (
+                  type.includes("approved") ||
+                  type.includes("received") ||
+                  type.includes("accepted") ||
+                  type.includes("completed")
+                ) {
                   return { bg: "bg-success/10", icon: "text-success" };
                 }
                 if (type.includes("rejected")) {
@@ -158,26 +170,33 @@ export default function NotificationsPage() {
                   onClick={() => handleNotificationClick(notification)}
                 >
                   {/* Icon Container */}
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorScheme.bg} group-hover:scale-105 transition-transform duration-500`}>
+                  <div
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${colorScheme.bg} group-hover:scale-105 transition-transform duration-500`}
+                  >
                     <Icon className={`w-6 h-6 ${colorScheme.icon}`} />
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="space-y-1.5">
-                      <p className={`font-display font-bold text-foreground text-sm ${isUnread ? "opacity-100" : "opacity-75"}`}>
+                      <p
+                        className={`font-display font-bold text-foreground text-sm ${isUnread ? "opacity-100" : "opacity-75"}`}
+                      >
                         {notification.title}
                       </p>
                       <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                         {notification.message}
                       </p>
                       <span className="text-[9px] text-muted-foreground/50 uppercase tracking-widest inline-block">
-                        {new Date(notification.createdAt).toLocaleDateString("pt-PT", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {new Date(notification.createdAt).toLocaleDateString(
+                          "pt-PT",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
                       </span>
                     </div>
                   </div>

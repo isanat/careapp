@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db-turso";
 
 /**
  * Migration Status API
- * 
+ *
  * Este endpoint verifica o status das tabelas do banco de dados.
  * Todas as tabelas são gerenciadas pelo schema Prisma mas acessadas via libsql.
  */
 
 // GET - Show migration status
 export async function GET(request: NextRequest) {
-  const adminSecret = request.headers.get('x-admin-secret');
+  const adminSecret = request.headers.get("x-admin-secret");
   if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -26,38 +26,38 @@ export async function GET(request: NextRequest) {
 
     // All models managed by Prisma schema
     const prismaModels = [
-      'User',
-      'ProfileFamily',
-      'ProfileCaregiver',
-      'Payment',
-      'Contract',
-      'ContractAcceptance',
-      'Review',
-      'ChatRoom',
-      'ChatParticipant',
-      'ChatMessage',
-      'Notification',
-      'PlatformSettings',
-      'Account',
-      'Session',
-      'VerificationToken',
-      'Interview',
-      'TermsAcceptance',
-      'EscrowPayment',
-      'AdminUser',
-      'AdminAction',
-      'SupportTicket',
-      'SupportTicketMessage',
-      'Receipt',
-      'RecurringPayment',
+      "User",
+      "ProfileFamily",
+      "ProfileCaregiver",
+      "Payment",
+      "Contract",
+      "ContractAcceptance",
+      "Review",
+      "ChatRoom",
+      "ChatParticipant",
+      "ChatMessage",
+      "Notification",
+      "PlatformSettings",
+      "Account",
+      "Session",
+      "VerificationToken",
+      "Interview",
+      "TermsAcceptance",
+      "EscrowPayment",
+      "AdminUser",
+      "AdminAction",
+      "SupportTicket",
+      "SupportTicketMessage",
+      "Receipt",
+      "RecurringPayment",
       // Orphan tables now in Prisma
-      'AdminNotification',
-      'ApiKey',
-      'EmailTemplate',
-      'ImpersonationLog',
-      'ModerationQueue',
-      'PlatformMetric',
-      'ScheduledReport',
+      "AdminNotification",
+      "ApiKey",
+      "EmailTemplate",
+      "ImpersonationLog",
+      "ModerationQueue",
+      "PlatformMetric",
+      "ScheduledReport",
     ];
 
     const existingPrismaModels = prismaModels.filter((t) => tables.includes(t));
@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
 
     // Count records in key tables
     const tableStats: Record<string, number> = {};
-    const countTables = ['User', 'AdminUser', 'Contract', 'Payment', 'Review'];
-    
+    const countTables = ["User", "AdminUser", "Contract", "Payment", "Review"];
+
     for (const table of countTables) {
       if (tables.includes(table)) {
         try {
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({
-      status: 'healthy',
+      status: "healthy",
       timestamp: new Date().toISOString(),
       database: {
         totalTables: tables.length,
@@ -97,31 +97,31 @@ export async function GET(request: NextRequest) {
       tableStats,
       recommendation:
         missingPrismaModels.length > 0
-          ? 'Run `bun run db:push` to sync Prisma schema with database'
-          : 'All tables are synced with Prisma schema',
+          ? "Run `bun run db:push` to sync Prisma schema with database"
+          : "All tables are synced with Prisma schema",
     });
   } catch (error) {
-    console.error('Migration status check failed:', error);
+    console.error("Migration status check failed:", error);
     return NextResponse.json(
       {
-        error: 'Failed to check migration status',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to check migration status",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // POST - Deprecated manual migration
 export async function POST(request: NextRequest) {
-  const adminSecret = request.headers.get('x-admin-secret');
+  const adminSecret = request.headers.get("x-admin-secret");
   if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   return NextResponse.json({
-    message: 'Manual migration is deprecated',
-    instruction: 'Use `bun run db:push` to sync Prisma schema with database',
-    note: 'All tables are now managed by Prisma schema.',
+    message: "Manual migration is deprecated",
+    instruction: "Use `bun run db:push` to sync Prisma schema with database",
+    note: "All tables are now managed by Prisma schema.",
   });
 }

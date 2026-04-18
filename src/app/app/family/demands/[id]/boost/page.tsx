@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Suspense, useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { AppShell } from '@/components/layout/app-shell';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
+import { Suspense, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { AppShell } from "@/components/layout/app-shell";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   IconArrowLeft,
   IconLoader2,
@@ -17,7 +17,7 @@ import {
   IconStar,
   IconTrendingUp,
   IconEuro,
-} from '@/components/icons';
+} from "@/components/icons";
 
 interface Demand {
   id: string;
@@ -27,25 +27,28 @@ interface Demand {
   serviceTypes: string[];
 }
 
-const PACKAGE_DETAILS: Record<string, { label: string; price: number; desc: string; days: number; icon: any }> = {
+const PACKAGE_DETAILS: Record<
+  string,
+  { label: string; price: number; desc: string; days: number; icon: any }
+> = {
   BASIC: {
-    label: 'BASIC',
+    label: "BASIC",
     price: 3,
-    desc: '7 dias de visibilidade padrão',
+    desc: "7 dias de visibilidade padrão",
     days: 7,
     icon: IconEuro,
   },
   PREMIUM: {
-    label: 'PREMIUM',
+    label: "PREMIUM",
     price: 8,
-    desc: '30 dias destacado na plataforma',
+    desc: "30 dias destacado na plataforma",
     days: 30,
     icon: IconStar,
   },
   URGENT: {
-    label: 'URGENTE',
+    label: "URGENTE",
     price: 15,
-    desc: '3 dias no topo da lista de demandas',
+    desc: "3 dias no topo da lista de demandas",
     days: 3,
     icon: IconTrendingUp,
   },
@@ -58,7 +61,7 @@ function BoostContent() {
   const searchParams = useSearchParams();
 
   const demandId = params.id as string;
-  const packageType = (searchParams.get('package') || 'BASIC') as string;
+  const packageType = (searchParams.get("package") || "BASIC") as string;
 
   const [demand, setDemand] = useState<Demand | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,23 +69,25 @@ function BoostContent() {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
+    if (status === "unauthenticated") {
+      router.push("/login");
     }
   }, [status, router]);
 
   useEffect(() => {
-    if (status !== 'authenticated' || !demandId) return;
+    if (status !== "authenticated" || !demandId) return;
 
     const fetchDemand = async () => {
       try {
         setLoading(true);
         const res = await fetch(`/api/demands/${demandId}`);
-        if (!res.ok) throw new Error('Demanda não encontrada');
+        if (!res.ok) throw new Error("Demanda não encontrada");
         const data = await res.json();
         setDemand(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar demanda');
+        setError(
+          err instanceof Error ? err.message : "Erro ao carregar demanda",
+        );
       } finally {
         setLoading(false);
       }
@@ -99,8 +104,8 @@ function BoostContent() {
     try {
       // Create checkout session
       const res = await fetch(`/api/demands/${demandId}/boost`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           package: packageType,
         }),
@@ -108,7 +113,7 @@ function BoostContent() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Falha ao processar checkout');
+        throw new Error(errorData.error || "Falha ao processar checkout");
       }
 
       const { url } = await res.json();
@@ -117,15 +122,15 @@ function BoostContent() {
       if (url) {
         window.location.href = url;
       } else {
-        throw new Error('Falha ao obter URL de checkout');
+        throw new Error("Falha ao obter URL de checkout");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro inesperado');
+      setError(err instanceof Error ? err.message : "Erro inesperado");
       setProcessing(false);
     }
   };
 
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
       <div className="max-w-2xl mx-auto space-y-4 py-8">
         <div className="animate-pulse space-y-4">
@@ -139,15 +144,8 @@ function BoostContent() {
   const pkgDetails = PACKAGE_DETAILS[packageType] || PACKAGE_DETAILS.BASIC;
   const Icon = pkgDetails.icon;
 
-
-
   return (
-    <div
-      className="max-w-2xl mx-auto pb-8"
-     
-     
-     
-    >
+    <div className="max-w-2xl mx-auto pb-8">
       {/* Header with Back Button */}
       <div className="mb-8 flex items-center gap-4">
         <Link
@@ -197,13 +195,13 @@ function BoostContent() {
                       key={idx}
                       className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg"
                     >
-                      {service.replace(/_/g, ' ')}
+                      {service.replace(/_/g, " ")}
                     </span>
                   ))}
                   {demand.serviceTypes.length > 2 && (
-                    <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
+                    <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
                       +{demand.serviceTypes.length - 2}
-                    </BloomBadge>
+                    </span>
                   )}
                 </div>
               </div>
@@ -219,20 +217,20 @@ function BoostContent() {
               {Object.entries(PACKAGE_DETAILS).map(([key, pkg]) => {
                 const isSelected = key === packageType;
                 return (
-                  <div key={key}>
-                    <Link
-                      href={`?package=${key}`}
-                      className={`block bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
-                        isSelected
-                          ? 'bg-primary/5 border-primary/30 shadow-elevated'
-                          : 'border-border hover:shadow-elevated hover:border-primary/30'
-                      }`}
-                    >
+                  <Link
+                    key={key}
+                    href={`?package=${key}`}
+                    className={`bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
+                      isSelected
+                        ? "bg-primary/5 border-primary/30 shadow-elevated"
+                        : "border-border hover:shadow-elevated hover:border-primary/30"
+                    }`}
+                  >
                     <div className="space-y-4">
                       {/* Badge */}
-                      <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
+                      <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
                         {pkg.label}
-                      </BloomBadge>
+                      </span>
 
                       {/* Icon */}
                       <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
@@ -277,8 +275,7 @@ function BoostContent() {
                         </li>
                       </ul>
                     </div>
-                    </Link>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -304,10 +301,14 @@ function BoostContent() {
           {/* Info Banner */}
           <div className="bg-info/5 p-5 rounded-2xl border border-info/20 flex items-start gap-3">
             <div className="w-6 h-6 rounded-lg bg-info/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-sm font-display font-bold text-info">i</span>
+              <span className="text-sm font-display font-bold text-info">
+                i
+              </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Pagamento 100% seguro com <strong className="text-foreground">Stripe</strong>. Sua demanda será publicada imediatamente após confirmação.
+              Pagamento 100% seguro com{" "}
+              <strong className="text-foreground">Stripe</strong>. Sua demanda
+              será publicada imediatamente após confirmação.
             </p>
           </div>
 
@@ -334,9 +335,7 @@ function BoostContent() {
                     Processando...
                   </>
                 ) : (
-                  <>
-                    Pagar €{pkgDetails.price}
-                  </>
+                  <>Pagar €{pkgDetails.price}</>
                 )}
               </Button>
             </div>

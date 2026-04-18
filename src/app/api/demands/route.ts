@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
 
 /**
  * GET /api/demands
@@ -12,14 +12,14 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const city = searchParams.get('city');
-    const serviceType = searchParams.get('serviceType');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const city = searchParams.get("city");
+    const serviceType = searchParams.get("serviceType");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
+    const offset = parseInt(searchParams.get("offset") || "0");
 
     let query = `
       SELECT
@@ -86,30 +86,50 @@ export async function GET(request: NextRequest) {
       args,
     });
 
-    const demands = result.rows.map(row => ({
+    const demands = result.rows.map((row) => ({
       id: row.id,
       familyUserId: row.familyUserId,
       title: row.title,
       description: row.description,
-      serviceTypes: JSON.parse(String(row.serviceTypes || '[]')),
+      serviceTypes: JSON.parse(String(row.serviceTypes || "[]")),
       // Privacy: Only show address to the family who created the demand or after contract is finalized
-      address: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.address : null,
+      address:
+        session.user.role === "FAMILY" && session.user.id === row.familyUserId
+          ? row.address
+          : null,
       city: row.city,
       // Hide postal code from caregivers (privacy)
-      postalCode: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.postalCode : null,
+      postalCode:
+        session.user.role === "FAMILY" && session.user.id === row.familyUserId
+          ? row.postalCode
+          : null,
       country: row.country,
       // Hide coordinates from caregivers (privacy)
-      latitude: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.latitude : null,
-      longitude: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.longitude : null,
+      latitude:
+        session.user.role === "FAMILY" && session.user.id === row.familyUserId
+          ? row.latitude
+          : null,
+      longitude:
+        session.user.role === "FAMILY" && session.user.id === row.familyUserId
+          ? row.longitude
+          : null,
       requiredExperienceLevel: row.requiredExperienceLevel,
-      requiredCertifications: row.requiredCertifications ? JSON.parse(String(row.requiredCertifications)) : [],
+      requiredCertifications: row.requiredCertifications
+        ? JSON.parse(String(row.requiredCertifications))
+        : [],
       careType: row.careType,
       desiredStartDate: row.desiredStartDate,
       desiredEndDate: row.desiredEndDate,
       hoursPerWeek: row.hoursPerWeek,
       // Hide budget from caregivers (privacy)
-      budgetEurCents: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.budgetEurCents : null,
-      minimumHourlyRateEur: session.user.role === 'FAMILY' && session.user.id === row.familyUserId ? row.minimumHourlyRateEur : null,
+      budgetEurCents:
+        session.user.role === "FAMILY" && session.user.id === row.familyUserId
+          ? row.budgetEurCents
+          : null,
+      minimumHourlyRateEur:
+        session.user.role === "FAMILY" && session.user.id === row.familyUserId
+          ? row.minimumHourlyRateEur
+          : null,
       visibilityPackage: row.visibilityPackage,
       visibilityExpiresAt: row.visibilityExpiresAt,
       status: row.status,
@@ -129,10 +149,10 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Demands API] GET error:', error);
+    console.error("[Demands API] GET error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch demands' },
-      { status: 500 }
+      { error: "Failed to fetch demands" },
+      { status: 500 },
     );
   }
 }
@@ -145,12 +165,15 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Only FAMILY users can create demands
-    if (session.user.role !== 'FAMILY') {
-      return NextResponse.json({ error: 'Only families can create demands' }, { status: 403 });
+    if (session.user.role !== "FAMILY") {
+      return NextResponse.json(
+        { error: "Only families can create demands" },
+        { status: 403 },
+      );
     }
 
     const body = await request.json();
@@ -163,30 +186,30 @@ export async function POST(request: NextRequest) {
       postalCode,
       latitude,
       longitude,
-      requiredExperienceLevel = 'INTERMEDIATE',
+      requiredExperienceLevel = "INTERMEDIATE",
       requiredCertifications = [],
-      careType = 'RECURRING',
+      careType = "RECURRING",
       desiredStartDate,
       desiredEndDate,
       hoursPerWeek,
       budgetEurCents,
       minimumHourlyRateEur,
-      visibilityPackage = 'NONE',
+      visibilityPackage = "NONE",
       scheduleJson,
     } = body;
 
     // Validation
     if (!title || !description || !city || !serviceTypes?.length) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        { error: "Missing required fields" },
+        { status: 400 },
       );
     }
 
     if (description.length < 100) {
       return NextResponse.json(
-        { error: 'Description must be at least 100 characters' },
-        { status: 400 }
+        { error: "Description must be at least 100 characters" },
+        { status: 400 },
       );
     }
 
@@ -195,11 +218,14 @@ export async function POST(request: NextRequest) {
 
     // Calculate visibilityExpiresAt based on package
     let visibilityExpiresAt: string | null = null;
-    if (visibilityPackage && visibilityPackage !== 'NONE') {
+    if (visibilityPackage && visibilityPackage !== "NONE") {
       const expiresDate = new Date();
-      if (visibilityPackage === 'BASIC') expiresDate.setDate(expiresDate.getDate() + 7); // 7 days
-      if (visibilityPackage === 'PREMIUM') expiresDate.setDate(expiresDate.getDate() + 14); // 14 days
-      if (visibilityPackage === 'URGENT') expiresDate.setDate(expiresDate.getDate() + 3); // 3 days with highest priority
+      if (visibilityPackage === "BASIC")
+        expiresDate.setDate(expiresDate.getDate() + 7); // 7 days
+      if (visibilityPackage === "PREMIUM")
+        expiresDate.setDate(expiresDate.getDate() + 14); // 14 days
+      if (visibilityPackage === "URGENT")
+        expiresDate.setDate(expiresDate.getDate() + 3); // 3 days with highest priority
       visibilityExpiresAt = expiresDate.toISOString();
     }
 
@@ -235,7 +261,7 @@ export async function POST(request: NextRequest) {
         minimumHourlyRateEur || null,
         visibilityPackage,
         visibilityExpiresAt,
-        'ACTIVE',
+        "ACTIVE",
         now,
         now,
       ],
@@ -244,19 +270,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         id: demandId,
-        message: 'Demand created successfully',
+        message: "Demand created successfully",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error('[Demands API] POST error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("[Demands API] POST error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       {
-        error: 'Failed to create demand',
+        error: "Failed to create demand",
         details: errorMessage,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

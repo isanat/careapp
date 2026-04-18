@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
-import { calculateCaregiverAmount } from '@/lib/services/platform-fees';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
+import { calculateCaregiverAmount } from "@/lib/services/platform-fees";
 
 // POST - Resolve dispute
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -19,7 +19,10 @@ export async function POST(
     const { decision, familyPercentage, caregiverPercentage, reason } = body;
 
     if (!reason) {
-      return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Reason is required" },
+        { status: 400 },
+      );
     }
 
     // Get contract and escrow info
@@ -30,11 +33,14 @@ export async function POST(
         LEFT JOIN EscrowPayment e ON c.id = e.contractId
         WHERE c.id = ? AND c.status = 'DISPUTED'
       `,
-      args: [id]
+      args: [id],
     });
 
     if (contract.rows.length === 0) {
-      return NextResponse.json({ error: 'Disputed contract not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Disputed contract not found" },
+        { status: 404 },
+      );
     }
 
     const c = contract.rows[0] as any;
@@ -45,29 +51,31 @@ export async function POST(
 
     const totalAmount = Number(c.totalEurCents) || 0;
 
-    if (decision === 'favor_family') {
+    if (decision === "favor_family") {
       familyAmount = totalAmount;
       caregiverAmount = 0;
-    } else if (decision === 'favor_caregiver') {
+    } else if (decision === "favor_caregiver") {
       familyAmount = 0;
       // Calculate caregiver amount using dynamic platform fee percentage
       caregiverAmount = await calculateCaregiverAmount(totalAmount);
-    } else if (decision === 'split' && familyPercentage !== undefined) {
+    } else if (decision === "split" && familyPercentage !== undefined) {
       familyAmount = Math.round(totalAmount * (familyPercentage / 100));
-      caregiverAmount = Math.round(totalAmount * ((100 - familyPercentage) / 100));
+      caregiverAmount = Math.round(
+        totalAmount * ((100 - familyPercentage) / 100),
+      );
     }
 
     // Update contract status
     await db.execute({
       sql: `UPDATE Contract SET status = 'COMPLETED', updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     // Update escrow
     if (c.escrowId) {
       await db.execute({
         sql: `UPDATE EscrowPayment SET status = 'RELEASED', releasedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-        args: [c.escrowId]
+        args: [c.escrowId],
       });
     }
 
@@ -81,19 +89,22 @@ export async function POST(
         id,
         JSON.stringify({ decision, familyAmount, caregiverAmount }),
         reason,
-        request.headers.get('x-forwarded-for') || 'unknown'
-      ]
+        request.headers.get("x-forwarded-for") || "unknown",
+      ],
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Dispute resolved',
+      message: "Dispute resolved",
       decision,
       familyAmount,
-      caregiverAmount
+      caregiverAmount,
     });
   } catch (error) {
-    console.error('Error resolving dispute:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error resolving dispute:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

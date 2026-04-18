@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // GET - Get escrow details
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -27,24 +27,27 @@ export async function GET(
         JOIN User uc ON c.caregiverUserId = uc.id
         WHERE e.id = ?
       `,
-      args: [id]
+      args: [id],
     });
 
     if (escrow.rows.length === 0) {
-      return NextResponse.json({ error: 'Escrow not found' }, { status: 404 });
+      return NextResponse.json({ error: "Escrow not found" }, { status: 404 });
     }
 
     return NextResponse.json({ escrow: escrow.rows[0] });
   } catch (error) {
-    console.error('Error fetching escrow:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching escrow:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
 // POST - Manually release escrow
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -56,17 +59,23 @@ export async function POST(
     const { reason } = body;
 
     if (!reason) {
-      return NextResponse.json({ error: 'Reason is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Reason is required" },
+        { status: 400 },
+      );
     }
 
     // Get escrow
     const escrow = await db.execute({
       sql: `SELECT * FROM EscrowPayment WHERE id = ? AND status = 'HELD'`,
-      args: [id]
+      args: [id],
     });
 
     if (escrow.rows.length === 0) {
-      return NextResponse.json({ error: 'Escrow not found or already released' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Escrow not found or already released" },
+        { status: 404 },
+      );
     }
 
     const e = escrow.rows[0] as any;
@@ -74,24 +83,33 @@ export async function POST(
     // Update escrow status
     await db.execute({
       sql: `UPDATE EscrowPayment SET status = 'RELEASED', releasedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      args: [id]
+      args: [id],
     });
 
     // Log action
     await db.execute({
       sql: `INSERT INTO AdminAction (id, adminUserId, action, entityType, entityId, oldValue, newValue, reason, ipAddress, createdAt)
             VALUES (?, ?, 'RELEASE_ESCROW', 'ESCROW', ?, '{"status": "HELD"}', '{"status": "RELEASED"}', ?, ?, CURRENT_TIMESTAMP)`,
-      args: [generateId("action"), adminUserId, id, reason, request.headers.get('x-forwarded-for') || 'unknown']
+      args: [
+        generateId("action"),
+        adminUserId,
+        id,
+        reason,
+        request.headers.get("x-forwarded-for") || "unknown",
+      ],
     });
 
     return NextResponse.json({
       success: true,
-      message: 'Escrow released',
+      message: "Escrow released",
       escrowId: id,
-      amountCents: e.totalAmountCents
+      amountCents: e.totalAmountCents,
     });
   } catch (error) {
-    console.error('Error releasing escrow:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error releasing escrow:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

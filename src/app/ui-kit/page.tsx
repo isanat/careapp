@@ -1,32 +1,119 @@
 "use client";
 
 import * as React from "react";
-import { 
-  Button, 
-  Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter,
-  Alert, 
-  Badge, StatusBadge,
-  Input, Textarea, Select,
-  Modal, ModalTrigger, ModalContent, ModalHeader, ModalTitle, ModalDescription, ModalFooter, ActivationModal, TipModal,
-  Tabs, TabsList, TabsTrigger, TabsContent,
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Alert,
+  Badge,
+  StatusBadge,
+  Input,
+  Textarea,
+  Select,
+  Modal,
+  ModalTrigger,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalFooter,
+  ActivationModal,
+  TipModal,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
   BottomNav,
 } from "@/components/ui-kit";
-import { 
-  IconHealthCare, IconHealthFamily, IconHealthCaregiver, IconHealthContract,
-  IconHealthWallet, IconHealthToken, IconHealthReputation, IconHealthSchedule,
-  IconHealthPayment, IconHealthBurn, IconHealthSupport, IconHealthTrust,
+import {
+  IconHealthCare,
+  IconHealthFamily,
+  IconHealthCaregiver,
+  IconHealthContract,
+  IconHealthWallet,
+  IconHealthToken,
+  IconHealthReputation,
+  IconHealthSchedule,
+  IconHealthPayment,
+  IconHealthBurn,
+  IconHealthSupport,
+  IconHealthTrust,
 } from "@/components/icons/health-icons";
 import { APP_NAME } from "@/lib/constants";
 
 export default function UIKitPage() {
   const [activationModalOpen, setActivationModalOpen] = React.useState(false);
   const [tipModalOpen, setTipModalOpen] = React.useState(false);
-  
+
   const bottomNavItems = [
-    { href: "/ui-kit", label: "Home", icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
-    { href: "/ui-kit", label: "Carteira", icon: <IconHealthWallet className="w-6 h-6" />, badge: 3 },
-    { href: "/ui-kit", label: "Chat", icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> },
-    { href: "/ui-kit", label: "Perfil", icon: <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
+    {
+      href: "/ui-kit",
+      label: "Home",
+      icon: (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          />
+        </svg>
+      ),
+    },
+    {
+      href: "/ui-kit",
+      label: "Carteira",
+      icon: <IconHealthWallet className="w-6 h-6" />,
+      badge: 3,
+    },
+    {
+      href: "/ui-kit",
+      label: "Chat",
+      icon: (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          />
+        </svg>
+      ),
+    },
+    {
+      href: "/ui-kit",
+      label: "Perfil",
+      icon: (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      ),
+    },
   ];
 
   return (
@@ -34,18 +121,21 @@ export default function UIKitPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-primary">UI Kit - {APP_NAME}</h1>
+          <h1 className="text-2xl font-bold text-primary">
+            UI Kit - {APP_NAME}
+          </h1>
           <p className="text-muted-foreground">Design System para Evyra</p>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8 space-y-12">
-        
         {/* Colors Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Paleta de Cores</h2>
-          <p className="text-muted-foreground mb-6">Health & Care - Não fintech/crypto</p>
-          
+          <p className="text-muted-foreground mb-6">
+            Health & Care - Não fintech/crypto
+          </p>
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-2">
               <div className="h-20 rounded-xl bg-primary" />
@@ -73,7 +163,7 @@ export default function UIKitPage() {
         {/* Buttons Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Botões</h2>
-          
+
           <div className="space-y-6">
             <div>
               <p className="text-sm text-muted-foreground mb-3">Variantes</p>
@@ -87,7 +177,7 @@ export default function UIKitPage() {
                 <Button variant="danger">Danger</Button>
               </div>
             </div>
-            
+
             <div>
               <p className="text-sm text-muted-foreground mb-3">Tamanhos</p>
               <div className="flex flex-wrap items-center gap-3">
@@ -97,13 +187,15 @@ export default function UIKitPage() {
                 <Button size="xl">Extra Large</Button>
               </div>
             </div>
-            
+
             <div>
               <p className="text-sm text-muted-foreground mb-3">Estados</p>
               <div className="flex flex-wrap gap-3">
                 <Button loading>Loading</Button>
                 <Button disabled>Disabled</Button>
-                <Button fullWidth className="max-w-xs">Full Width</Button>
+                <Button fullWidth className="max-w-xs">
+                  Full Width
+                </Button>
               </div>
             </div>
           </div>
@@ -112,58 +204,70 @@ export default function UIKitPage() {
         {/* Cards Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Cards</h2>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle>Card Default</CardTitle>
-                <CardDescription>Cards com fundo branco e sombra suave</CardDescription>
+                <CardDescription>
+                  Cards com fundo branco e sombra suave
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Conteúdo do card com estilo padrão.</p>
+                <p className="text-muted-foreground">
+                  Conteúdo do card com estilo padrão.
+                </p>
               </CardContent>
             </Card>
-            
+
             <Card variant="info">
               <CardHeader>
                 <CardTitle>Card Info</CardTitle>
                 <CardDescription>Para informações importantes</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Fundo com tom teal suave.</p>
+                <p className="text-muted-foreground">
+                  Fundo com tom teal suave.
+                </p>
               </CardContent>
             </Card>
-            
+
             <Card variant="warning">
               <CardHeader>
                 <CardTitle>Card Warning</CardTitle>
                 <CardDescription>Para alertas atenção</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Fundo com tom dourado quente.</p>
+                <p className="text-muted-foreground">
+                  Fundo com tom dourado quente.
+                </p>
               </CardContent>
             </Card>
-            
+
             <Card variant="success">
               <CardHeader>
                 <CardTitle>Card Success</CardTitle>
                 <CardDescription>Para confirmações</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Fundo com tom verde suave.</p>
+                <p className="text-muted-foreground">
+                  Fundo com tom verde suave.
+                </p>
               </CardContent>
             </Card>
-            
+
             <Card variant="elevated" hoverable>
               <CardHeader>
                 <CardTitle>Card Elevated</CardTitle>
                 <CardDescription>Com hover effect</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Passe o mouse para ver o efeito.</p>
+                <p className="text-muted-foreground">
+                  Passe o mouse para ver o efeito.
+                </p>
               </CardContent>
             </Card>
-            
+
             <Card variant="outline">
               <CardHeader>
                 <CardTitle>Card Outline</CardTitle>
@@ -179,20 +283,20 @@ export default function UIKitPage() {
         {/* Alerts Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Alertas</h2>
-          
+
           <div className="space-y-4">
             <Alert variant="info" title="Dica">
               Este é um alerta informativo. Use para dicas e informações úteis.
             </Alert>
-            
+
             <Alert variant="success" title="Sucesso">
               Operação realizada com sucesso! Seus dados foram salvos.
             </Alert>
-            
+
             <Alert variant="warning" title="Atenção">
               Verifique suas informações antes de continuar.
             </Alert>
-            
+
             <Alert variant="error" title="Erro">
               Não foi possível completar a operação. Tente novamente.
             </Alert>
@@ -202,7 +306,7 @@ export default function UIKitPage() {
         {/* Badges Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Badges</h2>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground mb-3">Variantes</p>
@@ -217,9 +321,11 @@ export default function UIKitPage() {
                 <Badge variant="outline">Outline</Badge>
               </div>
             </div>
-            
+
             <div>
-              <p className="text-sm text-muted-foreground mb-3">Status Badges</p>
+              <p className="text-sm text-muted-foreground mb-3">
+                Status Badges
+              </p>
               <div className="flex flex-wrap gap-2">
                 <StatusBadge status="active" />
                 <StatusBadge status="pending" />
@@ -228,13 +334,17 @@ export default function UIKitPage() {
                 <StatusBadge status="verified" />
               </div>
             </div>
-            
+
             <div>
               <p className="text-sm text-muted-foreground mb-3">Com Dot</p>
               <div className="flex flex-wrap gap-2">
                 <Badge dot>Online</Badge>
-                <Badge variant="warning" dot>Em análise</Badge>
-                <Badge variant="success" dot>Aprovado</Badge>
+                <Badge variant="warning" dot>
+                  Em análise
+                </Badge>
+                <Badge variant="success" dot>
+                  Aprovado
+                </Badge>
               </div>
             </div>
           </div>
@@ -243,27 +353,41 @@ export default function UIKitPage() {
         {/* Inputs Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Inputs</h2>
-          
+
           <div className="grid md:grid-cols-2 gap-6">
-            <Input 
+            <Input
               label="Nome completo"
               placeholder="Digite seu nome"
               hint="Use seu nome legal"
             />
-            
-            <Input 
+
+            <Input
               label="Email"
               type="email"
               placeholder="seu@email.com"
-              leftIcon={<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>}
+              leftIcon={
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              }
             />
-            
-            <Input 
+
+            <Input
               label="Com erro"
               placeholder="Campo com erro"
               error="Este campo é obrigatório"
             />
-            
+
             <Select
               label="Tipo de serviço"
               placeholder="Selecione..."
@@ -273,7 +397,7 @@ export default function UIKitPage() {
                 { value: "personal", label: "Cuidados Pessoais" },
               ]}
             />
-            
+
             <Textarea
               label="Descrição"
               placeholder="Descreva suas necessidades..."
@@ -285,22 +409,24 @@ export default function UIKitPage() {
         {/* Tabs Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Tabs</h2>
-          
+
           <Tabs defaultValue="tab1">
             <TabsList>
               <TabsTrigger value="tab1">Visão Geral</TabsTrigger>
               <TabsTrigger value="tab2">Detalhes</TabsTrigger>
               <TabsTrigger value="tab3">Histórico</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="tab1">
               <Card>
                 <CardContent className="p-4">
-                  <p>Conteúdo da tab Visão Geral. Interface limpa e acessível.</p>
+                  <p>
+                    Conteúdo da tab Visão Geral. Interface limpa e acessível.
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="tab2">
               <Card>
                 <CardContent className="p-4">
@@ -308,7 +434,7 @@ export default function UIKitPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="tab3">
               <Card>
                 <CardContent className="p-4">
@@ -322,8 +448,10 @@ export default function UIKitPage() {
         {/* Icons Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Ícones Health</h2>
-          <p className="text-muted-foreground mb-6">Ícones SVG próprios - Rounded, Line style</p>
-          
+          <p className="text-muted-foreground mb-6">
+            Ícones SVG próprios - Rounded, Line style
+          </p>
+
           <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
             <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted">
               <IconHealthCare className="w-8 h-8 text-primary" />
@@ -379,7 +507,7 @@ export default function UIKitPage() {
         {/* Modals Section */}
         <section>
           <h2 className="text-xl font-bold mb-4">Modals</h2>
-          
+
           <div className="flex flex-wrap gap-3">
             <Button onClick={() => setActivationModalOpen(true)}>
               Abrir Modal Ativação
@@ -388,7 +516,7 @@ export default function UIKitPage() {
               Abrir Modal Gorjeta
             </Button>
           </div>
-          
+
           <ActivationModal
             open={activationModalOpen}
             onOpenChange={setActivationModalOpen}
@@ -397,7 +525,7 @@ export default function UIKitPage() {
               setActivationModalOpen(false);
             }}
           />
-          
+
           <TipModal
             open={tipModalOpen}
             onOpenChange={setTipModalOpen}
@@ -408,9 +536,8 @@ export default function UIKitPage() {
             }}
           />
         </section>
-
       </div>
-      
+
       {/* Bottom Nav Demo */}
       <BottomNav items={bottomNavItems} />
     </main>

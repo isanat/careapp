@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - List caregivers pending KYC verification
 export async function GET(request: NextRequest) {
@@ -22,15 +22,18 @@ export async function GET(request: NextRequest) {
         WHERE u.role = 'CAREGIVER' AND u.verificationStatus = 'PENDING'
         ORDER BY u.createdAt ASC
       `,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
       pending: result.rows,
-      count: result.rows.length
+      count: result.rows.length,
     });
   } catch (error) {
-    console.error('Error fetching pending KYC:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching pending KYC:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

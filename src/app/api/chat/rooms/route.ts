@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth-turso';
-import { db } from '@/lib/db-turso';
-import { generateId } from '@/lib/utils/id';
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-turso";
+import { db } from "@/lib/db-turso";
+import { generateId } from "@/lib/utils/id";
 
 // GET: List chat rooms for logged-in user
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userId = session.user.id;
@@ -49,15 +49,15 @@ export async function GET(request: NextRequest) {
         WHERE cp.userId = ?
         ORDER BY COALESCE(cm.createdAt, cr.createdAt) DESC
       `,
-      args: [userId, userId]
+      args: [userId, userId],
     });
 
     // Group by chat room
     const chatRoomsMap = new Map<string, any>();
-    
+
     for (const row of result.rows) {
       const roomId = row.id as string;
-      
+
       if (!chatRoomsMap.has(roomId)) {
         chatRoomsMap.set(roomId, {
           id: roomId,
@@ -68,17 +68,21 @@ export async function GET(request: NextRequest) {
           createdAt: row.createdAt,
           lastReadAt: row.lastReadAt,
           unreadCount: row.unreadCount || 0,
-          participant: row.participant_id ? {
-            id: row.participant_id,
-            name: row.participant_name,
-            role: row.participant_role,
-            title: row.participant_title,
-          } : null,
-          lastMessage: row.last_message_content ? {
-            content: row.last_message_content,
-            createdAt: row.last_message_at,
-            senderId: row.last_message_sender_id,
-          } : null,
+          participant: row.participant_id
+            ? {
+                id: row.participant_id,
+                name: row.participant_name,
+                role: row.participant_role,
+                title: row.participant_title,
+              }
+            : null,
+          lastMessage: row.last_message_content
+            ? {
+                content: row.last_message_content,
+                createdAt: row.last_message_at,
+                senderId: row.last_message_sender_id,
+              }
+            : null,
         });
       }
     }
@@ -87,8 +91,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ chatRooms });
   } catch (error) {
-    console.error('Error fetching chat rooms:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching chat rooms:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -96,16 +103,19 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
     const { participantId, referenceType, referenceId } = body;
 
     if (!participantId) {
-      return NextResponse.json({ error: 'Participant ID required' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Participant ID required" },
+        { status: 400 },
+      );
     }
 
     // Check if chat room already exists between these users
@@ -117,13 +127,13 @@ export async function POST(request: NextRequest) {
         WHERE cp1.userId = ? AND cp2.userId = ? AND cr.type = 'direct'
         LIMIT 1
       `,
-      args: [session.user.id, participantId]
+      args: [session.user.id, participantId],
     });
 
     if (existingRoom.rows.length > 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         chatRoomId: existingRoom.rows[0].id,
-        message: 'Chat room already exists' 
+        message: "Chat room already exists",
       });
     }
 
@@ -133,26 +143,39 @@ export async function POST(request: NextRequest) {
     // Create chat room
     await db.execute({
       sql: `INSERT INTO ChatRoom (id, type, referenceType, referenceId, isActive, createdAt, updatedAt) VALUES (?, 'direct', ?, ?, 1, ?, ?)`,
-      args: [chatRoomId, referenceType || null, referenceId || null, now, now]
+      args: [chatRoomId, referenceType || null, referenceId || null, now, now],
     });
 
     // Add participants
     await db.execute({
       sql: `INSERT INTO ChatParticipant (id, chatRoomId, userId, createdAt) VALUES (?, ?, ?, ?)`,
-      args: [`cp-${chatRoomId}-${session.user.id}`, chatRoomId, session.user.id, now]
+      args: [
+        `cp-${chatRoomId}-${session.user.id}`,
+        chatRoomId,
+        session.user.id,
+        now,
+      ],
     });
 
     await db.execute({
       sql: `INSERT INTO ChatParticipant (id, chatRoomId, userId, createdAt) VALUES (?, ?, ?, ?)`,
-      args: [`cp-${chatRoomId}-${participantId}`, chatRoomId, participantId, now]
+      args: [
+        `cp-${chatRoomId}-${participantId}`,
+        chatRoomId,
+        participantId,
+        now,
+      ],
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       chatRoomId,
-      message: 'Chat room created successfully' 
+      message: "Chat room created successfully",
     });
   } catch (error) {
-    console.error('Error creating chat room:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error creating chat room:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

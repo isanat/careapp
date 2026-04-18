@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - List refunds
 export async function GET(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
         WHERE p.status = 'REFUNDED' OR p.refundedAt IS NOT NULL
         ORDER BY p.refundedAt DESC
       `,
-      args: []
+      args: [],
     });
 
     // Get payments that can be refunded (completed, not refunded)
@@ -30,17 +30,20 @@ export async function GET(request: NextRequest) {
         ORDER BY p.paidAt DESC
         LIMIT 50
       `,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
       refunded: refunded.rows,
       refundable: refundable.rows,
       refundedCount: refunded.rows.length,
-      refundableCount: refundable.rows.length
+      refundableCount: refundable.rows.length,
     });
   } catch (error) {
-    console.error('Error listing refunds:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error listing refunds:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

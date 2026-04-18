@@ -1,15 +1,12 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { PageHeader } from "@/components/admin/common/page-header";
-import { BloomCard } from "@/components/bloom-custom/BloomCard";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
-import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   IconUsers,
@@ -85,15 +82,8 @@ export default function AdminDashboardPage() {
     return new Intl.NumberFormat("pt-PT").format(num);
   };
 
-
-
   return (
-    <div
-      className="space-y-6"
-     
-     
-     
-    >
+    <div className="space-y-6">
       <PageHeader
         title="Dashboard"
         description="Visão geral da plataforma"
@@ -106,10 +96,7 @@ export default function AdminDashboardPage() {
       />
 
       {error && (
-        <div
-         
-          className="rounded-lg bg-destructive/5 p-5 sm:p-6 md:p-7 text-destructive"
-        >
+        <div className="rounded-lg bg-destructive/5 p-4 text-destructive">
           {error}
         </div>
       )}
@@ -150,80 +137,106 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Alerts Section */}
-      <div>
-        <BloomCard variant="warning">
-          <div className="p-5 sm:p-6 md:p-7">
-            <div className="mb-6 flex items-center gap-2">
-              <IconAlertTriangle className="h-5 w-5 text-warning" />
-              <h3 className="text-lg font-semibold text-foreground">Alertas Pendentes</h3>
-            </div>
-            <div className="grid gap-3 md:grid-cols-4">
-              <Link
-                href="/admin/caregivers?status=pending"
-                className="flex items-center justify-between rounded-lg border border-border bg-card/50 p-3 transition-all hover:bg-card hover:border-primary/50"
-              >
-                <span className="text-sm">KYC Pendente</span>
-                <BloomBadge variant="warning">{stats?.alerts.pendingKyc || 0}</BloomBadge>
-              </Link>
-              <Link
-                href="/admin/contracts?status=disputed"
-                className="flex items-center justify-between rounded-lg border border-border bg-card/50 p-3 transition-all hover:bg-card hover:border-primary/50"
-              >
-                <span className="text-sm">Disputas</span>
-                <BloomBadge variant="destructive">{stats?.alerts.pendingDisputes || 0}</BloomBadge>
-              </Link>
-              <Link
-                href="/admin/payments?status=refund"
-                className="flex items-center justify-between rounded-lg border border-border bg-card/50 p-3 transition-all hover:bg-card hover:border-primary/50"
-              >
-                <span className="text-sm">Reembolsos</span>
-                <BloomBadge variant="warning">{stats?.alerts.pendingRefunds || 0}</BloomBadge>
-              </Link>
-              <Link
-                href="/admin/moderation"
-                className="flex items-center justify-between rounded-lg border border-border bg-card/50 p-3 transition-all hover:bg-card hover:border-primary/50"
-              >
-                <span className="text-sm">Conteúdo Sinalizado</span>
-                <BloomBadge variant="warning">{stats?.alerts.flaggedContent || 0}</BloomBadge>
-              </Link>
-            </div>
+      <Card className="border-warning/30 bg-warning/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-warning">
+            <IconAlertTriangle className="h-5 w-5" />
+            Alertas Pendentes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-4">
+            <Link
+              href="/admin/caregivers?status=pending"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
+            >
+              <span className="text-sm">KYC Pendente</span>
+              <Badge className="bg-warning">
+                {stats?.alerts.pendingKyc || 0}
+              </Badge>
+            </Link>
+            <Link
+              href="/admin/contracts?status=disputed"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
+            >
+              <span className="text-sm">Disputas</span>
+              <Badge className="bg-destructive">
+                {stats?.alerts.pendingDisputes || 0}
+              </Badge>
+            </Link>
+            <Link
+              href="/admin/payments?status=refund"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
+            >
+              <span className="text-sm">Reembolsos</span>
+              <Badge className="bg-warning">
+                {stats?.alerts.pendingRefunds || 0}
+              </Badge>
+            </Link>
+            <Link
+              href="/admin/moderation"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-3"
+            >
+              <span className="text-sm">Conteúdo Sinalizado</span>
+              <Badge className="bg-warning">
+                {stats?.alerts.flaggedContent || 0}
+              </Badge>
+            </Link>
           </div>
-        </BloomCard>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <BloomCard variant="interactive">
-          <div className="p-5 sm:p-6 md:p-7 space-y-6">
-            <BloomSectionHeader title="Ações Rápidas" />
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-between" asChild>
-                <Link href="/admin/users/new">
-                  Novo Usuário <IconArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-between" asChild>
-                <Link href="/admin/caregivers?status=pending">
-                  Revisar KYC <IconArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-between" asChild>
-                <Link href="/admin/contracts?status=disputed">
-                  Resolver Disputas <IconArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" className="w-full justify-between" asChild>
-                <Link href="/admin/demands">
-                  Marketplace de Demandas <IconArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </BloomCard>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Ações Rápidas</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              asChild
+            >
+              <Link href="/admin/users/new">
+                Novo Usuário <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              asChild
+            >
+              <Link href="/admin/caregivers?status=pending">
+                Revisar KYC <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              asChild
+            >
+              <Link href="/admin/contracts?status=disputed">
+                Resolver Disputas <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              asChild
+            >
+              <Link href="/admin/demands">
+                Marketplace de Demandas <IconArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-        <BloomCard variant="default">
-          <div className="p-5 sm:p-6 md:p-7 space-y-6">
-            <BloomSectionHeader title="Contratos por Status" />
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Contratos por Status</CardTitle>
+          </CardHeader>
+          <CardContent>
             {loading ? (
               <div className="space-y-2">
                 <Skeleton className="h-6 w-full" />
@@ -234,36 +247,52 @@ export default function AdminDashboardPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Ativos</span>
-                  <BloomBadge variant="default">{stats?.kpis.activeContracts || 0}</BloomBadge>
+                  <Badge>{stats?.kpis.activeContracts || 0}</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Em Disputa</span>
-                  <BloomBadge variant="destructive">{stats?.kpis.pendingDisputes || 0}</BloomBadge>
+                  <Badge variant="destructive">
+                    {stats?.kpis.pendingDisputes || 0}
+                  </Badge>
                 </div>
               </div>
             )}
-          </div>
-        </BloomCard>
+          </CardContent>
+        </Card>
 
-        <BloomCard variant="default">
-          <div className="p-5 sm:p-6 md:p-7 space-y-6">
-            <BloomSectionHeader title="Saúde do Sistema" />
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Saúde do Sistema</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Banco de Dados</span>
-                <BloomBadge variant={stats?.health.database === "healthy" ? "success" : "destructive"}>
+                <Badge
+                  className={
+                    stats?.health.database === "healthy"
+                      ? "bg-success"
+                      : "bg-destructive"
+                  }
+                >
                   {stats?.health.database === "healthy" ? "OK" : "Erro"}
-                </BloomBadge>
+                </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Stripe</span>
-                <BloomBadge variant={stats?.health.stripe === "healthy" ? "success" : "destructive"}>
+                <Badge
+                  className={
+                    stats?.health.stripe === "healthy"
+                      ? "bg-success"
+                      : "bg-destructive"
+                  }
+                >
                   {stats?.health.stripe === "healthy" ? "OK" : "Erro"}
-                </BloomBadge>
+                </Badge>
               </div>
             </div>
-          </div>
-        </BloomCard>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

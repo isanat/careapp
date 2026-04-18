@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { contactFormSchema } from '@/lib/validations/schemas';
-import { sendEmail } from '@/lib/services/email';
-import { APP_NAME } from '@/lib/constants';
+import { NextRequest, NextResponse } from "next/server";
+import { contactFormSchema } from "@/lib/validations/schemas";
+import { sendEmail } from "@/lib/services/email";
+import { APP_NAME } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'Invalid input', details: parsed.error.flatten() },
-        { status: 400 }
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 },
       );
     }
 
@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
 
     const supportEmail = process.env.SUPPORT_EMAIL || process.env.SMTP_USER;
     if (!supportEmail) {
-      console.error('[Contact] No SUPPORT_EMAIL or SMTP_USER configured');
+      console.error("[Contact] No SUPPORT_EMAIL or SMTP_USER configured");
       return NextResponse.json(
-        { error: 'Contact form is not configured' },
-        { status: 503 }
+        { error: "Contact form is not configured" },
+        { status: 503 },
       );
     }
 
@@ -47,14 +47,20 @@ export async function POST(request: NextRequest) {
 
     if (!sent) {
       return NextResponse.json(
-        { error: 'Failed to send message. Please try again later.' },
-        { status: 500 }
+        { error: "Failed to send message. Please try again later." },
+        { status: 500 },
       );
     }
 
-    return NextResponse.json({ success: true, message: 'Message sent successfully' });
+    return NextResponse.json({
+      success: true,
+      message: "Message sent successfully",
+    });
   } catch (error) {
-    console.error('Error in contact form:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error in contact form:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

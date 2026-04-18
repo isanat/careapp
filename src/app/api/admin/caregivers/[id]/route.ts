@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - Get caregiver details
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireAdmin();
@@ -31,11 +31,14 @@ export async function GET(
         JOIN ProfileCaregiver pc ON u.id = pc.userId
         WHERE u.id = ? AND u.role = 'CAREGIVER'
       `,
-      args: [id]
+      args: [id],
     });
 
     if (result.rows.length === 0) {
-      return NextResponse.json({ error: 'Caregiver not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Caregiver not found" },
+        { status: 404 },
+      );
     }
 
     // Get reviews
@@ -48,7 +51,7 @@ export async function GET(
         ORDER BY r.createdAt DESC
         LIMIT 10
       `,
-      args: [id]
+      args: [id],
     });
 
     // Get contracts
@@ -61,16 +64,19 @@ export async function GET(
         ORDER BY c.createdAt DESC
         LIMIT 10
       `,
-      args: [id]
+      args: [id],
     });
 
     return NextResponse.json({
       ...result.rows[0],
       reviews: reviews.rows,
-      contracts: contracts.rows
+      contracts: contracts.rows,
     });
   } catch (error) {
-    console.error('Error fetching caregiver:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching caregiver:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

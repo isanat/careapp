@@ -46,7 +46,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `${APP_NAME} — Apoio Domiciliário de Confiança na Europa`,
-    description: "Profissionais verificados, contratos digitais e acompanhamento centralizado. Para as famílias que não podem estar sempre presentes.",
+    description:
+      "Profissionais verificados, contratos digitais e acompanhamento centralizado. Para as famílias que não podem estar sempre presentes.",
     url: "https://evyra.eu",
     siteName: APP_NAME,
     type: "website",
@@ -55,7 +56,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `${APP_NAME} — Apoio Domiciliário de Confiança na Europa`,
-    description: "Profissionais verificados, contratos digitais e acompanhamento centralizado. Para as famílias que não podem estar sempre presentes.",
+    description:
+      "Profissionais verificados, contratos digitais e acompanhamento centralizado. Para as famílias que não podem estar sempre presentes.",
   },
   manifest: "/manifest.json",
   appleWebApp: {
@@ -77,9 +79,7 @@ export default function RootLayout({
     <html lang="pt" suppressHydrationWarning>
       <body className="font-body antialiased bg-background text-foreground">
         <Providers>
-          <div className="relative flex min-h-screen flex-col">
-            {children}
-          </div>
+          <div className="relative flex min-h-screen flex-col">{children}</div>
           <Toaster />
         </Providers>
       </body>

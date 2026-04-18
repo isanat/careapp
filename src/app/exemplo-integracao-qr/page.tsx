@@ -10,15 +10,15 @@
  * - Caregiver App: adiciona QRScanner
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { QRGenerator, QRScanner, QRHistory } from '@/components/qr';
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { QRGenerator, QRScanner, QRHistory } from "@/components/qr";
 
 export default function ExemploIntegracaoQR() {
-  const [selectedContractId] = useState('contract_exemplo_123');
-  const [caregiverName] = useState('Maria Silva');
+  const [selectedContractId] = useState("contract_exemplo_123");
+  const [caregiverName] = useState("Maria Silva");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
@@ -56,7 +56,7 @@ export default function ExemploIntegracaoQR() {
                 contractId={selectedContractId}
                 caregiverName={caregiverName}
                 onQRGenerated={(qrCode) => {
-                  console.log('QR Gerado:', qrCode);
+                  console.log("QR Gerado:", qrCode);
                 }}
               />
 
@@ -91,16 +91,17 @@ export default function FamilyDashboard() {
                 Scanner de QR - App Profissional
               </h2>
               <p className="text-gray-600 mb-6">
-                Integrar este componente em uma página dedicada da app do profissional:
+                Integrar este componente em uma página dedicada da app do
+                profissional:
               </p>
 
               {/* Component */}
               <QRScanner
                 onScanSuccess={(result) => {
-                  console.log('Presença confirmada:', result);
+                  console.log("Presença confirmada:", result);
                 }}
                 onScanError={(error) => {
-                  console.error('Erro ao escanear:', error);
+                  console.error("Erro ao escanear:", error);
                 }}
               />
 
@@ -183,7 +184,8 @@ export default function ContractDetailsPage({ contractId }) {
                 1. Family Dashboard - Adicionar QRGenerator
               </h3>
               <p className="text-gray-600 mb-3">
-                Localização: <code className="bg-gray-100 px-2 py-1 rounded">
+                Localização:{" "}
+                <code className="bg-gray-100 px-2 py-1 rounded">
                   src/app/dashboard/contracts/[id]/page.tsx
                 </code>
               </p>
@@ -230,7 +232,8 @@ import { QRHistory } from '@/components/qr';
                 3. Caregiver App - Adicionar QRScanner
               </h3>
               <p className="text-gray-600 mb-3">
-                Localização: <code className="bg-gray-100 px-2 py-1 rounded">
+                Localização:{" "}
+                <code className="bg-gray-100 px-2 py-1 rounded">
                   src/app/cuidador/scanner/page.tsx (nova página)
                 </code>
               </p>
@@ -283,26 +286,22 @@ export default function CaregiverScannerPage() {
 
         {/* Important Notes */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-bold text-blue-900 mb-3">⚠️ Notas Importantes</h3>
+          <h3 className="text-lg font-bold text-blue-900 mb-3">
+            ⚠️ Notas Importantes
+          </h3>
           <ul className="space-y-2 text-blue-900 text-sm">
             <li>
-              ✓ Os componentes usam <code>use client</code> (client-side rendering)
+              ✓ Os componentes usam <code>use client</code> (client-side
+              rendering)
             </li>
             <li>
-              ✓ O hook <code>useQRCode</code> gerencia todo o estado das operações
+              ✓ O hook <code>useQRCode</code> gerencia todo o estado das
+              operações
             </li>
-            <li>
-              ✓ Os endpoints da API já estão implementados e prontos
-            </li>
-            <li>
-              ✓ A autenticação é validada no backend (NextAuth)
-            </li>
-            <li>
-              ✓ Rate limiting está ativado para evitar abuso
-            </li>
-            <li>
-              ✓ Responsivo em mobile, tablet e desktop
-            </li>
+            <li>✓ Os endpoints da API já estão implementados e prontos</li>
+            <li>✓ A autenticação é validada no backend (NextAuth)</li>
+            <li>✓ Rate limiting está ativado para evitar abuso</li>
+            <li>✓ Responsivo em mobile, tablet e desktop</li>
           </ul>
         </div>
       </div>

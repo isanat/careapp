@@ -15,10 +15,14 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get("authorization");
     const expectedToken = process.env.ADMIN_API_KEY;
 
-    if (!authHeader || !expectedToken || authHeader !== `Bearer ${expectedToken}`) {
+    if (
+      !authHeader ||
+      !expectedToken ||
+      authHeader !== `Bearer ${expectedToken}`
+    ) {
       return NextResponse.json(
         { error: "Unauthorized - Invalid API key" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -133,7 +137,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in auto-renew:", error);
     return NextResponse.json(
       { error: "Failed to renew contracts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

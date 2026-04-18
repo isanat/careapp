@@ -4,10 +4,16 @@ import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
@@ -102,13 +108,13 @@ export default function SearchPage() {
 
   const fetchCaregivers = async () => {
     try {
-      const response = await apiFetch('/api/caregivers');
+      const response = await apiFetch("/api/caregivers");
       if (response.ok) {
         const data = await response.json();
         setCaregivers(data.caregivers || []);
       }
     } catch (error) {
-      console.error('Error fetching caregivers:', error);
+      console.error("Error fetching caregivers:", error);
     } finally {
       setIsLoading(false);
     }
@@ -116,13 +122,13 @@ export default function SearchPage() {
 
   const fetchFamilies = async () => {
     try {
-      const response = await apiFetch('/api/families');
+      const response = await apiFetch("/api/families");
       if (response.ok) {
         const data = await response.json();
         setFamilies(data.families || []);
       }
     } catch (error) {
-      console.error('Error fetching families:', error);
+      console.error("Error fetching families:", error);
     } finally {
       setIsLoading(false);
     }
@@ -137,12 +143,14 @@ export default function SearchPage() {
           c.name.toLowerCase().includes(term) ||
           c.title?.toLowerCase().includes(term) ||
           c.bio?.toLowerCase().includes(term) ||
-          c.city?.toLowerCase().includes(term)
+          c.city?.toLowerCase().includes(term),
       );
     }
-    results = results.filter((c) => (c.hourlyRateEur / 100) <= maxPrice);
+    results = results.filter((c) => c.hourlyRateEur / 100 <= maxPrice);
     if (selectedService !== "all") {
-      results = results.filter((c) => c.services?.some(s => s.includes(selectedService)));
+      results = results.filter((c) =>
+        c.services?.some((s) => s.includes(selectedService)),
+      );
     }
     if (sortBy === "rating") {
       results.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
@@ -164,27 +172,20 @@ export default function SearchPage() {
         (f) =>
           f.name.toLowerCase().includes(term) ||
           f.city?.toLowerCase().includes(term) ||
-          f.elderNeeds?.toLowerCase().includes(term)
+          f.elderNeeds?.toLowerCase().includes(term),
       );
     }
     if (selectedService !== "all") {
       results = results.filter((f) =>
-        f.preferredServices?.some(s => s.includes(selectedService))
+        f.preferredServices?.some((s) => s.includes(selectedService)),
       );
     }
     return results;
   }, [families, searchTerm, selectedService]);
 
-
-
   return (
     <AppShell>
-      <div
-        className="space-y-8"
-       
-       
-       
-      >
+      <div className="space-y-8">
         {/* Page Header */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
@@ -203,7 +204,11 @@ export default function SearchPage() {
             <div className="relative flex-1">
               <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={isCaregiver ? "Pesquisar familias..." : "Nome, servico ou cidade..."}
+                placeholder={
+                  isCaregiver
+                    ? "Pesquisar familias..."
+                    : "Nome, servico ou cidade..."
+                }
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-11 h-11 rounded-2xl bg-secondary border border-border text-sm"
@@ -226,14 +231,19 @@ export default function SearchPage() {
                   <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest block mb-2">
                     {t.search.filters}
                   </label>
-                  <Select value={selectedService} onValueChange={setSelectedService}>
+                  <Select
+                    value={selectedService}
+                    onValueChange={setSelectedService}
+                  >
                     <SelectTrigger className="h-11 rounded-2xl bg-secondary border border-border text-sm">
                       <SelectValue placeholder={t.all} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t.all}</SelectItem>
                       {Object.entries(SERVICE_TYPES).map(([key, value]) => (
-                        <SelectItem key={key} value={key}>{value}</SelectItem>
+                        <SelectItem key={key} value={key}>
+                          {value}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -248,9 +258,15 @@ export default function SearchPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="rating">{t.search.rating}</SelectItem>
-                        <SelectItem value="price">{t.search.hourlyRate}</SelectItem>
-                        <SelectItem value="reviews">{t.dashboard.reviews}</SelectItem>
+                        <SelectItem value="rating">
+                          {t.search.rating}
+                        </SelectItem>
+                        <SelectItem value="price">
+                          {t.search.hourlyRate}
+                        </SelectItem>
+                        <SelectItem value="reviews">
+                          {t.dashboard.reviews}
+                        </SelectItem>
                         <SelectItem value="distance">Proximidade</SelectItem>
                       </SelectContent>
                     </Select>
@@ -260,9 +276,17 @@ export default function SearchPage() {
               {!isCaregiver && (
                 <div>
                   <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest block mb-3">
-                    Preço máximo: {"\u20AC"}{maxPrice}{t.search.perHour}
+                    Preço máximo: {"\u20AC"}
+                    {maxPrice}
+                    {t.search.perHour}
                   </label>
-                  <Slider value={[maxPrice]} onValueChange={([value]) => setMaxPrice(value)} min={10} max={50} step={1} />
+                  <Slider
+                    value={[maxPrice]}
+                    onValueChange={([value]) => setMaxPrice(value)}
+                    min={10}
+                    max={50}
+                    step={1}
+                  />
                 </div>
               )}
             </div>
@@ -274,14 +298,13 @@ export default function SearchPage() {
           <p className="text-xs text-muted-foreground font-medium">
             {isCaregiver
               ? `${filteredFamilies.length} ${filteredFamilies.length === 1 ? "família encontrada" : "famílias encontradas"}`
-              : `${filteredCaregivers.length} ${filteredCaregivers.length === 1 ? "cuidador encontrado" : t.search.resultsFound || "cuidadores encontrados"}`
-            }
+              : `${filteredCaregivers.length} ${filteredCaregivers.length === 1 ? "cuidador encontrado" : t.search.resultsFound || "cuidadores encontrados"}`}
           </p>
         )}
 
         {/* Loading Skeletons */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="status" aria-busy="true">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <Skeleton key={i} className="h-48 rounded-3xl" />
             ))}
@@ -292,18 +315,20 @@ export default function SearchPage() {
         {!isLoading && !isCaregiver && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredCaregivers.map((caregiver) => (
-              <div key={caregiver.id}>
-                <Link href={`/app/caregivers/${caregiver.id}`} className="group">
-                  <div
-                    whileHover={{ scale: 1.02, y: -4 }}
-                    transition={{ duration: 0.2 }}
-                    className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 cursor-pointer space-y-4"
-                  >
+              <Link
+                key={caregiver.id}
+                href={`/app/caregivers/${caregiver.id}`}
+                className="group"
+              >
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 cursor-pointer space-y-4">
                   {/* Header with avatar and verification */}
                   <div className="flex items-start gap-3">
                     <Avatar className="h-16 w-16 rounded-2xl shrink-0">
                       <AvatarFallback className="rounded-2xl text-sm font-semibold bg-primary/10 text-primary">
-                        {caregiver.name.split(" ").map((n) => n[0]).join("")}
+                        {caregiver.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
@@ -315,7 +340,9 @@ export default function SearchPage() {
                           <IconShield className="h-5 w-5 text-success shrink-0" />
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate">{caregiver.title || "Cuidador"}</p>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {caregiver.title || "Cuidador"}
+                      </p>
                     </div>
                   </div>
 
@@ -326,7 +353,11 @@ export default function SearchPage() {
                       {caregiver.averageRating?.toFixed(1) || "0.0"}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      ({caregiver.totalReviews || 0} {caregiver.totalReviews === 1 ? "avaliação" : "avaliações"})
+                      ({caregiver.totalReviews || 0}{" "}
+                      {caregiver.totalReviews === 1
+                        ? "avaliação"
+                        : "avaliações"}
+                      )
                     </span>
                   </div>
 
@@ -338,9 +369,13 @@ export default function SearchPage() {
                         <div className="h-8 w-8 rounded-2xl bg-secondary/60 flex items-center justify-center flex-shrink-0">
                           <IconMapPin className="h-4 w-4 text-muted-foreground" />
                         </div>
-                        <span className="text-xs text-muted-foreground font-medium">Localização</span>
+                        <span className="text-xs text-muted-foreground font-medium">
+                          Localização
+                        </span>
                       </div>
-                      <span className="text-xs font-display font-bold text-foreground">{caregiver.city || "N/A"}</span>
+                      <span className="text-xs font-display font-bold text-foreground">
+                        {caregiver.city || "N/A"}
+                      </span>
                     </div>
 
                     {/* Experience */}
@@ -349,28 +384,38 @@ export default function SearchPage() {
                         <div className="h-8 w-8 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <IconClock className="h-4 w-4 text-primary" />
                         </div>
-                        <span className="text-xs text-muted-foreground font-medium">Experiência</span>
+                        <span className="text-xs text-muted-foreground font-medium">
+                          Experiência
+                        </span>
                       </div>
-                      <span className="text-xs font-display font-bold text-foreground">{caregiver.experienceYears || 0} anos</span>
+                      <span className="text-xs font-display font-bold text-foreground">
+                        {caregiver.experienceYears || 0} anos
+                      </span>
                     </div>
 
                     {/* Contracts */}
                     <div className="flex justify-between items-center text-sm py-2">
-                      <span className="text-xs text-muted-foreground font-medium">Contratos</span>
-                      <span className="text-xs text-muted-foreground font-medium">{caregiver.totalContracts || 0}</span>
+                      <span className="text-xs text-muted-foreground font-medium">
+                        Contratos
+                      </span>
+                      <span className="text-xs text-muted-foreground font-medium">
+                        {caregiver.totalContracts || 0}
+                      </span>
                     </div>
                   </div>
 
                   {/* Price */}
                   <div className="flex items-baseline justify-between">
-                    <span className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">Tarifa Horária</span>
+                    <span className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      Tarifa Horária
+                    </span>
                     <span className="text-2xl font-display font-black text-primary tracking-tighter">
-                      {"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(2)}
+                      {"\u20AC"}
+                      {(caregiver.hourlyRateEur / 100).toFixed(2)}
                     </span>
                   </div>
-                  </div>
-                </Link>
-              </div>
+                </div>
+              </Link>
             ))}
 
             {/* Empty State */}
@@ -379,8 +424,12 @@ export default function SearchPage() {
                 <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
                   <IconSearch className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h4 className="font-display font-bold text-foreground text-lg mb-2">{t.search.noResults}</h4>
-                <p className="text-sm text-muted-foreground">{t.search.placeholder}</p>
+                <h4 className="font-display font-bold text-foreground text-lg mb-2">
+                  {t.search.noResults}
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  {t.search.placeholder}
+                </p>
               </div>
             )}
           </div>
@@ -390,18 +439,20 @@ export default function SearchPage() {
         {!isLoading && isCaregiver && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredFamilies.map((family) => (
-              <div key={family.id}>
-                <Link href={`/app/families/${family.id}`} className="group">
-                  <div
-                    whileHover={{ scale: 1.02, y: -4 }}
-                    transition={{ duration: 0.2 }}
-                    className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-secondary/30 transition-all duration-300 cursor-pointer space-y-4"
-                  >
+              <Link
+                key={family.id}
+                href={`/app/families/${family.id}`}
+                className="group"
+              >
+                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-secondary/30 transition-all duration-300 cursor-pointer space-y-4">
                   {/* Header with avatar */}
                   <div className="flex items-start gap-3">
                     <Avatar className="h-16 w-16 rounded-2xl shrink-0">
                       <AvatarFallback className="rounded-2xl text-sm font-semibold bg-secondary/10 text-secondary">
-                        {family.name.split(" ").map((n) => n[0]).join("")}
+                        {family.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
@@ -430,9 +481,12 @@ export default function SearchPage() {
                         <IconUser className="h-4 w-4 text-primary" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">Idoso</p>
+                        <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          Idoso
+                        </p>
                         <p className="text-xs font-display font-bold text-foreground">
-                          {family.elderName}{family.elderAge ? `, ${family.elderAge}a` : ""}
+                          {family.elderName}
+                          {family.elderAge ? `, ${family.elderAge}a` : ""}
                         </p>
                       </div>
                     </div>
@@ -441,42 +495,66 @@ export default function SearchPage() {
                   {/* Needs */}
                   {family.elderNeeds && (
                     <div>
-                      <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-2">Necessidades</p>
-                      <p className="text-sm text-foreground line-clamp-2 leading-relaxed">{family.elderNeeds}</p>
+                      <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                        Necessidades
+                      </p>
+                      <p className="text-sm text-foreground line-clamp-2 leading-relaxed">
+                        {family.elderNeeds}
+                      </p>
                     </div>
                   )}
 
                   {/* Preferred services badges */}
-                  {family.preferredServices && family.preferredServices.length > 0 && (
-                    <div>
-                      <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-2">Serviços Procurados</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {family.preferredServices.slice(0, 3).map((service, idx) => (
-                          <span key={idx} className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30">
-                            {serviceLabels[service] || service}
-                          </span>
-                        ))}
-                        {family.preferredServices.length > 3 && (
-                          <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-muted text-muted-foreground">
-                            +{family.preferredServices.length - 3}
-                          </span>
-                        )}
+                  {family.preferredServices &&
+                    family.preferredServices.length > 0 && (
+                      <div>
+                        <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                          Serviços Procurados
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {family.preferredServices
+                            .slice(0, 3)
+                            .map((service, idx) => (
+                              <span
+                                key={idx}
+                                className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30"
+                              >
+                                {serviceLabels[service] || service}
+                              </span>
+                            ))}
+                          {family.preferredServices.length > 3 && (
+                            <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-muted text-muted-foreground">
+                              +{family.preferredServices.length - 3}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Action buttons */}
                   <div className="flex gap-2 pt-2">
-                    <Button asChild className="flex-1 h-10 text-xs rounded-2xl" size="sm">
-                      <Link href={`/app/families/${family.id}`}>Ver Perfil</Link>
+                    <Button
+                      asChild
+                      className="flex-1 h-10 text-xs rounded-2xl"
+                      size="sm"
+                    >
+                      <Link href={`/app/families/${family.id}`}>
+                        Ver Perfil
+                      </Link>
                     </Button>
-                    <Button asChild variant="outline" className="flex-1 h-10 text-xs rounded-2xl" size="sm">
-                      <Link href={`/app/messages?userId=${family.id}`}>Mensagem</Link>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="flex-1 h-10 text-xs rounded-2xl"
+                      size="sm"
+                    >
+                      <Link href={`/app/messages?userId=${family.id}`}>
+                        Mensagem
+                      </Link>
                     </Button>
                   </div>
-                  </div>
-                </Link>
-              </div>
+                </div>
+              </Link>
             ))}
 
             {/* Empty State */}
@@ -485,8 +563,12 @@ export default function SearchPage() {
                 <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
                   <IconSearch className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h4 className="font-display font-bold text-foreground text-lg mb-2">Nenhuma família encontrada</h4>
-                <p className="text-sm text-muted-foreground">Tente ajustar os filtros</p>
+                <h4 className="font-display font-bold text-foreground text-lg mb-2">
+                  Nenhuma família encontrada
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Tente ajustar os filtros
+                </p>
               </div>
             )}
           </div>

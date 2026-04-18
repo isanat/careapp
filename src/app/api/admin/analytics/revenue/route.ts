@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/api/auth';
-import { db } from '@/lib/db-turso';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api/auth";
+import { db } from "@/lib/db-turso";
 
 // GET - Revenue analytics and charts
 export async function GET(request: NextRequest) {
@@ -10,19 +10,19 @@ export async function GET(request: NextRequest) {
     const { session, adminUserId } = auth;
 
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || '30d';
-    const groupBy = searchParams.get('groupBy') || 'day'; // day, week, month
+    const period = searchParams.get("period") || "30d";
+    const groupBy = searchParams.get("groupBy") || "day"; // day, week, month
 
     let daysAgo = 30;
-    if (period === '7d') daysAgo = 7;
-    else if (period === '90d') daysAgo = 90;
-    else if (period === '1y') daysAgo = 365;
+    if (period === "7d") daysAgo = 7;
+    else if (period === "90d") daysAgo = 90;
+    else if (period === "1y") daysAgo = 365;
 
     // === Revenue Over Time ===
     let dateFormat = "DATE(paidAt)";
-    if (groupBy === 'week') {
+    if (groupBy === "week") {
       dateFormat = "strftime('%Y-%W', paidAt)";
-    } else if (groupBy === 'month') {
+    } else if (groupBy === "month") {
       dateFormat = "strftime('%Y-%m', paidAt)";
     }
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         AND paidAt IS NOT NULL
       GROUP BY ${dateFormat}, type
       ORDER BY date`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // === Revenue by Type ===
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       WHERE status = 'COMPLETED'
       GROUP BY type
       ORDER BY totalRevenue DESC`,
-      args: []
+      args: [],
     });
 
     // === Revenue by Payment Provider ===
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
       WHERE status = 'COMPLETED'
       GROUP BY provider
       ORDER BY totalRevenue DESC`,
-      args: []
+      args: [],
     });
 
     // === Monthly Comparison ===
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
       GROUP BY strftime('%Y-%m', paidAt)
       ORDER BY month DESC
       LIMIT 12`,
-      args: []
+      args: [],
     });
 
     // === Refund Analytics ===
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
         AND refundedAt >= datetime('now', '-' || ? || ' days')
       GROUP BY DATE(refundedAt)
       ORDER BY date`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // === Revenue from Contracts ===
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       WHERE c.createdAt >= datetime('now', '-' || ? || ' days')
       ORDER BY c.totalEurCents DESC
       LIMIT 20`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // === Platform Fees Collected ===
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
         AND createdAt >= datetime('now', '-' || ? || ' days')
       GROUP BY DATE(createdAt)
       ORDER BY date`,
-      args: [daysAgo]
+      args: [daysAgo],
     });
 
     // === Top Revenue Generators ===
@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
       GROUP BY u.id
       ORDER BY totalSpent DESC
       LIMIT 10`,
-      args: []
+      args: [],
     });
 
     // === Summary Stats ===
@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
         (SELECT COALESCE(SUM(amountEurCents), 0) FROM Payment WHERE status = 'REFUNDED') as totalRefunds,
         (SELECT COALESCE(AVG(amountEurCents), 0) FROM Payment WHERE status = 'COMPLETED') as avgTransactionSize
       `,
-      args: []
+      args: [],
     });
 
     return NextResponse.json({
@@ -185,16 +185,22 @@ export async function GET(request: NextRequest) {
       topRevenueUsers: topRevenueUsersResult.rows,
       summary: {
         totalRevenue: Number(summaryResult.rows[0]?.totalRevenue) || 0,
-        revenueLast30Days: Number(summaryResult.rows[0]?.revenueLast30Days) || 0,
+        revenueLast30Days:
+          Number(summaryResult.rows[0]?.revenueLast30Days) || 0,
         revenueLast7Days: Number(summaryResult.rows[0]?.revenueLast7Days) || 0,
         revenueToday: Number(summaryResult.rows[0]?.revenueToday) || 0,
-        totalTransactions: Number(summaryResult.rows[0]?.totalTransactions) || 0,
+        totalTransactions:
+          Number(summaryResult.rows[0]?.totalTransactions) || 0,
         totalRefunds: Number(summaryResult.rows[0]?.totalRefunds) || 0,
-        avgTransactionSize: Number(summaryResult.rows[0]?.avgTransactionSize) || 0,
+        avgTransactionSize:
+          Number(summaryResult.rows[0]?.avgTransactionSize) || 0,
       },
     });
   } catch (error) {
-    console.error('Error fetching revenue analytics:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching revenue analytics:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

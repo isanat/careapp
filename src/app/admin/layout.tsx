@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
 import { AdminLayout } from "@/components/admin/layout/admin-layout";
 import { AdminGuard } from "@/components/admin/guards/admin-guard";
 
