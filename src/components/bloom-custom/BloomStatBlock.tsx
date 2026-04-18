@@ -4,33 +4,35 @@ interface BloomStatBlockProps {
   label: string;
   value: string | number;
   icon?: ReactNode;
+  iconBg?: string;
   colorClass?: string;
   className?: string;
 }
 
-/**
- * Bloom Stat Block - Bloco de estatística
- * Features: Rótulo, valor grande, ícone opcional
- */
 export function BloomStatBlock({
   label,
   value,
   icon,
+  iconBg = 'bg-secondary',
   colorClass = 'text-primary',
   className = '',
 }: BloomStatBlockProps) {
   return (
-    <div className={`bg-card p-4 rounded-xl border border-border shadow-card ${className}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+    <div className={`bg-card p-5 sm:p-7 rounded-3xl border border-border shadow-card min-h-[160px] hover:shadow-elevated transition-all group flex flex-col justify-between ${className}`}>
+      <div className="space-y-3 sm:space-y-4">
+        {icon && (
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${iconBg} ${colorClass} group-hover:scale-105 transition-transform`}>
+            {icon}
+          </div>
+        )}
+        <div>
+          <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
             {label}
           </p>
-          <p className={`text-2xl font-display font-bold ${colorClass} mt-2`}>
+          <p className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter leading-none mt-1">
             {value}
           </p>
         </div>
-        {icon && <div className="text-muted-foreground ml-4">{icon}</div>}
       </div>
     </div>
   );
