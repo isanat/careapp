@@ -1,14 +1,17 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { Card, CardContent } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
@@ -254,10 +257,10 @@ export default function AdminCaregiversPage() {
             <div className="flex items-center gap-2">
               <p className="font-medium">{c.name}</p>
               {c.featured === 1 && (
-                <Badge variant="default" className="bg-amber-500 text-xs">
+                <BloomBadge variant="warning" className="text-xs">
                   <IconStar className="h-3 w-3 mr-1" />
                   Destaque
-                </Badge>
+                </BloomBadge>
               )}
             </div>
             <p className="text-xs text-muted-foreground">{c.email}</p>
@@ -285,7 +288,7 @@ export default function AdminCaregiversPage() {
       header: "Avaliação",
       render: (c) => (
         <div className="flex items-center gap-1">
-          <IconStar className="h-4 w-4 text-amber-500 fill-amber-500" />
+          <IconStar className="h-4 w-4 text-warning fill-warning" />
           <span className="font-medium">{c.averageRating?.toFixed(1) || "-"}</span>
           <span className="text-xs text-muted-foreground">({c.totalReviews || 0})</span>
         </div>
@@ -295,7 +298,7 @@ export default function AdminCaregiversPage() {
       key: "totalContracts",
       header: "Contratos",
       render: (c) => (
-        <Badge variant="secondary">{c.totalContracts || 0}</Badge>
+        <BloomBadge variant="secondary">{c.totalContracts || 0}</BloomBadge>
       ),
     },
     {
@@ -309,7 +312,7 @@ export default function AdminCaregiversPage() {
               <Button
                 size="sm"
                 variant="default"
-                className="h-8 w-8 p-0 bg-green-600 hover:bg-green-700"
+                className="h-8 w-8 p-0 bg-success hover:bg-success/90"
                 onClick={() => handleVerify(c.id, 'verify')}
                 disabled={actionLoading === c.id}
                 title="Aprovar KYC"
@@ -341,7 +344,7 @@ export default function AdminCaregiversPage() {
             title={c.featured === 1 ? "Remover destaque" : "Destacar cuidador"}
           >
             {c.featured === 1 ? (
-              <IconStarOff className="h-4 w-4 text-amber-500" />
+              <IconStarOff className="h-4 w-4 text-warning" />
             ) : (
               <IconStar className="h-4 w-4" />
             )}
@@ -360,8 +363,15 @@ export default function AdminCaregiversPage() {
     },
   ];
 
+
+
   return (
-    <div className="space-y-6">
+    <div
+      className="space-y-6"
+     
+     
+     
+    >
       <PageHeader
         title="Cuidadores"
         description="Gerencie cuidadores e verificações KYC"
@@ -394,63 +404,67 @@ export default function AdminCaregiversPage() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nome ou email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
-                onKeyDown={(e) => e.key === 'Enter' && fetchCaregivers()}
-              />
+      <div>
+        <BloomCard variant="interactive">
+          <div className="p-5 sm:p-6 md:p-7">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center">
+              <div className="relative flex-1">
+                <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por nome ou email..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9"
+                  onKeyDown={(e) => e.key === 'Enter' && fetchCaregivers()}
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Status KYC" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="PENDING">Pendente</SelectItem>
+                  <SelectItem value="VERIFIED">Verificado</SelectItem>
+                  <SelectItem value="UNVERIFIED">Não verificado</SelectItem>
+                  <SelectItem value="REJECTED">Rejeitado</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={featuredFilter} onValueChange={setFeaturedFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Destaque" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="featured">Em destaque</SelectItem>
+                  <SelectItem value="not_featured">Sem destaque</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={fetchCaregivers}>
+                <IconSearch className="h-4 w-4 mr-2" />
+                Buscar
+              </Button>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Status KYC" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="PENDING">Pendente</SelectItem>
-                <SelectItem value="VERIFIED">Verificado</SelectItem>
-                <SelectItem value="UNVERIFIED">Não verificado</SelectItem>
-                <SelectItem value="REJECTED">Rejeitado</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={featuredFilter} onValueChange={setFeaturedFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Destaque" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="featured">Em destaque</SelectItem>
-                <SelectItem value="not_featured">Sem destaque</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={fetchCaregivers}>
-              <IconSearch className="h-4 w-4 mr-2" />
-              Buscar
-            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </BloomCard>
+      </div>
 
       {/* Data Table */}
-      <DataTable
-        columns={columns}
-        data={caregivers}
-        keyExtractor={(c) => c.id}
-        loading={loading}
-        emptyMessage="Nenhum cuidador encontrado"
-        pagination={{
-          page: pagination.page,
-          pageSize: pagination.limit,
-          total: pagination.total,
-          onPageChange: (page) => setPagination(prev => ({ ...prev, page })),
-        }}
-      />
+      <div>
+        <DataTable
+          columns={columns}
+          data={caregivers}
+          keyExtractor={(c) => c.id}
+          loading={loading}
+          emptyMessage="Nenhum cuidador encontrado"
+          pagination={{
+            page: pagination.page,
+            pageSize: pagination.limit,
+            total: pagination.total,
+            onPageChange: (page) => setPagination(prev => ({ ...prev, page })),
+          }}
+        />
+      </div>
 
       {/* Reject KYC Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>

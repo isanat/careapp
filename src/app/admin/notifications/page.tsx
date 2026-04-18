@@ -1,17 +1,19 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   IconBell,
   IconRefresh,
   IconCheck,
-  IconTrash,
   IconAlertTriangle,
   IconInfo,
   IconAlertCircle,
@@ -96,22 +98,22 @@ export default function AdminNotificationsPage() {
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case "CRITICAL":
-        return <IconAlertCircle className="h-5 w-5 text-red-500" />;
+        return <IconAlertCircle className="h-5 w-5 text-destructive" />;
       case "WARNING":
-        return <IconAlertTriangle className="h-5 w-5 text-amber-500" />;
+        return <IconAlertTriangle className="h-5 w-5 text-warning" />;
       default:
-        return <IconInfo className="h-5 w-5 text-blue-500" />;
+        return <IconInfo className="h-5 w-5 text-primary" />;
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "CRITICAL":
-        return "border-l-red-500 bg-red-50 dark:bg-red-900/10";
+        return "border-l-destructive bg-destructive/10";
       case "WARNING":
-        return "border-l-amber-500 bg-amber-50 dark:bg-amber-900/10";
+        return "border-l-warning bg-warning/10";
       default:
-        return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10";
+        return "border-l-primary bg-primary/10";
     }
   };
 
@@ -120,6 +122,8 @@ export default function AdminNotificationsPage() {
     : notifications;
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+
 
   return (
     <div className="space-y-6">
@@ -144,60 +148,62 @@ export default function AdminNotificationsPage() {
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <IconBell className="h-6 w-6 text-blue-600" />
+        <BloomCard variant="gradient">
+          <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
+            <div className="p-3 bg-primary/20 rounded-full">
+              <IconBell className="h-6 w-6 text-primary" />
             </div>
             <div>
               <p className="text-2xl font-bold">{notifications.length}</p>
-              <p className="text-sm text-slate-500">Total</p>
+              <p className="text-sm text-muted-foreground">Total</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="p-3 bg-amber-100 rounded-full">
-              <IconAlertTriangle className="h-6 w-6 text-amber-600" />
+          </div>
+        </BloomCard>
+        <BloomCard variant="warning">
+          <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
+            <div className="p-3 bg-warning/20 rounded-full">
+              <IconAlertTriangle className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">{unreadCount}</p>
-              <p className="text-sm text-slate-500">Não Lidas</p>
+              <p className="text-sm text-muted-foreground">Não Lidas</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="p-3 bg-red-100 rounded-full">
-              <IconAlertCircle className="h-6 w-6 text-red-600" />
+          </div>
+        </BloomCard>
+        <BloomCard>
+          <div className="flex items-center gap-4 p-5 sm:p-6 md:p-7">
+            <div className="p-3 bg-destructive/20 rounded-full">
+              <IconAlertCircle className="h-6 w-6 text-destructive" />
             </div>
             <div>
               <p className="text-2xl font-bold">
                 {notifications.filter(n => n.severity === "CRITICAL").length}
               </p>
-              <p className="text-sm text-slate-500">Críticas</p>
+              <p className="text-sm text-muted-foreground">Críticas</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
       </div>
 
       {/* Tabs */}
-      <Tabs value={filter} onValueChange={(v) => setFilter(v as "all" | "unread")}>
-        <TabsList>
-          <TabsTrigger value="all">
-            Todas
-            <Badge variant="secondary" className="ml-2">
-              {notifications.length}
-            </Badge>
-          </TabsTrigger>
-          <TabsTrigger value="unread">
-            Não Lidas
-            {unreadCount > 0 && (
-              <Badge className="ml-2 bg-amber-500">{unreadCount}</Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <div>
+        <Tabs value={filter} onValueChange={(v) => setFilter(v as "all" | "unread")}>
+          <TabsList>
+            <TabsTrigger value="all">
+              Todas
+              <BloomBadge variant="secondary" className="ml-2">
+                {notifications.length}
+              </BloomBadge>
+            </TabsTrigger>
+            <TabsTrigger value="unread">
+              Não Lidas
+              {unreadCount > 0 && (
+                <BloomBadge className="ml-2 bg-warning">{unreadCount}</BloomBadge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
       {/* Notifications List */}
       <div className="space-y-3">
@@ -206,36 +212,36 @@ export default function AdminNotificationsPage() {
             <Skeleton key={i} className="h-24 w-full" />
           ))
         ) : filteredNotifications.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center text-slate-500">
+          <BloomCard>
+            <div className="py-12 text-center text-slate-500 p-5 sm:p-6 md:p-7">
               <IconBell className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhuma notificação</p>
-            </CardContent>
-          </Card>
+            </div>
+          </BloomCard>
         ) : (
           filteredNotifications.map((notification) => (
-            <Card
+            <BloomCard
               key={notification.id}
               className={`border-l-4 ${getSeverityColor(notification.severity)} ${
                 notification.isRead ? "opacity-60" : ""
               }`}
             >
-              <CardContent className="p-4">
+              <div className="p-5 sm:p-6 md:p-7">
                 <div className="flex items-start gap-4">
                   <div className="mt-1">{getSeverityIcon(notification.severity)}</div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-medium">{notification.title}</h3>
                       {notification.isRead && (
-                        <Badge variant="outline" className="text-xs">
+                        <BloomBadge variant="outline" className="text-xs">
                           Lida
-                        </Badge>
+                        </BloomBadge>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground">
                       {notification.message}
                     </p>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       {format(new Date(notification.createdAt), "dd 'de' MMMM, HH:mm", {
                         locale: pt,
                       })}
@@ -251,8 +257,8 @@ export default function AdminNotificationsPage() {
                     </Button>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </BloomCard>
           ))
         )}
       </div>

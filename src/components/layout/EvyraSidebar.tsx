@@ -56,19 +56,19 @@ const SidebarLink = ({
     className={cn(
       "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group border border-transparent",
       active
-        ? "bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-accent shadow-sm"
-        : "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
+        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+        : "text-sidebar-foreground hover:bg-primary/10 hover:text-primary"
     )}
   >
     <div className="flex items-center gap-3">
       <Icon className={cn(
         "h-5 w-5",
-        active ? "text-sidebar-accent-foreground" : variant === 'danger' ? "text-destructive" : "text-sidebar-foreground group-hover:text-sidebar-primary transition-colors"
+        active ? "text-primary-foreground" : variant === 'danger' ? "text-destructive" : "text-sidebar-foreground group-hover:text-primary transition-colors"
       )} />
       {isOpen && (
         <span className={cn(
           "text-sm font-display font-bold tracking-tight",
-          active ? "text-sidebar-accent-foreground" : variant === 'danger' ? "text-destructive" : "text-foreground"
+          active ? "text-primary-foreground" : variant === 'danger' ? "text-destructive" : "text-foreground"
         )}>
           {label}
         </span>
@@ -76,7 +76,7 @@ const SidebarLink = ({
     </div>
     {isOpen && count && (
       <span className={cn(
-        "px-2 py-0.5 rounded-lg text-[10px] font-bold font-display",
+        "px-2 py-0.5 rounded-lg text-2xs font-bold font-display",
         active ? "bg-primary/15 text-primary" : "bg-primary/10 text-primary"
       )}>
         {count}
@@ -88,7 +88,7 @@ const SidebarLink = ({
 const SectionLabel = ({ label, isOpen }: { label: string; isOpen: boolean }) => (
   <div className="pt-6 pb-2 px-3">
     {isOpen ? (
-      <p className="text-[10px] font-display font-black text-sidebar-foreground/60 uppercase tracking-[0.3em]">{label}</p>
+      <p className="text-2xs font-display font-black text-sidebar-foreground/60 uppercase tracking-[0.3em]">{label}</p>
     ) : (
       <div className="h-px bg-border mx-auto w-8" />
     )}

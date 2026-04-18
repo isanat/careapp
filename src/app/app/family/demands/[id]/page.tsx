@@ -166,14 +166,23 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
     }
   };
 
+
+
   return (
     <AppShell>
-      <div className="space-y-8 pb-8">
+      <div
+        className="space-y-8 pb-8"
+       
+       
+       
+      >
         <div className="max-w-5xl mx-auto px-4 space-y-8">
           {/* Back Button */}
-          <Link href="/app/family/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
-            ← Voltar
-          </Link>
+          <div>
+            <Link href="/app/family/demands" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
+              ← Voltar
+            </Link>
+          </div>
 
           {/* Success Message */}
           {boostSuccess && (
@@ -357,6 +366,7 @@ export default function FamilyDemandDetailPage({ params }: { params: Promise<{ i
                     return (
                       <div
                         key={proposal.id}
+                       
                         className="p-5 sm:p-7 hover:bg-secondary/30 transition-colors group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">

@@ -1,11 +1,14 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -113,6 +116,8 @@ export default function AdminModerationPage() {
     }
   };
 
+
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -150,26 +155,27 @@ export default function AdminModerationPage() {
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="all">
-            Todos
-          </TabsTrigger>
-          <TabsTrigger value="review">
-            <IconStar className="h-4 w-4 mr-2" />
-            Reviews
-          </TabsTrigger>
-          <TabsTrigger value="chat">
-            <IconMessageSquare className="h-4 w-4 mr-2" />
-            Chat
-          </TabsTrigger>
-          <TabsTrigger value="report">
-            <IconFlag className="h-4 w-4 mr-2" />
-            Denúncias
-          </TabsTrigger>
-        </TabsList>
+      <div>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="all">
+              Todos
+            </TabsTrigger>
+            <TabsTrigger value="review">
+              <IconStar className="h-4 w-4 mr-2" />
+              Reviews
+            </TabsTrigger>
+            <TabsTrigger value="chat">
+              <IconMessageSquare className="h-4 w-4 mr-2" />
+              Chat
+            </TabsTrigger>
+            <TabsTrigger value="report">
+              <IconFlag className="h-4 w-4 mr-2" />
+              Denúncias
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value={activeTab} className="mt-6">
+          <TabsContent value={activeTab} className="mt-6">
           {loading ? (
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -177,53 +183,53 @@ export default function AdminModerationPage() {
               ))}
             </div>
           ) : items.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center text-slate-500">
+            <BloomCard>
+              <div className="py-12 text-center text-muted-foreground p-5 sm:p-6 md:p-7">
                 <IconShield className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Nenhum item para moderar</p>
-              </CardContent>
-            </Card>
+              </div>
+            </BloomCard>
           ) : (
             <div className="space-y-4">
               {items.map((item) => (
-                <Card key={item.id}>
-                  <CardContent className="p-6">
+                <BloomCard key={item.id} variant="interactive">
+                  <div className="p-5 sm:p-6 md:p-7">
                     <div className="flex items-start gap-4">
-                      <div className="p-2 bg-slate-100 rounded-lg">
+                      <div className="p-2 bg-muted rounded-lg">
                         {getTypeIcon(item.type)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline">{item.type}</Badge>
-                          <Badge
+                          <BloomBadge variant="outline">{item.type}</BloomBadge>
+                          <BloomBadge
                             className={
                               item.status === "PENDING"
-                                ? "bg-amber-500"
+                                ? "bg-warning text-warning"
                                 : item.status === "APPROVED"
-                                ? "bg-green-500"
-                                : "bg-red-500"
+                                ? "bg-success text-success"
+                                : "bg-destructive text-destructive"
                             }
                           >
                             {item.status}
-                          </Badge>
+                          </BloomBadge>
                         </div>
 
                         <p className="text-sm font-medium mb-1">{item.reason}</p>
-                        <p className="text-sm text-slate-600 mb-3">{item.content}</p>
+                        <p className="text-sm text-muted-foreground mb-3">{item.content}</p>
 
                         {item.type === "review" && item.reviewRating && (
                           <div className="flex items-center gap-2 mb-2 text-sm">
                             <span className="flex items-center gap-1">
-                              <IconStar className="h-4 w-4 text-amber-500" />
+                              <IconStar className="h-4 w-4 text-warning/80" />
                               {item.reviewRating}/5
                             </span>
-                            <span className="text-slate-400">
+                            <span className="text-muted-foreground">
                               De: {item.reviewFrom} → Para: {item.reviewTo}
                             </span>
                           </div>
                         )}
 
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-muted-foreground">
                           {format(new Date(item.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}
                           {item.reportedBy && ` • Reportado por: ${item.reportedBy}`}
                         </p>
@@ -250,13 +256,14 @@ export default function AdminModerationPage() {
                         </div>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </BloomCard>
               ))}
             </div>
           )}
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }

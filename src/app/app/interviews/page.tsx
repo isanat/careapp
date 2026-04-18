@@ -74,72 +74,96 @@ export default function InterviewsPage() {
   if (status === "loading" || isLoading) {
     return (
       <AppShell>
-        <div className="space-y-4 max-w-4xl">
+        <div className="space-y-6 max-w-6xl">
           <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-24 rounded-3xl w-full" />
-          <Skeleton className="h-24 rounded-3xl w-full" />
+          <Skeleton className="h-32 rounded-3xl w-full" />
+          <Skeleton className="h-32 rounded-3xl w-full" />
         </div>
       </AppShell>
     );
   }
 
+
+
   return (
     <AppShell>
-      <div className="space-y-8 max-w-6xl">
+      <div
+        className="space-y-6 max-w-6xl"
+       
+       
+       
+      >
         {/* Header */}
-        <BloomSectionHeader
-          title="Entrevistas"
-          desc="Acompanhe o estado das entrevistas agendadas e realizadas."
-        />
+        <div>
+          <BloomSectionHeader
+            title="Entrevistas"
+            desc="Acompanhe o estado das entrevistas agendadas e realizadas."
+          />
+        </div>
 
-        {error && (
-          <BloomCard variant="error">
-            <div className="flex items-center gap-3">
-              <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
-              <p className="text-sm font-medium text-destructive">{error}</p>
+        <AnimatePresence>
+          {error && (
+            <div
+             
+             
+             
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <BloomCard variant="warning" className="p-5 sm:p-6 md:p-7 flex items-center gap-3">
+                <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
+                <p className="font-body text-sm font-medium text-destructive">{error}</p>
+              </BloomCard>
             </div>
-          </BloomCard>
-        )}
+          )}
+        </AnimatePresence>
 
         {/* Upcoming Interviews */}
         {upcomingInterviews.length > 0 && (
           <section className="space-y-4">
             <BloomSectionDivider title="Próximas Entrevistas" borderColor="primary" />
-            <div className="grid grid-cols-1 gap-4">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+             
+             
+             
+            >
               {upcomingInterviews.map((interview) => (
-                <Link key={interview.id} href={`/app/interview/${interview.id}`}>
-                  <BloomCard variant="interactive">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                      <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary shrink-0 text-primary">
-                          <IconVideo className="h-6 w-6" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-3 flex-wrap">
-                            <h4 className="text-lg font-display font-black text-foreground uppercase tracking-tight">
-                              {interview.otherPartyRole === "family" ? "Entrevista com Família" : "Entrevista com Cuidador"}
-                            </h4>
-                            <BloomBadge variant="primary">Agendada</BloomBadge>
+                <div key={interview.id}>
+                  <Link href={`/app/interview/${interview.id}`}>
+                    <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7 h-full flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-4">
+                          <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary/50 shrink-0 text-primary">
+                            <IconVideo className="h-6 w-6" />
                           </div>
-                          <p className="text-sm font-medium text-muted-foreground mt-1">{interview.otherPartyName}</p>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 flex-wrap mb-2">
+                              <h4 className="font-display font-black text-foreground text-sm uppercase tracking-tight">
+                                {interview.otherPartyRole === "family" ? "Família" : "Cuidador"}
+                              </h4>
+                              <BloomBadge variant="primary">Agendada</BloomBadge>
+                            </div>
+                            <p className="font-body text-sm font-medium text-muted-foreground">{interview.otherPartyName}</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-8">
-                        <div className="text-right">
-                          <p className="text-[10px] font-display font-bold text-muted-foreground/50 uppercase tracking-widest">Data</p>
-                          <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
+
+                      <div className="flex flex-col gap-3 mt-4">
+                        <div className="space-y-1">
+                          <p className="font-display text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest">Data</p>
+                          <p className="font-display font-black text-lg text-foreground tracking-tighter">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
-                          <p className="text-xs font-medium text-muted-foreground mt-1">{formatTime(interview.durationMinutes)}</p>
+                          <p className="font-body text-xs font-medium text-muted-foreground">{formatTime(interview.durationMinutes)}</p>
                         </div>
-                        <Button variant="default" size="sm">
+                        <Button variant="default" size="sm" className="w-full">
                           <IconVideo className="h-4 w-4 mr-1.5" />
                           Entrar
                         </Button>
                       </div>
-                    </div>
-                  </BloomCard>
-                </Link>
+                    </BloomCard>
+                  </Link>
+                </div>
               ))}
             </div>
           </section>
@@ -149,61 +173,78 @@ export default function InterviewsPage() {
         {pastInterviews.length > 0 && (
           <section className="space-y-4">
             <BloomSectionDivider title="Histórico" borderColor="primary" />
-            <div className="grid grid-cols-1 gap-4">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+             
+             
+             
+            >
               {pastInterviews.map((interview) => (
-                <Link key={interview.id} href={`/app/interview/${interview.id}`}>
-                  <BloomCard variant="interactive">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                      <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary shrink-0 text-muted-foreground">
-                          <IconVideo className="h-6 w-6" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-3 flex-wrap">
-                            <h4 className="text-lg font-display font-black text-foreground uppercase tracking-tight">
-                              {interview.otherPartyRole === "family" ? "Entrevista com Família" : "Entrevista com Cuidador"}
-                            </h4>
-                            <BloomBadge variant={
-                              interview.status === "COMPLETED" ? "success" :
-                              interview.status === "CANCELLED" ? "destructive" :
-                              "warning"
-                            }>
-                              {interview.status === "COMPLETED" ? "Concluída" :
-                               interview.status === "CANCELLED" ? "Cancelada" :
-                               "Não Compareceu"}
-                            </BloomBadge>
+                <div key={interview.id}>
+                  <Link href={`/app/interview/${interview.id}`}>
+                    <BloomCard variant="interactive" className="p-5 sm:p-6 md:p-7 h-full flex flex-col justify-between opacity-75 hover:opacity-100 transition-opacity">
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-4">
+                          <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-4 ring-secondary/50 shrink-0 text-muted-foreground">
+                            <IconVideo className="h-6 w-6" />
                           </div>
-                          <p className="text-sm font-medium text-muted-foreground mt-1">{interview.otherPartyName}</p>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 flex-wrap mb-2">
+                              <h4 className="font-display font-black text-foreground text-sm uppercase tracking-tight">
+                                {interview.otherPartyRole === "family" ? "Família" : "Cuidador"}
+                              </h4>
+                              <BloomBadge variant={
+                                interview.status === "COMPLETED" ? "success" :
+                                interview.status === "CANCELLED" ? "destructive" :
+                                "warning"
+                              }>
+                                {interview.status === "COMPLETED" ? "Concluída" :
+                                 interview.status === "CANCELLED" ? "Cancelada" :
+                                 "Não Compareceu"}
+                              </BloomBadge>
+                            </div>
+                            <p className="font-body text-sm font-medium text-muted-foreground">{interview.otherPartyName}</p>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-8">
-                        <div className="text-right">
-                          <p className="text-[10px] font-display font-bold text-muted-foreground/50 uppercase tracking-widest">Data</p>
-                          <p className="text-3xl font-display font-black text-foreground tracking-tighter leading-none">
+
+                      <div className="flex flex-col gap-3 mt-4">
+                        <div className="space-y-1">
+                          <p className="font-display text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest">Data</p>
+                          <p className="font-display font-black text-lg text-foreground tracking-tighter">
                             {new Date(interview.scheduledAt).toLocaleDateString("pt-PT")}
                           </p>
-                          <p className="text-xs font-medium text-muted-foreground mt-1">{formatTime(interview.durationMinutes)}</p>
+                          <p className="font-body text-xs font-medium text-muted-foreground">{formatTime(interview.durationMinutes)}</p>
                         </div>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="w-full">
                           Ver Detalhes
                         </Button>
                       </div>
-                    </div>
-                  </BloomCard>
-                </Link>
+                    </BloomCard>
+                  </Link>
+                </div>
               ))}
             </div>
           </section>
         )}
 
         {/* Empty State */}
-        {interviews.length === 0 && !isLoading && (
-          <BloomEmpty
-            icon={<IconVideo className="h-8 w-8" />}
-            title="Nenhuma entrevista agendada"
-            description="Suas entrevistas aparecerão aqui quando agendadas"
-          />
-        )}
+        <AnimatePresence>
+          {interviews.length === 0 && !isLoading && (
+            <div
+             
+             
+             
+              exit={{ opacity: 0 }}
+            >
+              <BloomEmpty
+                icon={<IconVideo className="h-8 w-8" />}
+                title="Nenhuma entrevista agendada"
+                description="Suas entrevistas aparecerão aqui quando agendadas"
+              />
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </AppShell>
   );

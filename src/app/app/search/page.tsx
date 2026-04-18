@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -175,9 +175,16 @@ export default function SearchPage() {
     return results;
   }, [families, searchTerm, selectedService]);
 
+
+
   return (
     <AppShell>
-      <div className="space-y-8">
+      <div
+        className="space-y-8"
+       
+       
+       
+      >
         {/* Page Header */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
@@ -274,7 +281,7 @@ export default function SearchPage() {
 
         {/* Loading Skeletons */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="status" aria-busy="true">
             {[1, 2, 3, 4].map((i) => (
               <Skeleton key={i} className="h-48 rounded-3xl" />
             ))}
@@ -285,8 +292,13 @@ export default function SearchPage() {
         {!isLoading && !isCaregiver && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredCaregivers.map((caregiver) => (
-              <Link key={caregiver.id} href={`/app/caregivers/${caregiver.id}`} className="group">
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 cursor-pointer space-y-4">
+              <div key={caregiver.id}>
+                <Link href={`/app/caregivers/${caregiver.id}`} className="group">
+                  <div
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all duration-300 cursor-pointer space-y-4"
+                  >
                   {/* Header with avatar and verification */}
                   <div className="flex items-start gap-3">
                     <Avatar className="h-16 w-16 rounded-2xl shrink-0">
@@ -356,8 +368,9 @@ export default function SearchPage() {
                       {"\u20AC"}{(caregiver.hourlyRateEur / 100).toFixed(2)}
                     </span>
                   </div>
-                </div>
-              </Link>
+                  </div>
+                </Link>
+              </div>
             ))}
 
             {/* Empty State */}
@@ -377,8 +390,13 @@ export default function SearchPage() {
         {!isLoading && isCaregiver && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredFamilies.map((family) => (
-              <Link key={family.id} href={`/app/families/${family.id}`} className="group">
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-secondary/30 transition-all duration-300 cursor-pointer space-y-4">
+              <div key={family.id}>
+                <Link href={`/app/families/${family.id}`} className="group">
+                  <div
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card hover:shadow-elevated hover:border-secondary/30 transition-all duration-300 cursor-pointer space-y-4"
+                  >
                   {/* Header with avatar */}
                   <div className="flex items-start gap-3">
                     <Avatar className="h-16 w-16 rounded-2xl shrink-0">
@@ -456,8 +474,9 @@ export default function SearchPage() {
                       <Link href={`/app/messages?userId=${family.id}`}>Mensagem</Link>
                     </Button>
                   </div>
-                </div>
-              </Link>
+                  </div>
+                </Link>
+              </div>
             ))}
 
             {/* Empty State */}

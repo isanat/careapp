@@ -1,8 +1,13 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -175,6 +180,8 @@ export default function AdminSupportPage() {
       ticket.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -228,11 +235,12 @@ export default function AdminSupportPage() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
+      <div>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Buscar por assunto, nome ou email..."
                 value={searchTerm}
@@ -265,18 +273,20 @@ export default function AdminSupportPage() {
               </SelectContent>
             </Select>
           </div>
-        </CardContent>
-      </Card>
+          </div>
+        </BloomCard>
+      </div>
 
       {/* Tickets List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Tickets de Suporte</CardTitle>
-          <CardDescription>
-            {filteredTickets.length} ticket(s) encontrado(s)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
+      <div>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold">Tickets de Suporte</h3>
+              <p className="text-sm text-muted-foreground">
+                {filteredTickets.length} ticket(s) encontrado(s)
+              </p>
+            </div>
           {loading ? (
             <div className="p-4 space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
@@ -290,7 +300,7 @@ export default function AdminSupportPage() {
               ))}
             </div>
           ) : filteredTickets.length === 0 ? (
-            <div className="text-center py-12 text-slate-500">
+            <div className="text-center py-12 text-muted-foreground">
               <IconHeadphones className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhum ticket encontrado</p>
               <p className="text-sm mt-2">Os tickets de suporte aparecerão aqui quando os utilizadores os criarem.</p>
@@ -300,7 +310,7 @@ export default function AdminSupportPage() {
               {filteredTickets.map((ticket) => (
                 <div
                   key={ticket.id}
-                  className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                  className="p-4 hover:bg-muted/30 transition-colors cursor-pointer"
                   onClick={() => {
                     setSelectedTicket(ticket);
                     setDetailsOpen(true);
@@ -322,8 +332,8 @@ export default function AdminSupportPage() {
                           </Badge>
                         </div>
                         <h3 className="font-medium">{ticket.subject}</h3>
-                        <p className="text-sm text-slate-500 line-clamp-1">{ticket.description}</p>
-                        <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                        <p className="text-sm text-muted-foreground line-clamp-1">{ticket.description}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/70">
                           <span className="flex items-center gap-1">
                             <IconUser className="h-3 w-3" />
                             {ticket.userName}
@@ -351,8 +361,9 @@ export default function AdminSupportPage() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+          </div>
+        </BloomCard>
+      </div>
 
       {/* Ticket Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -374,21 +385,21 @@ export default function AdminSupportPage() {
               
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-slate-500">Utilizador</p>
+                  <p className="text-muted-foreground">Utilizador</p>
                   <p className="font-medium">{selectedTicket.userName}</p>
-                  <p className="text-slate-500">{selectedTicket.userEmail}</p>
+                  <p className="text-muted-foreground">{selectedTicket.userEmail}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500">Criado em</p>
+                  <p className="text-muted-foreground">Criado em</p>
                   <p className="font-medium">
                     {new Date(selectedTicket.createdAt).toLocaleString("pt-PT")}
                   </p>
                 </div>
               </div>
-              
+
               <div>
-                <p className="text-slate-500 text-sm mb-2">Descrição</p>
-                <p className="text-sm bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                <p className="text-muted-foreground text-sm mb-2">Descrição</p>
+                <p className="text-sm bg-muted p-3 rounded-lg">
                   {selectedTicket.description}
                 </p>
               </div>

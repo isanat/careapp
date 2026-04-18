@@ -16,6 +16,7 @@ import {
   IconLoader2,
   IconAlertCircle,
   IconCheck,
+  IconMapPin,
 } from '@/components/icons';
 
 interface Demand {
@@ -193,9 +194,16 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
     );
   }
 
+
+
   return (
     <AppShell>
-      <div className="max-w-2xl mx-auto py-12 px-4 space-y-8">
+      <div
+        className="max-w-2xl mx-auto py-12 px-4 space-y-8"
+       
+       
+       
+      >
         {/* Header */}
         <div className="space-y-2">
           <Link
@@ -218,7 +226,7 @@ export default function EditDemandPage({ params }: { params: Promise<{ id: strin
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Error Alert */}
             {error && (
-              <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+              <div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
                 <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <p className="text-sm font-display font-bold text-foreground mb-1">Erro ao atualizar</p>

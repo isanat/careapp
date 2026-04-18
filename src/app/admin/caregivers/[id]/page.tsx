@@ -1,15 +1,18 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import { DataTable, Column } from "@/components/admin/common/data-table";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -306,7 +309,7 @@ export default function AdminCaregiverDetailPage() {
       header: "Nota",
       render: (r) => (
         <div className="flex items-center gap-1">
-          <IconStar className="h-4 w-4 text-amber-500 fill-amber-500" />
+          <IconStar className="h-4 w-4 text-warning fill-warning" />
           <span>{r.rating}</span>
         </div>
       ),
@@ -328,7 +331,13 @@ export default function AdminCaregiverDetailPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div
+     
+     
+      exit="exit"
+     
+      className="space-y-6"
+    >
       <PageHeader
         title={caregiver.name}
         description="Detalhes do cuidador"
@@ -346,41 +355,53 @@ export default function AdminCaregiverDetailPage() {
       />
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <StatsCard
-          title="Contratos"
-          value={caregiver.totalContracts || 0}
-          icon={<IconBriefcase className="h-5 w-5" />}
-        />
-        <StatsCard
-          title="Horas Trabalhadas"
-          value={caregiver.totalHoursWorked || 0}
-          icon={<IconClock className="h-5 w-5" />}
-        />
-        <StatsCard
-          title="Avaliação"
-          value={caregiver.averageRating?.toFixed(1) || "-"}
-          description={`${caregiver.totalReviews || 0} avaliações`}
-          icon={<IconStar className="h-5 w-5" />}
-        />
+      <div
+        className="grid gap-4 md:grid-cols-4"
+       
+       
+       
+      >
+        <div>
+          <StatsCard
+            title="Contratos"
+            value={caregiver.totalContracts || 0}
+            icon={<IconBriefcase className="h-5 w-5" />}
+          />
+        </div>
+        <div>
+          <StatsCard
+            title="Horas Trabalhadas"
+            value={caregiver.totalHoursWorked || 0}
+            icon={<IconClock className="h-5 w-5" />}
+          />
+        </div>
+        <div>
+          <StatsCard
+            title="Avaliação"
+            value={caregiver.averageRating?.toFixed(1) || "-"}
+            description={`${caregiver.totalReviews || 0} avaliações`}
+            icon={<IconStar className="h-5 w-5" />}
+          />
+        </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div
+        className="grid gap-6 lg:grid-cols-3"
+       
+       
+       
+      >
         {/* User Info Card */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconUser className="h-5 w-5" />
-              Informações Pessoais
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div>
+          <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
+            <BloomSectionHeader title="Informações Pessoais" />
+            <div className="space-y-4">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
                 <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${caregiver.name}`} />
                 <AvatarFallback>{caregiver.name?.charAt(0)}</AvatarFallback>
               </Avatar>
-              <div>
+              <div className="flex-1">
                 <p className="font-medium text-lg">{caregiver.name}</p>
                 <p className="text-sm text-muted-foreground">{caregiver.title || "Sem título"}</p>
               </div>
@@ -413,7 +434,7 @@ export default function AdminCaregiverDetailPage() {
 
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-3 pt-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Experiência</span>
                 <span className="font-medium">{caregiver.experienceYears || 0} anos</span>
@@ -449,21 +470,18 @@ export default function AdminCaregiverDetailPage() {
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
+            </div>
+          </BloomCard>
+        </div>
 
         {/* KYC Verification Panel */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconShield className="h-5 w-5" />
-              Verificação KYC
-            </CardTitle>
-            <CardDescription>
-              Status da verificação de identidade
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div>
+          <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
+            <BloomSectionHeader
+              title="Verificação KYC"
+              desc="Status da verificação de identidade"
+            />
+            <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status</span>
               <StatusBadge status={getStatusBadgeVariant(caregiver.verificationStatus)} />
@@ -471,7 +489,7 @@ export default function AdminCaregiverDetailPage() {
 
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Documento</span>
                 <span>{caregiver.documentType || "-"}</span>
@@ -511,7 +529,7 @@ export default function AdminCaregiverDetailPage() {
                   <p className="text-sm font-medium">Ações</p>
                   <div className="flex gap-2">
                     <Button
-                      className="flex-1 bg-green-600 hover:bg-green-700"
+                      className="flex-1 bg-success hover:bg-success/90"
                       onClick={() => handleVerify('verify')}
                       disabled={actionLoading}
                     >
@@ -538,61 +556,68 @@ export default function AdminCaregiverDetailPage() {
 
             {/* Reject Modal */}
             {showRejectModal && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <Card className="w-full max-w-md mx-4">
-                  <CardHeader>
-                    <CardTitle>Rejeitar KYC</CardTitle>
-                    <CardDescription>
-                      Informe o motivo da rejeição
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Textarea
-                      placeholder="Motivo da rejeição..."
-                      value={rejectReason}
-                      onChange={(e) => setRejectReason(e.target.value)}
-                      rows={4}
+              <div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+              >
+                <div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <BloomCard className="w-full max-w-md mx-4 p-5 sm:p-6 md:p-7">
+                    <BloomSectionHeader
+                      title="Rejeitar KYC"
+                      desc="Informe o motivo da rejeição"
                     />
-                    <div className="flex gap-2 justify-end">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setShowRejectModal(false);
-                          setRejectReason("");
-                        }}
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleVerify('reject')}
-                        disabled={actionLoading || !rejectReason.trim()}
-                      >
-                        {actionLoading ? (
-                          <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
-                        ) : null}
-                        Rejeitar
-                      </Button>
+                    <div className="space-y-4">
+                      <Textarea
+                        placeholder="Motivo da rejeição..."
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                        rows={4}
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setShowRejectModal(false);
+                            setRejectReason("");
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleVerify('reject')}
+                          disabled={actionLoading || !rejectReason.trim()}
+                        >
+                          {actionLoading ? (
+                            <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                          ) : null}
+                          Rejeitar
+                        </Button>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </BloomCard>
+                </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+            </div>
+          </BloomCard>
+        </div>
 
         {/* Featured Status */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <IconStar className="h-5 w-5" />
-              Destaque
-            </CardTitle>
-            <CardDescription>
-              Gerencie a visibilidade do cuidador
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div>
+          <BloomCard className="lg:col-span-1 p-5 sm:p-6 md:p-7">
+            <BloomSectionHeader
+              title="Destaque"
+              desc="Gerencie a visibilidade do cuidador"
+            />
+            <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <p className="text-sm font-medium">Cuidador em Destaque</p>
@@ -616,14 +641,14 @@ export default function AdminCaregiverDetailPage() {
                   Indica disponibilidade imediata
                 </p>
               </div>
-              <Badge variant={caregiver.availableNow ? "default" : "secondary"}>
+              <BloomBadge variant={caregiver.availableNow ? "success" : "secondary"}>
                 {caregiver.availableNow ? "Sim" : "Não"}
-              </Badge>
+              </BloomBadge>
             </div>
 
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <p className="text-sm font-medium">Estatísticas de Visibilidade</p>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Visualizações</span>
@@ -634,45 +659,40 @@ export default function AdminCaregiverDetailPage() {
                 <span>-</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            </div>
+          </BloomCard>
+        </div>
       </div>
 
       {/* Contracts */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconBriefcase className="h-5 w-5" />
-            Contratos ({caregiver.contracts?.length || 0})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            columns={contractColumns}
-            data={caregiver.contracts || []}
-            keyExtractor={(c) => c.id}
-            emptyMessage="Nenhum contrato encontrado"
-          />
-        </CardContent>
-      </Card>
+      <div>
+        <BloomCard className="p-5 sm:p-6 md:p-7">
+          <BloomSectionHeader title={`Contratos (${caregiver.contracts?.length || 0})`} />
+          <div className="pt-4">
+            <DataTable
+              columns={contractColumns}
+              data={caregiver.contracts || []}
+              keyExtractor={(c) => c.id}
+              emptyMessage="Nenhum contrato encontrado"
+            />
+          </div>
+        </BloomCard>
+      </div>
 
       {/* Reviews */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <IconStar className="h-5 w-5" />
-            Avaliações ({caregiver.reviews?.length || 0})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            columns={reviewColumns}
-            data={caregiver.reviews || []}
-            keyExtractor={(r) => r.id}
-            emptyMessage="Nenhuma avaliação encontrada"
-          />
-        </CardContent>
-      </Card>
+      <div>
+        <BloomCard className="p-5 sm:p-6 md:p-7">
+          <BloomSectionHeader title={`Avaliações (${caregiver.reviews?.length || 0})`} />
+          <div className="pt-4">
+            <DataTable
+              columns={reviewColumns}
+              data={caregiver.reviews || []}
+              keyExtractor={(r) => r.id}
+              emptyMessage="Nenhuma avaliação encontrada"
+            />
+          </div>
+        </BloomCard>
+      </div>
     </div>
   );
 }

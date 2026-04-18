@@ -1,10 +1,13 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
-import { Card, CardContent } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import {
@@ -80,21 +83,21 @@ export default function AdminLogsPage() {
   const getActionColor = (action: string) => {
     switch (action) {
       case "CREATE":
-        return "bg-green-100 text-green-700";
+        return "bg-success/10 text-success";
       case "UPDATE":
-        return "bg-blue-100 text-blue-700";
+        return "bg-primary/10 text-primary";
       case "DELETE":
-        return "bg-red-100 text-red-700";
+        return "bg-destructive/10 text-destructive";
       case "SUSPEND":
-        return "bg-amber-100 text-amber-700";
+        return "bg-warning/10 text-warning";
       case "ACTIVATE":
-        return "bg-green-100 text-green-700";
+        return "bg-success/10 text-success";
       case "VERIFY_KYC":
-        return "bg-cyan-100 text-cyan-700";
+        return "bg-primary/10 text-primary";
       case "REFUND":
-        return "bg-orange-100 text-orange-700";
+        return "bg-warning/10 text-warning";
       default:
-        return "bg-slate-100 text-slate-700";
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -122,6 +125,8 @@ export default function AdminLogsPage() {
     }
   };
 
+
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -136,44 +141,46 @@ export default function AdminLogsPage() {
       />
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4 md:flex-row">
-            <Select value={actionFilter} onValueChange={setActionFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Ação" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as Ações</SelectItem>
-                <SelectItem value="CREATE">Criar</SelectItem>
-                <SelectItem value="UPDATE">Atualizar</SelectItem>
-                <SelectItem value="DELETE">Excluir</SelectItem>
-                <SelectItem value="SUSPEND">Suspender</SelectItem>
-                <SelectItem value="ACTIVATE">Ativar</SelectItem>
-                <SelectItem value="VERIFY_KYC">Verificar KYC</SelectItem>
-                <SelectItem value="REFUND">Reembolsar</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={entityFilter} onValueChange={setEntityFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Entidade" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as Entidades</SelectItem>
-                <SelectItem value="USER">Usuário</SelectItem>
-                <SelectItem value="CONTRACT">Contrato</SelectItem>
-                <SelectItem value="PAYMENT">Pagamento</SelectItem>
-                <SelectItem value="TOKEN">Token</SelectItem>
-                <SelectItem value="CAREGIVER">Cuidador</SelectItem>
-              </SelectContent>
-            </Select>
+      <div>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <div className="flex flex-col gap-4 md:flex-row">
+              <Select value={actionFilter} onValueChange={setActionFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Ação" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as Ações</SelectItem>
+                  <SelectItem value="CREATE">Criar</SelectItem>
+                  <SelectItem value="UPDATE">Atualizar</SelectItem>
+                  <SelectItem value="DELETE">Excluir</SelectItem>
+                  <SelectItem value="SUSPEND">Suspender</SelectItem>
+                  <SelectItem value="ACTIVATE">Ativar</SelectItem>
+                  <SelectItem value="VERIFY_KYC">Verificar KYC</SelectItem>
+                  <SelectItem value="REFUND">Reembolsar</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={entityFilter} onValueChange={setEntityFilter}>
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="Entidade" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as Entidades</SelectItem>
+                  <SelectItem value="USER">Usuário</SelectItem>
+                  <SelectItem value="CONTRACT">Contrato</SelectItem>
+                  <SelectItem value="PAYMENT">Pagamento</SelectItem>
+                  <SelectItem value="TOKEN">Token</SelectItem>
+                  <SelectItem value="CAREGIVER">Cuidador</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </BloomCard>
+      </div>
 
       {/* Logs Table */}
-      <Card>
-        <CardContent className="p-0">
+      <div>
+        <BloomCard>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-slate-50 dark:bg-slate-800">
@@ -217,9 +224,9 @@ export default function AdminLogsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge className={getActionColor(log.action)}>
+                        <BloomBadge className={getActionColor(log.action)}>
                           {log.action}
-                        </Badge>
+                        </BloomBadge>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -242,8 +249,8 @@ export default function AdminLogsPage() {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+        </BloomCard>
+      </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-between">

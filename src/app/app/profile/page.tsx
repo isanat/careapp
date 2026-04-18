@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,170 +53,13 @@ import {
   IconClock,
   IconAlertTriangle,
 } from "@/components/icons";
+import { BloomCard, BloomBadge, BloomSectionHeader, DocCard } from "@/components/bloom-custom";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
 
-const SERVICE_TYPES = [
-  { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
-  { id: "MEDICATION", label: "Medicacao" },
-  { id: "MOBILITY", label: "Mobilidade" },
-  { id: "COMPANIONSHIP", label: "Companhia" },
-  { id: "MEAL_PREPARATION", label: "Refeicoes" },
-  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domesticas" },
-  { id: "TRANSPORTATION", label: "Transporte" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulacao Cognitiva" },
-  { id: "NIGHT_CARE", label: "Cuidados Noturnos" },
-  { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos" },
-  { id: "PHYSIOTHERAPY", label: "Fisioterapia" },
-  { id: "NURSING_CARE", label: "Enfermagem" },
-];
-
-const DOCUMENT_TYPES = [
-  { id: "CC", label: "Cartao de Cidadao", placeholder: "12345678 1 ZZ2", maxLength: 15 },
-  { id: "PASSPORT", label: "Passaporte", placeholder: "AA123456", maxLength: 9 },
-  { id: "RESIDENCE", label: "Titulo de Residencia", placeholder: "Numero do titulo", maxLength: 20 },
-];
-
-function validateNIF(nif: string): boolean {
-  if (!/^\d{9}$/.test(nif)) return false;
-  const digits = nif.split("").map(Number);
-  const checkSum = digits.slice(0, 8).reduce((sum, d, i) => sum + d * (9 - i), 0);
-  const remainder = checkSum % 11;
-  const checkDigit = remainder < 2 ? 0 : 11 - remainder;
-  return checkDigit === digits[8];
-}
-
-function formatPhonePT(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.startsWith("351")) {
-    const num = digits.slice(3);
-    if (num.length <= 3) return `+351 ${num}`;
-    if (num.length <= 6) return `+351 ${num.slice(0, 3)} ${num.slice(3)}`;
-    return `+351 ${num.slice(0, 3)} ${num.slice(3, 6)} ${num.slice(6, 9)}`;
-  }
-  if (digits.length <= 3) return `+351 ${digits}`;
-  if (digits.length <= 6) return `+351 ${digits.slice(0, 3)} ${digits.slice(3)}`;
-  return `+351 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
-}
-
-interface ProfileData {
-  name: string;
-  email: string;
-  phone: string;
-  nif?: string;
-  documentType?: string;
-  documentNumber?: string;
-  profileImage?: string;
-  title?: string;
-  bio?: string;
-  experienceYears?: number;
-  city?: string;
-  services?: string[];
-  hourlyRateEur?: number;
-  certifications?: string;
-  languages?: string;
-  averageRating?: number;
-  totalReviews?: number;
-  totalContracts?: number;
-  elderName?: string;
-  elderAge?: number;
-  elderNeeds?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
-  backgroundCheckStatus?: string;
-  backgroundCheckUrl?: string;
-}
-
-export default function ProfilePage() {
-  const { data: session, status, update } = useSession();
-  const { t } = useI18n();
-  const { isPushEnabled, subscribeToPush, requestPushPermission, isPushSupported, pushError } = useNotifications();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [pushLoading, setPushLoading] = useState(false);
-
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [formData, setFormData] = useState<ProfileData>({
-    name: "",
-    email: "",
-    phone: "",
-    emergencyContactName: "",
-    emergencyContactPhone: "",
-  });
-
-  const isFamily = session?.user?.role === "FAMILY";
-  const isCaregiver = session?.user?.role === "CAREGIVER";
-
-  useEffect(() => {
-    if (status === "authenticated") fetchProfile();
-  }, [status]);
-
-  const fetchProfile = async () => {
-    setIsLoading(true);
-    try {
-      const response = await apiFetch("/api/user/profile");
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error("Erro ao carregar perfil: " + errorText);
-      }
-      const data = await response.json();
-      setProfile(data.profile);
-
-      // Parse services from JSON string if it's stored as string
-      let services: string[] = [];
-      if (typeof data.profile?.services === 'string') {
-        try {
-          services = JSON.parse(data.profile.services);
-        } catch {
-          services = [];
-        }
-      } else if (Array.isArray(data.profile?.services)) {
-        services = data.profile.services;
-      }
-
-      setFormData({
-        name: data.user?.name || "",
-        email: data.user?.email || "",
-        phone: data.user?.phone || "",
-        nif: data.user?.nif || "",
-        documentType: data.user?.documentType || "",
-        documentNumber: data.user?.documentNumber || "",
-        profileImage: data.user?.profileImage || "",
-        title: data.profile?.title || "",
-        bio: data.profile?.bio || "",
-        experienceYears: data.profile?.experienceYears || 0,
-        city: data.profile?.city || "",
-        services: services,
-        hourlyRateEur: data.profile?.hourlyRateEur ? (data.profile.hourlyRateEur / 100) : 15,
-        certifications: data.profile?.certifications || "",
-        languages: data.profile?.languages || "",
-        averageRating: data.profile?.averageRating || 0,
-        totalReviews: data.profile?.totalReviews || 0,
-        totalContracts: data.profile?.totalContracts || 0,
-        elderName: data.profile?.elderName || "",
-        elderAge: data.profile?.elderAge || undefined,
-        elderNeeds: data.profile?.elderNeeds || "",
-        emergencyContactName: data.profile?.emergencyContactName || "",
-        emergencyContactPhone: data.profile?.emergencyContactPhone || "",
-        backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
-        backgroundCheckUrl: data.user?.backgroundCheckUrl || "",
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar perfil");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+// Framer Motion animation variants
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -449,22 +291,27 @@ export default function ProfilePage() {
   const getBackgroundCheckBadge = () => {
     switch (formData.backgroundCheckStatus) {
       case "VERIFIED":
-        return <Badge className="bg-success/10 text-success border-success/20" variant="outline"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</Badge>;
+        return <BloomBadge className="bg-success/10 text-success border-success/20" variant="success"><IconCheckCircle className="h-3 w-3 mr-1" />Verificado</BloomBadge>;
       case "SUBMITTED":
-        return <Badge className="bg-warning/10 text-warning border-warning/20" variant="outline"><IconClock className="h-3 w-3 mr-1" />Em analise</Badge>;
+        return <BloomBadge className="bg-warning/10 text-warning border-warning/20" variant="warning"><IconClock className="h-3 w-3 mr-1" />Em analise</BloomBadge>;
       case "REJECTED":
-        return <Badge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</Badge>;
+        return <BloomBadge variant="destructive"><IconAlertTriangle className="h-3 w-3 mr-1" />Rejeitado</BloomBadge>;
       default:
-        return <Badge variant="outline"><IconClock className="h-3 w-3 mr-1" />Pendente</Badge>;
+        return <BloomBadge variant="outline"><IconClock className="h-3 w-3 mr-1" />Pendente</BloomBadge>;
     }
   };
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-4xl">
+      <div
+        className="space-y-8 max-w-4xl"
+       
+       
+       
+      >
         {/* Page Header */}
         <div className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
+          <h1 className="text-2xl sm:text-3xl font-display font-black uppercase tracking-tighter leading-none">
             Meu Perfil
           </h1>
           <p className="text-base text-muted-foreground font-medium">
@@ -496,7 +343,7 @@ export default function ProfilePage() {
 
         {/* Profile Header Section */}
         <section className="space-y-4">
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4 hover:shadow-elevated transition-all">
+          <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-5">
                 {/* Avatar */}
@@ -564,7 +411,7 @@ export default function ProfilePage() {
                 )}
               </Button>
             </div>
-          </div>
+          </BloomCard>
         </section>
 
         {/* Stats for caregiver */}
@@ -576,7 +423,7 @@ export default function ProfilePage() {
               { value: (profile?.averageRating || 0).toFixed(1), label: "Nota", icon: IconStar },
               { value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`, label: "/hora", icon: IconEuro },
             ].map((stat, i) => (
-              <div key={i} className="bg-card p-7 rounded-3xl border border-border shadow-card space-y-4 hover:shadow-elevated transition-all group">
+              <BloomCard key={i} className="p-6 md:p-7 space-y-4 group">
                 <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <stat.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -588,13 +435,14 @@ export default function ProfilePage() {
                     {stat.value}
                   </div>
                 </div>
-              </div>
+              </BloomCard>
             ))}
           </div>
         )}
 
         {/* Tabs */}
-        <Tabs defaultValue="about" className="space-y-6">
+        <div>
+          <Tabs defaultValue="about" className="space-y-6">
           <TabsList className={`w-full h-11 rounded-2xl bg-secondary/50 p-1 grid ${isCaregiver ? 'grid-cols-5' : 'grid-cols-4'} gap-1`}>
             <TabsTrigger value="about" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Info</TabsTrigger>
             <TabsTrigger value="documents" className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm">Docs</TabsTrigger>
@@ -607,8 +455,8 @@ export default function ProfilePage() {
           {/* Info Tab */}
           <TabsContent value="about" className="space-y-6">
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informações Pessoais</h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <BloomSectionHeader title="Informações Pessoais" />
+              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.name}</Label>
@@ -668,7 +516,7 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
-              </div>
+              </BloomCard>
             </section>
           </TabsContent>
 
@@ -676,8 +524,8 @@ export default function ProfilePage() {
           <TabsContent value="documents" className="space-y-6">
             {/* Personal Documents Section */}
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Documentos Pessoais</h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <BloomSectionHeader title="Documentos Pessoais" />
+              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div>
                   <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">NIF</Label>
                   <Input
@@ -722,14 +570,14 @@ export default function ProfilePage() {
                     />
                   </div>
                 )}
-              </div>
+              </BloomCard>
             </section>
 
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
               <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Verificacao de Antecedentes</h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <BloomSectionHeader title="Verificacao de Antecedentes" />
+                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center">
@@ -766,7 +614,7 @@ export default function ProfilePage() {
                   {formData.backgroundCheckUrl && (
                     <p className="text-xs text-success flex items-center gap-1"><IconCheck className="h-3 w-3" />Documento enviado com sucesso</p>
                   )}
-                </div>
+                </BloomCard>
               </section>
             )}
 
@@ -784,8 +632,8 @@ export default function ProfilePage() {
           {isCaregiver && (
             <TabsContent value="services" className="space-y-6">
               <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Servicos Oferecidos</h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+                <BloomSectionHeader title="Servicos Oferecidos" />
+                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {SERVICE_TYPES.map((service) => (
                       <label
@@ -848,7 +696,7 @@ export default function ProfilePage() {
                       />
                     </div>
                   </div>
-                </div>
+                </BloomCard>
               </section>
             </TabsContent>
           )}
@@ -857,8 +705,8 @@ export default function ProfilePage() {
           {isFamily && (
             <TabsContent value="elder" className="space-y-6">
               <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informacoes do Familiar</h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <BloomSectionHeader title="Informacoes do Familiar" />
+                <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Nome do Idoso</Label>
@@ -891,7 +739,7 @@ export default function ProfilePage() {
                       placeholder="Descreva as necessidades especificas de saude e cuidado..."
                     />
                   </div>
-                </div>
+                </BloomCard>
               </section>
             </TabsContent>
           )}
@@ -899,8 +747,8 @@ export default function ProfilePage() {
           {/* Contact Tab */}
           <TabsContent value="contact" className="space-y-6">
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Informacoes de Contato</h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <BloomSectionHeader title="Informacoes de Contato" />
+              <BloomCard className="p-5 sm:p-6 md:p-7 space-y-4">
                 <div>
                   <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">{t.auth.email}</Label>
                   <Input
@@ -954,7 +802,7 @@ export default function ProfilePage() {
                     </div>
                   </>
                 )}
-              </div>
+              </BloomCard>
             </section>
           </TabsContent>
 
@@ -962,7 +810,7 @@ export default function ProfilePage() {
           <TabsContent value="settings" className="space-y-6">
             {/* Settings Section */}
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">Preferencias e Configuracoes</h3>
+              <BloomSectionHeader title="Preferencias e Configuracoes" />
 
               {/* Push Notifications */}
               <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
@@ -1047,7 +895,7 @@ export default function ProfilePage() {
                     Apagar conta
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl">
+                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl p-5 sm:p-6 md:p-7">
                   <DialogHeader>
                     <DialogTitle className="text-xl font-display font-black uppercase tracking-tighter">Apagar conta?</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
@@ -1092,6 +940,7 @@ export default function ProfilePage() {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </AppShell>
   );

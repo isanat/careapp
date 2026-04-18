@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -722,9 +722,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 {interview.questionnaire.wouldRecommend !== undefined && (
                   <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                     <span className="text-sm text-muted-foreground">Recomendação:</span>
-                    <Badge className={interview.questionnaire.wouldRecommend ? "bg-green-500" : "bg-red-500"}>
+                    <BloomBadge className={interview.questionnaire.wouldRecommend ? "bg-success" : "bg-destructive"}>
                       {interview.questionnaire.wouldRecommend ? "Recomenda" : "Não Recomenda"}
-                    </Badge>
+                    </BloomBadge>
                   </div>
                 )}
 
@@ -798,10 +798,7 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
 
             {/* Next Steps */}
             <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7">
-              <h3 className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-4 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center flex-shrink-0">
-                  <IconCheck className="h-5 w-5 text-success" />
-                </div>
+              <h3 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4 mb-4 flex items-center gap-3">
                 Próximos Passos
               </h3>
               {interview.questionnaire?.proceedWithContract ? (
@@ -1112,9 +1109,9 @@ export default function InterviewPage({ params }: { params: Promise<{ id: string
                 {interview.questionnaire.wouldRecommend !== undefined && (
                   <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                     <span className="text-sm text-muted-foreground">Recomendação:</span>
-                    <Badge className={interview.questionnaire.wouldRecommend ? "bg-green-500" : "bg-red-500"}>
+                    <BloomBadge className={interview.questionnaire.wouldRecommend ? "bg-success" : "bg-destructive"}>
                       {interview.questionnaire.wouldRecommend ? "Recomenda" : "Não Recomenda"}
-                    </Badge>
+                    </BloomBadge>
                   </div>
                 )}
 

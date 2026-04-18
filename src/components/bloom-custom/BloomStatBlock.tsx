@@ -20,7 +20,7 @@ export function BloomStatBlock({
   className = '',
 }: BloomStatBlockProps) {
   return (
-    <div className={`bg-card p-4 rounded-xl border border-border shadow-card ${className}`}>
+    <div className={`bg-card p-4 rounded-3xl border border-border shadow-card ${className}`}>
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">

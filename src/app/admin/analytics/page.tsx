@@ -1,11 +1,14 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -97,6 +100,8 @@ export default function AdminAnalyticsPage() {
     a.click();
   };
 
+
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -165,11 +170,9 @@ export default function AdminAnalyticsPage() {
       {/* Charts Row */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Revenue Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Receita ao Longo do Tempo</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard variant="gradient">
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Receita ao Longo do Tempo</h3>
             {loading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
@@ -180,7 +183,7 @@ export default function AdminAnalyticsPage() {
                   return (
                     <div
                       key={i}
-                      className="flex-1 bg-cyan-500 rounded-t"
+                      className="flex-1 bg-primary rounded-t"
                       style={{ height: `${Math.max(height, 5)}%` }}
                       title={`${formatCurrency(item.revenue)}`}
                     />
@@ -188,15 +191,13 @@ export default function AdminAnalyticsPage() {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
 
         {/* Users Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Crescimento de Usuários</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard variant="success">
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Crescimento de Usuários</h3>
             {loading ? (
               <Skeleton className="h-48 w-full" />
             ) : (
@@ -207,7 +208,7 @@ export default function AdminAnalyticsPage() {
                   return (
                     <div
                       key={i}
-                      className="flex-1 bg-green-500 rounded-t"
+                      className="flex-1 bg-success rounded-t"
                       style={{ height: `${Math.max(height, 5)}%` }}
                       title={`${item.users} utilizadores`}
                   />
@@ -215,18 +216,16 @@ export default function AdminAnalyticsPage() {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
       </div>
 
       {/* Bottom Row */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
         {/* Contracts by Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Contratos por Status</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Contratos por Status</h3>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -238,20 +237,18 @@ export default function AdminAnalyticsPage() {
                 {data?.contractsByStatus?.map((item) => (
                   <div key={item.status} className="flex items-center justify-between">
                     <span className="text-sm">{item.status}</span>
-                    <Badge>{item.count}</Badge>
+                    <BloomBadge>{item.count}</BloomBadge>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
 
         {/* Top Cities */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top Cidades</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Top Cidades</h3>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -265,20 +262,18 @@ export default function AdminAnalyticsPage() {
                     <span className="text-sm">
                       {i + 1}. {item.city}
                     </span>
-                    <Badge variant="outline">{item.count}</Badge>
+                    <BloomBadge variant="outline">{item.count}</BloomBadge>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
 
         {/* Top Caregivers */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top Cuidadores</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <BloomCard>
+          <div className="p-5 sm:p-6 md:p-7">
+            <h3 className="font-semibold text-base mb-4">Top Cuidadores</h3>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -292,7 +287,7 @@ export default function AdminAnalyticsPage() {
                     <span className="text-sm font-medium w-6">{i + 1}.</span>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{item.name}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-muted-foreground">
                         ⭐ {item.rating.toFixed(1)} • {item.contracts} contratos
                       </p>
                     </div>
@@ -303,8 +298,8 @@ export default function AdminAnalyticsPage() {
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </BloomCard>
       </div>
     </div>
   );

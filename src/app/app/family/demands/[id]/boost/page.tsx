@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
 import {
   IconArrowLeft,
   IconLoader2,
@@ -139,8 +139,15 @@ function BoostContent() {
   const pkgDetails = PACKAGE_DETAILS[packageType] || PACKAGE_DETAILS.BASIC;
   const Icon = pkgDetails.icon;
 
+
+
   return (
-    <div className="max-w-2xl mx-auto pb-8">
+    <div
+      className="max-w-2xl mx-auto pb-8"
+     
+     
+     
+    >
       {/* Header with Back Button */}
       <div className="mb-8 flex items-center gap-4">
         <Link
@@ -194,9 +201,9 @@ function BoostContent() {
                     </span>
                   ))}
                   {demand.serviceTypes.length > 2 && (
-                    <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
+                    <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg">
                       +{demand.serviceTypes.length - 2}
-                    </span>
+                    </BloomBadge>
                   )}
                 </div>
               </div>
@@ -212,20 +219,20 @@ function BoostContent() {
               {Object.entries(PACKAGE_DETAILS).map(([key, pkg]) => {
                 const isSelected = key === packageType;
                 return (
-                  <Link
-                    key={key}
-                    href={`?package=${key}`}
-                    className={`bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
-                      isSelected
-                        ? 'bg-primary/5 border-primary/30 shadow-elevated'
-                        : 'border-border hover:shadow-elevated hover:border-primary/30'
-                    }`}
-                  >
+                  <div key={key}>
+                    <Link
+                      href={`?package=${key}`}
+                      className={`block bg-card rounded-3xl p-5 sm:p-7 border shadow-card transition-all cursor-pointer group ${
+                        isSelected
+                          ? 'bg-primary/5 border-primary/30 shadow-elevated'
+                          : 'border-border hover:shadow-elevated hover:border-primary/30'
+                      }`}
+                    >
                     <div className="space-y-4">
                       {/* Badge */}
-                      <span className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
+                      <BloomBadge className="text-[9px] font-display font-bold uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 rounded-lg inline-block">
                         {pkg.label}
-                      </span>
+                      </BloomBadge>
 
                       {/* Icon */}
                       <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
@@ -270,7 +277,8 @@ function BoostContent() {
                         </li>
                       </ul>
                     </div>
-                  </Link>
+                    </Link>
+                  </div>
                 );
               })}
             </div>

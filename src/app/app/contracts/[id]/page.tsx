@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -301,9 +301,9 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
             {contract?.title || "Contrato de Cuidado"}
           </h1>
           {statusConfig && (
-            <Badge className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 ml-auto ${statusConfig.bgColor} ${statusConfig.color} border border-${statusConfig.color.replace('text-', '')}/30`}>
+            <BloomBadge className={`text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 ml-auto ${statusConfig.bgColor} ${statusConfig.color} border border-${statusConfig.color.replace('text-', '')}/30`}>
               {statusConfig.label}
-            </Badge>
+            </BloomBadge>
           )}
         </div>
 
@@ -527,21 +527,21 @@ export default function ContractDetailPage({ params }: { params: Promise<{ id: s
                   <div className="flex items-center justify-between py-4 border-b border-border/50">
                     <span className="text-sm font-display font-bold text-foreground uppercase tracking-widest">Família</span>
                     {contract.acceptance?.familyAccepted ? (
-                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30 flex items-center gap-1.5">
+                      <BloomBadge className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30 flex items-center gap-1.5">
                         <IconCheck className="h-3 w-3" /> Aceito
-                      </span>
+                      </BloomBadge>
                     ) : (
-                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Pendente</span>
+                      <BloomBadge className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Pendente</BloomBadge>
                     )}
                   </div>
                   <div className="flex items-center justify-between py-4">
                     <span className="text-sm font-display font-bold text-foreground uppercase tracking-widest">Cuidador(a)</span>
                     {contract.acceptance?.caregiverAccepted ? (
-                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30 flex items-center gap-1.5">
+                      <BloomBadge className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-success/10 text-success border border-success/30 flex items-center gap-1.5">
                         <IconCheck className="h-3 w-3" /> Aceito
-                      </span>
+                      </BloomBadge>
                     ) : (
-                      <span className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Pendente</span>
+                      <BloomBadge className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-warning/10 text-warning border border-warning/30">Pendente</BloomBadge>
                     )}
                   </div>
                 </div>
@@ -912,9 +912,9 @@ function ActiveContractActions({ contractId }: { contractId: string }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between py-4 border-b border-border/50">
                 <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Status</span>
-                <Badge className={recurringPayment.status === 'ACTIVE' ? 'bg-success/10 text-success border border-success/30' : 'bg-muted text-muted-foreground border border-border'}>
+                <BloomBadge className={recurringPayment.status === 'ACTIVE' ? 'bg-success/10 text-success border border-success/30' : 'bg-muted text-muted-foreground border border-border'}>
                   {recurringPayment.status === 'ACTIVE' ? 'Ativo' : recurringPayment.status}
-                </Badge>
+                </BloomBadge>
               </div>
               <div className="flex items-center justify-between py-4 border-b border-border/50">
                 <span className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">Valor mensal</span>

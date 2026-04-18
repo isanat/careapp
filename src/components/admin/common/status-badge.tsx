@@ -24,17 +24,17 @@ interface StatusBadgeProps {
 }
 
 const statusConfig: Record<StatusType, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; className?: string }> = {
-  active: { label: "Ativo", variant: "default", className: "bg-green-500 hover:bg-green-600" },
+  active: { label: "Ativo", variant: "default", className: "bg-success/10 text-success hover:bg-success/20" },
   inactive: { label: "Inativo", variant: "secondary" },
-  pending: { label: "Pendente", variant: "secondary", className: "bg-amber-500 hover:bg-amber-600 text-white" },
+  pending: { label: "Pendente", variant: "secondary", className: "bg-warning/10 text-warning hover:bg-warning/20" },
   suspended: { label: "Suspenso", variant: "destructive" },
-  verified: { label: "Verificado", variant: "default", className: "bg-green-500 hover:bg-green-600" },
+  verified: { label: "Verificado", variant: "default", className: "bg-success/10 text-success hover:bg-success/20" },
   unverified: { label: "Não verificado", variant: "outline" },
   rejected: { label: "Rejeitado", variant: "destructive" },
-  disputed: { label: "Em disputa", variant: "destructive", className: "bg-orange-500 hover:bg-orange-600" },
-  completed: { label: "Concluído", variant: "default", className: "bg-green-500 hover:bg-green-600" },
+  disputed: { label: "Em disputa", variant: "destructive", className: "bg-destructive/10 text-destructive hover:bg-destructive/20" },
+  completed: { label: "Concluído", variant: "default", className: "bg-success/10 text-success hover:bg-success/20" },
   cancelled: { label: "Cancelado", variant: "secondary" },
-  processing: { label: "Processando", variant: "secondary", className: "bg-blue-500 hover:bg-blue-600 text-white" },
+  processing: { label: "Processando", variant: "secondary", className: "bg-primary/10 text-primary hover:bg-primary/20" },
   failed: { label: "Falhou", variant: "destructive" },
   refunded: { label: "Reembolsado", variant: "outline" },
 };

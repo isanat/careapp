@@ -1,11 +1,15 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { DataTable, Column } from "@/components/admin/common/data-table";
 import { StatusBadge } from "@/components/admin/common/status-badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   IconSearch,
   IconEye,
@@ -139,10 +142,10 @@ function AdminFamiliesContent() {
   };
 
   const getRoleBadge = (role: User["role"]) => {
-    const variants: Record<User["role"], string> = {
-      FAMILY: "bg-blue-100 text-blue-700",
-      CAREGIVER: "bg-green-100 text-green-700",
-      ADMIN: "bg-purple-100 text-purple-700",
+    const variants: Record<User["role"], "default" | "secondary" | "success" | "primary"> = {
+      FAMILY: "primary",
+      CAREGIVER: "success",
+      ADMIN: "primary",
     };
     const labels: Record<User["role"], string> = {
       FAMILY: "Família",
@@ -150,9 +153,9 @@ function AdminFamiliesContent() {
       ADMIN: "Admin",
     };
     return (
-      <Badge className={variants[role]} variant="secondary">
+      <BloomBadge variant={variants[role]}>
         {labels[role]}
-      </Badge>
+      </BloomBadge>
     );
   };
 
@@ -163,13 +166,13 @@ function AdminFamiliesContent() {
       render: (user) => (
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-cyan-100 text-cyan-700 text-xs">
+            <AvatarFallback className="bg-primary/10 text-primary text-xs">
               {user.name?.charAt(0) || "U"}
             </AvatarFallback>
           </Avatar>
           <div>
             <p className="font-medium">{user.name}</p>
-            <p className="text-xs text-slate-500">{user.email}</p>
+            <p className="text-xs text-muted-foreground">{user.email}</p>
           </div>
         </div>
       ),
@@ -217,7 +220,7 @@ function AdminFamiliesContent() {
       key: "createdAt",
       header: "Criado",
       render: (user) => (
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-muted-foreground">
           {new Date(user.createdAt).toLocaleDateString("pt-PT")}
         </span>
       ),
@@ -243,7 +246,7 @@ function AdminFamiliesContent() {
             {user.status === "ACTIVE" ? (
               <DropdownMenuItem
                 onClick={() => handleSuspend(user.id)}
-                className="text-red-600"
+                className="text-destructive"
               >
                 <IconUserOff className="mr-2 h-4 w-4" /> Suspender
               </DropdownMenuItem>
@@ -258,68 +261,79 @@ function AdminFamiliesContent() {
     },
   ];
 
+
+
   return (
-    <div className="space-y-6">
+    <div
+      className="space-y-6"
+     
+     
+     
+    >
       <PageHeader
         title="Famílias"
         description="Gerencie as famílias cadastradas na plataforma"
       />
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4 md:flex-row">
-            <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                placeholder="Buscar por nome ou email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
-              />
+      <div>
+        <BloomCard variant="interactive">
+          <div className="p-5 sm:p-6 md:p-7">
+            <div className="flex flex-col gap-4 md:flex-row">
+              <div className="relative flex-1">
+                <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por nome ou email..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="Função" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas</SelectItem>
+                  <SelectItem value="FAMILY">Família</SelectItem>
+                  <SelectItem value="CAREGIVER">Cuidador</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full md:w-40">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="ACTIVE">Ativo</SelectItem>
+                  <SelectItem value="PENDING">Pendente</SelectItem>
+                  <SelectItem value="SUSPENDED">Suspenso</SelectItem>
+                  <SelectItem value="INACTIVE">Inativo</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={() => fetchUsers()}>Filtrar</Button>
             </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Função" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas</SelectItem>
-                <SelectItem value="FAMILY">Família</SelectItem>
-                <SelectItem value="CAREGIVER">Cuidador</SelectItem>
-                <SelectItem value="ADMIN">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="ACTIVE">Ativo</SelectItem>
-                <SelectItem value="PENDING">Pendente</SelectItem>
-                <SelectItem value="SUSPENDED">Suspenso</SelectItem>
-                <SelectItem value="INACTIVE">Inativo</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={() => fetchUsers()}>Filtrar</Button>
           </div>
-        </CardContent>
-      </Card>
+        </BloomCard>
+      </div>
 
       {/* Users Table */}
-      <DataTable
-        columns={columns}
-        data={users}
-        keyExtractor={(user) => user.id}
-        loading={loading}
-        onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
-        pagination={{
-          page: pagination.page,
-          pageSize: pagination.limit,
-          total: pagination.total,
-          onPageChange: (page) => setPagination((p) => ({ ...p, page })),
-        }}
-      />
+      <div>
+        <DataTable
+          columns={columns}
+          data={users}
+          keyExtractor={(user) => user.id}
+          loading={loading}
+          onRowClick={(user) => router.push(`/admin/users/${user.id}`)}
+          pagination={{
+            page: pagination.page,
+            pageSize: pagination.limit,
+            total: pagination.total,
+            onPageChange: (page) => setPagination((p) => ({ ...p, page })),
+          }}
+        />
+      </div>
     </div>
   );
 }

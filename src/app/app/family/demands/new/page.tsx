@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { BloomBadge } from '@/components/bloom-custom/BloomBadge';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   IconArrowLeft,
@@ -234,8 +234,15 @@ function NewDemandContent() {
   const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
 
+
+
   return (
-    <div className="max-w-2xl mx-auto pb-8">
+    <div
+      className="max-w-2xl mx-auto pb-8"
+     
+     
+     
+    >
       {/* Header Section */}
       <div className="mb-8 flex items-start justify-between">
         <div>
@@ -355,7 +362,7 @@ function NewDemandContent() {
                       {formData.description.length}/100 caracteres mínimos
                     </p>
                     {formData.description.length >= 100 && (
-                      <div className="flex items-center gap-1 text-xs text-success font-medium">
+                      <div className="flex items-center gap-1 text-xs text-success font-medium animate-fade-in">
                         <IconCheck className="h-4 w-4" />
                         OK
                       </div>
@@ -744,9 +751,9 @@ function NewDemandContent() {
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-2">
                       {formData.serviceTypes.map(type => (
-                        <span key={type} className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
+                        <BloomBadge key={type} className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
                           {SERVICE_LABELS[type]}
-                        </span>
+                        </BloomBadge>
                       ))}
                     </div>
                     <div className="flex items-center gap-2 text-sm text-foreground">

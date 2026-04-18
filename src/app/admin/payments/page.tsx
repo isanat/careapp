@@ -1,12 +1,17 @@
 "use client";
 
+// Force dynamic rendering - Framer Motion component dependency
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/admin/common/page-header";
 import { StatsCard } from "@/components/admin/common/stats-card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
+import { BloomSectionHeader } from "@/components/bloom-custom/BloomSectionHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -110,14 +115,14 @@ const typeLabels: Record<string, string> = {
 };
 
 const auditStatusColors: Record<string, string> = {
-  COMPLETED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  PENDING: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
-  FAILED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-  REFUNDED: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  PROCESSING: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-  ACTIVE: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  CANCELLED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-  DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
+  COMPLETED: "bg-success/10 text-success",
+  PENDING: "bg-warning/10 text-warning",
+  FAILED: "bg-destructive/10 text-destructive",
+  REFUNDED: "bg-primary/10 text-primary",
+  PROCESSING: "bg-warning/10 text-warning",
+  ACTIVE: "bg-success/10 text-success",
+  CANCELLED: "bg-destructive/10 text-destructive",
+  DRAFT: "bg-muted text-muted-foreground",
 };
 
 const reasonLabels: Record<string, string> = {
@@ -136,20 +141,22 @@ export default function AdminPaymentsPage() {
         description="Transacoes, pagamentos e auditoria por cliente"
       />
 
-      <Tabs defaultValue="transactions" className="space-y-4">
-        <TabsList className="h-10">
-          <TabsTrigger value="transactions" className="text-sm">Transacoes</TabsTrigger>
-          <TabsTrigger value="audit" className="text-sm">Auditoria por Cliente</TabsTrigger>
-        </TabsList>
+      <div>
+        <Tabs defaultValue="transactions" className="space-y-4">
+          <TabsList className="h-10">
+            <TabsTrigger value="transactions" className="text-sm">Transacoes</TabsTrigger>
+            <TabsTrigger value="audit" className="text-sm">Auditoria por Cliente</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="transactions">
-          <TransactionsTab />
-        </TabsContent>
+          <TabsContent value="transactions">
+            <TransactionsTab />
+          </TabsContent>
 
-        <TabsContent value="audit">
-          <CustomerAuditTab />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="audit">
+            <CustomerAuditTab />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
@@ -230,8 +237,8 @@ function TransactionsTab() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
+      <BloomCard>
+        <div className="p-5 sm:p-6 md:p-7">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <Input placeholder="Pesquisar por utilizador..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && fetchData()} />
@@ -256,69 +263,67 @@ function TransactionsTab() {
             </Select>
             <Button onClick={fetchData}>Filtrar</Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </BloomCard>
 
       {/* Table */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium">ID</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Usuario</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Tipo</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Status</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium">Valor</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Data</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium">Acoes</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30">
-                {loading ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i}>{Array.from({ length: 7 }).map((_, j) => (<td key={j} className="px-3 py-2"><Skeleton className="h-4 w-16" /></td>))}</tr>
-                  ))
-                ) : payments.length === 0 ? (
-                  <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground text-sm">Nenhum pagamento encontrado</td></tr>
-                ) : (
-                  payments.map((p) => (
-                    <tr key={p.id} className="hover:bg-muted/30">
-                      <td className="px-3 py-2 font-mono text-xs">{p.id.slice(0, 8)}...</td>
-                      <td className="px-3 py-2">
-                        <p className="text-sm font-medium">{p.userName}</p>
-                        <p className="text-xs text-muted-foreground">{p.userEmail}</p>
-                      </td>
-                      <td className="px-3 py-2"><Badge variant="outline" className="text-xs">{getTypeLabel(p.type)}</Badge></td>
-                      <td className="px-3 py-2">
-                        <StatusBadge status={p.status === "COMPLETED" ? "completed" : p.status === "PENDING" ? "pending" : p.status === "FAILED" ? "failed" : p.status === "REFUNDED" ? "refunded" : "processing"} />
-                      </td>
-                      <td className="px-3 py-2 text-right font-medium text-sm">{formatCurrency(p.amountEurCents)}</td>
-                      <td className="px-3 py-2 text-xs text-muted-foreground">{format(new Date(p.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}</td>
-                      <td className="px-3 py-2">
-                        <div className="flex gap-1">
-                          {p.stripePaymentIntentId && (
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => window.open(`https://dashboard.stripe.com/payments/${p.stripePaymentIntentId}`, "_blank")}>
-                              <IconExternalLink className="h-3.5 w-3.5" />
-                            </Button>
-                          )}
-                          {p.status === "COMPLETED" && !p.refundedAt && (
-                            <Button variant="ghost" size="sm" onClick={() => handleRefund(p.id)} className="text-red-600 hover:text-red-700 h-7 text-xs px-2">Reemb.</Button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <BloomCard>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-muted/50">
+              <tr>
+                <th className="px-3 py-2 text-left text-xs font-medium">ID</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Usuario</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Tipo</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Status</th>
+                <th className="px-3 py-2 text-right text-xs font-medium">Valor</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Data</th>
+                <th className="px-3 py-2 text-left text-xs font-medium">Acoes</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/30">
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i}>{Array.from({ length: 7 }).map((_, j) => (<td key={j} className="px-3 py-2"><Skeleton className="h-4 w-16" /></td>))}</tr>
+                ))
+              ) : payments.length === 0 ? (
+                <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground text-sm">Nenhum pagamento encontrado</td></tr>
+              ) : (
+                payments.map((p) => (
+                  <tr key={p.id} className="hover:bg-muted/30">
+                    <td className="px-3 py-2 font-mono text-xs">{p.id.slice(0, 8)}...</td>
+                    <td className="px-3 py-2">
+                      <p className="text-sm font-medium">{p.userName}</p>
+                      <p className="text-xs text-muted-foreground">{p.userEmail}</p>
+                    </td>
+                    <td className="px-3 py-2"><BloomBadge variant="outline" className="text-xs">{getTypeLabel(p.type)}</BloomBadge></td>
+                    <td className="px-3 py-2">
+                      <StatusBadge status={p.status === "COMPLETED" ? "completed" : p.status === "PENDING" ? "pending" : p.status === "FAILED" ? "failed" : p.status === "REFUNDED" ? "refunded" : "processing"} />
+                    </td>
+                    <td className="px-3 py-2 text-right font-medium text-sm">{formatCurrency(p.amountEurCents)}</td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">{format(new Date(p.createdAt), "dd/MM/yyyy HH:mm", { locale: pt })}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-1">
+                        {p.stripePaymentIntentId && (
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => window.open(`https://dashboard.stripe.com/payments/${p.stripePaymentIntentId}`, "_blank")}>
+                            <IconExternalLink className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        {p.status === "COMPLETED" && !p.refundedAt && (
+                          <Button variant="ghost" size="sm" onClick={() => handleRefund(p.id)} className="text-destructive hover:text-destructive h-7 text-xs px-2">Reemb.</Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </BloomCard>
     </div>
-  );
-}
+    );
+  }
 
 // ==================== CUSTOMER AUDIT TAB ====================
 
@@ -360,7 +365,7 @@ function CustomerAuditTab() {
       </Card>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-center gap-2 text-sm text-red-700 dark:text-red-400">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex items-center gap-2 text-sm text-destructive">
           <IconAlertCircle className="h-4 w-4" /> {error}
         </div>
       )}
@@ -371,34 +376,34 @@ function CustomerAuditTab() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <AuditInfoCard icon={<IconUser className="h-4 w-4" />} label="Cliente" value={data.user.name} sub={`${data.user.email} | ${data.user.role}`} />
             <AuditInfoCard icon={<IconWallet className="h-4 w-4" />} label="Saldo Carteira" value={EUR(data.wallet.balanceEurCents)} />
-            <AuditInfoCard icon={<IconArrowUp className="h-4 w-4 text-green-600" />} label="Total Depositos" value={EUR(data.summary.totalDeposits)} sub={`${data.summary.completedTransactions} tx aprovadas`} />
-            <AuditInfoCard icon={<IconArrowDown className="h-4 w-4 text-red-600" />} label="Total Saques" value={EUR(data.summary.totalWithdrawals)} sub={`Reemb: ${EUR(data.summary.refundedAmount)}`} />
+            <AuditInfoCard icon={<IconArrowUp className="h-4 w-4 text-success" />} label="Total Depositos" value={EUR(data.summary.totalDeposits)} sub={`${data.summary.completedTransactions} tx aprovadas`} />
+            <AuditInfoCard icon={<IconArrowDown className="h-4 w-4 text-destructive" />} label="Total Saques" value={EUR(data.summary.totalWithdrawals)} sub={`Reemb: ${EUR(data.summary.refundedAmount)}`} />
           </div>
 
           {/* Platform Profit */}
-          <Card className="border-2 border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20">
+          <Card className="border-2 border-success/30 bg-success/10">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <IconEuro className="h-5 w-5 text-green-700 dark:text-green-400" />
+                  <IconEuro className="h-5 w-5 text-success" />
                   <span className="font-bold">Lucro da Plataforma com este cliente</span>
                 </div>
-                <span className="text-xl font-bold text-green-700 dark:text-green-400">{EUR(data.platformProfit.totalFeesCollected)}</span>
+                <span className="text-xl font-bold text-success">{EUR(data.platformProfit.totalFeesCollected)}</span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                <div className="bg-white dark:bg-slate-800 rounded-lg p-2.5">
+                <div className="bg-white rounded-lg p-2.5">
                   <p className="text-muted-foreground">Taxas Cash-In (deposito)</p>
                   <p className="font-bold text-sm">{EUR(data.summary.depositFees)}</p>
                 </div>
-                <div className="bg-white dark:bg-slate-800 rounded-lg p-2.5">
+                <div className="bg-white rounded-lg p-2.5">
                   <p className="text-muted-foreground">Taxas Cash-Out (saque)</p>
                   <p className="font-bold text-sm">{EUR(data.summary.withdrawalFees)}</p>
                 </div>
-                <div className="bg-white dark:bg-slate-800 rounded-lg p-2.5">
+                <div className="bg-white rounded-lg p-2.5">
                   <p className="text-muted-foreground">Taxas Contrato</p>
                   <p className="font-bold text-sm">{EUR(data.summary.contractFeePlatform)}</p>
                 </div>
-                <div className="bg-white dark:bg-slate-800 rounded-lg p-2.5">
+                <div className="bg-white rounded-lg p-2.5">
                   <p className="text-muted-foreground">Taxas Servico</p>
                   <p className="font-bold text-sm">{EUR(data.summary.servicePaymentFees)}</p>
                 </div>
@@ -412,30 +417,30 @@ function CustomerAuditTab() {
           </Card>
 
           {/* Cross-Check */}
-          <Card className={data.crossCheck.isConsistent ? "border-green-200 dark:border-green-800" : "border-2 border-red-300 dark:border-red-700"}>
+          <Card className={data.crossCheck.isConsistent ? "border-success/30" : "border-2 border-destructive/30"}>
             <CardHeader className="pb-2 px-4 pt-4">
               <CardTitle className="text-sm flex items-center gap-2">
                 <IconShield className="h-4 w-4" />
                 Verificacao de Consistencia (Cruzamento)
                 {data.crossCheck.isConsistent
-                  ? <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-0 text-[10px]"><IconCheck className="h-3 w-3 mr-0.5" />OK</Badge>
-                  : <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-0 text-[10px]"><IconX className="h-3 w-3 mr-0.5" />Divergencia</Badge>
+                  ? <BloomBadge className="bg-success/10 text-success border-0 text-[10px]"><IconCheck className="h-3 w-3 mr-0.5" />OK</BloomBadge>
+                  : <BloomBadge className="bg-destructive/10 text-destructive border-0 text-[10px]"><IconX className="h-3 w-3 mr-0.5" />Divergencia</BloomBadge>
                 }
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
-                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Entradas (depositos aprovados)</span><span className="font-medium text-green-700 dark:text-green-400">+{EUR(data.crossCheck.totalIn)}</span></div>
-                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Gorjetas recebidas</span><span className="font-medium text-green-700 dark:text-green-400">+{EUR(data.crossCheck.tipsReceived)}</span></div>
-                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Saidas (saques aprovados)</span><span className="font-medium text-red-600">-{EUR(data.crossCheck.totalOut)}</span></div>
-                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Gorjetas enviadas</span><span className="font-medium text-red-600">-{EUR(data.crossCheck.tipsSent)}</span></div>
-                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Taxas plataforma (total)</span><span className="font-medium text-red-600">-{EUR(data.crossCheck.totalFees)}</span></div>
-                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Reembolsos</span><span className="font-medium text-red-600">-{EUR(data.crossCheck.totalRefunded)}</span></div>
+                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Entradas (depositos aprovados)</span><span className="font-medium text-success">+{EUR(data.crossCheck.totalIn)}</span></div>
+                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Gorjetas recebidas</span><span className="font-medium text-success">+{EUR(data.crossCheck.tipsReceived)}</span></div>
+                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Saidas (saques aprovados)</span><span className="font-medium text-destructive">-{EUR(data.crossCheck.totalOut)}</span></div>
+                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Gorjetas enviadas</span><span className="font-medium text-destructive">-{EUR(data.crossCheck.tipsSent)}</span></div>
+                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Taxas plataforma (total)</span><span className="font-medium text-destructive">-{EUR(data.crossCheck.totalFees)}</span></div>
+                <div className="flex justify-between py-1 border-b"><span className="text-muted-foreground">Reembolsos</span><span className="font-medium text-destructive">-{EUR(data.crossCheck.totalRefunded)}</span></div>
                 <div className="flex justify-between py-1.5 font-bold text-base"><span>Saldo Esperado</span><span>{EUR(data.crossCheck.expectedBalance)}</span></div>
                 <div className="flex justify-between py-1.5 font-bold text-base"><span>Saldo Real (carteira)</span><span>{EUR(data.crossCheck.actualBalance)}</span></div>
               </div>
               {!data.crossCheck.isConsistent && (
-                <div className="mt-3 bg-red-50 dark:bg-red-900/20 rounded-lg p-3 text-sm text-red-700 dark:text-red-400 font-medium">
+                <div className="mt-3 bg-destructive/10 rounded-lg p-3 text-sm text-destructive font-medium">
                   Diferenca: {EUR(Math.abs(data.crossCheck.difference))} ({data.crossCheck.difference > 0 ? "cliente sacou a mais" : "saldo nao contabilizado"})
                 </div>
               )}
@@ -474,9 +479,9 @@ function CustomerAuditTab() {
                           <tr key={p.id} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5 whitespace-nowrap">{format(new Date(p.createdAt), "dd/MM/yy HH:mm", { locale: pt })}</td>
                             <td className="px-2 py-1.5">{typeLabels[p.type] || p.type}</td>
-                            <td className="px-2 py-1.5"><Badge className={`${auditStatusColors[p.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{p.status}</Badge></td>
+                            <td className="px-2 py-1.5"><BloomBadge className={`${auditStatusColors[p.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{p.status}</BloomBadge></td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(p.amountEurCents)}</td>
-                            <td className="px-2 py-1.5 text-right text-orange-600 dark:text-orange-400 font-medium">{p.platformFee > 0 ? EUR(p.platformFee) : '-'}</td>
+                            <td className="px-2 py-1.5 text-right text-warning font-medium">{p.platformFee > 0 ? EUR(p.platformFee) : '-'}</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(p.amountEurCents - (p.platformFee || 0))}</td>
                             <td className="px-2 py-1.5 truncate max-w-[120px]">{p.description || p.contractTitle || '-'}</td>
                           </tr>
@@ -508,10 +513,10 @@ function CustomerAuditTab() {
                         {data.paymentsGrouped.map((g, i) => (
                           <tr key={i} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5 font-medium">{typeLabels[g.type] || g.type}</td>
-                            <td className="px-2 py-1.5"><Badge className={`${auditStatusColors[g.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{g.status}</Badge></td>
+                            <td className="px-2 py-1.5"><BloomBadge className={`${auditStatusColors[g.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{g.status}</BloomBadge></td>
                             <td className="px-2 py-1.5 text-right">{g.qty}</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(g.totalAmount)}</td>
-                            <td className="px-2 py-1.5 text-right text-orange-600 dark:text-orange-400 font-bold">{g.totalFees > 0 ? EUR(g.totalFees) : '-'}</td>
+                            <td className="px-2 py-1.5 text-right text-warning font-bold">{g.totalFees > 0 ? EUR(g.totalFees) : '-'}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -541,11 +546,11 @@ function CustomerAuditTab() {
                         {data.contracts.map((c) => (
                           <tr key={c.id} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5 font-medium truncate max-w-[120px]">{c.title || c.id.slice(0, 8)}</td>
-                            <td className="px-2 py-1.5"><Badge className={`${auditStatusColors[c.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{c.status}</Badge></td>
+                            <td className="px-2 py-1.5"><BloomBadge className={`${auditStatusColors[c.status] || 'bg-muted'} border-0 text-[9px] px-1.5 py-0`}>{c.status}</BloomBadge></td>
                             <td className="px-2 py-1.5">{c.otherParty.name} <span className="text-muted-foreground">({c.otherParty.role})</span></td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(c.totalValue)}</td>
                             <td className="px-2 py-1.5 text-right">{c.platformFeePct}%</td>
-                            <td className="px-2 py-1.5 text-right font-bold text-green-700 dark:text-green-400">{EUR(c.platformCut)}</td>
+                            <td className="px-2 py-1.5 text-right font-bold text-success">{EUR(c.platformCut)}</td>
                           </tr>
                         ))}
                         {data.contracts.length === 0 && <tr><td colSpan={6} className="px-2 py-6 text-center text-muted-foreground">Nenhum contrato</td></tr>}
@@ -574,9 +579,9 @@ function CustomerAuditTab() {
                         {data.ledgerGrouped.map((l, i) => (
                           <tr key={i} className="hover:bg-muted/30">
                             <td className="px-2 py-1.5">
-                              <Badge className={`${l.type === 'CREDIT' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'} border-0 text-[9px] px-1.5 py-0`}>
+                              <BloomBadge className={`${l.type === 'CREDIT' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'} border-0 text-[9px] px-1.5 py-0`}>
                                 {l.type === 'CREDIT' ? 'ENTRADA' : 'SAIDA'}
-                              </Badge>
+                              </BloomBadge>
                             </td>
                             <td className="px-2 py-1.5">{reasonLabels[l.reason] || l.reason}</td>
                             <td className="px-2 py-1.5 text-right">{l.qty}</td>
@@ -614,7 +619,7 @@ function CustomerAuditTab() {
                             <td className="px-2 py-1.5">{format(new Date(r.periodStart), "dd/MM/yy", { locale: pt })} - {format(new Date(r.periodEnd), "dd/MM/yy", { locale: pt })}</td>
                             <td className="px-2 py-1.5 text-right">{r.hoursWorked}h</td>
                             <td className="px-2 py-1.5 text-right font-medium">{EUR(r.totalAmountCents)}</td>
-                            <td className="px-2 py-1.5 text-right text-orange-600 dark:text-orange-400 font-medium">{EUR(r.platformFeeCents)}</td>
+                            <td className="px-2 py-1.5 text-right text-warning font-medium">{EUR(r.platformFeeCents)}</td>
                             <td className="px-2 py-1.5 text-right">{EUR(r.caregiverAmountCents)}</td>
                           </tr>
                         ))}

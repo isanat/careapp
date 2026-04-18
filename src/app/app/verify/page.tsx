@@ -4,9 +4,9 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api-client";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { BloomCard } from "@/components/bloom-custom/BloomCard";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { BloomBadge } from "@/components/bloom-custom/BloomBadge";
 import { AppShell } from "@/components/layout/app-shell";
 import {
   IconShield,
@@ -117,9 +117,16 @@ export default function VerifyPage() {
 
   // Familiares veem página de confiança em vez de KYC
   if (isFamily) {
+
+
     return (
       <AppShell>
-        <div className="space-y-8 max-w-2xl">
+        <div
+          className="space-y-6 max-w-2xl"
+         
+         
+         
+        >
           {/* Header */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">Score de Confiança</h1>
@@ -127,20 +134,22 @@ export default function VerifyPage() {
           </div>
 
           {/* Trust Score Card */}
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
-            <div className="flex flex-col items-center text-center">
-              <div className="text-5xl font-display font-black text-primary mb-2">0</div>
-              <p className="text-sm text-muted-foreground font-medium">Contratos completados</p>
-              <span className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary mt-4 mb-4">Novo Membro</span>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                Complete contratos com cuidadores para construir seu score de confiança
-              </p>
-            </div>
+          <div>
+            <BloomCard className="p-5 sm:p-6 md:p-7">
+              <div className="flex flex-col items-center text-center space-y-6">
+                <div className="text-5xl font-display font-black text-primary mb-2">0</div>
+                <p className="text-sm text-muted-foreground font-medium">Contratos completados</p>
+                <span className="px-3 py-1 text-[10px] font-display font-bold rounded-lg uppercase tracking-widest bg-primary/10 text-primary">Novo Membro</span>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                  Complete contratos com cuidadores para construir seu score de confiança
+                </p>
+              </div>
+            </BloomCard>
           </div>
 
           {/* Payment Badge */}
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
-            <div className="space-y-4">
+          <div>
+            <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
               <h3 className="text-lg sm:text-xl font-display font-bold uppercase flex items-center gap-3">
                 <div className="w-9 h-9 rounded-2xl bg-success/10 flex items-center justify-center">
                   <IconCreditCard className="h-5 w-5 text-success" />
@@ -154,46 +163,50 @@ export default function VerifyPage() {
                 </div>
                 <IconCheck className="h-6 w-6 text-success shrink-0" />
               </div>
-            </div>
+            </BloomCard>
           </div>
 
           {/* Trust Building Tips */}
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
-            <h3 className="text-lg sm:text-xl font-display font-bold uppercase mb-5">Como aumentar sua confiabilidade</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <IconCheck className="h-5 w-5 text-success" />
-                </div>
-                <div>
-                  <p className="text-sm font-display font-bold text-foreground">Complete contratos com sucesso</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Cada contato completado aumenta seu score</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-warning/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <IconStar className="h-5 w-5 text-warning" />
-                </div>
-                <div>
-                  <p className="text-sm font-display font-bold text-foreground">Receba avaliações positivas</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Cuidadores avaliam sua comunicação e profissionalismo</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-info/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <IconTrendingUp className="h-5 w-5 text-info" />
-                </div>
-                <div>
-                  <p className="text-sm font-display font-bold text-foreground">Mantenha um histórico limpo</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Sem atrasos em pagamentos ou cancelamentos</p>
-                </div>
-              </li>
-            </ul>
+          <div>
+            <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
+              <h3 className="text-lg sm:text-xl font-display font-bold uppercase">Como aumentar sua confiabilidade</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <IconCheck className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-display font-bold text-foreground">Complete contratos com sucesso</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Cada contato completado aumenta seu score</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-warning/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <IconStar className="h-5 w-5 text-warning" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-display font-bold text-foreground">Receba avaliações positivas</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Cuidadores avaliam sua comunicação e profissionalismo</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-info/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <IconTrendingUp className="h-5 w-5 text-info" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-display font-bold text-foreground">Mantenha um histórico limpo</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Sem atrasos em pagamentos ou cancelamentos</p>
+                  </div>
+                </li>
+              </ul>
+            </BloomCard>
           </div>
 
-          <Button onClick={() => router.push("/app/panel")} className="w-full">
-            Ir para Dashboard
-          </Button>
+          <div>
+            <Button onClick={() => router.push("/app/panel")} className="w-full rounded-2xl">
+              Ir para Dashboard
+            </Button>
+          </div>
         </div>
       </AppShell>
     );
@@ -203,22 +216,22 @@ export default function VerifyPage() {
   const getStatusBadge = () => {
     switch (kycStatus?.verification_status) {
       case "VERIFIED":
-        return <Badge className="bg-green-500">{t.kyc.status.verified}</Badge>;
+        return <BloomBadge className="bg-success">{t.kyc.status.verified}</BloomBadge>;
       case "PENDING":
-        return <Badge variant="secondary">{t.kyc.status.pending}</Badge>;
+        return <BloomBadge variant="secondary">{t.kyc.status.pending}</BloomBadge>;
       case "REJECTED":
-        return <Badge variant="destructive">{t.kyc.status.rejected}</Badge>;
+        return <BloomBadge variant="destructive">{t.kyc.status.rejected}</BloomBadge>;
       default:
-        return <Badge variant="outline">{t.kyc.status.unverified}</Badge>;
+        return <BloomBadge variant="outline">{t.kyc.status.unverified}</BloomBadge>;
     }
   };
 
   const getStatusIcon = () => {
     switch (kycStatus?.verification_status) {
       case "VERIFIED":
-        return <IconCheck className="h-16 w-16 text-green-500" />;
+        return <IconCheck className="h-16 w-16 text-success" />;
       case "PENDING":
-        return <IconClock className="h-16 w-16 text-yellow-500" />;
+        return <IconClock className="h-16 w-16 text-warning" />;
       case "REJECTED":
         return <IconX className="h-16 w-16 text-destructive" />;
       default:
@@ -226,9 +239,16 @@ export default function VerifyPage() {
     }
   };
 
+
+
   return (
     <AppShell>
-      <div className="space-y-8 max-w-2xl">
+      <div
+        className="space-y-6 max-w-2xl"
+       
+       
+       
+      >
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">{t.kyc.title}</h1>
@@ -236,8 +256,9 @@ export default function VerifyPage() {
         </div>
 
         {/* Status Card */}
-        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
-          <div className="flex flex-col items-center text-center space-y-4">
+        <div>
+          <BloomCard className="p-5 sm:p-6 md:p-7">
+            <div className="flex flex-col items-center text-center space-y-4">
             {getStatusIcon()}
             <div>{getStatusBadge()}</div>
 
@@ -304,53 +325,60 @@ export default function VerifyPage() {
                 )}
               </Button>
             )}
-          </div>
+            </div>
+          </BloomCard>
         </div>
 
         {error && (
-          <div className="bg-destructive/5 border border-destructive/20 rounded-3xl p-5 sm:p-7">
-            <p className="text-destructive text-sm">{error}</p>
+          <div>
+            <div className="bg-destructive/5 border border-destructive/20 rounded-3xl p-5 sm:p-6 md:p-7">
+              <p className="text-destructive text-sm">{error}</p>
+            </div>
           </div>
         )}
 
         {/* Benefits */}
-        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
-          <h3 className="text-lg sm:text-xl font-display font-bold uppercase mb-5">{t.kyc.benefits.title}</h3>
-          <ul className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <li key={i} className="flex items-start gap-4">
-                <div className="w-9 h-9 rounded-2xl bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
-                  <IconCheck className="h-4 w-4 text-success" />
-                </div>
-                <span className="text-sm text-foreground">{t.kyc.benefits[`item${i}` as keyof typeof t.kyc.benefits]}</span>
-              </li>
-            ))}
-          </ul>
+        <div>
+          <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
+            <h3 className="text-lg sm:text-xl font-display font-bold uppercase">{t.kyc.benefits.title}</h3>
+            <ul className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <li key={i} className="flex items-start gap-4">
+                  <div className="w-9 h-9 rounded-2xl bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <IconCheck className="h-4 w-4 text-success" />
+                  </div>
+                  <span className="text-sm text-foreground">{t.kyc.benefits[`item${i}` as keyof typeof t.kyc.benefits]}</span>
+                </li>
+              ))}
+            </ul>
+          </BloomCard>
         </div>
 
         {/* Requirements */}
-        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
-          <h3 className="text-lg sm:text-xl font-display font-bold uppercase mb-5">{t.kyc.requirements.title}</h3>
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                <IconId className="h-5 w-5 text-primary" />
+        <div>
+          <BloomCard className="p-5 sm:p-6 md:p-7 space-y-6">
+            <h3 className="text-lg sm:text-xl font-display font-bold uppercase">{t.kyc.requirements.title}</h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <IconId className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item1}</span>
               </div>
-              <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item1}</span>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                <IconCamera className="h-5 w-5 text-primary" />
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <IconCamera className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item2}</span>
               </div>
-              <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item2}</span>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-                <IconSun className="h-5 w-5 text-primary" />
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <IconSun className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item3}</span>
               </div>
-              <span className="text-sm text-foreground pt-0.5">{t.kyc.requirements.item3}</span>
             </div>
-          </div>
+          </BloomCard>
         </div>
       </div>
     </AppShell>

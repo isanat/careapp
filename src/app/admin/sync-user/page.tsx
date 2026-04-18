@@ -61,17 +61,17 @@ export default function SyncDiditUserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-muted py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Sincronizar Usuário Didit</h1>
-          <p className="text-gray-600 mb-6">
+        <div className="bg-background rounded-lg shadow-md p-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Sincronizar Usuário Didit</h1>
+          <p className="text-muted-foreground mb-6">
             Use este formulário para criar ou atualizar um usuário com dados já aprovados no Didit
           </p>
 
           {/* Admin Key Warning */}
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <p className="text-blue-900 text-sm">
+          <div className="mb-8 p-4 bg-primary/10 border border-primary/30 rounded-md">
+            <p className="text-primary text-sm">
               <strong>⚠️ Chave de Admin Necessária:</strong> Você precisa da chave de admin para sincronizar usuários.
               <br />
               A chave está configurada em Vercel → Environment Variables → ADMIN_API_KEY
@@ -87,74 +87,74 @@ export default function SyncDiditUserPage() {
               type="password"
               value={adminKey}
               onChange={(e) => setAdminKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="dev-admin-key"
             />
-            <p className="text-xs text-gray-500 mt-1">Em desenvolvimento, use "dev-admin-key"</p>
+            <p className="text-xs text-muted-foreground mt-1">Em desenvolvimento, use "dev-admin-key"</p>
           </div>
 
           {/* Dados Pessoais */}
           <div className="border-t pt-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados Pessoais</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Dados Pessoais</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Primeiro Nome</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Primeiro Nome</label>
                 <input
                   type="text"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sobrenome</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Sobrenome</label>
                 <input
                   type="text"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Data de Nascimento</label>
                 <input
                   type="date"
                   name="birthDate"
                   value={formData.birthDate}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nacionalidade</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Nacionalidade</label>
                 <input
                   type="text"
                   name="nationality"
                   value={formData.nationality}
                   onChange={handleInputChange}
                   placeholder="BRA, PT, etc"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Role</label>
                 <select
                   name="role"
                   value={formData.role}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="FAMILY">Family</option>
                   <option value="CAREGIVER">Caregiver</option>
@@ -165,58 +165,58 @@ export default function SyncDiditUserPage() {
 
           {/* Dados do Documento */}
           <div className="border-t pt-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados do Documento</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Dados do Documento</h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Tipo</label>
                 <input
                   type="text"
                   name="documentType"
                   value={formData.documentType}
                   onChange={handleInputChange}
                   placeholder="driver_license"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Número</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Número</label>
                 <input
                   type="text"
                   name="documentNumber"
                   value={formData.documentNumber}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Emissor</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Emissor</label>
                 <input
                   type="text"
                   name="documentIssuer"
                   value={formData.documentIssuer}
                   onChange={handleInputChange}
                   placeholder="Detran-SP"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data de Emissão</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Data de Emissão</label>
                 <input
                   type="date"
                   name="documentIssueDate"
                   value={formData.documentIssueDate}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Data de Expiração</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Data de Expiração</label>
                 <input
                   type="date"
                   name="documentExpiryDate"
                   value={formData.documentExpiryDate}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
@@ -224,17 +224,17 @@ export default function SyncDiditUserPage() {
 
           {/* KYC Session */}
           <div className="border-t pt-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Dados KYC</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Dados KYC</h2>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">KYC Session ID</label>
+              <label className="block text-sm font-medium text-foreground mb-1">KYC Session ID</label>
               <input
                 type="text"
                 name="kycSessionId"
                 value={formData.kycSessionId}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <p className="text-xs text-gray-500 mt-1">ID da sessão do Didit</p>
+              <p className="text-xs text-muted-foreground mt-1">ID da sessão do Didit</p>
             </div>
           </div>
 
@@ -243,7 +243,7 @@ export default function SyncDiditUserPage() {
             <button
               onClick={handleSync}
               disabled={loading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-md transition"
+              className="flex-1 bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground font-medium py-2 px-4 rounded-md transition"
             >
               {loading ? 'Sincronizando...' : 'Sincronizar Usuário'}
             </button>
@@ -251,19 +251,19 @@ export default function SyncDiditUserPage() {
 
           {/* Result Messages */}
           {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-800">
+            <div className="mt-6 p-4 bg-destructive/10 border border-destructive/30 rounded-md">
+              <p className="text-destructive">
                 <strong>❌ Erro:</strong> {error}
               </p>
             </div>
           )}
 
           {result && (
-            <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-green-800 mb-3">
+            <div className="mt-6 p-4 bg-success/10 border border-success/30 rounded-md">
+              <p className="text-success mb-3">
                 <strong>✅ Sucesso!</strong> Usuário sincronizado
               </p>
-              <div className="text-sm text-green-700 space-y-1">
+              <div className="text-sm text-success/90 space-y-1">
                 <p><strong>User ID:</strong> {result.userId}</p>
                 <p><strong>Email:</strong> {result.email}</p>
                 <p><strong>Ação:</strong> {result.action}</p>
