@@ -126,7 +126,7 @@ export default function DashboardPage() {
         <div className="space-y-6 sm:space-y-8 p-6 md:p-8 animate-pulse">
           <Skeleton className="h-12 w-48" />
           <Skeleton className="h-28 w-full rounded-3xl" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 mt-5">
             <Skeleton className="h-40 rounded-3xl" />
             <Skeleton className="h-40 rounded-3xl" />
             <Skeleton className="h-40 rounded-3xl" />
@@ -179,7 +179,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats - 4 columns */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 mt-5">
           <BloomStatBlock
             label={t.nav.contracts}
             value={stats?.activeContracts || 0}
@@ -211,61 +211,49 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
           {isFamily && (
-            <Link href="/app/search" className="w-full">
-              <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+            <Link href="/app/search">
+              <div className="p-5 sm:p-7 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                     <IconSearch className="h-5 w-5" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                      {t.nav.searchCaregivers}
-                    </p>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
-                      Encontrar profissional ideal
-                    </p>
+                  <div>
+                    <p className="font-display font-black text-foreground text-sm uppercase">{t.nav.searchCaregivers}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium">Encontrar profissional ideal</p>
                   </div>
                 </div>
-              </BloomCard>
+              </div>
             </Link>
           )}
           {isCaregiver && (
-            <Link href="/app/proposals" className="w-full">
-              <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+            <Link href="/app/proposals">
+              <div className="p-5 sm:p-7 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                     <IconInbox className="h-5 w-5" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                      Propostas
-                    </p>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
-                      Solicitações recebidas
-                    </p>
+                  <div>
+                    <p className="font-display font-black text-foreground text-sm uppercase">Propostas</p>
+                    <p className="text-[10px] text-muted-foreground font-medium">Solicitações recebidas</p>
                   </div>
                 </div>
-              </BloomCard>
+              </div>
             </Link>
           )}
-          <Link href="/app/contracts" className="w-full">
-            <BloomCard variant="interactive" className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center text-primary group-hover:scale-110 transition-transform flex-shrink-0">
+          <Link href="/app/contracts">
+            <div className="p-5 sm:p-7 rounded-3xl border border-border shadow-card hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                   <IconContract className="h-5 w-5" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                    {t.contracts.title}
-                  </p>
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
-                    {t.dashboard.viewAll}
-                  </p>
+                <div>
+                  <p className="font-display font-black text-foreground text-sm uppercase">{t.contracts.title}</p>
+                  <p className="text-[10px] text-muted-foreground font-medium">{t.dashboard.viewAll}</p>
                 </div>
               </div>
-            </BloomCard>
+            </div>
           </Link>
         </div>
 

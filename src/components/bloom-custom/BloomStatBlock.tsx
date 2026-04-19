@@ -18,10 +18,10 @@ export function BloomStatBlock({
   className = '',
 }: BloomStatBlockProps) {
   return (
-    <div className={`bg-card p-5 sm:p-7 rounded-3xl border border-border shadow-card min-h-[160px] hover:shadow-elevated transition-all group flex flex-col justify-between ${className}`}>
-      <div className="space-y-3 sm:space-y-4">
+    <div className={`bg-card p-5 sm:p-7 rounded-3xl border border-border shadow-card space-y-3 sm:space-y-4 hover:shadow-elevated transition-all group ${className}`}>
+      <div>
         {icon && (
-          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${iconBg} ${colorClass} group-hover:scale-105 transition-transform`}>
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center ${iconBg} ${colorClass} group-hover:scale-110 transition-transform`}>
             {icon}
           </div>
         )}
