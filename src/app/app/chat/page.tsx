@@ -190,6 +190,19 @@ export default function ChatPage() {
               </span>
             </div>
 
+            {/* Search Bar */}
+            <div className="p-3 sm:p-4 border-b border-border">
+              <div className="relative">
+                <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t.search.placeholder}
+                  className="pl-10 bg-secondary border border-border rounded-2xl h-10 text-sm placeholder:text-muted-foreground/70"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="flex-1 overflow-y-auto">
               {isLoadingConversations ? (
                 <div className="space-y-0">
@@ -217,9 +230,13 @@ export default function ChatPage() {
                           setSelectedConversation(conv);
                           setMobileShowChat(true);
                         }}
-                        className="w-full p-3 sm:p-4 flex gap-3 border-b border-border/30 cursor-pointer transition-all text-left hover:bg-secondary/20"
+                        className={`w-full p-3 sm:p-4 flex gap-3 border-b border-border/30 cursor-pointer transition-all text-left ${
+                          selectedConversation?.id === conv.id
+                            ? "bg-secondary/30"
+                            : "hover:bg-secondary/20"
+                        }`}
                       >
-                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-secondary overflow-hidden shrink-0 shadow-sm border-2 border-card flex items-center justify-center">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary overflow-hidden shrink-0 shadow-sm border-2 border-border flex items-center justify-center">
                           <span className="text-xs sm:text-sm font-display font-black text-foreground">
                             {conv.participant?.name
                               ?.split(" ")
@@ -228,12 +245,12 @@ export default function ChatPage() {
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2 mb-1">
+                          <div className="flex items-center justify-between gap-2 mb-0.5">
                             <span className="font-display font-bold text-sm text-foreground truncate">
                               {conv.participant?.name || "Usuario"}
                             </span>
                             {conv.lastMessage && (
-                              <span className="text-[10px] font-medium text-muted-foreground/50 shrink-0 ml-2">
+                              <span className="text-[10px] font-medium text-muted-foreground/60 whitespace-nowrap shrink-0">
                                 {new Date(
                                   conv.lastMessage.createdAt,
                                 ).toLocaleTimeString("pt-PT", {
@@ -244,14 +261,14 @@ export default function ChatPage() {
                             )}
                           </div>
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1 leading-relaxed">
+                            <p className="text-xs text-muted-foreground line-clamp-1 leading-relaxed">
                               {conv.lastMessage?.content ||
                                 t.chat.noMessages}
                             </p>
                             {conv.unreadCount > 0 && (
-                              <div className="ml-2 w-5 h-5 bg-primary text-primary-foreground rounded-full text-[10px] font-bold flex items-center justify-center shrink-0">
-                                {conv.unreadCount}
-                              </div>
+                              <span className="ml-2 px-1.5 h-5 bg-primary text-primary-foreground rounded-full text-[10px] font-bold flex items-center justify-center shrink-0">
+                                {conv.unreadCount > 9 ? "9+" : conv.unreadCount}
+                              </span>
                             )}
                           </div>
                         </div>
