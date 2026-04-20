@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Suspense } from "react";
 import { apiFetch } from "@/lib/api-client";
-import { WalletView } from "@/components/bloom-views/AppViews";
+import { WalletView } from "@isanat/bloom-elements";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
 
