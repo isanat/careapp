@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
-import { RegisterView } from "@isanat/bloom-elements";
+import { RegisterView } from "../../../bloom-elements/src/components/evyra/views/AuthViews";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
 
