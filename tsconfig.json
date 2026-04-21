@@ -26,9 +26,6 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@isanat/bloom-elements/*": [
-        "../bloom-elements/src/*"
       ]
     }
   },
