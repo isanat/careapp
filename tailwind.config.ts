@@ -153,15 +153,15 @@ const config: Config = {
           "100%": { opacity: "1" },
         },
         slideUp: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         slideRight: {
-          "0%": { opacity: "0", transform: "translateX(-10px)" },
+          "0%": { opacity: "0", transform: "translateX(-16px)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
         slideDown: {
-          "0%": { opacity: "0", transform: "translateY(-10px)" },
+          "0%": { opacity: "0", transform: "translateY(-16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         scaleIn: {
@@ -170,18 +170,18 @@ const config: Config = {
         },
         "pulse-soft": {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
+          "50%": { opacity: "0.7" },
         },
         shimmer: {
-          "0%": { backgroundPosition: "-1000px 0" },
-          "100%": { backgroundPosition: "1000px 0" },
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
         fadeOut: {
           "0%": { opacity: "1" },
           "100%": { opacity: "0" },
         },
         slideLeft: {
-          "0%": { opacity: "0", transform: "translateX(10px)" },
+          "0%": { opacity: "0", transform: "translateX(16px)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
         scaleOut: {
