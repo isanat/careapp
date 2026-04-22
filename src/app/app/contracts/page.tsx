@@ -6,7 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
 
 function ContratosPageContent() {
-  return <ContratosView />;
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-primary/5 to-background px-4 sm:px-6 md:px-8 py-6 md:py-8">
+      <ContratosView />
+    </main>
+  );
 }
 
 export default function ContratosPage() {
