@@ -6,11 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
 
 function EntrevistasPageContent() {
-  return (
-    <main className="min-h-screen bg-gradient-to-b from-primary/5 to-background px-4 sm:px-6 md:px-8 py-6 md:py-8">
-      <EntrevistasView />
-    </main>
-  );
+  return <EntrevistasView />;
 }
 
 export default function EntrevistasPage() {
@@ -19,13 +15,13 @@ export default function EntrevistasPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
+        <div className="flex items-center justify-center p-4">
           <Card className="w-full max-w-lg">
             <CardContent className="py-12 text-center">
               <p>{t.loading}</p>
             </CardContent>
           </Card>
-        </main>
+        </div>
       }
     >
       <EntrevistasPageContent />
