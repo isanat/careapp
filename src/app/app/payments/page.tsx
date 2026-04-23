@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomSectionHeader,
   BloomStatBlock,
@@ -117,7 +116,7 @@ export default function PaymentsPage() {
 
   if (isLoading) {
     return (
-      <AppShell>
+      <>
         <div className="space-y-4">
           <Skeleton className="h-10 w-48" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
@@ -127,36 +126,36 @@ export default function PaymentsPage() {
           </div>
           <Skeleton className="h-64 rounded-3xl mt-6" />
         </div>
-      </AppShell>
+      </>
     );
   }
 
   return (
-    <AppShell>
+    <>
       <div className="space-y-10 max-w-6xl">
         {/* Header */}
         <BloomSectionHeader
-          title="Finanças & Pagamentos"
-          desc="Controlo de fundos seguros e histórico de pagamentos libertados."
+          title="FinanÃ§as & Pagamentos"
+          desc="Controlo de fundos seguros e histÃ³rico de pagamentos libertados."
         />
 
         {/* Stats - 3 StatBlocks like PaymentsView */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <BloomStatBlock
             label="Total de Ganhos"
-            value={`€${((walletData?.totalEarnings || 0) / 100).toFixed(2)}`}
+            value={`â¬${((walletData?.totalEarnings || 0) / 100).toFixed(2)}`}
             icon={<IconEuro className="h-6 w-6" />}
             colorClass="text-primary"
           />
           <BloomStatBlock
             label="Pagamentos Libertados"
-            value={`€${((walletData?.availableBalance || 0) / 100).toFixed(2)}`}
+            value={`â¬${((walletData?.availableBalance || 0) / 100).toFixed(2)}`}
             icon={<IconCheck className="h-6 w-6" />}
             colorClass="text-success"
           />
           <BloomStatBlock
             label="Pendente (Escrow)"
-            value={`€${((walletData?.pendingAmount || 0) / 100).toFixed(2)}`}
+            value={`â¬${((walletData?.pendingAmount || 0) / 100).toFixed(2)}`}
             icon={<IconClock className="h-6 w-6" />}
             colorClass="text-foreground"
           />
@@ -166,7 +165,7 @@ export default function PaymentsPage() {
         {walletData && walletData.recentPayments.length > 0 && (
           <section className="space-y-4">
             <BloomSectionDivider
-              title="Histórico de Ganhos"
+              title="HistÃ³rico de Ganhos"
               borderColor="primary"
             />
             <BloomCard className="p-5 sm:p-7">
@@ -182,7 +181,7 @@ export default function PaymentsPage() {
                       </div>
                       <div>
                         <p className="font-display font-black text-foreground text-base uppercase tracking-tight">
-                          {payment.description || "Pagamento de Serviço"}
+                          {payment.description || "Pagamento de ServiÃ§o"}
                         </p>
                         <p className="text-xs font-display font-black text-muted-foreground mt-1">
                           {new Date(payment.createdAt).toLocaleDateString(
@@ -199,7 +198,7 @@ export default function PaymentsPage() {
                     <div className="flex items-center gap-6">
                       <div className="text-right min-w-[120px]">
                         <p className="text-2xl font-display font-black text-foreground leading-none">
-                          {(payment.amount / 100).toFixed(2)}€
+                          {(payment.amount / 100).toFixed(2)}â¬
                         </p>
                         <BloomBadge
                           variant={
@@ -230,7 +229,7 @@ export default function PaymentsPage() {
           <BloomEmpty
             icon={<IconTrendingUp className="h-8 w-8" />}
             title="Sem ganhos ainda"
-            description="Seus ganhos aparecerão aqui quando completar contratos"
+            description="Seus ganhos aparecerÃ£o aqui quando completar contratos"
           />
         )}
 
@@ -244,6 +243,6 @@ export default function PaymentsPage() {
           </div>
         )}
       </div>
-    </AppShell>
+    </>
   );
 }
