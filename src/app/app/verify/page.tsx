@@ -54,7 +54,7 @@ export default function VerifyPage() {
   useEffect(() => {
     if (status === "authenticated") {
       if (isFamily) {
-        // Familiares nÃ£o precisam de verificaÃ§Ã£o KYC, redirect para dashboard
+        // Familiares não precisam de verificação KYC, redirect para dashboard
         setTimeout(() => {
           router.push("/app/panel");
         }, 1000);
@@ -120,7 +120,7 @@ export default function VerifyPage() {
     );
   }
 
-  // Familiares veem pÃ¡gina de confianÃ§a em vez de KYC
+  // Familiares veem página de confiança em vez de KYC
   if (isFamily) {
     return (
       <>
@@ -128,7 +128,7 @@ export default function VerifyPage() {
           {/* Header */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
-              Score de ConfianÃ§a
+              Score de Confiança
             </h1>
             <p className="text-base text-muted-foreground font-medium">
               Aumente sua confiabilidade entre cuidadores
@@ -149,7 +149,7 @@ export default function VerifyPage() {
               </span>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
                 Complete contratos com cuidadores para construir seu score de
-                confianÃ§a
+                confiança
               </p>
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function VerifyPage() {
                     Status: <span className="text-success">Verificado</span>
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Seu mÃ©todo de pagamento foi verificado com sucesso
+                    Seu método de pagamento foi verificado com sucesso
                   </p>
                 </div>
                 <IconCheck className="h-6 w-6 text-success shrink-0" />
@@ -202,10 +202,10 @@ export default function VerifyPage() {
                 </div>
                 <div>
                   <p className="text-sm font-display font-bold text-foreground">
-                    Receba avaliaÃ§Ãµes positivas
+                    Receba avaliações positivas
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Cuidadores avaliam sua comunicaÃ§Ã£o e profissionalismo
+                    Cuidadores avaliam sua comunicação e profissionalismo
                   </p>
                 </div>
               </li>
@@ -215,7 +215,7 @@ export default function VerifyPage() {
                 </div>
                 <div>
                   <p className="text-sm font-display font-bold text-foreground">
-                    Mantenha um histÃ³rico limpo
+                    Mantenha um histórico limpo
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Sem atrasos em pagamentos ou cancelamentos
@@ -233,7 +233,7 @@ export default function VerifyPage() {
     );
   }
 
-  // Cuidadores veem verificaÃ§Ã£o KYC
+  // Cuidadores veem verificação KYC
   const getStatusBadge = () => {
     switch (kycStatus?.verification_status) {
       case "VERIFIED":
