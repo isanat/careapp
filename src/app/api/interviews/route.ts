@@ -94,8 +94,8 @@ export async function POST(request: NextRequest) {
         crypto.randomUUID(),
         caregiverUserId,
         "interview",
-        "New Interview Scheduled",
-        `A family has scheduled an interview with you for ${new Date(scheduledAt).toLocaleString()}`,
+        "Nova Entrevista Agendada",
+        `Uma família agendou uma entrevista consigo para ${new Date(scheduledAt).toLocaleString("pt-PT")}`,
         new Date().toISOString(),
       ],
     });
