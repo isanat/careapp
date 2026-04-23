@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Suspense } from "react";
 import { apiFetch } from "@/lib/api-client";
 import { NotificacoesView } from "@isanat/bloom-elements";
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,29 +79,15 @@ function NotificationsPageContent() {
   }
 
   return (
-    <NotificacoesView
-      notifications={notifications.length > 0 ? notifications : undefined}
-      onMarkAsRead={handleMarkAsRead}
-    />
+    <div suppressHydrationWarning>
+      <NotificacoesView
+        notifications={notifications.length > 0 ? notifications : undefined}
+        onMarkAsRead={handleMarkAsRead}
+      />
+    </div>
   );
 }
 
 export default function NotificationsPage() {
-  const { t } = useI18n();
-
-  return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-          <Card className="w-full max-w-lg">
-            <CardContent className="py-12 text-center">
-              <p>{t.loading}</p>
-            </CardContent>
-          </Card>
-        </main>
-      }
-    >
-      <NotificationsPageContent />
-    </Suspense>
-  );
+  return <NotificationsPageContent />;
 }
