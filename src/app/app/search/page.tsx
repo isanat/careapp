@@ -188,12 +188,12 @@ export default function SearchPage() {
         {/* Page Header */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
-            {isCaregiver ? "FamÃ­lias em Busca" : "Explorar Cuidadores"}
+            {isCaregiver ? "Famílias em Busca" : "Explorar Cuidadores"}
           </h1>
           <p className="text-base text-muted-foreground font-medium">
             {isCaregiver
-              ? "Encontre famÃ­lias que precisam de seus serviÃ§os"
-              : "Descubra os melhores cuidadores disponÃ­veis"}
+              ? "Encontre famílias que precisam de seus serviços"
+              : "Descubra os melhores cuidadores disponíveis"}
           </p>
         </div>
 
@@ -275,7 +275,7 @@ export default function SearchPage() {
               {!isCaregiver && (
                 <div>
                   <label className="text-xs font-display font-bold text-foreground uppercase tracking-widest block mb-3">
-                    PreÃ§o mÃ¡ximo: {"\u20AC"}
+                    Preço máximo: {"\u20AC"}
                     {maxPrice}
                     {t.search.perHour}
                   </label>
@@ -296,7 +296,7 @@ export default function SearchPage() {
         {!isLoading && (
           <p className="text-xs text-muted-foreground font-medium">
             {isCaregiver
-              ? `${filteredFamilies.length} ${filteredFamilies.length === 1 ? "famÃ­lia encontrada" : "famÃ­lias encontradas"}`
+              ? `${filteredFamilies.length} ${filteredFamilies.length === 1 ? "família encontrada" : "famílias encontradas"}`
               : `${filteredCaregivers.length} ${filteredCaregivers.length === 1 ? "cuidador encontrado" : t.search.resultsFound || "cuidadores encontrados"}`}
           </p>
         )}
@@ -354,8 +354,8 @@ export default function SearchPage() {
                     <span className="text-xs text-muted-foreground">
                       ({caregiver.totalReviews || 0}{" "}
                       {caregiver.totalReviews === 1
-                        ? "avaliaÃ§Ã£o"
-                        : "avaliaÃ§Ãµes"}
+                        ? "avaliação"
+                        : "avaliações"}
                       )
                     </span>
                   </div>
@@ -369,7 +369,7 @@ export default function SearchPage() {
                           <IconMapPin className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <span className="text-xs text-muted-foreground font-medium">
-                          LocalizaÃ§Ã£o
+                          Localização
                         </span>
                       </div>
                       <span className="text-xs font-display font-bold text-foreground">
@@ -384,7 +384,7 @@ export default function SearchPage() {
                           <IconClock className="h-4 w-4 text-primary" />
                         </div>
                         <span className="text-xs text-muted-foreground font-medium">
-                          ExperiÃªncia
+                          Experiência
                         </span>
                       </div>
                       <span className="text-xs font-display font-bold text-foreground">
@@ -406,7 +406,7 @@ export default function SearchPage() {
                   {/* Price */}
                   <div className="flex items-baseline justify-between">
                     <span className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest">
-                      Tarifa HorÃ¡ria
+                      Tarifa Horária
                     </span>
                     <span className="text-2xl font-display font-black text-primary tracking-tighter">
                       {"\u20AC"}
@@ -461,7 +461,7 @@ export default function SearchPage() {
                         </h3>
                         <span className="px-2.5 py-1 text-[9px] font-display font-bold rounded-lg uppercase tracking-widest bg-secondary/10 text-secondary border border-secondary/30 shrink-0">
                           <IconFamily className="h-3 w-3 inline mr-1" />
-                          FamÃ­lia
+                          Família
                         </span>
                       </div>
                       {family.city && (
@@ -508,7 +508,7 @@ export default function SearchPage() {
                     family.preferredServices.length > 0 && (
                       <div>
                         <p className="text-[9px] font-display font-bold text-muted-foreground uppercase tracking-widest mb-2">
-                          ServiÃ§os Procurados
+                          Serviços Procurados
                         </p>
                         <div className="flex flex-wrap gap-1.5">
                           {family.preferredServices
@@ -563,7 +563,7 @@ export default function SearchPage() {
                   <IconSearch className="h-8 w-8 text-muted-foreground" />
                 </div>
                 <h4 className="font-display font-bold text-foreground text-lg mb-2">
-                  Nenhuma famÃ­lia encontrada
+                  Nenhuma família encontrada
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   Tente ajustar os filtros
