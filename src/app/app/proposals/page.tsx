@@ -19,7 +19,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomSectionHeader,
   BloomCard,
@@ -272,7 +271,7 @@ export default function ProposalsPage() {
   );
 
   return (
-    <AppShell>
+    <>
       <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {/* Page Heading */}
         <div className="flex items-center gap-3 justify-between">
@@ -281,7 +280,7 @@ export default function ProposalsPage() {
               Propostas
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-              Gerencie propostas recebidas e negociações com famílias.
+              Gerencie propostas recebidas e negociaÃ§Ãµes com famÃ­lias.
             </p>
           </div>
           <Button
@@ -370,7 +369,7 @@ export default function ProposalsPage() {
                 <BloomEmpty
                   icon={<IconCheck className="h-8 w-8" />}
                   title="Nenhuma nova proposta"
-                  description="Aguarde novas propostas de famílias interessadas"
+                  description="Aguarde novas propostas de famÃ­lias interessadas"
                 />
               ) : (
                 pendingProposals.map((p) => (
@@ -399,7 +398,7 @@ export default function ProposalsPage() {
                 <BloomEmpty
                   icon={<IconEdit className="h-8 w-8" />}
                   title="Nenhuma contraproposta"
-                  description="Aguarde respostas às contrapropostas enviadas"
+                  description="Aguarde respostas Ã s contrapropostas enviadas"
                 />
               ) : (
                 counterProposals.map((p) => (
@@ -418,7 +417,7 @@ export default function ProposalsPage() {
                 <BloomEmpty
                   icon={<IconClock className="h-8 w-8" />}
                   title="Nenhuma proposta aceita"
-                  description="Propostas aceitas e ativas aparecerão aqui"
+                  description="Propostas aceitas e ativas aparecerÃ£o aqui"
                 />
               ) : (
                 acceptedProposals.map((p) => (
@@ -442,7 +441,7 @@ export default function ProposalsPage() {
                 Aceitar Proposta?
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-2">
-                {selectedProposal?.family.name} • €
+                {selectedProposal?.family.name} â¢ â¬
                 {((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}{" "}
                 total
               </DialogDescription>
@@ -456,7 +455,7 @@ export default function ProposalsPage() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Data de início:</span>
+                  <span className="text-muted-foreground">Data de inÃ­cio:</span>
                   <span className="font-display font-bold text-foreground">
                     {selectedProposal?.startDate
                       ? new Date(selectedProposal.startDate).toLocaleDateString(
@@ -508,7 +507,7 @@ export default function ProposalsPage() {
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
-                placeholder="Ex: Horário incompatível, orçamento limitado..."
+                placeholder="Ex: HorÃ¡rio incompatÃ­vel, orÃ§amento limitado..."
                 className="text-sm rounded-2xl border border-border bg-secondary"
               />
             </div>
@@ -556,9 +555,9 @@ export default function ProposalsPage() {
                   Valores Atuais
                 </p>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Taxa horária:</span>
+                  <span className="text-muted-foreground">Taxa horÃ¡ria:</span>
                   <span className="font-display font-bold text-foreground">
-                    €{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}
+                    â¬{((selectedProposal?.hourlyRateEur || 0) / 100).toFixed(2)}
                     /h
                   </span>
                 </div>
@@ -577,7 +576,7 @@ export default function ProposalsPage() {
                 <div className="flex justify-between border-t border-secondary/30 pt-2 font-display font-black">
                   <span className="text-muted-foreground">Total:</span>
                   <span className="text-foreground">
-                    €{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}
+                    â¬{((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -596,7 +595,7 @@ export default function ProposalsPage() {
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
-                    Nova Taxa Horária (€)
+                    Nova Taxa HorÃ¡ria (â¬)
                   </Label>
                   <Input
                     type="number"
@@ -642,7 +641,7 @@ export default function ProposalsPage() {
                     value={counterMessage}
                     onChange={(e) => setCounterMessage(e.target.value)}
                     rows={2}
-                    placeholder="Ex: Proponho um valor ligeiramente superior devido à complexidade..."
+                    placeholder="Ex: Proponho um valor ligeiramente superior devido Ã  complexidade..."
                     className="text-sm rounded-2xl border border-border bg-secondary"
                   />
                 </div>
@@ -655,7 +654,7 @@ export default function ProposalsPage() {
                     Novo Valor Total Estimado
                   </p>
                   <p className="font-display font-black text-2xl text-primary">
-                    €
+                    â¬
                     {(
                       parseFloat(counterHourlyRate) *
                       parseInt(counterTotalHours || "0")
@@ -689,7 +688,7 @@ export default function ProposalsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </AppShell>
+    </>
   );
 }
 
@@ -759,7 +758,7 @@ function ProposalCard({
               Taxa/h
             </p>
             <p className="text-base sm:text-lg font-display font-black text-foreground mt-1">
-              €{(proposal.hourlyRateEur / 100).toFixed(0)}
+              â¬{(proposal.hourlyRateEur / 100).toFixed(0)}
             </p>
           </div>
           <div>
@@ -775,7 +774,7 @@ function ProposalCard({
               Total
             </p>
             <p className="text-base sm:text-lg font-display font-black text-foreground mt-1">
-              €{totalEur.toFixed(0)}
+              â¬{totalEur.toFixed(0)}
             </p>
           </div>
         </div>
