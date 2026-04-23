@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   IconShield,
   IconCheck,
@@ -55,7 +54,7 @@ export default function VerifyPage() {
   useEffect(() => {
     if (status === "authenticated") {
       if (isFamily) {
-        // Familiares não precisam de verificação KYC, redirect para dashboard
+        // Familiares nÃ£o precisam de verificaÃ§Ã£o KYC, redirect para dashboard
         setTimeout(() => {
           router.push("/app/panel");
         }, 1000);
@@ -112,24 +111,24 @@ export default function VerifyPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <AppShell>
+      <>
         <div className="animate-pulse space-y-8 max-w-2xl">
           <div className="h-20 bg-muted rounded-3xl" />
           <div className="h-64 bg-muted rounded-3xl" />
         </div>
-      </AppShell>
+      </>
     );
   }
 
-  // Familiares veem página de confiança em vez de KYC
+  // Familiares veem pÃ¡gina de confianÃ§a em vez de KYC
   if (isFamily) {
     return (
-      <AppShell>
+      <>
         <div className="space-y-8 max-w-2xl">
           {/* Header */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
-              Score de Confiança
+              Score de ConfianÃ§a
             </h1>
             <p className="text-base text-muted-foreground font-medium">
               Aumente sua confiabilidade entre cuidadores
@@ -150,7 +149,7 @@ export default function VerifyPage() {
               </span>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
                 Complete contratos com cuidadores para construir seu score de
-                confiança
+                confianÃ§a
               </p>
             </div>
           </div>
@@ -170,7 +169,7 @@ export default function VerifyPage() {
                     Status: <span className="text-success">Verificado</span>
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Seu método de pagamento foi verificado com sucesso
+                    Seu mÃ©todo de pagamento foi verificado com sucesso
                   </p>
                 </div>
                 <IconCheck className="h-6 w-6 text-success shrink-0" />
@@ -203,10 +202,10 @@ export default function VerifyPage() {
                 </div>
                 <div>
                   <p className="text-sm font-display font-bold text-foreground">
-                    Receba avaliações positivas
+                    Receba avaliaÃ§Ãµes positivas
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Cuidadores avaliam sua comunicação e profissionalismo
+                    Cuidadores avaliam sua comunicaÃ§Ã£o e profissionalismo
                   </p>
                 </div>
               </li>
@@ -216,7 +215,7 @@ export default function VerifyPage() {
                 </div>
                 <div>
                   <p className="text-sm font-display font-bold text-foreground">
-                    Mantenha um histórico limpo
+                    Mantenha um histÃ³rico limpo
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Sem atrasos em pagamentos ou cancelamentos
@@ -230,11 +229,11 @@ export default function VerifyPage() {
             Ir para Dashboard
           </Button>
         </div>
-      </AppShell>
+      </>
     );
   }
 
-  // Cuidadores veem verificação KYC
+  // Cuidadores veem verificaÃ§Ã£o KYC
   const getStatusBadge = () => {
     switch (kycStatus?.verification_status) {
       case "VERIFIED":
@@ -262,7 +261,7 @@ export default function VerifyPage() {
   };
 
   return (
-    <AppShell>
+    <>
       <div className="space-y-8 max-w-2xl">
         {/* Header */}
         <div className="space-y-2">
@@ -411,6 +410,6 @@ export default function VerifyPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }
