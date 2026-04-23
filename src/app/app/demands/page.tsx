@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomSectionHeader,
   BloomEmpty,
@@ -210,7 +209,7 @@ function DemandsContent() {
             Marketplace de Demandas
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-            Explore oportunidades de trabalho disponíveis e envie suas propostas.
+            Explore oportunidades de trabalho disponÃ­veis e envie suas propostas.
           </p>
         </div>
         <span className="px-3 py-1 text-[10px] font-display font-black rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
@@ -240,13 +239,13 @@ function DemandsContent() {
               type="text"
               value={searchCity}
               onChange={(e) => setSearchCity(e.target.value)}
-              placeholder="Ex: Lisboa, Porto, Covilhã..."
+              placeholder="Ex: Lisboa, Porto, CovilhÃ£..."
               className="bg-secondary border-border rounded-2xl h-11"
             />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-              Tipo de Serviço
+              Tipo de ServiÃ§o
             </label>
             <Select
               value={selectedService || "ALL"}
@@ -255,21 +254,21 @@ function DemandsContent() {
               }
             >
               <SelectTrigger className="h-11 rounded-2xl bg-secondary border-border">
-                <SelectValue placeholder="Todos os serviços" />
+                <SelectValue placeholder="Todos os serviÃ§os" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">Todos os serviços</SelectItem>
+                <SelectItem value="ALL">Todos os serviÃ§os</SelectItem>
                 <SelectItem value="PERSONAL_CARE">Cuidados Pessoais</SelectItem>
-                <SelectItem value="MEDICATION">Medicação</SelectItem>
+                <SelectItem value="MEDICATION">MedicaÃ§Ã£o</SelectItem>
                 <SelectItem value="MOBILITY">Mobilidade</SelectItem>
                 <SelectItem value="COMPANIONSHIP">Companhia</SelectItem>
-                <SelectItem value="MEAL_PREPARATION">Refeições</SelectItem>
+                <SelectItem value="MEAL_PREPARATION">RefeiÃ§Ãµes</SelectItem>
                 <SelectItem value="LIGHT_HOUSEWORK">
-                  Tarefas Domésticas
+                  Tarefas DomÃ©sticas
                 </SelectItem>
                 <SelectItem value="TRANSPORTATION">Transporte</SelectItem>
                 <SelectItem value="COGNITIVE_SUPPORT">
-                  Estimulação Cognitiva
+                  EstimulaÃ§Ã£o Cognitiva
                 </SelectItem>
                 <SelectItem value="NIGHT_CARE">Cuidados Noturnos</SelectItem>
               </SelectContent>
@@ -306,7 +305,7 @@ function DemandsContent() {
                     }
                   : demand.visibilityPackage === "BASIC"
                     ? {
-                        label: "VISÍVEL",
+                        label: "VISÃVEL",
                         classes: "bg-success/10 text-success",
                       }
                     : null;
@@ -444,16 +443,16 @@ function DemandsContent() {
                 <div className="space-y-5">
                   <div>
                     <h3 className="font-display font-black text-foreground uppercase text-sm">
-                      Quem você é?
+                      Quem vocÃª Ã©?
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Compartilhe informações sobre sua experiência e
-                      qualificações
+                      Compartilhe informaÃ§Ãµes sobre sua experiÃªncia e
+                      qualificaÃ§Ãµes
                     </p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                      Sobre você
+                      Sobre vocÃª
                     </label>
                     <Textarea
                       value={wizard.aboutYou}
@@ -463,7 +462,7 @@ function DemandsContent() {
                           aboutYou: e.target.value,
                         }))
                       }
-                      placeholder="Ex: Tenho 10 anos de experiência em cuidados domiciliares..."
+                      placeholder="Ex: Tenho 10 anos de experiÃªncia em cuidados domiciliares..."
                       rows={4}
                       className="rounded-xl text-sm resize-none bg-secondary border-border/50"
                     />
@@ -490,13 +489,13 @@ function DemandsContent() {
                       Sua proposta
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Por que você é ideal para esta demanda?
+                      Por que vocÃª Ã© ideal para esta demanda?
                     </p>
                   </div>
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                        Mensagem para a família
+                        Mensagem para a famÃ­lia
                       </label>
                       <Textarea
                         value={wizard.message}
@@ -506,14 +505,14 @@ function DemandsContent() {
                             message: e.target.value,
                           }))
                         }
-                        placeholder="Descreva por que você é um bom encaixe..."
+                        placeholder="Descreva por que vocÃª Ã© um bom encaixe..."
                         rows={4}
                         className="rounded-xl text-sm resize-none bg-secondary border-border/50"
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                        Taxa por hora (€)
+                        Taxa por hora (â¬)
                       </label>
                       <Input
                         type="number"
@@ -567,13 +566,13 @@ function DemandsContent() {
                       Revisar proposta
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Verifique suas informações antes de enviar
+                      Verifique suas informaÃ§Ãµes antes de enviar
                     </p>
                   </div>
                   <div className="space-y-3 bg-secondary rounded-2xl border border-border/50 p-5">
                     <div className="border-b border-border/50 pb-3">
                       <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
-                        Sobre você
+                        Sobre vocÃª
                       </p>
                       <p className="text-sm line-clamp-3">{wizard.aboutYou}</p>
                     </div>
@@ -585,10 +584,10 @@ function DemandsContent() {
                     </div>
                     <div>
                       <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
-                        Taxa horária
+                        Taxa horÃ¡ria
                       </p>
                       <p className="text-2xl font-display font-black text-foreground tracking-tighter">
-                        €{parseFloat(wizard.expectedRate || "0").toFixed(2)}/h
+                        â¬{parseFloat(wizard.expectedRate || "0").toFixed(2)}/h
                       </p>
                     </div>
                   </div>
@@ -643,7 +642,7 @@ function DemandsContent() {
 
 export default function DemandsPage() {
   return (
-    <AppShell>
+  <>
       <Suspense
         fallback={
           <div className="max-w-7xl mx-auto space-y-6">
@@ -656,6 +655,6 @@ export default function DemandsPage() {
       >
         <DemandsContent />
       </Suspense>
-    </AppShell>
+  </>
   );
 }
