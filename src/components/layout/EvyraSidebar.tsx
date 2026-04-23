@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import {
   IconMenu,
   IconHome,
@@ -263,15 +263,22 @@ export const EvyraSidebar: React.FC<EvyraSidebarProps> = ({ isOpen, setIsOpen, o
             isOpen={isOpen}
             onLinkClick={onLinkClick}
           />
-          <SidebarLink
-            href="/logout"
-            icon={IconLogout}
-            label="Sair"
-            active={false}
-            isOpen={isOpen}
-            variant="danger"
-            onLinkClick={onLinkClick}
-          />
+          <button
+            onClick={() => signOut({ callbackUrl: '/auth/login' })}
+            className={cn(
+              "w-full flex items-center justify-between p-3 rounded-2xl transition-all duration-200 relative group",
+              "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <IconLogout className="h-5 w-5 text-destructive group-hover:text-destructive transition-colors" />
+              {isOpen && (
+                <span className="text-sm font-display font-bold tracking-tight text-destructive">
+                  Sair
+                </span>
+              )}
+            </div>
+          </button>
         </div>
       </div>
     </aside>
