@@ -21,12 +21,12 @@
 
 export const TYPOGRAPHY_PRESETS = {
   // Headings - Always font-display, uppercase, font-black
-  h1: "text-5xl sm:text-5xl md:text-5xl font-display font-black uppercase tracking-tight leading-[1.15]",
-  h2: "text-4xl sm:text-4xl md:text-4xl font-display font-black uppercase tracking-tight leading-[1.2]",
-  h3: "text-3xl sm:text-3xl md:text-3xl font-display font-black uppercase tracking-tight leading-[1.3]",
-  h4: "text-2xl sm:text-2xl md:text-2xl font-display font-black uppercase tracking-tight leading-[1.35]",
-  h5: "text-xl sm:text-xl md:text-xl font-display font-bold uppercase tracking-wide leading-[1.4]",
-  h6: "text-lg sm:text-lg md:text-lg font-display font-bold uppercase tracking-wide leading-[1.5]",
+  h1: "text-5xl sm:text-5xl md:text-5xl font-display font-black tracking-tight leading-[1.15]",
+  h2: "text-4xl sm:text-4xl md:text-4xl font-display font-black tracking-tight leading-[1.2]",
+  h3: "text-3xl sm:text-3xl md:text-3xl font-display font-black tracking-tight leading-[1.3]",
+  h4: "text-2xl sm:text-2xl md:text-2xl font-display font-black tracking-tight leading-[1.35]",
+  h5: "text-xl sm:text-xl md:text-xl font-display font-bold tracking-normal leading-[1.4]",
+  h6: "text-lg sm:text-lg md:text-lg font-display font-bold tracking-normal leading-[1.5]",
 
   // Section Headers (used in pages)
   sectionHeader:
