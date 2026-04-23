@@ -29,10 +29,10 @@ const nextConfig: NextConfig = {
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         // Enable HTTPS and HSTS
         { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
-        // Content Security Policy
+        // Content Security Policy (strict)
         {
           key: "Content-Security-Policy",
-          value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://checkout.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://checkout.stripe.com https://js.stripe.com; connect-src 'self' https://api.stripe.com https://checkout.stripe.com; object-src 'none';"
+          value: "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://checkout.stripe.com; style-src 'self' 'nonce-{random}' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src https://checkout.stripe.com https://js.stripe.com; connect-src 'self' https://api.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self';"
         },
         // Permissions Policy (formerly Feature Policy)
         {
