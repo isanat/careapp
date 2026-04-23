@@ -406,7 +406,7 @@ export default function ProfilePage() {
       // Validate file size
       if (file.size > 5 * 1024 * 1024) {
         throw new Error(
-          "Ficheiro muito grande. MÃ¡ximo 5MB. O ficheiro serÃ¡ comprimido automaticamente.",
+          "Ficheiro muito grande. Máximo 5MB. O ficheiro será comprimido automaticamente.",
         );
       }
 
@@ -449,7 +449,7 @@ export default function ProfilePage() {
     try {
       // Validate file size (10MB for documents/images)
       if (file.size > 10 * 1024 * 1024) {
-        throw new Error("Ficheiro muito grande. MÃ¡ximo 10MB");
+        throw new Error("Ficheiro muito grande. Máximo 10MB");
       }
 
       // For images, compress them
@@ -552,8 +552,8 @@ export default function ProfilePage() {
           </h1>
           <p className="text-base text-muted-foreground font-medium">
             {isCaregiver
-              ? "Gerencie suas informaÃ§Ãµes profissionais e preferÃªncias"
-              : "Gerencie as informaÃ§Ãµes do seu familiar"}
+              ? "Gerencie suas informações profissionais e preferências"
+              : "Gerencie as informações do seu familiar"}
           </p>
         </div>
 
@@ -635,7 +635,7 @@ export default function ProfilePage() {
                   {isCaregiver && formData.title && (
                     <p className="text-sm text-muted-foreground font-medium">
                       {formData.title}
-                      {formData.city ? ` â¢ ${formData.city}` : ""}
+                      {formData.city ? ` • ${formData.city}` : ""}
                     </p>
                   )}
                   <div className="space-y-1">
@@ -698,7 +698,7 @@ export default function ProfilePage() {
               },
               {
                 value: profile?.totalReviews || 0,
-                label: "AvaliaÃ§Ãµes",
+                label: "Avaliações",
                 icon: IconStar,
               },
               {
@@ -707,7 +707,7 @@ export default function ProfilePage() {
                 icon: IconStar,
               },
               {
-                value: `â¬${(formData.hourlyRateEur || 0).toFixed(2)}`,
+                value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`,
                 label: "/hora",
                 icon: IconEuro,
               },
@@ -783,7 +783,7 @@ export default function ProfilePage() {
           <TabsContent value="about" className="space-y-6">
             <section className="space-y-4">
               <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
-                InformaÃ§Ãµes Pessoais
+                Informações Pessoais
               </h3>
               <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
