@@ -245,3 +245,55 @@
     display: none;
   }
 }
+
+/* ============================================
+   UI/UX FIXES - Applied globally
+   ============================================ */
+
+/* 1. Fix notification text contrast - ensure readability */
+@layer base {
+  /* Notifications: improved contrast for unread items */
+  [data-notification],
+  .notification-item {
+    opacity: 1 !important;
+  }
+  
+  /* 2. Minimum touch target size for interactive icon buttons (WCAG 2.5.5) */
+  button:has(svg:only-child),
+  a:has(svg:only-child) {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* 3. Focus visible ring for accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* 4. Spacing: consistent page content padding */
+  main > .container,
+  main > [class*="max-w-"] {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+/* 5. Fix heading text-transform: allow titles to use sentence case */
+@layer utilities {
+  /* Override uppercase on section labels only when inside page headings */
+  h1.page-title,
+  h2.page-title {
+    text-transform: none;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Sidebar category labels - reduce tracking */
+  nav [class*="tracking-widest"] {
+    letter-spacing: 0.05em;
+  }
+}
