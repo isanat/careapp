@@ -277,11 +277,11 @@ export default function ProposalsPage() {
       <div className={tokens.layout.sectionSpacing}>
         {/* Page Heading */}
         <div className={cn("flex items-center gap-3 justify-between")}>
-          <div className={tokens.layout.sectionHeader.container}>
-            <h2 className={cn(tokens.layout.sectionHeader.title)}>
+          <div className={tokens.components.sectionHeader.container}>
+            <h2 className={cn(tokens.components.sectionHeader.title)}>
               Propostas
             </h2>
-            <p className={tokens.layout.sectionHeader.description}>
+            <p className={tokens.components.sectionHeader.description}>
               Gerencie propostas recebidas e negociações com famílias.
             </p>
           </div>
