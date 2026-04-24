@@ -150,7 +150,7 @@ export default function PaymentsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-10">
+      <div className="space-y-10 px-4 md:px-6 lg:px-8">
         {/* Header */}
         <BloomSectionHeader
           title="Finanças & Pagamentos"

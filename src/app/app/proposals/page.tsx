@@ -274,7 +274,7 @@ export default function ProposalsPage() {
 
   return (
     <AppShell>
-      <div className={tokens.layout.sectionSpacing}>
+      <div className={cn(tokens.layout.sectionSpacing, tokens.spacing.paddingX.responsive)}>
         {/* Page Heading */}
         <div className={cn("flex items-center gap-3 justify-between")}>
           <div className={tokens.components.sectionHeader.container}>
