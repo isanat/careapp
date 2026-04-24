@@ -275,28 +275,6 @@ export default function ProposalsPage() {
   return (
     <AppShell>
       <div className={cn(tokens.layout.sectionSpacing, tokens.spacing.paddingX.responsive)}>
-        {/* Page Heading */}
-        <div className={cn("flex items-center gap-3 justify-between")}>
-          <div className={tokens.components.sectionHeader.container}>
-            <h2 className={cn(tokens.components.sectionHeader.title)}>
-              Propostas
-            </h2>
-            <p className={tokens.components.sectionHeader.description}>
-              Gerencie propostas recebidas e negociações com famílias.
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={fetchProposals}
-            disabled={isLoading}
-          >
-            <IconRefresh
-              className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-            />
-          </Button>
-        </div>
-
         {successMessage && (
           <div className={cn("flex items-start", tokens.spacing.gap.lg, tokens.spacing.paddingY.mobile, tokens.spacing.paddingX.mobile, "bg-success/5 border border-success/20", tokens.radius.md)}>
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
