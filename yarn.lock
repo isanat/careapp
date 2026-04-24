@@ -856,9 +856,9 @@
   optionalDependencies:
     "@img/sharp-libvips-linuxmusl-x64" "1.2.4"
 
-"@isanat/bloom-elements@isanat/bloom-elements#cb3d1c1":
+"@isanat/bloom-elements@github:isanat/bloom-elements#c3b202b":
   version "1.1.0"
-  resolved "git+ssh://git@github.com/isanat/bloom-elements.git#cb3d1c13f9175726a1091ffeebfd7e4bcd834b7e"
+  resolved "git+ssh://git@github.com/isanat/bloom-elements.git#c3b202b112aa2c2d61161c061ca50b0230bad414"
   dependencies:
     "@radix-ui/react-accordion" "^1.2.11"
     "@radix-ui/react-alert-dialog" "^1.1.14"
