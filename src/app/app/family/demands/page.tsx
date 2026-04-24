@@ -378,7 +378,7 @@ export default function FamilyDemandsPage() {
     <AppShell>
       <Suspense
         fallback={
-          <div className="max-w-7xl mx-auto space-y-4 py-8">
+          <div className="space-y-4 py-8">
             <div className="animate-pulse space-y-4">
               <div className="h-24 bg-muted rounded-2xl" />
               <div className="h-64 bg-muted rounded-2xl" />
