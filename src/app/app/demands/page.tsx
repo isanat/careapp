@@ -186,7 +186,7 @@ function DemandsContent() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="space-y-6">
         <div className="space-y-2">
           <div className="h-10 bg-muted rounded-2xl w-64 animate-pulse" />
           <div className="h-5 bg-muted rounded-xl w-96 animate-pulse" />
@@ -645,7 +645,7 @@ export default function DemandsPage() {
   <>
       <Suspense
         fallback={
-          <div className="max-w-7xl mx-auto space-y-6">
+          <div className="space-y-6">
             <div className="animate-pulse space-y-4">
               <div className="h-10 bg-muted rounded-2xl w-64" />
               <div className="h-64 bg-muted rounded-3xl" />
