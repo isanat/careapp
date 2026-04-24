@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   IconShield,
   IconCheck,
@@ -112,19 +111,19 @@ export default function VerifyPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <AppShell>
+      <>
         <div className="animate-pulse space-y-8 max-w-2xl">
           <div className="h-20 bg-muted rounded-3xl" />
           <div className="h-64 bg-muted rounded-3xl" />
         </div>
-      </AppShell>
+      </>
     );
   }
 
   // Familiares veem página de confiança em vez de KYC
   if (isFamily) {
     return (
-      <AppShell>
+      <>
         <div className="space-y-8 max-w-2xl">
           {/* Header */}
           <div className="space-y-2">
@@ -230,7 +229,7 @@ export default function VerifyPage() {
             Ir para Dashboard
           </Button>
         </div>
-      </AppShell>
+      </>
     );
   }
 
@@ -262,7 +261,7 @@ export default function VerifyPage() {
   };
 
   return (
-    <AppShell>
+    <>
       <div className="space-y-8 max-w-2xl">
         {/* Header */}
         <div className="space-y-2">
@@ -411,6 +410,6 @@ export default function VerifyPage() {
           </div>
         </div>
       </div>
-    </AppShell>
+    </>
   );
 }

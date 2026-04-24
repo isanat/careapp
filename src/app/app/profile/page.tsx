@@ -546,7 +546,7 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth)}>
+      <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
         {/* Page Header */}
         <div className="space-y-2">
           <h1 className={getHeadingClasses("pageTitle")}>

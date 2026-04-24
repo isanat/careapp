@@ -360,7 +360,7 @@ export default function InterviewPage({
 
   return (
     <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
-      <div className="space-y-6 max-w-4xl mx-auto pb-6">
+      <div className="space-y-6 max-w-4xl mx-auto pb-6 px-4 md:px-6 lg:px-8">
         {/* Header - Bloom Elements style */}
         <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 overflow-hidden">
           <div className="h-1 -mx-5 sm:-mx-7 -mt-5 sm:-mt-7 mb-6 bg-primary" />

@@ -221,9 +221,9 @@ function KycPageContent() {
       )}
 
       <AppShell>
-        <div className="space-y-3">
+        <div className="space-y-3 px-4 md:px-6 lg:px-8">
           {/* Header compacto */}
-          <div className="flex items-center justify-between px-4 py-3 bg-background sticky top-0 z-10 border-b">
+          <div className="flex items-center justify-between py-3 bg-background sticky top-0 z-10 border-b -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
             <h1 className="text-lg font-semibold">{t.kyc.title}</h1>
             {kycStatus?.verification_status === "VERIFIED" && (
               <Button size="sm" onClick={handleContinue}>

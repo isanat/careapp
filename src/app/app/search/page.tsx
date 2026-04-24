@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   IconSearch,
   IconMapPin,
@@ -201,7 +200,7 @@ export default function SearchPage() {
   }, [families, searchTerm, selectedService]);
 
   return (
-    <AppShell>
+    <>
       <div className="space-y-8">
         {/* Page Header */}
         <div className="space-y-2">
@@ -591,6 +590,6 @@ export default function SearchPage() {
           </div>
         )}
       </div>
-    </AppShell>
+    </>
   );
 }

@@ -353,7 +353,7 @@ export default function ContractDetailPage({
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto pb-8 space-y-8">
+      <div className="max-w-4xl mx-auto pb-8 space-y-8 px-4 md:px-6 lg:px-8">
         {/* Page Header - Title + Back Button */}
         <div className="flex items-center gap-4">
           <Button
