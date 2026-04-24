@@ -150,7 +150,7 @@ export default function PaymentsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-10 px-4 md:px-6 lg:px-8">
+      <div className="space-y-10">
         {/* Stats - 3 StatBlocks like PaymentsView */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <BloomStatBlock

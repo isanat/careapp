@@ -189,7 +189,7 @@ export default function FamilyDemandDetailPage({
   return (
     <AppShell>
       <div className="space-y-8 pb-8">
-        <div className="max-w-5xl mx-auto px-4 space-y-8">
+        <div className="max-w-5xl mx-auto space-y-8">
           {/* Back Button */}
           <Link
             href="/app/family/demands"

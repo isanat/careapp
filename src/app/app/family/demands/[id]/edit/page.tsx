@@ -212,7 +212,7 @@ export default function EditDemandPage({
 
   return (
     <AppShell>
-      <div className="max-w-2xl mx-auto py-12 px-4 space-y-8">
+      <div className="max-w-2xl mx-auto py-12 space-y-8">
         {/* Header */}
         <div className="space-y-2">
           <Link
