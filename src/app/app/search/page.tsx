@@ -89,7 +89,7 @@ export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [maxPrice, setMaxPrice] = useState(50);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
 
@@ -97,14 +97,29 @@ export default function SearchPage() {
   const isCaregiver = userRole === "CAREGIVER";
 
   useEffect(() => {
-    if (status === "authenticated") {
+    const savedMaxPrice = localStorage.getItem("search_maxPrice");
+    if (savedMaxPrice) {
+      setMaxPrice(parseInt(savedMaxPrice, 10));
+    } else {
+      setMaxPrice(100);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (maxPrice !== null) {
+      localStorage.setItem("search_maxPrice", maxPrice.toString());
+    }
+  }, [maxPrice]);
+
+  useEffect(() => {
+    if (status === "authenticated" && maxPrice !== null) {
       if (isCaregiver) {
         fetchFamilies();
       } else {
         fetchCaregivers();
       }
     }
-  }, [status, isCaregiver]);
+  }, [status, isCaregiver, maxPrice]);
 
   const fetchCaregivers = async () => {
     try {

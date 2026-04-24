@@ -124,7 +124,7 @@ function NewContractContent() {
   const [hourlyRate, setHourlyRate] = useState(28); // in euros, not cents
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [agreedTerms, setAgreedTerms] = useState(false);
-  const [platformFeePercent, setPlatformFeePercent] = useState(10); // Default 10%
+  const [platformFeePercent, setPlatformFeePercent] = useState(15);
 
   // Fetch caregiver data and platform settings
   useEffect(() => {
@@ -154,7 +154,6 @@ function NewContractContent() {
           averageRating: c.averageRating,
           hourlyRateEur: c.hourlyRateEur,
         });
-        // Convert from cents to euros
         setHourlyRate((c.hourlyRateEur || 2800) / 100);
       } catch {
         setCaregiverError("Erro inesperado ao carregar cuidador.");
@@ -164,11 +163,11 @@ function NewContractContent() {
     }
     fetchCaregiver();
 
-    // Fetch dynamic platform fee percentage
-    apiFetch("/api/admin/settings")
-      .then((res) => (res.ok ? res.json() : { platformFeePercent: 10 }))
-      .then((data) => setPlatformFeePercent(data.platformFeePercent || 10))
-      .catch(() => setPlatformFeePercent(10));
+    // Fetch platform settings
+    fetch("/api/settings")
+      .then((res) => (res.ok ? res.json() : { platformFeePercent: 15 }))
+      .then((data) => setPlatformFeePercent(data.platformFeePercent || 15))
+      .catch(() => setPlatformFeePercent(15));
   }, [caregiverId]);
 
   // Calculate actual hours based on dates
