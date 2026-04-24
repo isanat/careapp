@@ -333,9 +333,9 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
  * Get responsive padding
  */
 export function getResponsivePadding(
-  size: "sm" | "base" | "lg" | "card" = "base"
+  size: keyof typeof tokens.spacing.padding = "normal"
 ): string {
-  return tokens.spacing.padding[size] || tokens.spacing.padding.base;
+  return tokens.spacing.padding[size] || tokens.spacing.padding.normal;
 }
 
 /**

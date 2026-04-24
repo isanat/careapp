@@ -377,7 +377,7 @@ export default function CaregiverProfilePage({
                   {caregiver.services.map((service) => (
                     <span
                       key={service}
-                      className={cn(tokens.colors.badges.primary, "text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1")}
+                      className={cn(tokens.colors.badges.info, "text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1")}
                     >
                       {SERVICE_TYPES[service as keyof typeof SERVICE_TYPES] ||
                         service}
@@ -422,7 +422,7 @@ export default function CaregiverProfilePage({
 
               {/* No Contract Info */}
               {!caregiver.hasActiveContract && (
-                <div className="p-3 bg-secondary/50 border border-border/50 rounded-2xl flex items-center gap-1.5">
+                <div className="p-3 bg-secondary/50 border border-border/50 rounded-lg flex items-center gap-1.5">
                   <IconLock className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                   <span className="text-[10px] font-display font-bold text-muted-foreground uppercase tracking-widest">
                     Contato apos contrato
@@ -510,7 +510,7 @@ export default function CaregiverProfilePage({
                         {educationList.map((edu, index) => (
                           <div
                             key={index}
-                            className="flex items-start gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
+                            className="flex items-start gap-3 p-4 bg-secondary/30 rounded-lg border border-border/50"
                           >
                             <div className="w-6 h-6 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <IconCheck className="h-4 w-4 text-success" />
@@ -536,7 +536,7 @@ export default function CaregiverProfilePage({
                         {caregiver.certifications.map((cert, index) => (
                           <div
                             key={index}
-                            className="flex items-start gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
+                            className="flex items-start gap-3 p-4 bg-secondary/30 rounded-lg border border-border/50"
                           >
                             <div className="w-6 h-6 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <IconCheck className="h-4 w-4 text-success" />
@@ -606,7 +606,7 @@ export default function CaregiverProfilePage({
                   {caregiver.reviews.map((review) => (
                     <div
                       key={review.id}
-                      className="flex flex-col gap-3 p-4 bg-secondary/30 rounded-2xl border border-border/50"
+                      className="flex flex-col gap-3 p-4 bg-secondary/30 rounded-lg border border-border/50"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

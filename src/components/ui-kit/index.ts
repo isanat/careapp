@@ -16,7 +16,7 @@ export * from "./tabs";
 export * from "./bottom-nav";
 
 // Design Tokens
-export { designTokens, colors, typography, spacing, radius, shadows, transitions, componentSizes, semanticTokens } from "@/lib/design-tokens";
+export { default as tokens, cn, getResponsivePadding, getButtonClasses, getCardClasses, getBadgeClasses, getHeadingClasses } from "@/lib/design-tokens";
 
 // Health Icons
 export * from "@/components/icons/health-icons";

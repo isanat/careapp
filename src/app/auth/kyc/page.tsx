@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { tokens, cn } from "@/lib/design-tokens";
 import {
   IconShield,
   IconCheck,
@@ -240,9 +241,9 @@ function KycPageContent() {
             </Alert>
           )}
           {success && (
-            <Alert className="mx-4 border-green-500/20 bg-green-500/5">
-              <IconCheck className="h-4 w-4 text-green-500" />
-              <AlertDescription className="text-green-600">
+            <Alert className={cn("mx-4", tokens.colors.badges.success)}>
+              <IconCheck className="h-4 w-4" />
+              <AlertDescription>
                 {success}
               </AlertDescription>
             </Alert>
@@ -256,23 +257,23 @@ function KycPageContent() {
                   {/* Status Icon */}
                   <div className="mb-2">
                     {kycStatus?.verification_status === "VERIFIED" && (
-                      <div className="p-3 bg-green-500/10 rounded-full">
-                        <IconCheck className="h-8 w-8 text-green-500" />
+                      <div className={cn(tokens.colors.badges.success, "p-3 rounded-full")}>
+                        <IconCheck className="h-8 w-8" />
                       </div>
                     )}
                     {kycStatus?.verification_status === "PENDING" && (
-                      <div className="p-3 bg-yellow-500/10 rounded-full">
-                        <IconClock className="h-8 w-8 text-yellow-500" />
+                      <div className={cn(tokens.colors.badges.warning, "p-3 rounded-full")}>
+                        <IconClock className="h-8 w-8" />
                       </div>
                     )}
                     {kycStatus?.verification_status === "REJECTED" && (
-                      <div className="p-3 bg-destructive/10 rounded-full">
-                        <IconX className="h-8 w-8 text-destructive" />
+                      <div className={cn(tokens.colors.badges.destructive, "p-3 rounded-full")}>
+                        <IconX className="h-8 w-8" />
                       </div>
                     )}
                     {kycStatus?.verification_status === "UNVERIFIED" && (
-                      <div className="p-3 bg-muted rounded-full">
-                        <IconShield className="h-8 w-8 text-muted-foreground" />
+                      <div className={cn(tokens.colors.badges.muted, "p-3 rounded-full")}>
+                        <IconShield className="h-8 w-8" />
                       </div>
                     )}
                   </div>
@@ -308,7 +309,7 @@ function KycPageContent() {
                   <div className="mt-3 w-full">
                     {kycStatus?.verification_status === "VERIFIED" && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-green-600">
+                        <p className={cn(tokens.colors.badges.success, "text-sm font-medium")}>
                           {t.kyc.verifiedTitle}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -327,7 +328,7 @@ function KycPageContent() {
 
                     {kycStatus?.verification_status === "PENDING" && (
                       <div className="space-y-3">
-                        <p className="text-sm font-medium text-yellow-600">
+                        <p className={cn(tokens.colors.badges.warning, "text-sm font-medium")}>
                           {t.kyc.inProgress}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -358,7 +359,7 @@ function KycPageContent() {
 
                     {kycStatus?.verification_status === "REJECTED" && (
                       <div className="space-y-3">
-                        <p className="text-sm font-medium text-destructive">
+                        <p className={cn(tokens.colors.badges.destructive, "text-sm font-medium")}>
                           {t.kyc.rejectedTitle}
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -416,24 +417,24 @@ function KycPageContent() {
                 </p>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-primary/10 rounded">
-                      <IconId className="h-3.5 w-3.5 text-primary" />
+                    <div className={cn(tokens.colors.badges.primary, "p-1.5 rounded")}>
+                      <IconId className="h-3.5 w-3.5" />
                     </div>
                     <span className="text-xs text-muted-foreground">
                       {t.kyc.requirements.item1}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-primary/10 rounded">
-                      <IconCamera className="h-3.5 w-3.5 text-primary" />
+                    <div className={cn(tokens.colors.badges.primary, "p-1.5 rounded")}>
+                      <IconCamera className="h-3.5 w-3.5" />
                     </div>
                     <span className="text-xs text-muted-foreground">
                       {t.kyc.requirements.item2}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-primary/10 rounded">
-                      <IconSun className="h-3.5 w-3.5 text-primary" />
+                    <div className={cn(tokens.colors.badges.primary, "p-1.5 rounded")}>
+                      <IconSun className="h-3.5 w-3.5" />
                     </div>
                     <span className="text-xs text-muted-foreground">
                       {t.kyc.requirements.item3}
@@ -446,7 +447,7 @@ function KycPageContent() {
 
           {/* Benefits - compacto */}
           <div className="px-4 pb-4">
-            <Card className="bg-primary/5 border-primary/20">
+            <Card className={cn(tokens.colors.badges.primary)}>
               <CardContent className="py-3">
                 <p className="text-xs font-medium mb-2">
                   {t.kyc.benefits.title}
@@ -454,7 +455,7 @@ function KycPageContent() {
                 <ul className="space-y-1.5">
                   {[1, 2, 3, 4].map((i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <IconCheck className="h-3.5 w-3.5 text-green-500 mt-0.5 shrink-0" />
+                      <IconCheck className="h-3.5 w-3.5 text-success mt-0.5 shrink-0" />
                       <span className="text-xs text-muted-foreground">
                         {
                           t.kyc.benefits[
