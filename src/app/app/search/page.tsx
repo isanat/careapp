@@ -88,7 +88,7 @@ export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [maxPrice, setMaxPrice] = useState(50);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
 
@@ -96,14 +96,29 @@ export default function SearchPage() {
   const isCaregiver = userRole === "CAREGIVER";
 
   useEffect(() => {
-    if (status === "authenticated") {
+    const savedMaxPrice = localStorage.getItem("search_maxPrice");
+    if (savedMaxPrice) {
+      setMaxPrice(parseInt(savedMaxPrice, 10));
+    } else {
+      setMaxPrice(100);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (maxPrice !== null) {
+      localStorage.setItem("search_maxPrice", maxPrice.toString());
+    }
+  }, [maxPrice]);
+
+  useEffect(() => {
+    if (status === "authenticated" && maxPrice !== null) {
       if (isCaregiver) {
         fetchFamilies();
       } else {
         fetchCaregivers();
       }
     }
-  }, [status, isCaregiver]);
+  }, [status, isCaregiver, maxPrice]);
 
   const fetchCaregivers = async () => {
     try {
@@ -145,7 +160,9 @@ export default function SearchPage() {
           c.city?.toLowerCase().includes(term),
       );
     }
-    results = results.filter((c) => c.hourlyRateEur / 100 <= maxPrice);
+    if (maxPrice !== null) {
+      results = results.filter((c) => c.hourlyRateEur / 100 <= maxPrice);
+    }
     if (selectedService !== "all") {
       results = results.filter((c) =>
         c.services?.some((s) => s.includes(selectedService)),
@@ -280,10 +297,10 @@ export default function SearchPage() {
                     {t.search.perHour}
                   </label>
                   <Slider
-                    value={[maxPrice]}
+                    value={[maxPrice ?? 100]}
                     onValueChange={([value]) => setMaxPrice(value)}
                     min={10}
-                    max={50}
+                    max={100}
                     step={1}
                   />
                 </div>

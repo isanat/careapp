@@ -27,7 +27,7 @@ import {
   IconLoader2,
   IconInfo,
 } from "@/components/icons";
-import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS } from "@/lib/constants";
+import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS, FREQUENCY_OPTIONS } from "@/lib/constants";
 
 interface CaregiverInfo {
   id: string;
@@ -78,14 +78,6 @@ const SCHEDULE_OPTIONS = [
   },
 ];
 
-const FREQUENCY_OPTIONS = [
-  { key: "daily", label: "Todos os dias", hours: 35 },
-  { key: "weekdays", label: "Dias uteis (seg-sex)", hours: 25 },
-  { key: "3x", label: "3x por semana", hours: 15 },
-  { key: "2x", label: "2x por semana", hours: 10 },
-  { key: "weekends", label: "Fins de semana", hours: 10 },
-  { key: "custom", label: "Personalizado", hours: 0 },
-];
 
 function NewContractContent() {
   const searchParams = useSearchParams();
@@ -124,7 +116,7 @@ function NewContractContent() {
   const [hourlyRate, setHourlyRate] = useState(28); // in euros, not cents
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [agreedTerms, setAgreedTerms] = useState(false);
-  const [platformFeePercent, setPlatformFeePercent] = useState(10); // Default 10%
+  const [platformFeePercent, setPlatformFeePercent] = useState(15);
 
   // Fetch caregiver data and platform settings
   useEffect(() => {
@@ -154,7 +146,6 @@ function NewContractContent() {
           averageRating: c.averageRating,
           hourlyRateEur: c.hourlyRateEur,
         });
-        // Convert from cents to euros
         setHourlyRate((c.hourlyRateEur || 2800) / 100);
       } catch {
         setCaregiverError("Erro inesperado ao carregar cuidador.");
@@ -164,11 +155,11 @@ function NewContractContent() {
     }
     fetchCaregiver();
 
-    // Fetch dynamic platform fee percentage
-    apiFetch("/api/admin/settings")
-      .then((res) => (res.ok ? res.json() : { platformFeePercent: 10 }))
-      .then((data) => setPlatformFeePercent(data.platformFeePercent || 10))
-      .catch(() => setPlatformFeePercent(10));
+    // Fetch platform settings
+    fetch("/api/settings")
+      .then((res) => (res.ok ? res.json() : { platformFeePercent: 15 }))
+      .then((data) => setPlatformFeePercent(data.platformFeePercent || 15))
+      .catch(() => setPlatformFeePercent(15));
   }, [caregiverId]);
 
   // Calculate actual hours based on dates

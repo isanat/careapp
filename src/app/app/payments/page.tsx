@@ -49,12 +49,29 @@ export default function PaymentsPage() {
   const [walletData, setWalletData] = useState<WalletData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [platformFeePercent, setPlatformFeePercent] = useState(15);
+
+  useEffect(() => {
+    fetchPlatformSettings();
+  }, []);
 
   useEffect(() => {
     if (status === "authenticated") {
       fetchWalletData();
     }
   }, [status]);
+
+  const fetchPlatformSettings = async () => {
+    try {
+      const res = await fetch("/api/settings");
+      if (res.ok) {
+        const data = await res.json();
+        setPlatformFeePercent(data.platformFeePercent || 15);
+      }
+    } catch (err) {
+      console.error("Error fetching settings:", err);
+    }
+  };
 
   const fetchWalletData = async () => {
     try {
@@ -79,7 +96,7 @@ export default function PaymentsPage() {
           const hourlyRate = contract.hourlyRateEur || 0;
           const hoursWorked = contract.totalHours || 0;
           const totalAmount = hourlyRate * hoursWorked;
-          const earnings = totalAmount * 0.9;
+          const earnings = totalAmount * (1 - platformFeePercent / 100);
           totalEarnings += earnings;
 
           if (contract.status === "ACTIVE") {

@@ -74,3 +74,13 @@ export const APP_NAV_LINKS_CAREGIVER = [
   { href: "/app/profile", label: "Meu Perfil", icon: "user" },
   { href: "/app/settings", label: "Configurações", icon: "settings" },
 ] as const;
+
+// Contract Frequency Patterns (suggested weekly hours)
+export const FREQUENCY_OPTIONS = [
+  { key: "daily", label: "Todos os dias", hours: 35 },
+  { key: "weekdays", label: "Dias úteis (seg-sex)", hours: 25 },
+  { key: "3x", label: "3x por semana", hours: 15 },
+  { key: "2x", label: "2x por semana", hours: 10 },
+  { key: "weekends", label: "Fins de semana", hours: 10 },
+  { key: "custom", label: "Personalizado", hours: 0 },
+] as const;
