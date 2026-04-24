@@ -206,7 +206,7 @@ export default function DemandDetailPage({
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto pb-8 space-y-8">
+      <div className="max-w-4xl mx-auto pb-8 space-y-8 px-4 md:px-6 lg:px-8">
         <Link
           href="/app/demands"
           className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"

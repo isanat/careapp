@@ -307,7 +307,7 @@ function NewContractContent() {
   // Error/loading states
   if (caregiverError) {
     return (
-      <div className="space-y-8 max-w-2xl mx-auto pb-8">
+      <div className="space-y-8 max-w-2xl mx-auto pb-8 px-4 md:px-6 lg:px-8">
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2">
             Erro
@@ -334,7 +334,7 @@ function NewContractContent() {
 
   if (caregiverLoading || !caregiver) {
     return (
-      <div className="space-y-8 max-w-2xl mx-auto pb-8">
+      <div className="space-y-8 max-w-2xl mx-auto pb-8 px-4 md:px-6 lg:px-8">
         <div className="space-y-2">
           <div className="h-10 bg-muted rounded-2xl w-64 animate-pulse" />
           <div className="h-4 bg-muted rounded w-48 animate-pulse" />
