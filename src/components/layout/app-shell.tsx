@@ -164,8 +164,10 @@ export function AppShell({ children, hideBottomNav = false }: AppShellProps) {
         <EvyraHeader sidebarOpen={sidebarOpen} mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
 
         {/* Content Area */}
-        <div className="p-4 md:p-6 lg:p-10 max-w-7xl mx-auto w-full">
-          {children}
+        <div className="w-full px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10">
+          <div className="max-w-7xl mx-auto w-full">
+            {children}
+          </div>
         </div>
 
         {/* Mobile Bottom Navigation (Evyra specific) */}

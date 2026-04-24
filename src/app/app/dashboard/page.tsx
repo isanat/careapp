@@ -21,8 +21,14 @@ interface ActivityItem {
 
 function DashboardPageContent() {
   const { data: session } = useSession();
-  const [stats, setStats] = useState<DashboardStats | undefined>();
+  const [stats, setStats] = useState<DashboardStats>({
+    activeContracts: 0,
+    totalHours: 0,
+    rating: 0,
+    totalReviews: 0,
+  });
   const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Extract user data from session
   const userRole = (session?.user as any)?.role?.toLowerCase() as 'caregiver' | 'family' | undefined;
@@ -38,6 +44,7 @@ function DashboardPageContent() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        setIsLoading(true);
         const [contractsRes] = await Promise.all([apiFetch("/api/contracts")]);
 
         if (contractsRes.ok) {
@@ -74,11 +81,15 @@ function DashboardPageContent() {
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     if (session?.user) {
       fetchDashboardData();
+    } else {
+      setIsLoading(false);
     }
   }, [session?.user]);
 
