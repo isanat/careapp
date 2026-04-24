@@ -27,7 +27,7 @@ import {
   IconLoader2,
   IconInfo,
 } from "@/components/icons";
-import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS } from "@/lib/constants";
+import { SERVICE_TYPES, CONTRACT_FEE_EUR_CENTS, FREQUENCY_OPTIONS } from "@/lib/constants";
 
 interface CaregiverInfo {
   id: string;
@@ -78,14 +78,6 @@ const SCHEDULE_OPTIONS = [
   },
 ];
 
-const FREQUENCY_OPTIONS = [
-  { key: "daily", label: "Todos os dias", hours: 35 },
-  { key: "weekdays", label: "Dias uteis (seg-sex)", hours: 25 },
-  { key: "3x", label: "3x por semana", hours: 15 },
-  { key: "2x", label: "2x por semana", hours: 10 },
-  { key: "weekends", label: "Fins de semana", hours: 10 },
-  { key: "custom", label: "Personalizado", hours: 0 },
-];
 
 function NewContractContent() {
   const searchParams = useSearchParams();
