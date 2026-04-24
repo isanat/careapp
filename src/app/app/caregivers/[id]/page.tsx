@@ -269,7 +269,7 @@ export default function CaregiverProfilePage({
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-6xl">
+      <div className="space-y-8 max-w-6xl mx-auto">
         <Button
           variant="ghost"
           asChild

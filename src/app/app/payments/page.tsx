@@ -151,12 +151,6 @@ export default function PaymentsPage() {
   return (
     <AppShell>
       <div className="space-y-10">
-        {/* Header */}
-        <BloomSectionHeader
-          title="Finanças & Pagamentos"
-          desc="Controlo de fundos seguros e histórico de pagamentos libertados."
-        />
-
         {/* Stats - 3 StatBlocks like PaymentsView */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <BloomStatBlock
