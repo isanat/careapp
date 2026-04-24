@@ -161,7 +161,9 @@ export default function SearchPage() {
           c.city?.toLowerCase().includes(term),
       );
     }
-    results = results.filter((c) => c.hourlyRateEur / 100 <= maxPrice);
+    if (maxPrice !== null) {
+      results = results.filter((c) => c.hourlyRateEur / 100 <= maxPrice);
+    }
     if (selectedService !== "all") {
       results = results.filter((c) =>
         c.services?.some((s) => s.includes(selectedService)),
@@ -296,10 +298,10 @@ export default function SearchPage() {
                     {t.search.perHour}
                   </label>
                   <Slider
-                    value={[maxPrice]}
+                    value={[maxPrice ?? 100]}
                     onValueChange={([value]) => setMaxPrice(value)}
                     min={10}
-                    max={50}
+                    max={100}
                     step={1}
                   />
                 </div>
