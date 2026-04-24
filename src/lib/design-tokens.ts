@@ -1,300 +1,381 @@
 /**
- * Evyra Design Tokens
- * European Home Care Infrastructure - Digital Human Care Design System
- * Brand Colors: Evyra Blue (#4A9EFF), Trust Teal (#2DD4BF), Midnight (#080C14), Soft White (#E8EEF8)
+ * Bloom Elements Design Tokens
+ * Complete design system extracted from Bloom Elements UI Kit
+ * All values follow Bloom design patterns and are semantic/reusable
+ *
+ * Usage:
+ * import { tokens, cn, getButtonClasses, getCardClasses } from '@/lib/design-tokens'
  */
 
-// =============================================================================
-// COLOR PALETTE
-// =============================================================================
-
-export const colors = {
-  // Primary - Evyra Blue (#4A9EFF) - Innovation, Trust, Digital
-  primary: {
-    DEFAULT: '#4A9EFF',
-    light: '#7FB8FF',
-    dark: '#1E78FF',
-    foreground: '#FFFFFF',
-  },
-
-  // Secondary - Trust Teal (#2DD4BF) - Care, Health, Calm
-  secondary: {
-    DEFAULT: '#2DD4BF',
-    light: '#5FE3D0',
-    foreground: '#FFFFFF',
-  },
-
-  // Accent - Midnight (#080C14) - Depth, Trust, Sophistication
-  accent: {
-    DEFAULT: '#080C14',
-    foreground: '#E8EEF8',
-  },
-
-  // Warm - Soft White (#E8EEF8) - Care, Warmth, Accessibility
-  warm: {
-    DEFAULT: '#E8EEF8',
-    light: '#F2F5FA',
-    foreground: '#080C14',
-  },
-
-  // Background & Surface
-  background: '#F8FAFB',
-  surface: '#FFFFFF',
-
-  // Text
-  text: {
-    primary: '#080C14',
-    secondary: '#4B5563',
-    muted: '#8FA0B0',
-  },
-  
-  // Semantic Colors (Soft, not harsh)
-  success: {
-    DEFAULT: '#5B9A6F',
-    light: '#A8D5B8',
-    foreground: '#FFFFFF',
-  },
-  
-  warning: {
-    DEFAULT: '#E8A65D',
-    light: '#F5D4A8',
-    foreground: '#1F2933',
-  },
-  
-  error: {
-    DEFAULT: '#C96B6B',
-    light: '#F0C8C8',
-    foreground: '#FFFFFF',
-  },
-  
-  // UI Colors
-  border: '#E0E7E5',
-  muted: '#EEF3F2',
-  input: '#E0E7E5',
-} as const;
-
-// =============================================================================
-// TYPOGRAPHY
-// =============================================================================
-
-export const typography = {
-  fontFamily: {
-    heading: 'var(--font-poppins), system-ui, sans-serif',
-    body: 'var(--font-inter), system-ui, sans-serif',
-  },
-  
-  // Larger sizes for accessibility (seniors)
-  fontSize: {
-    xs: '0.8125rem',   // 13px
-    sm: '0.9375rem',   // 15px
-    base: '1.0625rem', // 17px (larger than default 16px)
-    lg: '1.1875rem',   // 19px
-    xl: '1.375rem',    // 22px
-    '2xl': '1.625rem', // 26px
-    '3xl': '2rem',     // 32px
-    '4xl': '2.5rem',   // 40px
-    '5xl': '3rem',     // 48px
-  },
-  
-  lineHeight: {
-    tight: 1.25,
-    normal: 1.5,
-    relaxed: 1.625,
-    loose: 2,
-  },
-  
-  fontWeight: {
-    normal: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-  },
-} as const;
-
-// =============================================================================
-// SPACING
-// =============================================================================
-
-export const spacing = {
-  0: '0',
-  1: '0.25rem',   // 4px
-  2: '0.5rem',    // 8px
-  3: '0.75rem',   // 12px
-  4: '1rem',      // 16px
-  5: '1.25rem',   // 20px
-  6: '1.5rem',    // 24px
-  8: '2rem',      // 32px
-  10: '2.5rem',   // 40px
-  12: '3rem',     // 48px
-  16: '4rem',     // 64px
-  20: '5rem',     // 80px
-  24: '6rem',     // 96px
-} as const;
-
-// =============================================================================
-// BORDER RADIUS
-// =============================================================================
-
-export const radius = {
-  none: '0',
-  sm: '0.375rem',   // 6px - subtle
-  md: '0.625rem',   // 10px - default
-  lg: '0.875rem',   // 14px - cards
-  xl: '1.125rem',   // 18px - larger elements
-  '2xl': '1.5rem',  // 24px - modals
-  '3xl': '2rem',    // 32px - feature cards
-  full: '9999px',   // pills
-} as const;
-
-// =============================================================================
-// SHADOWS (Soft, not harsh)
-// =============================================================================
-
-export const shadows = {
-  sm: '0 1px 2px 0 rgba(47, 111, 109, 0.05)',
-  DEFAULT: '0 2px 4px 0 rgba(47, 111, 109, 0.08)',
-  md: '0 4px 8px 0 rgba(47, 111, 109, 0.1)',
-  lg: '0 8px 16px 0 rgba(47, 111, 109, 0.12)',
-  xl: '0 16px 32px 0 rgba(47, 111, 109, 0.15)',
-  // Card shadow
-  card: '0 2px 8px 0 rgba(47, 111, 109, 0.08), 0 1px 2px 0 rgba(47, 111, 109, 0.04)',
-  // Focus ring
-  focus: '0 0 0 3px rgba(47, 111, 109, 0.25)',
-} as const;
-
-// =============================================================================
-// TRANSITIONS
-// =============================================================================
-
-export const transitions = {
-  fast: '150ms ease',
-  DEFAULT: '200ms ease',
-  slow: '300ms ease',
-  // For seniors: slower, more visible transitions
-  accessible: '250ms ease',
-} as const;
-
-// =============================================================================
-// BREAKPOINTS
-// =============================================================================
-
-export const breakpoints = {
-  sm: '640px',
-  md: '768px',
-  lg: '1024px',
-  xl: '1280px',
-  '2xl': '1536px',
-} as const;
-
-// =============================================================================
-// Z-INDEX
-// =============================================================================
-
-export const zIndex = {
-  dropdown: 50,
-  sticky: 100,
-  modal: 200,
-  popover: 300,
-  tooltip: 400,
-  toast: 500,
-} as const;
-
-// =============================================================================
-// COMPONENT SIZES (Accessibility focused)
-// =============================================================================
-
-export const componentSizes = {
-  // Minimum touch target: 44px
-  button: {
-    sm: { height: '40px', padding: '0.625rem 1rem' },
-    md: { height: '48px', padding: '0.75rem 1.5rem' },
-    lg: { height: '56px', padding: '1rem 2rem' },
-  },
-  
-  input: {
-    sm: { height: '40px' },
-    md: { height: '48px' },
-    lg: { height: '56px' },
-  },
-  
-  icon: {
-    sm: '18px',
-    md: '24px',
-    lg: '32px',
-    xl: '48px',
-  },
-} as const;
-
-// =============================================================================
-// SEMANTIC TOKENS
-// =============================================================================
-
-export const semanticTokens = {
-  // Button variants
-  button: {
-    primary: {
-      bg: colors.primary.DEFAULT,
-      hover: colors.primary.dark,
-      text: colors.primary.foreground,
+export const tokens = {
+  // ============= TYPOGRAPHY =============
+  typography: {
+    fonts: {
+      display: "font-display", // Space Grotesk
+      body: "font-body", // Inter
     },
-    secondary: {
-      bg: colors.secondary.DEFAULT,
-      hover: colors.primary.DEFAULT,
-      text: colors.secondary.foreground,
+    sizes: {
+      // Headings
+      h1: "text-4xl sm:text-5xl",
+      h2: "text-3xl sm:text-4xl",
+      h3: "text-2xl sm:text-3xl",
+      h4: "text-xl sm:text-2xl",
+      // Body text
+      lg: "text-base",
+      base: "text-sm",
+      sm: "text-xs",
+      xs: "text-[10px]",
+      xxs: "text-[9px]",
     },
-    ghost: {
-      bg: 'transparent',
-      hover: colors.muted,
-      text: colors.text.primary,
+    weights: {
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
+      black: "font-black",
     },
-    warm: {
-      bg: colors.warm.DEFAULT,
-      hover: colors.warm.light,
-      text: colors.warm.foreground,
+    lineHeight: {
+      tight: "leading-none",
+      normal: "leading-relaxed",
+      relaxed: "leading-loose",
+    },
+    tracking: {
+      tight: "tracking-tighter",
+      normal: "tracking-normal",
+      wide: "tracking-wide",
+      wider: "tracking-widest",
+      widest: "tracking-[0.4em]",
+    },
+    // Semantic combinations
+    heading: {
+      pageTitle: "text-3xl sm:text-4xl font-display font-black tracking-tighter leading-none",
+      sectionTitle: "text-2xl sm:text-3xl font-display font-black tracking-tighter leading-none",
+      cardTitle: "text-lg sm:text-xl font-display font-black",
+      label: "text-xs font-display font-black uppercase tracking-widest",
+      subLabel: "text-[10px] font-display font-black uppercase tracking-widest",
+      tinyLabel: "text-[9px] font-display font-black uppercase tracking-widest",
+    },
+    body: {
+      lg: "text-base text-foreground",
+      base: "text-sm text-foreground",
+      sm: "text-xs text-muted-foreground",
+      xs: "text-[10px] text-muted-foreground font-medium",
     },
   },
-  
-  // Card variants
-  card: {
-    default: {
-      bg: colors.surface,
-      border: colors.border,
+
+  // ============= COLORS =============
+  colors: {
+    semantic: {
+      primary: "primary",
+      secondary: "secondary",
+      success: "success",
+      warning: "warning",
+      destructive: "destructive",
+      info: "info",
+      muted: "muted",
+      accent: "accent",
     },
-    info: {
-      bg: '#EEF8F7', // Light teal tint
-      border: colors.secondary.light,
+    // Background + foreground combos
+    backgrounds: {
+      primary: "bg-primary text-primary-foreground",
+      secondary: "bg-secondary text-secondary-foreground",
+      success: "bg-success text-success-foreground",
+      warning: "bg-warning text-warning-foreground",
+      destructive: "bg-destructive text-destructive-foreground",
+      info: "bg-info text-info-foreground",
+      card: "bg-card",
+      muted: "bg-muted text-muted-foreground",
     },
-    warning: {
-      bg: '#FDF8EE', // Light warm tint
-      border: colors.warm.light,
+    // Opacity variants (use for badges, overlays, etc)
+    badges: {
+      primary: "bg-primary/10 text-primary border border-primary/30",
+      secondary: "bg-secondary/10 text-secondary border border-secondary/30",
+      success: "bg-success/10 text-success border border-success/30",
+      warning: "bg-warning/10 text-warning border border-warning/30",
+      destructive: "bg-destructive/10 text-destructive border border-destructive/30",
+      info: "bg-info/10 text-info border border-info/30",
+      muted: "bg-muted text-muted-foreground",
     },
-    success: {
-      bg: '#F0F9F2', // Light green tint
-      border: colors.success.light,
+    text: {
+      primary: "text-foreground",
+      secondary: "text-muted-foreground",
+      accent: "text-primary",
     },
   },
-  
-  // Status badges
-  badge: {
-    active: { bg: colors.success.DEFAULT, text: colors.success.foreground },
-    pending: { bg: colors.warning.DEFAULT, text: colors.warning.foreground },
-    inactive: { bg: colors.muted, text: colors.text.secondary },
-    error: { bg: colors.error.DEFAULT, text: colors.error.foreground },
+
+  // ============= SPACING =============
+  spacing: {
+    // Card & container padding
+    padding: {
+      card: "p-5 sm:p-7",
+      cardLarge: "p-6 sm:p-8",
+      cardSmall: "p-4 sm:p-5",
+      tight: "p-3",
+      normal: "p-4",
+      loose: "p-6",
+    },
+    // Horizontal padding for content areas
+    paddingX: {
+      mobile: "px-4",
+      tablet: "md:px-6",
+      desktop: "lg:px-8",
+      responsive: "px-4 md:px-6 lg:px-8",
+    },
+    // Vertical padding for content areas
+    paddingY: {
+      mobile: "py-6",
+      tablet: "md:py-8",
+      desktop: "lg:py-10",
+      responsive: "py-6 md:py-8 lg:py-10",
+    },
+    // Gap values for grids and flex
+    gap: {
+      xs: "gap-2",
+      sm: "gap-3",
+      base: "gap-4",
+      lg: "gap-5",
+      xl: "gap-6",
+      xxl: "gap-8",
+    },
+    // Vertical spacing for stacked content
+    space: {
+      xs: "space-y-2",
+      sm: "space-y-3",
+      base: "space-y-4",
+      md: "space-y-6",
+      lg: "space-y-8",
+      xl: "space-y-10",
+      xxl: "space-y-12",
+    },
   },
-} as const;
+
+  // ============= BORDER RADIUS =============
+  radius: {
+    sm: "rounded-lg",
+    base: "rounded-xl",
+    md: "rounded-2xl",
+    lg: "rounded-3xl",
+    full: "rounded-full",
+    // Semantic usage
+    button: "rounded-2xl",
+    buttonLarge: "rounded-3xl",
+    card: "rounded-3xl",
+    input: "rounded-2xl",
+    select: "rounded-2xl",
+    badge: "rounded-2xl",
+    avatar: "rounded-2xl",
+  },
+
+  // ============= SHADOWS =============
+  shadows: {
+    none: "shadow-none",
+    card: "shadow-card",
+    elevated: "shadow-elevated",
+    glow: "shadow-glow",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-lg",
+    xl: "shadow-xl",
+  },
+
+  // ============= COMPONENTS =============
+  components: {
+    // ===== BUTTONS =====
+    button: {
+      base: "inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-bold uppercase tracking-wide ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]",
+      variants: {
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-glow",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border",
+        success: "bg-success text-success-foreground hover:bg-success/90 shadow-md",
+        warning: "bg-warning text-warning-foreground hover:bg-warning/90 shadow-md",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md",
+        outline: "border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline !tracking-normal !font-medium !normal-case",
+      },
+      sizes: {
+        sm: "h-9 px-4 text-[10px] rounded-xl",
+        default: "h-11 px-6 text-xs rounded-2xl",
+        lg: "h-14 px-10 text-xs rounded-2xl",
+        xl: "h-16 px-12 text-sm rounded-3xl",
+      },
+    },
+
+    // ===== CARDS =====
+    card: {
+      base: "bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card",
+      interactive: "hover:shadow-elevated hover:border-primary/30 transition-all cursor-pointer",
+      header: "flex flex-col space-y-1.5 pb-4",
+      title: "text-lg font-display font-black text-foreground",
+      description: "text-xs text-muted-foreground font-medium",
+      content: "space-y-4",
+      footer: "flex items-center gap-2 pt-4 border-t border-border/50",
+    },
+
+    // ===== STAT BLOCK (Dashboard Stats) =====
+    statBlock: {
+      container: "bg-card p-5 sm:p-7 rounded-3xl border border-border shadow-card space-y-3 sm:space-y-4 hover:shadow-elevated transition-all group",
+      iconContainer: "w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform",
+      label: "text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest",
+      value: "text-2xl sm:text-3xl font-display font-black text-foreground tracking-tighter leading-none",
+    },
+
+    // ===== SECTION HEADER =====
+    sectionHeader: {
+      container: "space-y-1 sm:space-y-2",
+      title: "text-3xl sm:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase",
+      description: "text-sm text-muted-foreground font-medium",
+    },
+
+    // ===== DOC CARD (Bloom Pattern) =====
+    docCard: {
+      container: "space-y-4",
+      titleBar: "text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4",
+      contentBox: "bg-card p-5 sm:p-8 rounded-3xl border border-border shadow-card",
+    },
+
+    // ===== BADGE =====
+    badge: {
+      base: "inline-flex items-center px-2.5 py-1 text-[9px] font-display font-black rounded-2xl border uppercase tracking-widest",
+      variants: {
+        primary: "bg-primary/10 text-primary border-primary/30",
+        secondary: "bg-secondary/10 text-secondary border-secondary/30",
+        success: "bg-success/10 text-success border-success/30",
+        warning: "bg-warning/10 text-warning border-warning/30",
+        destructive: "bg-destructive/10 text-destructive border-destructive/30",
+        info: "bg-info/10 text-info border-info/30",
+        muted: "bg-muted text-muted-foreground border-border/30",
+      },
+    },
+
+    // ===== INPUT & FORM =====
+    input: {
+      base: "flex h-11 w-full rounded-2xl border border-border bg-secondary px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
+      helperText: "mt-1.5 text-xs font-medium",
+    },
+
+    // ===== DIALOG/MODAL =====
+    dialog: {
+      overlay: "fixed inset-0 bg-black/50 z-50 transition-opacity",
+      content: "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-card p-6 shadow-2xl rounded-3xl duration-200",
+      header: "flex flex-col space-y-1.5",
+      title: "text-2xl font-display font-black leading-none tracking-tight",
+      description: "text-sm text-muted-foreground",
+      footer: "flex gap-2 pt-4 border-t border-border/50",
+    },
+
+    // ===== TABS =====
+    tabs: {
+      list: "inline-flex h-11 w-full items-center justify-center rounded-2xl bg-muted/50 p-1 border border-border/30 space-x-1",
+      trigger: "inline-flex items-center justify-center whitespace-nowrap rounded-xl px-3 py-2 text-xs font-display font-black uppercase tracking-widest ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+    },
+  },
+
+  // ============= ANIMATIONS =============
+  animations: {
+    fadeIn: "animate-fade-in",
+    slideUp: "animate-slide-up",
+    slideRight: "animate-slide-right",
+    scaleIn: "animate-scale-in",
+    pulse: "animate-pulse-soft",
+  },
+
+  // ============= LAYOUT PATTERNS =====
+  layout: {
+    // Page structure
+    pageContainer: "min-h-screen bg-background text-foreground",
+    contentArea: "w-full px-4 md:px-6 lg:px-8 py-6 md:py-8 lg:py-10",
+    maxWidth: "max-w-7xl mx-auto w-full",
+
+    // Grid layouts
+    grid: {
+      responsive1: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6",
+      responsive2: "grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6",
+      responsive4: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6",
+      responsive5: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6",
+    },
+
+    // Flex layouts
+    flexCenter: "flex items-center justify-center",
+    flexBetween: "flex items-center justify-between",
+    flexCol: "flex flex-col",
+
+    // Spacing
+    sectionSpacing: "space-y-8 sm:space-y-10",
+    cardSpacing: "space-y-4 sm:space-y-6",
+  },
+
+  // ============= UTILITIES =============
+  utilities: {
+    truncate: "truncate",
+    lineClamp: {
+      1: "line-clamp-1",
+      2: "line-clamp-2",
+      3: "line-clamp-3",
+    },
+    transitions: {
+      fast: "transition-all duration-200",
+      normal: "transition-all duration-300",
+      slow: "transition-all duration-500",
+    },
+  },
+};
+
+// ============= HELPER FUNCTIONS =============
+
+/**
+ * Combine multiple token classes safely
+ */
+export function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(" ");
+}
+
+/**
+ * Get responsive padding
+ */
+export function getResponsivePadding(
+  size: "sm" | "base" | "lg" | "card" = "base"
+): string {
+  return tokens.spacing.padding[size] || tokens.spacing.padding.base;
+}
+
+/**
+ * Get button classes
+ */
+export function getButtonClasses(
+  variant: keyof typeof tokens.components.button.variants = "primary",
+  size: keyof typeof tokens.components.button.sizes = "default"
+): string {
+  return cn(
+    tokens.components.button.base,
+    tokens.components.button.variants[variant],
+    tokens.components.button.sizes[size]
+  );
+}
+
+/**
+ * Get card classes
+ */
+export function getCardClasses(interactive: boolean = false): string {
+  return cn(tokens.components.card.base, interactive && tokens.components.card.interactive);
+}
+
+/**
+ * Get badge classes
+ */
+export function getBadgeClasses(
+  variant: keyof typeof tokens.components.badge.variants = "primary"
+): string {
+  return cn(tokens.components.badge.base, tokens.components.badge.variants[variant]);
+}
+
+/**
+ * Get heading classes
+ */
+export function getHeadingClasses(
+  level: "pageTitle" | "sectionTitle" | "cardTitle" = "sectionTitle"
+): string {
+  return tokens.typography.heading[level];
+}
 
 // Export all tokens
-export const designTokens = {
-  colors,
-  typography,
-  spacing,
-  radius,
-  shadows,
-  transitions,
-  breakpoints,
-  zIndex,
-  componentSizes,
-  semanticTokens,
-} as const;
-
-export default designTokens;
+export default tokens;
