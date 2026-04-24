@@ -20,11 +20,11 @@
     "test:create-admin": "npx ts-node scripts/create-admin-user.ts"
   },
   "dependencies": {
-    "@isanat/bloom-elements": "isanat/bloom-elements#cb3d1c1",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.1.1",
+    "@isanat/bloom-elements": "github:isanat/bloom-elements#c3b202b",
     "@jitsi/react-sdk": "^1.4.4",
     "@libsql/client": "^0.17.0",
     "@mdxeditor/editor": "^3.39.1",
