@@ -47,6 +47,7 @@ import {
   getStatusLabel,
   getServiceTypeLabel,
 } from "@/lib/status-constants";
+import { tokens, cn, getCardClasses, getHeadingClasses, getBadgeClasses } from "@/lib/design-tokens";
 
 interface Proposal {
   id: string;
@@ -273,14 +274,14 @@ export default function ProposalsPage() {
 
   return (
     <AppShell>
-      <div className="space-y-4 sm:space-y-6 md:space-y-8">
+      <div className={tokens.layout.sectionSpacing}>
         {/* Page Heading */}
-        <div className="flex items-center gap-3 justify-between">
-          <div className="space-y-1 sm:space-y-2">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+        <div className={cn("flex items-center gap-3 justify-between")}>
+          <div className={tokens.layout.sectionHeader.container}>
+            <h2 className={cn(tokens.layout.sectionHeader.title)}>
               Propostas
             </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+            <p className={tokens.layout.sectionHeader.description}>
               Gerencie propostas recebidas e negociações com famílias.
             </p>
           </div>
@@ -297,25 +298,25 @@ export default function ProposalsPage() {
         </div>
 
         {successMessage && (
-          <div className="flex items-start gap-3 p-4 sm:p-5 md:p-7 bg-success/5 border border-success/20 rounded-2xl sm:rounded-3xl">
+          <div className={cn("flex items-start", tokens.spacing.gap.lg, tokens.spacing.paddingY.mobile, tokens.spacing.paddingX.mobile, "bg-success/5 border border-success/20", tokens.radius.md)}>
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
-            <p className="text-sm font-medium text-foreground">
+            <p className={cn(tokens.typography.sizes.base, tokens.typography.weights.medium, "text-foreground")}>
               {successMessage}
             </p>
           </div>
         )}
 
         {error && (
-          <div className="flex items-start gap-3 p-4 sm:p-5 md:p-7 bg-destructive/5 border border-destructive/20 rounded-2xl sm:rounded-3xl">
+          <div className={cn("flex items-start", tokens.spacing.gap.lg, tokens.spacing.paddingY.mobile, tokens.spacing.paddingX.mobile, "bg-destructive/5 border border-destructive/20", tokens.radius.md)}>
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-            <p className="text-sm font-medium text-foreground">{error}</p>
+            <p className={cn(tokens.typography.sizes.base, tokens.typography.weights.medium, "text-foreground")}>{error}</p>
           </div>
         )}
 
         {isLoading && (
-          <div className="space-y-3 sm:space-y-4">
+          <div className={tokens.spacing.space.base}>
             {[1, 2].map((i) => (
-              <Skeleton key={i} className="h-24 w-full rounded-2xl sm:rounded-3xl" />
+              <Skeleton key={i} className={cn("h-24 w-full", tokens.radius.md)} />
             ))}
           </div>
         )}
@@ -334,38 +335,38 @@ export default function ProposalsPage() {
         )}
 
         {!isLoading && proposals.length > 0 && (
-          <Tabs defaultValue="pending" className="space-y-4 sm:space-y-6">
+          <Tabs defaultValue="pending" className={tokens.layout.cardSpacing}>
             <TabsList className="grid w-full grid-cols-3 h-12 bg-transparent p-0 border-b border-border/60 rounded-none">
               <TabsTrigger
                 value="pending"
-                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground"
+                className={cn("h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground", tokens.typography.sizes.base, tokens.typography.weights.bold, "tracking-wide text-muted-foreground")}
               >
                 Novas{" "}
-                <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">
+                <span className={cn(tokens.typography.sizes.xs, tokens.typography.weights.black, tokens.spacing.gap.sm, tokens.spacing.padding.tight, tokens.radius.sm, "bg-primary/10 text-primary")}>
                   {pendingProposals.length}
                 </span>
               </TabsTrigger>
               <TabsTrigger
                 value="counter"
-                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground"
+                className={cn("h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground", tokens.typography.sizes.base, tokens.typography.weights.bold, "tracking-wide text-muted-foreground")}
               >
                 Contra{" "}
-                <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">
+                <span className={cn(tokens.typography.sizes.xs, tokens.typography.weights.black, tokens.spacing.gap.sm, tokens.spacing.padding.tight, tokens.radius.sm, "bg-primary/10 text-primary")}>
                   {counterProposals.length}
                 </span>
               </TabsTrigger>
               <TabsTrigger
                 value="accepted"
-                className="h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground text-sm font-display font-bold tracking-wide text-muted-foreground"
+                className={cn("h-12 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground", tokens.typography.sizes.base, tokens.typography.weights.bold, "tracking-wide text-muted-foreground")}
               >
                 Aceitas{" "}
-                <span className="text-[11px] font-display font-black ml-2 px-2 py-0.5 rounded-lg bg-primary/10 text-primary">
+                <span className={cn(tokens.typography.sizes.xs, tokens.typography.weights.black, tokens.spacing.gap.sm, tokens.spacing.padding.tight, tokens.radius.sm, "bg-primary/10 text-primary")}>
                   {acceptedProposals.length}
                 </span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pending" className="space-y-3 sm:space-y-4">
+            <TabsContent value="pending" className={tokens.spacing.space.sm}>
               {pendingProposals.length === 0 ? (
                 <BloomEmpty
                   icon={<IconCheck className="h-8 w-8" />}
@@ -394,7 +395,7 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="counter" className="space-y-3 sm:space-y-4">
+            <TabsContent value="counter" className={tokens.spacing.space.sm}>
               {counterProposals.length === 0 ? (
                 <BloomEmpty
                   icon={<IconEdit className="h-8 w-8" />}
@@ -413,7 +414,7 @@ export default function ProposalsPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="accepted" className="space-y-3 sm:space-y-4">
+            <TabsContent value="accepted" className={tokens.spacing.space.sm}>
               {acceptedProposals.length === 0 ? (
                 <BloomEmpty
                   icon={<IconClock className="h-8 w-8" />}
@@ -436,19 +437,19 @@ export default function ProposalsPage() {
 
         {/* Accept Dialog */}
         <Dialog open={acceptDialogOpen} onOpenChange={setAcceptDialogOpen}>
-          <DialogContent className="max-w-sm border border-border bg-card rounded-3xl">
-            <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-lg font-display font-bold text-foreground">
+          <DialogContent className={cn("max-w-sm border border-border bg-card", tokens.radius.md)}>
+            <DialogHeader className={cn("pb-4 border-b border-border/30")}>
+              <DialogTitle className={cn(tokens.typography.sizes.lg, tokens.typography.weights.bold, "text-foreground")}>
                 Aceitar Proposta?
               </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground mt-2">
+              <DialogDescription className={cn(tokens.typography.sizes.base, "text-muted-foreground", tokens.spacing.gap.xs)}>
                 {selectedProposal?.family.name} • €
                 {((selectedProposal?.totalEurCents || 0) / 100).toFixed(2)}{" "}
                 total
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="p-4 bg-success/5 border border-success/20 rounded-2xl space-y-2 text-sm">
+            <div className={cn(tokens.spacing.space.base, tokens.spacing.paddingY.mobile)}>
+              <div className={cn(tokens.spacing.padding.normal, "bg-success/5 border border-success/20", tokens.radius.base, tokens.spacing.space.xs, tokens.typography.sizes.base)}>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Horas/semana:</span>
                   <span className="font-display font-bold text-foreground">
@@ -467,7 +468,7 @@ export default function ProposalsPage() {
                 </div>
               </div>
             </div>
-            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
+            <DialogFooter className={cn(tokens.spacing.gap.sm, "pt-4 border-t border-border/30")}>
               <Button
                 variant="outline"
                 size="sm"
@@ -494,25 +495,25 @@ export default function ProposalsPage() {
 
         {/* Reject Dialog */}
         <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-          <DialogContent className="max-w-sm border border-border bg-card rounded-3xl">
-            <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-lg font-display font-bold text-foreground">
+          <DialogContent className={cn("max-w-sm border border-border bg-card", tokens.radius.md)}>
+            <DialogHeader className={cn("pb-4 border-b border-border/30")}>
+              <DialogTitle className={cn(tokens.typography.sizes.lg, tokens.typography.weights.bold, "text-foreground")}>
                 Recusar Proposta
               </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground mt-2">
+              <DialogDescription className={cn(tokens.typography.sizes.base, "text-muted-foreground", tokens.spacing.gap.xs)}>
                 Insira um motivo (opcional)
               </DialogDescription>
             </DialogHeader>
-            <div className="py-4">
+            <div className={tokens.spacing.paddingY.mobile}>
               <Textarea
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={3}
                 placeholder="Ex: Horário incompatível, orçamento limitado..."
-                className="text-sm rounded-2xl border border-border bg-secondary"
+                className={cn(tokens.typography.sizes.base, tokens.radius.base, "border border-border bg-secondary")}
               />
             </div>
-            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
+            <DialogFooter className={cn(tokens.spacing.gap.sm, "pt-4 border-t border-border/30")}>
               <Button
                 variant="outline"
                 size="sm"
@@ -540,19 +541,19 @@ export default function ProposalsPage() {
 
         {/* Counter-Proposal Dialog */}
         <Dialog open={counterDialogOpen} onOpenChange={setCounterDialogOpen}>
-          <DialogContent className="max-w-md border border-border bg-card rounded-3xl">
+          <DialogContent className={cn("max-w-md border border-border bg-card", tokens.radius.lg)}>
             <DialogHeader className="pb-4 border-b border-border/30">
-              <DialogTitle className="text-lg font-display font-bold text-foreground">
+              <DialogTitle className={cn(tokens.typography.sizes.lg, tokens.typography.weights.bold, "text-foreground")}>
                 Contraproposta
               </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground mt-2">
+              <DialogDescription className={cn(tokens.typography.sizes.base, "text-muted-foreground", tokens.spacing.gap.xs)}>
                 Proponha novos valores para {selectedProposal?.family.name}
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className={cn(tokens.spacing.space.md, tokens.spacing.paddingY.mobile)}>
               {/* Current values summary */}
-              <div className="p-4 bg-secondary/5 border border-secondary/20 rounded-2xl text-sm space-y-2">
-                <p className="text-xs font-display font-bold text-secondary uppercase tracking-widest">
+              <div className={cn(tokens.spacing.padding.normal, "bg-secondary/5 border border-secondary/20", tokens.radius.base, tokens.spacing.space.sm, tokens.typography.sizes.base)}>
+                <p className={cn(tokens.typography.sizes.xs, tokens.typography.weights.bold, "text-secondary uppercase tracking-widest")}>
                   Valores Atuais
                 </p>
                 <div className="flex justify-between">
@@ -584,18 +585,18 @@ export default function ProposalsPage() {
 
               {/* Error message if any */}
               {error && (
-                <div className="flex items-start gap-2 p-3 bg-destructive/5 border border-destructive/20 rounded-2xl">
+                <div className={cn("flex items-start", tokens.spacing.gap.sm, tokens.spacing.padding.tight, "bg-destructive/5 border border-destructive/20", tokens.radius.base)}>
                   <IconAlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                  <p className="text-xs text-destructive font-medium">
+                  <p className={cn(tokens.typography.sizes.xs, "text-destructive", tokens.typography.weights.medium)}>
                     {error}
                   </p>
                 </div>
               )}
 
               {/* Counter values */}
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+              <div className={tokens.spacing.space.sm}>
+                <div className={tokens.spacing.space.xs}>
+                  <Label className={cn(tokens.typography.sizes.xs, tokens.typography.weights.bold, "text-foreground uppercase tracking-widest")}>
                     Nova Taxa Horária (€)
                   </Label>
                   <Input
@@ -605,11 +606,11 @@ export default function ProposalsPage() {
                     value={counterHourlyRate}
                     onChange={(e) => setCounterHourlyRate(e.target.value)}
                     placeholder="Ex: 12.50"
-                    className="rounded-2xl border border-border bg-secondary text-sm"
+                    className={cn(tokens.radius.base, "border border-border bg-secondary text-sm")}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                <div className={tokens.spacing.space.xs}>
+                  <Label className={cn(tokens.typography.sizes.xs, tokens.typography.weights.bold, "text-foreground uppercase tracking-widest")}>
                     Total de Horas
                   </Label>
                   <Input
@@ -618,11 +619,11 @@ export default function ProposalsPage() {
                     value={counterTotalHours}
                     onChange={(e) => setCounterTotalHours(e.target.value)}
                     placeholder="Ex: 40"
-                    className="rounded-2xl border border-border bg-secondary text-sm"
+                    className={cn(tokens.radius.base, "border border-border bg-secondary text-sm")}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                <div className={tokens.spacing.space.xs}>
+                  <Label className={cn(tokens.typography.sizes.xs, tokens.typography.weights.bold, "text-foreground uppercase tracking-widest")}>
                     Horas por Semana
                   </Label>
                   <Input
@@ -631,11 +632,11 @@ export default function ProposalsPage() {
                     value={counterHoursPerWeek}
                     onChange={(e) => setCounterHoursPerWeek(e.target.value)}
                     placeholder="Ex: 20"
-                    className="rounded-2xl border border-border bg-secondary text-sm"
+                    className={cn(tokens.radius.base, "border border-border bg-secondary text-sm")}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-display font-bold text-foreground uppercase tracking-widest">
+                <div className={tokens.spacing.space.xs}>
+                  <Label className={cn(tokens.typography.sizes.xs, tokens.typography.weights.bold, "text-foreground uppercase tracking-widest")}>
                     Mensagem (Opcional)
                   </Label>
                   <Textarea
@@ -643,18 +644,18 @@ export default function ProposalsPage() {
                     onChange={(e) => setCounterMessage(e.target.value)}
                     rows={2}
                     placeholder="Ex: Proponho um valor ligeiramente superior devido à complexidade..."
-                    className="text-sm rounded-2xl border border-border bg-secondary"
+                    className={cn("text-sm", tokens.radius.base, "border border-border bg-secondary")}
                   />
                 </div>
               </div>
 
               {/* Preview new total */}
               {counterHourlyRate && counterTotalHours && (
-                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl">
-                  <p className="text-xs font-display font-bold text-primary uppercase tracking-widest mb-2">
+                <div className={cn(tokens.spacing.padding.normal, "bg-primary/5 border border-primary/20", tokens.radius.base)}>
+                  <p className={cn(tokens.typography.sizes.xs, tokens.typography.weights.bold, "text-primary uppercase tracking-widest", tokens.spacing.gap.sm)}>
                     Novo Valor Total Estimado
                   </p>
-                  <p className="font-display font-black text-2xl text-primary">
+                  <p className={cn("font-display font-black text-2xl text-primary")}>
                     €
                     {(
                       parseFloat(counterHourlyRate) *
@@ -664,7 +665,7 @@ export default function ProposalsPage() {
                 </div>
               )}
             </div>
-            <DialogFooter className="gap-2 pt-4 border-t border-border/30">
+            <DialogFooter className={cn(tokens.spacing.gap.sm, "pt-4 border-t border-border/30")}>
               <Button
                 variant="outline"
                 size="sm"
@@ -713,7 +714,7 @@ function ProposalCard({
   return (
     <BloomCard
       variant="interactive"
-      className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-5 p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl"
+      className={cn("flex flex-col md:flex-row items-start md:items-center justify-between", tokens.spacing.gap.lg, tokens.spacing.padding.card, tokens.radius.lg)}
     >
       {/* Left side: Family info */}
       <div className="flex-1 flex items-start gap-3 sm:gap-4 min-w-0">

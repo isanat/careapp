@@ -15,6 +15,7 @@ import {
 import { IconLogo, IconMail, IconAlert, IconCheck } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+import { tokens, cn, getCardClasses, getHeadingClasses, getBadgeClasses } from "@/lib/design-tokens";
 
 export default function ForgotPasswordPage() {
   const { t } = useI18n();
@@ -51,38 +52,38 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
+    <main className={cn("min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background", tokens.spacing.paddingX.mobile, tokens.spacing.paddingY.mobile)}>
+      <Card className={cn("w-full max-w-md")}>
+        <CardHeader className={cn("text-center", tokens.spacing.space.base)}>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 mx-auto"
+            className={cn("inline-flex items-center justify-center", tokens.spacing.gap.sm, "mx-auto")}
           >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">{t.forgotPassword.title}</CardTitle>
+            <CardTitle className={cn(tokens.typography.sizes.h4)}>{t.forgotPassword.title}</CardTitle>
             <CardDescription>{t.forgotPassword.description}</CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className={tokens.spacing.space.base}>
           {errorMessage && (
-            <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+            <div className={cn("flex items-center", tokens.spacing.gap.sm, tokens.spacing.padding.tight, "bg-destructive/10 text-destructive", tokens.radius.sm, tokens.typography.sizes.sm)}>
               <IconAlert className="h-4 w-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {isSuccess ? (
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
+            <div className={cn("text-center", tokens.spacing.space.base)}>
+              <div className={cn("w-16 h-16 bg-green-500/10", tokens.radius.full, "flex items-center justify-center mx-auto")}>
                 <IconCheck className="h-8 w-8 text-green-500" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">
+                <h2 className={cn(tokens.typography.weights.semibold, tokens.typography.sizes.lg)}>
                   {t.forgotPassword.emailSent}
                 </h2>
-                <p className="text-muted-foreground text-sm mt-2">
+                <p className={cn("text-muted-foreground", tokens.typography.sizes.sm, tokens.spacing.gap.xs)}>
                   {t.forgotPassword.checkInbox}
                 </p>
               </div>
@@ -91,8 +92,8 @@ export default function ForgotPasswordPage() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit} className={tokens.spacing.space.base}>
+              <div className={tokens.spacing.space.xs}>
                 <Label htmlFor="email">{t.forgotPassword.emailLabel}</Label>
                 <div className="relative">
                   <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -114,7 +115,7 @@ export default function ForgotPasswordPage() {
                   : t.forgotPassword.sendReset}
               </Button>
 
-              <div className="text-center text-sm text-muted-foreground">
+              <div className={cn("text-center", tokens.typography.sizes.sm, "text-muted-foreground")}>
                 {t.forgotPassword.rememberedPassword}{" "}
                 <Link
                   href="/auth/login"

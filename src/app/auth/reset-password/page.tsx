@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { IconLogo, IconAlert, IconCheck } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
+import { tokens, cn, getCardClasses, getHeadingClasses, getBadgeClasses } from "@/lib/design-tokens";
 
 export default function ResetPasswordPage() {
   return (
@@ -81,17 +82,17 @@ function ResetPasswordContent() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
+    <main className={cn("min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background", tokens.spacing.paddingX.mobile, tokens.spacing.paddingY.mobile)}>
+      <Card className={cn("w-full max-w-md")}>
+        <CardHeader className={cn("text-center", tokens.spacing.space.base)}>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 mx-auto"
+            className={cn("inline-flex items-center justify-center", tokens.spacing.gap.sm, "mx-auto")}
           >
             <IconLogo className="h-10 w-10 text-primary" />
           </Link>
           <div>
-            <CardTitle className="text-2xl">
+            <CardTitle className={cn(tokens.typography.sizes.h4)}>
               {t.auth?.resetPassword || "Redefinir Senha"}
             </CardTitle>
             <CardDescription>
@@ -99,24 +100,24 @@ function ResetPasswordContent() {
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className={tokens.spacing.space.base}>
           {errorMessage && (
-            <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
+            <div className={cn("flex items-center", tokens.spacing.gap.sm, tokens.spacing.padding.tight, "bg-destructive/10 text-destructive", tokens.radius.sm, tokens.typography.sizes.sm)}>
               <IconAlert className="h-4 w-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {isSuccess ? (
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
+            <div className={cn("text-center", tokens.spacing.space.base)}>
+              <div className={cn("w-16 h-16 bg-green-500/10", tokens.radius.full, "flex items-center justify-center mx-auto")}>
                 <IconCheck className="h-8 w-8 text-green-500" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg">
+                <h2 className={cn(tokens.typography.weights.semibold, tokens.typography.sizes.lg)}>
                   Senha redefinida com sucesso!
                 </h2>
-                <p className="text-muted-foreground text-sm mt-2">
+                <p className={cn("text-muted-foreground", tokens.typography.sizes.sm, tokens.spacing.gap.xs)}>
                   Pode agora iniciar sessão com a sua nova senha.
                 </p>
               </div>
@@ -125,8 +126,8 @@ function ResetPasswordContent() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit} className={tokens.spacing.space.base}>
+              <div className={tokens.spacing.space.xs}>
                 <Label htmlFor="password">Nova Senha</Label>
                 <Input
                   id="password"
@@ -139,7 +140,7 @@ function ResetPasswordContent() {
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className={tokens.spacing.space.xs}>
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <Input
                   id="confirmPassword"
@@ -156,7 +157,7 @@ function ResetPasswordContent() {
                 {isLoading ? "A redefinir..." : "Redefinir Senha"}
               </Button>
 
-              <div className="text-center text-sm text-muted-foreground">
+              <div className={cn("text-center", tokens.typography.sizes.sm, "text-muted-foreground")}>
                 <Link
                   href="/auth/login"
                   className="text-primary hover:underline font-medium"

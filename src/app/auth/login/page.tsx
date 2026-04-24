@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { LoginView } from "@isanat/bloom-elements";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
+import { tokens, cn, getCardClasses, getHeadingClasses, getBadgeClasses } from "@/lib/design-tokens";
 
 function LoginPageContent() {
   const router = useRouter();
@@ -64,9 +65,9 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background px-4 py-12">
-          <Card className="w-full max-w-md">
-            <CardContent className="py-12 text-center">
+        <div className={cn("min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background", tokens.spacing.paddingX.mobile, tokens.spacing.paddingY.mobile)}>
+          <Card className={cn("w-full max-w-md")}>
+            <CardContent className={cn(tokens.spacing.padding.cardLarge, "text-center")}>
               <p>{t.loading}</p>
             </CardContent>
           </Card>
