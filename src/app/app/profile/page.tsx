@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { tokens, cn, getCardClasses, getHeadingClasses } from "@/lib/design-tokens";
 import {
   Dialog,
   DialogContent,
@@ -545,10 +546,10 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="space-y-8 max-w-4xl">
+      <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth)}>
         {/* Page Header */}
         <div className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none">
+          <h1 className={getHeadingClasses("pageTitle")}>
             Meu Perfil
           </h1>
           <p className="text-base text-muted-foreground font-medium">
@@ -584,7 +585,7 @@ export default function ProfilePage() {
 
         {/* Profile Header Section */}
         <section className="space-y-4">
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4 hover:shadow-elevated transition-all">
+          <div className={cn(getCardClasses(true), "space-y-4")}>
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-5">
                 {/* Avatar */}
@@ -690,7 +691,7 @@ export default function ProfilePage() {
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className={cn(tokens.layout.grid.responsive4)}>
             {[
               {
                 value: profile?.totalContracts || 0,
@@ -715,7 +716,7 @@ export default function ProfilePage() {
             ].map((stat, i) => (
               <div
                 key={i}
-                className="bg-card p-7 rounded-3xl border border-border shadow-card space-y-4 hover:shadow-elevated transition-all group"
+                className={cn(getCardClasses(true), "space-y-4")}
               >
                 <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
                   <stat.icon className="h-6 w-6 text-primary" />
@@ -783,10 +784,10 @@ export default function ProfilePage() {
           {/* Info Tab */}
           <TabsContent value="about" className="space-y-6">
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+              <h3 className={getHeadingClasses("sectionTitle")}>
                 Informações Pessoais
               </h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <div className={cn(getCardClasses(), "space-y-4")}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
@@ -877,10 +878,10 @@ export default function ProfilePage() {
           <TabsContent value="documents" className="space-y-6">
             {/* Personal Documents Section */}
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+              <h3 className={getHeadingClasses("sectionTitle")}>
                 Documentos Pessoais
               </h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <div className={cn(getCardClasses(), "space-y-4")}>
                 <div>
                   <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
                     NIF
@@ -980,10 +981,10 @@ export default function ProfilePage() {
             {/* Background Check - Caregivers only */}
             {isCaregiver && (
               <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                <h3 className={getHeadingClasses("sectionTitle")}>
                   Verificacao de Antecedentes
                 </h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <div className={cn(getCardClasses(), "space-y-4")}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center">
@@ -1063,12 +1064,12 @@ export default function ProfilePage() {
 
           {/* Services Tab */}
           {isCaregiver && (
-            <TabsContent value="services" className="space-y-6">
+            <TabsContent value="services" className={tokens.layout.sectionSpacing}>
               <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                <h3 className={getHeadingClasses("sectionTitle")}>
                   Servicos Oferecidos
                 </h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+                <div className={cn(getCardClasses(), "space-y-6")}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {SERVICE_TYPES.map((service) => (
                       <label
@@ -1166,12 +1167,12 @@ export default function ProfilePage() {
 
           {/* Elder Tab */}
           {isFamily && (
-            <TabsContent value="elder" className="space-y-6">
+            <TabsContent value="elder" className={tokens.layout.sectionSpacing}>
               <section className="space-y-4">
-                <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+                <h3 className={getHeadingClasses("sectionTitle")}>
                   Informacoes do Familiar
                 </h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <div className={cn(getCardClasses(), "space-y-4")}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
@@ -1228,12 +1229,12 @@ export default function ProfilePage() {
           )}
 
           {/* Contact Tab */}
-          <TabsContent value="contact" className="space-y-6">
+          <TabsContent value="contact" className={tokens.layout.sectionSpacing}>
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+              <h3 className={getHeadingClasses("sectionTitle")}>
                 Informacoes de Contato
               </h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+              <div className={cn(getCardClasses(), "space-y-4")}>
                 <div>
                   <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
                     {t.auth.email}
@@ -1319,10 +1320,10 @@ export default function ProfilePage() {
           </TabsContent>
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
+          <TabsContent value="settings" className={tokens.layout.sectionSpacing}>
             {/* Settings Section */}
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter leading-none mb-6">
+              <h3 className={getHeadingClasses("sectionTitle")}>
                 Preferencias e Configuracoes
               </h3>
 

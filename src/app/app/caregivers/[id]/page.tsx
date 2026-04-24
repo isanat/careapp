@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { AppShell } from "@/components/layout/app-shell";
+import { tokens, cn, getCardClasses } from "@/lib/design-tokens";
 import {
   IconStar,
   IconMapPin,
@@ -184,7 +185,7 @@ export default function CaregiverProfilePage({
               Voltar para busca
             </Link>
           </Button>
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+          <div className={getCardClasses()}>
             <div className="flex flex-col md:flex-row gap-6 animate-pulse">
               <div className="h-20 w-20 rounded-3xl bg-secondary flex-shrink-0" />
               <div className="flex-1 space-y-3">
@@ -213,7 +214,7 @@ export default function CaregiverProfilePage({
               Voltar para busca
             </Link>
           </Button>
-          <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card text-center space-y-4">
+          <div className={cn(getCardClasses(), "text-center space-y-4")}>
             <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto">
               <IconShield className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -281,7 +282,7 @@ export default function CaregiverProfilePage({
         </Button>
 
         {/* Profile Header Section */}
-        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+        <div className={getCardClasses()}>
           <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-start">
             {/* Avatar & Basic Info */}
             <div className="flex flex-col items-center md:items-start gap-4">
@@ -315,9 +316,9 @@ export default function CaregiverProfilePage({
             {/* Trust Badges & Details */}
             <div className="flex-1 space-y-4">
               {caregiver.verificationStatus === "VERIFIED" && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-success/10 border border-success/30 rounded-xl w-fit">
-                  <IconCheck className="h-4 w-4 text-success" />
-                  <span className="text-xs font-display font-bold text-success uppercase tracking-widest">
+                <div className={cn(tokens.colors.badges.success, "flex items-center gap-2 px-3 py-2 rounded-lg w-fit")}>
+                  <IconCheck className="h-4 w-4" />
+                  <span className="text-xs font-display font-bold uppercase tracking-widest">
                     Verificado
                   </span>
                 </div>
@@ -332,7 +333,7 @@ export default function CaregiverProfilePage({
                     return (
                       <div
                         key={badge}
-                        className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30 flex items-center gap-1"
+                        className={cn(tokens.colors.badges.info, "text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 flex items-center gap-1")}
                       >
                         {config.icon === "shield" ? (
                           <IconShield className="h-3 w-3" />
@@ -376,7 +377,7 @@ export default function CaregiverProfilePage({
                   {caregiver.services.map((service) => (
                     <span
                       key={service}
-                      className="text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1 bg-primary/10 text-primary border border-primary/30"
+                      className={cn(tokens.colors.badges.primary, "text-[9px] font-display font-bold rounded-lg uppercase tracking-widest px-2.5 py-1")}
                     >
                       {SERVICE_TYPES[service as keyof typeof SERVICE_TYPES] ||
                         service}
@@ -400,8 +401,8 @@ export default function CaregiverProfilePage({
               {/* Contact Info */}
               {caregiver.hasActiveContract &&
                 (caregiver.phone || caregiver.email) && (
-                  <div className="p-3 bg-success/10 border border-success/30 rounded-2xl space-y-1">
-                    <p className="text-[10px] font-display font-bold text-success uppercase tracking-widest">
+                  <div className={cn(tokens.colors.badges.success, "p-3 rounded-lg space-y-1")}>
+                    <p className="text-[10px] font-display font-bold uppercase tracking-widest">
                       Contato direto
                     </p>
                     {caregiver.phone && (
@@ -484,7 +485,7 @@ export default function CaregiverProfilePage({
                 <h2 className="text-xl font-display font-black uppercase mb-4">
                   Sobre
                 </h2>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+                <div className={getCardClasses()}>
                   <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                     {caregiver.bio}
                   </p>
@@ -499,7 +500,7 @@ export default function CaregiverProfilePage({
                 <h2 className="text-xl font-display font-black uppercase mb-4">
                   Formacao e Certificacoes
                 </h2>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-6">
+                <div className={cn(getCardClasses(), "space-y-6")}>
                   {educationList.length > 0 && (
                     <div className="space-y-3">
                       <h4 className="text-sm font-display font-bold text-foreground uppercase tracking-widest">
@@ -558,7 +559,7 @@ export default function CaregiverProfilePage({
                 <h2 className="text-xl font-display font-black uppercase mb-4">
                   Avaliacoes Detalhadas
                 </h2>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <div className={cn(getCardClasses(), "space-y-4")}>
                   {[
                     { label: "Pontualidade", value: avgSubRatings.punctuality },
                     {
@@ -601,7 +602,7 @@ export default function CaregiverProfilePage({
                 <h2 className="text-xl font-display font-black uppercase mb-4">
                   Avaliacoes Recentes
                 </h2>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
+                <div className={cn(getCardClasses(), "space-y-4")}>
                   {caregiver.reviews.map((review) => (
                     <div
                       key={review.id}
@@ -646,7 +647,7 @@ export default function CaregiverProfilePage({
               <h3 className="text-xl font-display font-black uppercase mb-4">
                 Disponibilidade
               </h3>
-              <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
+              <div className={getCardClasses()}>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <IconClock className="h-5 w-5 text-primary" />
@@ -666,7 +667,7 @@ export default function CaregiverProfilePage({
                 <h3 className="text-xl font-display font-black uppercase mb-4">
                   Idiomas
                 </h3>
-                <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-3">
+                <div className={cn(getCardClasses(), "space-y-3")}>
                   {caregiver.languages.map((lang) => (
                     <div
                       key={lang}
