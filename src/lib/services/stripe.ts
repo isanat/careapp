@@ -83,9 +83,9 @@ export class StripeService {
   }
 
   /**
-   * Create checkout session for visibility boost
+   * Create checkout session for boost visibility
    */
-  async createVisibilityBoostCheckout(
+  async createBoostVisibilityCheckout(
     userId: string,
     demandId: string,
     boostPackage: 'BASIC' | 'PREMIUM' | 'URGENT'

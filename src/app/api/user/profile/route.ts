@@ -1,3 +1,31 @@
+/**
+ * User Profile API Routes
+ *
+ * GET /api/user/profile
+ * - Fetch authenticated user's complete profile (User + ProfileFamily/ProfileCaregiver)
+ * - Returns: { user: User, profile: MergedProfile }
+ * - Auth: Required
+ *
+ * PUT /api/user/profile
+ * - Update user profile fields across User, ProfileFamily, and ProfileCaregiver tables
+ * - Supports partial updates (only provided fields are updated)
+ * - Accepts: User fields, Family fields, or Caregiver fields
+ * - Returns: { success: true, message: "Profile updated" }
+ * - Auth: Required
+ * - Automatic: Creates profile rows if needed (INSERT OR IGNORE)
+ *
+ * USAGE:
+ * PUT /api/user/profile with JSON body:
+ * {
+ *   "name": "João Silva",
+ *   "phone": "+351912345678",
+ *   "profileImage": "https://...",
+ *   "bio": "Experienced caregiver",
+ *   "hourlyRateEur": 15.50,
+ *   "languages": ["pt", "en"]
+ * }
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-turso";

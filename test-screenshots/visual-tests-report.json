@@ -1,0 +1,120 @@
+{
+  "timestamp": "2026-04-27T12:48:26.279Z",
+  "baseUrl": "https://projetoevyrapt.vercel.app",
+  "screenshotsDir": "./test-screenshots",
+  "pages": [
+    {
+      "page": "Pagamentos",
+      "url": "https://projetoevyrapt.vercel.app/app/payments",
+      "timestamp": "2026-04-27T12:48:17.837Z",
+      "status": 503,
+      "screenshots": {
+        "desktop": "test-screenshots/pagamentos-desktop.png",
+        "mobile": "test-screenshots/pagamentos-mobile.png"
+      },
+      "layout": {
+        "duplicateAppShells": 0,
+        "hiddenElements": 2,
+        "overflowIssues": 0
+      },
+      "elements": {
+        "headersVisible": false,
+        "buttonsVisible": 0,
+        "formsPresent": false,
+        "navigationVisible": false
+      },
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 503 ()"
+      ],
+      "accessibility": {
+        "missingAlt": 0,
+        "missingLabels": 0
+      },
+      "responsiveness": {
+        "flexElements": 0,
+        "gridElements": 0
+      },
+      "issues": [
+        "AppShell não encontrado"
+      ]
+    },
+    {
+      "page": "Propostas",
+      "url": "https://projetoevyrapt.vercel.app/app/proposals",
+      "timestamp": "2026-04-27T12:48:22.060Z",
+      "status": 503,
+      "screenshots": {
+        "desktop": "test-screenshots/propostas-desktop.png",
+        "mobile": "test-screenshots/propostas-mobile.png"
+      },
+      "layout": {
+        "duplicateAppShells": 0,
+        "hiddenElements": 2,
+        "overflowIssues": 0
+      },
+      "elements": {
+        "headersVisible": false,
+        "buttonsVisible": 0,
+        "formsPresent": false,
+        "navigationVisible": false
+      },
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 503 ()"
+      ],
+      "accessibility": {
+        "missingAlt": 0,
+        "missingLabels": 0
+      },
+      "responsiveness": {
+        "flexElements": 0,
+        "gridElements": 0
+      },
+      "issues": [
+        "AppShell não encontrado"
+      ]
+    },
+    {
+      "page": "Perfil",
+      "url": "https://projetoevyrapt.vercel.app/app/profile",
+      "timestamp": "2026-04-27T12:48:26.271Z",
+      "status": 503,
+      "screenshots": {
+        "desktop": "test-screenshots/perfil-desktop.png",
+        "mobile": "test-screenshots/perfil-mobile.png"
+      },
+      "layout": {
+        "duplicateAppShells": 0,
+        "hiddenElements": 2,
+        "overflowIssues": 0
+      },
+      "elements": {
+        "headersVisible": false,
+        "buttonsVisible": 0,
+        "formsPresent": false,
+        "navigationVisible": false
+      },
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 503 ()"
+      ],
+      "accessibility": {
+        "missingAlt": 0,
+        "missingLabels": 0
+      },
+      "responsiveness": {
+        "flexElements": 0,
+        "gridElements": 0
+      },
+      "issues": [
+        "AppShell não encontrado"
+      ]
+    }
+  ],
+  "summary": {
+    "totalPages": 3,
+    "pagesWithIssues": 3,
+    "totalIssues": 3,
+    "appShellsOk": 0,
+    "overflowIssues": 0,
+    "a11yIssues": 0
+  }
+}

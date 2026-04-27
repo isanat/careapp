@@ -1,0 +1,35 @@
+{
+  "page": "Perfil",
+  "url": "https://projetoevyrapt.vercel.app/app/profile",
+  "timestamp": "2026-04-27T12:48:26.271Z",
+  "status": 503,
+  "screenshots": {
+    "desktop": "test-screenshots/perfil-desktop.png",
+    "mobile": "test-screenshots/perfil-mobile.png"
+  },
+  "layout": {
+    "duplicateAppShells": 0,
+    "hiddenElements": 2,
+    "overflowIssues": 0
+  },
+  "elements": {
+    "headersVisible": false,
+    "buttonsVisible": 0,
+    "formsPresent": false,
+    "navigationVisible": false
+  },
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 503 ()"
+  ],
+  "accessibility": {
+    "missingAlt": 0,
+    "missingLabels": 0
+  },
+  "responsiveness": {
+    "flexElements": 0,
+    "gridElements": 0
+  },
+  "issues": [
+    "AppShell não encontrado"
+  ]
+}
