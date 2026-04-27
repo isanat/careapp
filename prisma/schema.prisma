@@ -1213,6 +1213,7 @@ model Demand {
   visibilityPurchases VisibilityPurchase[]
   proposals           Proposal[]
   demandNotifications DemandNotification[]
+  payments            Payment[]
 
   @@index([familyUserId, status, createdAt])
   @@index([status, visibilityPackage, visibilityExpiresAt])
