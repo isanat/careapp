@@ -151,8 +151,8 @@ export default function PaymentsPage() {
   return (
     <div className="space-y-10">
         <BloomSectionHeader
-          title="Finanças & Escrow"
-          description="Controlo de fundos seguros e histórico de pagamentos libertados."
+          title="Finanças & Custódia"
+          description="Controlo de fundos em custódia e histórico de pagamentos libertados."
         />
 
         {/* Stats - 3 StatBlocks like PaymentsView */}
@@ -170,7 +170,7 @@ export default function PaymentsPage() {
             colorClass="text-success"
           />
           <BloomStatBlock
-            label="Pendente (Escrow)"
+            label="Pendente (Custódia)"
             value={`€${((walletData?.pendingAmount || 0) / 100).toFixed(2)}`}
             icon={<IconClock className="h-6 w-6" />}
             colorClass="text-foreground"

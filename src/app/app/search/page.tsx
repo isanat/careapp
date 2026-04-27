@@ -390,7 +390,7 @@ export default function SearchPage() {
                         </span>
                       </div>
                       <span className="text-xs font-display font-bold text-foreground">
-                        {caregiver.city || "N/A"}
+                        {caregiver.city ? caregiver.city.replace(/\b\w/g, (c) => c.toUpperCase()) : "N/A"}
                       </span>
                     </div>
 
@@ -484,7 +484,7 @@ export default function SearchPage() {
                       {family.city && (
                         <p className="text-sm text-muted-foreground flex items-center gap-1">
                           <IconMapPin className="h-3 w-3" />
-                          {family.city}
+                          {family.city.replace(/\b\w/g, (c) => c.toUpperCase())}
                         </p>
                       )}
                     </div>
