@@ -66,7 +66,7 @@ export default function PaymentsPage() {
       const res = await fetch("/api/settings");
       if (res.ok) {
         const data = await res.json();
-        setPlatformFeePercent(data.platformFeePercent || 15);
+        setPlatformFeePercent(Number(data.platformFeePercent) || 15);
       }
     } catch (err) {
       console.error("Error fetching settings:", err);
@@ -93,31 +93,34 @@ export default function PaymentsPage() {
 
       contracts.forEach((contract: any) => {
         if (contract.status === "COMPLETED" || contract.status === "ACTIVE") {
-          const hourlyRate = contract.hourlyRateEur || 0;
-          const hoursWorked = contract.totalHours || 0;
-          const totalAmount = hourlyRate * hoursWorked;
-          const earnings = totalAmount * (1 - platformFeePercent / 100);
-          totalEarnings += earnings;
+          // Use pre-calculated totalEurCents (in cents) from API
+          const totalCents = Number(contract.totalEurCents) || 0;
+          const feeMultiplier = 1 - platformFeePercent / 100;
+          const earningsCents = Math.round(totalCents * feeMultiplier);
+
+          totalEarnings += earningsCents;
 
           if (contract.status === "ACTIVE") {
-            pendingAmount += earnings;
+            pendingAmount += earningsCents;
           }
 
-          recentPayments.push({
-            id: contract.id,
-            type: "SERVICE_PAYMENT",
-            amount: earnings,
-            status: contract.status,
-            createdAt: contract.createdAt,
-            description: contract.title,
-          });
+          if (contract.createdAt) {
+            recentPayments.push({
+              id: contract.id,
+              type: "SERVICE_PAYMENT",
+              amount: earningsCents,
+              status: contract.status,
+              createdAt: contract.createdAt,
+              description: contract.title ?? `Contrato #${contract.id?.slice(-6)}`,
+            });
+          }
         }
       });
 
       setWalletData({
-        totalEarnings: Math.round(totalEarnings),
-        pendingAmount: Math.round(pendingAmount),
-        availableBalance: Math.round(totalEarnings - pendingAmount),
+        totalEarnings,
+        pendingAmount,
+        availableBalance: totalEarnings - pendingAmount,
         recentPayments: recentPayments.slice(0, 10),
       });
     } catch (err: any) {

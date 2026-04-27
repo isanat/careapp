@@ -65,29 +65,48 @@ export default function WalletPage() {
     try {
       setIsLoading(true);
       setError(null);
-      const statsRes = await apiFetch("/api/user/stats");
+      const [statsRes, paymentsRes] = await Promise.all([
+        apiFetch("/api/user/stats"),
+        apiFetch("/api/payments/recurring"),
+      ]);
+
       if (!statsRes.ok) throw new Error("Failed to fetch wallet data");
       const statsData = await statsRes.json();
-      setWalletData({
-        availableBalance: statsData.availableBalance || 0,
-        pendingBalance: statsData.pendingBalance || 0,
-        totalEarnings: statsData.totalEarnings || 0,
-        lastWithdrawal: statsData.lastWithdrawal,
-      });
+      const stats = statsData.stats ?? {};
 
-      const paymentsRes = await apiFetch("/api/payments/recurring");
+      // Build wallet totals from recurring payments
+      let totalEarnings = 0;
+      let pendingAmount = 0;
+      const txns: Transaction[] = [];
+
       if (paymentsRes.ok) {
         const paymentsData = await paymentsRes.json();
-        const txns = paymentsData.payments?.map((p: any) => ({
-          id: p.id,
-          type: p.type || "earning",
-          amount: p.amount,
-          description: p.description || `Payment from contract`,
-          date: p.createdAt || new Date().toISOString(),
-          status: p.status || "completed",
-        })) || [];
-        setTransactions(txns.slice(0, 10));
+        const recurring = paymentsData.recurringPayments ?? [];
+
+        for (const p of recurring) {
+          const amount = Number(p.caregiverAmountCents) || 0;
+          if (p.status === "ACTIVE") pendingAmount += amount;
+          if (p.lastPaymentAt) {
+            totalEarnings += amount;
+            txns.push({
+              id: p.id,
+              type: "earning",
+              amount,
+              description: p.contractTitle ?? `Contrato #${p.contractId?.slice(-6)}`,
+              date: p.lastPaymentAt,
+              status: "completed",
+            });
+          }
+        }
       }
+
+      setWalletData({
+        availableBalance: Number(stats.availableBalance) || totalEarnings,
+        pendingBalance: pendingAmount,
+        totalEarnings,
+        lastWithdrawal: undefined,
+      });
+      setTransactions(txns.slice(0, 10));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load wallet data");
     } finally {
