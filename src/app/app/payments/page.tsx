@@ -147,6 +147,11 @@ export default function PaymentsPage() {
 
   return (
     <div className="space-y-10">
+        <BloomSectionHeader
+          title="Finanças & Escrow"
+          description="Controlo de fundos seguros e histórico de pagamentos libertados."
+        />
+
         {/* Stats - 3 StatBlocks like PaymentsView */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <BloomStatBlock
