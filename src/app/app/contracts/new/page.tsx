@@ -1,3 +1,26 @@
+/**
+ * Contract Creation Page (/app/contracts/new)
+ *
+ * PROPÓSITO: Página para criar novos contratos de cuidados entre famílias e cuidadores.
+ * Esta página é acessada após uma proposta ser aceita ou uma família decidir criar um contrato direto.
+ *
+ * FLUXO:
+ * 1. Família ou Cuidador acessa /app/contracts/new com query param ?proposalId=[id]
+ * 2. Carrega informações do cuidador e detalhes da proposta
+ * 3. Permite configurar: horário, frequência, taxa horária, benefícios
+ * 4. Ao submeter, cria novo contrato via POST /api/contracts
+ * 5. Redireciona para /app/contracts/[id] com sucesso
+ *
+ * ROLES PERMITIDOS: FAMILY (Família) - para criar e assinar contratos
+ *
+ * ACESSO:
+ * - URL direta: /app/contracts/new
+ * - Query params: ?proposalId=[id] (de proposta aceita)
+ *
+ * NOT IN SIDEBAR: Esta página não aparece no menu principal pois é acessada
+ * via fluxo de aceitação de propostas. Link direto disponível apenas em contexto.
+ */
+
 "use client";
 
 import { Suspense } from "react";

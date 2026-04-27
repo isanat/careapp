@@ -33,7 +33,7 @@ export async function POST(
       return NextResponse.json({ error: "Invalid package" }, { status: 400 });
     }
 
-    const checkoutSession = await stripeService.createVisibilityBoostCheckout(
+    const checkoutSession = await stripeService.createBoostVisibilityCheckout(
       session.user.id,
       demandId,
       boostPackage as "BASIC" | "PREMIUM" | "URGENT",
