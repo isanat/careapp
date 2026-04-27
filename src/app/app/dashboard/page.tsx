@@ -28,52 +28,57 @@ function DashboardPageContent() {
     totalReviews: 0,
   });
   const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [userTitle, setUserTitle] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Extract user data from session
   const userRole = (session?.user as any)?.role?.toLowerCase() as 'caregiver' | 'family' | undefined;
   const role = userRole === 'family' ? 'family' : 'caregiver';
-  const userName = (session?.user as any)?.name || 'Usuário';
+  const userName = (session?.user as any)?.name ?? '';
 
-  // Role-specific titles
-  const userTitle = role === 'caregiver'
-    ? (session?.user as any)?.profession || 'Profissional de Saúde'
-    : 'Gestor Familiar';
-
-  // Fetch dashboard stats and activity
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setIsLoading(true);
-        const [contractsRes] = await Promise.all([apiFetch("/api/contracts")]);
+
+        const [contractsRes, profileRes] = await Promise.all([
+          apiFetch("/api/contracts"),
+          apiFetch("/api/user/profile"),
+        ]);
+
+        // Load profile for real title, rating and totalReviews
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          const profile = profileData.profile;
+
+          if (role === 'caregiver') {
+            setUserTitle(profile?.title ?? '');
+            setStats(prev => ({
+              ...prev,
+              rating: Number(profile?.averageRating) || 0,
+              totalReviews: Number(profile?.totalReviews) || 0,
+            }));
+          } else {
+            setUserTitle('Gestor Familiar');
+          }
+        }
 
         if (contractsRes.ok) {
           const contractsData = await contractsRes.json();
           const contracts = contractsData.contracts || [];
 
-          // Calculate stats from real data
           const activeContracts = contracts.filter((c: any) => c.status === "ACTIVE").length;
-          const totalHours = contracts.reduce((sum: number, c: any) => sum + (c.totalHours || 0), 0);
-          const rating = contracts.length > 0
-            ? (contracts.reduce((sum: number, c: any) => sum + (c.rating || 0), 0) / contracts.length)
-            : 0;
-          const totalReviews = contracts.filter((c: any) => c.rating).length;
+          const totalHours = contracts.reduce((sum: number, c: any) => sum + (Number(c.totalHours) || 0), 0);
 
-          setStats({
-            activeContracts,
-            totalHours,
-            rating: Math.round(rating * 10) / 10,
-            totalReviews,
-          });
+          setStats(prev => ({ ...prev, activeContracts, totalHours }));
 
-          // Build activity feed from contracts
+          // Activity feed: use totalEurCents (pre-calculated) and createdAt
           const activityItems: ActivityItem[] = contracts
-            .filter((c: any) => c.status === "COMPLETED" || c.status === "ACTIVE")
+            .filter((c: any) => (c.status === "COMPLETED" || c.status === "ACTIVE") && c.createdAt)
             .map((c: any) => ({
               type: 'credit' as const,
-              description: `Contrato: ${c.title || 'Sem título'}`,
-              amount: Math.round((c.hourlyRateEur || 0) * (c.totalHours || 0)),
-              date: c.updatedAt || new Date().toISOString(),
+              description: c.title ?? `Contrato #${c.id?.slice(-6)}`,
+              amount: Number(c.totalEurCents) || 0,
+              date: c.createdAt,
             }))
             .slice(0, 5);
 
@@ -91,7 +96,7 @@ function DashboardPageContent() {
     } else {
       setIsLoading(false);
     }
-  }, [session?.user]);
+  }, [session?.user, role]);
 
   return (
     <div suppressHydrationWarning>

@@ -92,8 +92,14 @@ export async function GET(request: NextRequest) {
         stats.totalHours = 0;
       }
     } else {
-      // For family users
-      stats.totalHours = activeContracts * 20; // Estimate
+      // Family users: sum totalHours from active contracts
+      const familyHoursResult = await db.execute({
+        sql: `SELECT SUM(totalHours) as total FROM Contract WHERE familyUserId = ? AND status IN ('ACTIVE', 'COMPLETED')`,
+        args: [userId],
+      });
+      stats.totalHours = familyHoursResult.rows.length > 0
+        ? Number(familyHoursResult.rows[0].total) || 0
+        : 0;
     }
 
     return NextResponse.json({
