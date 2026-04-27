@@ -103,8 +103,8 @@ async function checkAccessibility(page: any): Promise<any> {
       missingAlt: 0,
       missingLabels: 0,
       details: {
-        imagesWithoutAlt: [],
-        inputsWithoutLabels: [],
+        imagesWithoutAlt: [] as { src: string }[],
+        inputsWithoutLabels: [] as { id: string; type: string }[],
       },
     };
 
