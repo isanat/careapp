@@ -206,19 +206,19 @@ export default function WalletPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <BloomStatBlock
-          icon={IconEuro}
+          icon={<IconEuro className="h-6 w-6" />}
           label="Ganhos Totais"
           value={`€${walletData?.totalEarnings.toFixed(2) || "0.00"}`}
           trend={{ value: 12, direction: "up" }}
         />
         <BloomStatBlock
-          icon={IconClock}
+          icon={<IconClock className="h-6 w-6" />}
           label="Saldo Pendente"
           value={`€${walletData?.pendingBalance.toFixed(2) || "0.00"}`}
           trend={{ value: 0, direction: "neutral" }}
         />
         <BloomStatBlock
-          icon={IconCheck}
+          icon={<IconCheck className="h-6 w-6" />}
           label="Último Saque"
           value={
             walletData?.lastWithdrawal
