@@ -23,7 +23,7 @@ export function BloomSectionHeader({
 
   return (
     <div className={`mb-6 ${className}`} {...props}>
-      <h2 className="text-2xl font-display font-bold text-foreground">{title}</h2>
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">{title}</h2>
       {finalDesc && (
         <p className="text-sm text-muted-foreground mt-2">{finalDesc}</p>
       )}
