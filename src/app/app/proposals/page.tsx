@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   BloomCard,
   BloomEmpty,
+  BloomSectionHeader,
 } from "@/components/bloom-custom";
 import {
   IconContract,
@@ -272,6 +273,11 @@ export default function ProposalsPage() {
 
   return (
     <div className={tokens.layout.sectionSpacing}>
+        <BloomSectionHeader
+          title="As Minhas Propostas"
+          description="Acompanhe o estado das propostas enviadas e recebidas."
+        />
+
         {successMessage && (
           <div className={cn("flex items-start", tokens.spacing.gap.lg, tokens.spacing.paddingY.mobile, tokens.spacing.paddingX.mobile, "bg-success/5 border border-success/20", tokens.radius.md)}>
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
