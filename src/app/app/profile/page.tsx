@@ -31,7 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AppShell } from "@/components/layout/app-shell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/ui/language-selector";
 import {
@@ -495,13 +494,11 @@ export default function ProfilePage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <AppShell>
-        <div className="space-y-4 animate-pulse">
+      <div className="space-y-4 animate-pulse">
           <Skeleton className="h-20 w-full rounded-2xl" />
           <Skeleton className="h-10 w-full rounded-xl" />
           <Skeleton className="h-32 w-full rounded-2xl" />
         </div>
-      </AppShell>
     );
   }
 
@@ -545,7 +542,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <AppShell>
+    
       <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
         {/* Page Header */}
         <div className="space-y-2">
@@ -1496,6 +1493,6 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppShell>
+
   );
 }

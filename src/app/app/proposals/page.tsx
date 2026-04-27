@@ -19,7 +19,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomCard,
   BloomEmpty,
@@ -272,8 +271,7 @@ export default function ProposalsPage() {
   );
 
   return (
-    <AppShell>
-      <div className={tokens.layout.sectionSpacing}>
+    <div className={tokens.layout.sectionSpacing}>
         {successMessage && (
           <div className={cn("flex items-start", tokens.spacing.gap.lg, tokens.spacing.paddingY.mobile, tokens.spacing.paddingX.mobile, "bg-success/5 border border-success/20", tokens.radius.md)}>
             <IconCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
@@ -667,7 +665,6 @@ export default function ProposalsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </AppShell>
   );
 }
 
