@@ -209,13 +209,11 @@ export default function WalletPage() {
           icon={<IconEuro className="h-6 w-6" />}
           label="Ganhos Totais"
           value={`€${walletData?.totalEarnings.toFixed(2) || "0.00"}`}
-          trend={{ value: 12, direction: "up" }}
         />
         <BloomStatBlock
           icon={<IconClock className="h-6 w-6" />}
           label="Saldo Pendente"
           value={`€${walletData?.pendingBalance.toFixed(2) || "0.00"}`}
-          trend={{ value: 0, direction: "neutral" }}
         />
         <BloomStatBlock
           icon={<IconCheck className="h-6 w-6" />}
@@ -224,11 +222,6 @@ export default function WalletPage() {
             walletData?.lastWithdrawal
               ? `€${walletData.lastWithdrawal.amount.toFixed(2)}`
               : "—"
-          }
-          subtext={
-            walletData?.lastWithdrawal
-              ? new Date(walletData.lastWithdrawal.date).toLocaleDateString()
-              : "Nenhum saque"
           }
         />
       </div>
