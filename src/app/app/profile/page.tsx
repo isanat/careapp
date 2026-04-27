@@ -61,13 +61,13 @@ import { apiFetch } from "@/lib/api-client";
 
 const SERVICE_TYPES = [
   { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
-  { id: "MEDICATION", label: "Medicacao" },
+  { id: "MEDICATION", label: "Medicação" },
   { id: "MOBILITY", label: "Mobilidade" },
   { id: "COMPANIONSHIP", label: "Companhia" },
-  { id: "MEAL_PREPARATION", label: "Refeicoes" },
-  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domesticas" },
+  { id: "MEAL_PREPARATION", label: "Refeições" },
+  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas" },
   { id: "TRANSPORTATION", label: "Transporte" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulacao Cognitiva" },
+  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva" },
   { id: "NIGHT_CARE", label: "Cuidados Noturnos" },
   { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos" },
   { id: "PHYSIOTHERAPY", label: "Fisioterapia" },
@@ -77,7 +77,7 @@ const SERVICE_TYPES = [
 const DOCUMENT_TYPES = [
   {
     id: "CC",
-    label: "Cartao de Cidadao",
+    label: "Cartão de Cidadão",
     placeholder: "12345678 1 ZZ2",
     maxLength: 15,
   },
@@ -89,11 +89,59 @@ const DOCUMENT_TYPES = [
   },
   {
     id: "RESIDENCE",
-    label: "Titulo de Residencia",
+    label: "Título de Residência",
     placeholder: "Numero do titulo",
     maxLength: 20,
   },
 ];
+
+function parseElderNeeds(raw: string): string {
+  if (!raw) return "";
+  try {
+    const data = JSON.parse(raw);
+    const parts: string[] = [];
+    const mobilityLabels: Record<string, string> = {
+      total: "Sem mobilidade",
+      parcial: "Mobilidade parcial",
+      boa: "Boa mobilidade",
+    };
+    if (data.mobilityLevel)
+      parts.push(`Mobilidade: ${mobilityLabels[data.mobilityLevel] || data.mobilityLevel}`);
+    const condLabels: Record<string, string> = {
+      cancer: "Cancro",
+      artrite: "Artrite",
+      avc: "AVC",
+      diabetes: "Diabetes",
+      demencia: "Demência",
+      alzheimer: "Alzheimer",
+      parkinson: "Parkinson",
+      insuficiencia_cardiaca: "Insuficiência cardíaca",
+    };
+    if (Array.isArray(data.medicalConditions) && data.medicalConditions.length > 0)
+      parts.push(`Condições médicas: ${data.medicalConditions.map((c: string) => condLabels[c] || c).join(", ")}`);
+    if (data.medicalConditionsNotes)
+      parts.push(`Notas médicas: ${data.medicalConditionsNotes}`);
+    if (Array.isArray(data.dietaryRestrictions) && data.dietaryRestrictions.length > 0)
+      parts.push(`Restrições alimentares: ${data.dietaryRestrictions.join(", ")}`);
+    if (Array.isArray(data.servicesNeeded) && data.servicesNeeded.length > 0) {
+      const svcLabels: Record<string, string> = {
+        personal_care: "Cuidados pessoais",
+        medication: "Medicação",
+        meal_preparation: "Preparação de refeições",
+        mobility: "Mobilidade",
+        companionship: "Companhia",
+        cognitive_support: "Estimulação cognitiva",
+        night_care: "Cuidados noturnos",
+        transportation: "Transporte",
+      };
+      parts.push(`Serviços necessários: ${data.servicesNeeded.map((s: string) => svcLabels[s] || s).join(", ")}`);
+    }
+    if (data.additionalNotes) parts.push(`Notas adicionais: ${data.additionalNotes}`);
+    return parts.length > 0 ? parts.join("\n") : raw;
+  } catch {
+    return raw;
+  }
+}
 
 function validateNIF(nif: string): boolean {
   if (!/^\d{9}$/.test(nif)) return false;
@@ -232,7 +280,7 @@ export default function ProfilePage() {
         totalContracts: data.profile?.totalContracts || 0,
         elderName: data.profile?.elderName || "",
         elderAge: data.profile?.elderAge || undefined,
-        elderNeeds: data.profile?.elderNeeds || "",
+        elderNeeds: parseElderNeeds(data.profile?.elderNeeds || ""),
         emergencyContactName: data.profile?.emergencyContactName || "",
         emergencyContactPhone: data.profile?.emergencyContactPhone || "",
         backgroundCheckStatus: data.user?.backgroundCheckStatus || "PENDING",
@@ -309,7 +357,7 @@ export default function ProfilePage() {
       if (granted) {
         const ok = await subscribeToPush();
         if (!ok && pushError) setError(pushError);
-        else if (ok) setSuccess("Notificacoes ativadas!");
+        else if (ok) setSuccess("Notificações ativadas!");
       }
     } finally {
       setPushLoading(false);
@@ -551,7 +599,7 @@ export default function ProfilePage() {
           </h1>
           <p className="text-base text-muted-foreground font-medium">
             {isCaregiver
-              ? "Gerencie suas informações profissionais e preferências"
+              ? "Gira as suas informações profissionais e preferências"
               : "Gerencie as informações do seu familiar"}
           </p>
         </div>
@@ -753,7 +801,7 @@ export default function ProfilePage() {
                 value="services"
                 className="rounded-xl text-xs font-display font-bold uppercase data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
-                Servicos
+                Serviços
               </TabsTrigger>
             )}
             {isFamily && (
@@ -1049,11 +1097,11 @@ export default function ProfilePage() {
               <IconShield className="h-5 w-5 text-info shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-display font-bold text-foreground">
-                  Seguranca dos dados
+                  Segurança dos dados
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Seus documentos sao armazenados de forma segura e
-                  criptografada em conformidade com LGPD.
+                  Os seus documentos são armazenados de forma segura e
+                  encriptados em conformidade com o RGPD.
                 </p>
               </div>
             </div>
@@ -1064,7 +1112,7 @@ export default function ProfilePage() {
             <TabsContent value="services" className={tokens.layout.sectionSpacing}>
               <section className="space-y-4">
                 <h3 className={getHeadingClasses("sectionTitle")}>
-                  Servicos Oferecidos
+                  Serviços Oferecidos
                 </h3>
                 <div className={cn(getCardClasses(), "space-y-6")}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1141,7 +1189,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                        Certificacoes
+                        Certificações
                       </Label>
                       <Input
                         value={formData.certifications || ""}
@@ -1167,7 +1215,7 @@ export default function ProfilePage() {
             <TabsContent value="elder" className={tokens.layout.sectionSpacing}>
               <section className="space-y-4">
                 <h3 className={getHeadingClasses("sectionTitle")}>
-                  Informacoes do Familiar
+                  Informações do Familiar
                 </h3>
                 <div className={cn(getCardClasses(), "space-y-4")}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1207,7 +1255,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                      Necessidades Especificas
+                      Necessidades Específicas
                     </Label>
                     <Textarea
                       value={formData.elderNeeds || ""}
@@ -1229,7 +1277,7 @@ export default function ProfilePage() {
           <TabsContent value="contact" className={tokens.layout.sectionSpacing}>
             <section className="space-y-4">
               <h3 className={getHeadingClasses("sectionTitle")}>
-                Informacoes de Contato
+                Informações de Contacto
               </h3>
               <div className={cn(getCardClasses(), "space-y-4")}>
                 <div>
@@ -1267,7 +1315,7 @@ export default function ProfilePage() {
                   <>
                     <div className="border-t border-border/30 pt-6 space-y-4">
                       <h4 className="text-sm font-display font-bold uppercase text-foreground">
-                        Contato de Emergencia
+                        Contacto de Emergência
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -1321,7 +1369,7 @@ export default function ProfilePage() {
             {/* Settings Section */}
             <section className="space-y-4">
               <h3 className={getHeadingClasses("sectionTitle")}>
-                Preferencias e Configuracoes
+                Preferências e Configurações
               </h3>
 
               {/* Push Notifications */}
@@ -1332,7 +1380,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-sm font-display font-bold text-foreground">
-                      Notificacoes Push
+                      Notificações Push
                     </p>
                     <p className="text-xs text-muted-foreground font-medium">
                       Alertas em tempo real
@@ -1448,8 +1496,8 @@ export default function ProfilePage() {
                       Apagar conta?
                     </DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
-                      Esta acao e irreversivel. Todos os seus dados serao
-                      excluidos permanentemente.
+                      Esta ação é irreversível. Todos os seus dados serão
+                      apagados permanentemente.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="flex gap-3 mt-6">
