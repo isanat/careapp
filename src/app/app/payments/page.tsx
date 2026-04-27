@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomSectionHeader,
   BloomStatBlock,
@@ -134,8 +133,7 @@ export default function PaymentsPage() {
 
   if (isLoading) {
     return (
-      <AppShell>
-        <div className="space-y-4">
+      <div className="space-y-4">
           <Skeleton className="h-10 w-48" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {[1, 2, 3].map((i) => (
@@ -144,13 +142,11 @@ export default function PaymentsPage() {
           </div>
           <Skeleton className="h-64 rounded-3xl mt-6" />
         </div>
-      </AppShell>
     );
   }
 
   return (
-    <AppShell>
-      <div className="space-y-10">
+    <div className="space-y-10">
         {/* Stats - 3 StatBlocks like PaymentsView */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <BloomStatBlock
@@ -255,6 +251,5 @@ export default function PaymentsPage() {
           </div>
         )}
       </div>
-    </AppShell>
   );
 }
