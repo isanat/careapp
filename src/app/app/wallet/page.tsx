@@ -20,7 +20,6 @@ import {
   IconEuro,
   IconTrendingUp,
   IconClock,
-  IconBank,
   IconArrowLeft,
   IconArrowRight,
   IconCheck,
@@ -164,7 +163,7 @@ export default function WalletPage() {
                 <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
                   <DialogTrigger asChild>
                     <Button className="flex-1">
-                      <IconBank className="h-4 w-4 mr-2" />
+                      <IconArrowLeft className="h-4 w-4 mr-2" />
                       Sacar Fundos
                     </Button>
                   </DialogTrigger>
@@ -249,7 +248,7 @@ export default function WalletPage() {
                     )}
                     {tx.type === "withdrawal" && (
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <IconBank className="h-5 w-5 text-primary" />
+                        <IconArrowLeft className="h-5 w-5 text-primary" />
                       </div>
                     )}
                   </div>
