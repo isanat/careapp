@@ -7,7 +7,6 @@ import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomCard,
   BloomSectionHeader,
@@ -94,8 +93,7 @@ export default function ContractsPage() {
   );
 
   return (
-    <AppShell>
-      <div className="space-y-3">
+    <div className="space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
           <BloomSectionHeader title={t.contracts.title} />
@@ -169,8 +167,7 @@ export default function ContractsPage() {
           </Tabs>
         )}
       </div>
-    </AppShell>
-  );
+    );
 }
 
 function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily: boolean; t: any }) {
