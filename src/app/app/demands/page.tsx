@@ -227,48 +227,49 @@ function DemandsContent() {
         </h3>
         <BloomCard className="p-5 sm:p-8 rounded-3xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-          <div className="space-y-2">
-            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-              Localidade
-            </label>
-            <Input
-              type="text"
-              value={searchCity}
-              onChange={(e) => setSearchCity(e.target.value)}
-              placeholder="Ex: Lisboa, Porto, Covilhã..."
-              className="bg-secondary border-border rounded-2xl h-11"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-              Tipo de Serviço
-            </label>
-            <Select
-              value={selectedService || "ALL"}
-              onValueChange={(value) =>
-                setSelectedService(value === "ALL" ? "" : value)
-              }
-            >
-              <SelectTrigger className="h-11 rounded-2xl bg-secondary border-border">
-                <SelectValue placeholder="Todos os serviços" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos os serviços</SelectItem>
-                <SelectItem value="PERSONAL_CARE">Cuidados Pessoais</SelectItem>
-                <SelectItem value="MEDICATION">Medicação</SelectItem>
-                <SelectItem value="MOBILITY">Mobilidade</SelectItem>
-                <SelectItem value="COMPANIONSHIP">Companhia</SelectItem>
-                <SelectItem value="MEAL_PREPARATION">Refeições</SelectItem>
-                <SelectItem value="LIGHT_HOUSEWORK">
-                  Tarefas Domésticas
-                </SelectItem>
-                <SelectItem value="TRANSPORTATION">Transporte</SelectItem>
-                <SelectItem value="COGNITIVE_SUPPORT">
-                  Estimulação Cognitiva
-                </SelectItem>
-                <SelectItem value="NIGHT_CARE">Cuidados Noturnos</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+                Localidade
+              </label>
+              <Input
+                type="text"
+                value={searchCity}
+                onChange={(e) => setSearchCity(e.target.value)}
+                placeholder="Ex: Lisboa, Porto, Covilhã..."
+                className="bg-secondary border-border rounded-2xl h-11"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+                Tipo de Serviço
+              </label>
+              <Select
+                value={selectedService || "ALL"}
+                onValueChange={(value) =>
+                  setSelectedService(value === "ALL" ? "" : value)
+                }
+              >
+                <SelectTrigger className="h-11 rounded-2xl bg-secondary border-border">
+                  <SelectValue placeholder="Todos os serviços" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">Todos os serviços</SelectItem>
+                  <SelectItem value="PERSONAL_CARE">Cuidados Pessoais</SelectItem>
+                  <SelectItem value="MEDICATION">Medicação</SelectItem>
+                  <SelectItem value="MOBILITY">Mobilidade</SelectItem>
+                  <SelectItem value="COMPANIONSHIP">Companhia</SelectItem>
+                  <SelectItem value="MEAL_PREPARATION">Refeições</SelectItem>
+                  <SelectItem value="LIGHT_HOUSEWORK">
+                    Tarefas Domésticas
+                  </SelectItem>
+                  <SelectItem value="TRANSPORTATION">Transporte</SelectItem>
+                  <SelectItem value="COGNITIVE_SUPPORT">
+                    Estimulação Cognitiva
+                  </SelectItem>
+                  <SelectItem value="NIGHT_CARE">Cuidados Noturnos</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </BloomCard>
       </div>
