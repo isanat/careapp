@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/react";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -591,8 +590,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <AppShell>
-      <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
+    <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
         {/* Page Header */}
         <div className="space-y-2">
           <h1 className={getHeadingClasses("pageTitle")}>
@@ -1542,6 +1540,5 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
-    </AppShell>
   );
 }
