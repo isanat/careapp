@@ -20,6 +20,7 @@ import {
   IconLoader2,
   IconAlertCircle,
 } from "@/components/icons";
+// Removed AppShell import - layout.tsx provides global AppShell wrapper
 
 interface Interview {
   id: string;
@@ -118,19 +119,16 @@ export default function InterviewsPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <AppShell>
-        <div className="space-y-4 max-w-4xl">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-        </div>
-      </AppShell>
+      <div className="space-y-4 max-w-4xl">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full" />
+      </div>
     );
   }
 
   return (
-    <AppShell>
-      <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl">
         {/* Header */}
         <BloomSectionHeader
           title="Entrevistas"
@@ -285,6 +283,5 @@ export default function InterviewsPage() {
           </div>
         )}
       </div>
-    </AppShell>
-  );
+    );
 }
