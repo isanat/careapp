@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomSectionHeader,
   BloomEmpty,
@@ -639,7 +640,7 @@ function DemandsContent() {
 
 export default function DemandsPage() {
   return (
-  <>
+    <AppShell>
       <Suspense
         fallback={
           <div className="space-y-6">
@@ -652,6 +653,6 @@ export default function DemandsPage() {
       >
         <DemandsContent />
       </Suspense>
-  </>
+    </AppShell>
   );
 }

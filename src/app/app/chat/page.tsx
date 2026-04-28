@@ -1,6 +1,7 @@
 "use client";
 
 import { ChatView } from "@isanat/bloom-elements";
+import { AppShell } from "@/components/layout/app-shell";
 import { BloomSectionHeader } from "@/components/bloom-custom";
 import { tokens, cn, getCardClasses, getHeadingClasses, getBadgeClasses } from "@/lib/design-tokens";
 
@@ -19,7 +20,9 @@ function ChatPageContent() {
 export default function ChatPage() {
   return (
     <div suppressHydrationWarning>
-      <ChatPageContent />
+      <AppShell>
+        <ChatPageContent />
+      </AppShell>
     </div>
   );
 }
