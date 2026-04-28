@@ -5,7 +5,6 @@ import { use } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getServiceTypeLabel } from "@/lib/service-types";
@@ -158,8 +157,7 @@ export default function DemandDetailPage({
 
   if (error && !demand) {
     return (
-      <AppShell>
-        <div className="max-w-2xl mx-auto space-y-4">
+      <div className="max-w-2xl mx-auto space-y-4">
           <Link
             href="/app/demands"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
@@ -181,7 +179,6 @@ export default function DemandDetailPage({
             </div>
           </BloomCard>
         </div>
-      </AppShell>
     );
   }
 
@@ -205,8 +202,7 @@ export default function DemandDetailPage({
             };
 
   return (
-    <AppShell>
-      <div className="max-w-4xl mx-auto pb-8 space-y-8 px-4 md:px-6 lg:px-8">
+    <div className="max-w-4xl mx-auto pb-8 space-y-8 px-4 md:px-6 lg:px-8">
         <Link
           href="/app/demands"
           className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
@@ -492,6 +488,5 @@ export default function DemandDetailPage({
           </BloomCard>
         </div>
       </div>
-    </AppShell>
-  );
+    );
 }

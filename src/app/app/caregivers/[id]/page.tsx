@@ -8,7 +8,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AppShell } from "@/components/layout/app-shell";
 import { tokens, cn, getCardClasses } from "@/lib/design-tokens";
 import {
   IconStar,
@@ -173,7 +172,7 @@ export default function CaregiverProfilePage({
 
   if (isLoading) {
     return (
-      <AppShell>
+      
         <div className="space-y-8">
           <Button
             variant="ghost"
@@ -196,13 +195,13 @@ export default function CaregiverProfilePage({
             </div>
           </div>
         </div>
-      </AppShell>
+      
     );
   }
 
   if (error || !caregiver) {
     return (
-      <AppShell>
+      
         <div className="space-y-8">
           <Button
             variant="ghost"
@@ -226,7 +225,7 @@ export default function CaregiverProfilePage({
             </Button>
           </div>
         </div>
-      </AppShell>
+      
     );
   }
 
@@ -268,8 +267,7 @@ export default function CaregiverProfilePage({
       : null;
 
   return (
-    <AppShell>
-      <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto">
         <Button
           variant="ghost"
           asChild
@@ -739,14 +737,13 @@ export default function CaregiverProfilePage({
             </section>
           </div>
         </div>
-      </div>
 
-      <ScheduleInterviewDialog
-        caregiverUserId={caregiver.id}
-        caregiverName={caregiver.name}
-        open={isInterviewDialogOpen}
-        onOpenChange={setIsInterviewDialogOpen}
-      />
-    </AppShell>
+        <ScheduleInterviewDialog
+          caregiverUserId={caregiver.id}
+          caregiverName={caregiver.name}
+          open={isInterviewDialogOpen}
+          onOpenChange={setIsInterviewDialogOpen}
+        />
+      </div>
   );
 }

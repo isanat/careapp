@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -175,7 +174,7 @@ export default function EditDemandPage({
 
   if (status === "loading" || loading) {
     return (
-      <AppShell>
+      
         <div className="max-w-2xl mx-auto py-12 px-4">
           <div className="animate-pulse space-y-8">
             <div className="h-12 bg-secondary rounded-3xl" />
@@ -188,13 +187,13 @@ export default function EditDemandPage({
             </div>
           </div>
         </div>
-      </AppShell>
+      
     );
   }
 
   if (error && !demand) {
     return (
-      <AppShell>
+      
         <div className="max-w-2xl mx-auto py-12 px-4">
           <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
@@ -206,12 +205,12 @@ export default function EditDemandPage({
             </div>
           </div>
         </div>
-      </AppShell>
+      
     );
   }
 
   return (
-    <AppShell>
+    
       <div className="max-w-2xl mx-auto py-12 space-y-8">
         {/* Header */}
         <div className="space-y-2">
@@ -389,6 +388,6 @@ export default function EditDemandPage({
           </form>
         </div>
       </div>
-    </AppShell>
+    
   );
 }

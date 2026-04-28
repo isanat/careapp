@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { BloomCard } from "@/components/bloom-custom";
 import { BloomSectionHeader } from "@/components/bloom-custom";
 import { BloomBadge } from "@/components/bloom-custom";
-import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -20,7 +19,6 @@ import {
   IconLoader2,
   IconAlertCircle,
 } from "@/components/icons";
-// Removed AppShell import - layout.tsx provides global AppShell wrapper
 
 interface Interview {
   id: string;

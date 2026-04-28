@@ -17,7 +17,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   IconCheck,
   IconX,
@@ -208,8 +207,7 @@ export default function AdminPaymentsPage() {
   }
 
   return (
-    <AppShell>
-      <div className="space-y-8 px-4 md:px-6 lg:px-8">
+    <div className="space-y-8 px-4 md:px-6 lg:px-8">
         {/* Header */}
         <div>
           <h1 className="text-3xl sm:text-4xl font-display font-black uppercase tracking-tighter leading-none text-foreground mb-2">
@@ -610,6 +608,5 @@ export default function AdminPaymentsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </AppShell>
-  );
+    );
 }

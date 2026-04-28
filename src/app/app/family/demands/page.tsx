@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { AppShell } from "@/components/layout/app-shell";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { DemandActionsDropdown } from "@/components/demands/demand-actions-dropdown";
@@ -375,8 +374,7 @@ function FamilyDemandsContent() {
 
 export default function FamilyDemandsPage() {
   return (
-    <AppShell>
-      <Suspense
+    <Suspense
         fallback={
           <div className="space-y-4 py-8 px-4 md:px-6 lg:px-8">
             <div className="animate-pulse space-y-4">
@@ -388,6 +386,5 @@ export default function FamilyDemandsPage() {
       >
         <FamilyDemandsContent />
       </Suspense>
-    </AppShell>
   );
 }

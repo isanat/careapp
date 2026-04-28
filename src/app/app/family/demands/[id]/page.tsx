@@ -4,7 +4,6 @@ import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AppShell } from "@/components/layout/app-shell";
 import { BoostVisibilityModal } from "@/components/demands/boost-visibility-modal";
 import { getServiceTypeLabel } from "@/lib/service-types";
 
@@ -130,19 +129,19 @@ export default function FamilyDemandDetailPage({
 
   if (loading) {
     return (
-      <AppShell>
+      
         <div className="flex justify-center items-center min-h-screen">
           <div className="animate-spin">
             <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full" />
           </div>
         </div>
-      </AppShell>
+      
     );
   }
 
   if (error || !demand) {
     return (
-      <AppShell>
+      
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
             <div className="text-destructive font-display font-bold text-sm flex-1">
@@ -156,7 +155,7 @@ export default function FamilyDemandDetailPage({
             ← Voltar
           </Link>
         </div>
-      </AppShell>
+      
     );
   }
 
@@ -187,8 +186,7 @@ export default function FamilyDemandDetailPage({
   };
 
   return (
-    <AppShell>
-      <div className="space-y-8 pb-8">
+    <div className="space-y-8 pb-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Back Button */}
           <Link
@@ -478,22 +476,21 @@ export default function FamilyDemandDetailPage({
               )}
             </div>
           </section>
+
+          {/* Boost Modal */}
+          {demand && (
+            <BoostVisibilityModal
+              demandId={demand.id}
+              demandTitle={demand.title}
+              isOpen={showBoostModal}
+              onClose={() => setShowBoostModal(false)}
+              onSuccess={() => {
+                setShowBoostModal(false);
+                setBoostSuccess(true);
+              }}
+            />
+          )}
         </div>
       </div>
-
-      {/* Boost Modal */}
-      {demand && (
-        <BoostVisibilityModal
-          demandId={demand.id}
-          demandTitle={demand.title}
-          isOpen={showBoostModal}
-          onClose={() => setShowBoostModal(false)}
-          onSuccess={() => {
-            setShowBoostModal(false);
-            setBoostSuccess(true);
-          }}
-        />
-      )}
-    </AppShell>
   );
 }

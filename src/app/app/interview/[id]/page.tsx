@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AppShell } from "@/components/layout/app-shell";
 import { AgoraRoom } from "@/components/video/agora-room";
 import {
   IconVideo,
@@ -287,18 +286,18 @@ export default function InterviewPage({
 
   if (isLoading) {
     return (
-      <AppShell>
+      
         <div className="animate-pulse space-y-5 max-w-4xl mx-auto">
           <div className="h-28 bg-muted rounded-3xl" />
           <div className="h-[60vh] bg-muted rounded-3xl" />
         </div>
-      </AppShell>
+      
     );
   }
 
   if (!interview) {
     return (
-      <AppShell>
+      
         <div className="text-center py-16 px-6 max-w-md mx-auto">
           <div className="w-16 h-16 bg-secondary rounded-3xl flex items-center justify-center mx-auto mb-5">
             <IconAlertCircle className="h-8 w-8 text-muted-foreground" />
@@ -314,7 +313,7 @@ export default function InterviewPage({
             Voltar ao Dashboard
           </Button>
         </div>
-      </AppShell>
+      
     );
   }
 
@@ -359,7 +358,7 @@ export default function InterviewPage({
     interviewConducted && noMisrepresentation && platformLiabilityAck;
 
   return (
-    <AppShell hideBottomNav={interview.status === "IN_PROGRESS"}>
+    
       <div className="space-y-6 max-w-4xl mx-auto pb-6 px-4 md:px-6 lg:px-8">
         {/* Header - Bloom Elements style */}
         <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-7 overflow-hidden">
@@ -1435,6 +1434,6 @@ export default function InterviewPage({
             </div>
           )}
       </div>
-    </AppShell>
+    
   );
 }
