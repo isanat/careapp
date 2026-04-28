@@ -211,9 +211,10 @@ export default function DashboardPage() {
                     <p className="font-display font-black text-foreground text-sm uppercase">Contratos</p>
                     <p className="text-[10px] text-muted-foreground font-medium">Ver todos os contratos</p>
                   </div>
-                </BloomCard>
-              </Link>
-            </div>
+                </div>
+              </BloomCard>
+            </Link>
+          </div>
         </div>
 
         {/* Next Steps - compact list */}
