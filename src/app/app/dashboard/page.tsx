@@ -8,6 +8,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/layout/app-shell";
 import {
+  BloomCard,
+  BloomStatBlock,
+  BloomSectionHeader,
+} from "@/components/bloom-custom";
+import {
   IconToken,
   IconContract,
   IconSearch,
@@ -108,12 +113,15 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-3">
-        {/* Welcome + Status inline */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-foreground">
-            {t.dashboard.welcome}, {firstName}!
-          </h1>
+      <div className="space-y-6 sm:space-y-8">
+        {/* Header */}
+        <BloomSectionHeader
+          title={`Olá, ${firstName}`}
+          description="Visão geral da sua atividade na plataforma"
+        />
+
+        {/* Status Badge */}
+        <div className="flex justify-end">
           <Badge
             className={session?.user?.status === "ACTIVE"
               ? "bg-success/10 text-success border-success/20"
@@ -125,69 +133,87 @@ export default function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Stats - 4 columns, optimized spacing */}
-        <div className="grid grid-cols-4 gap-3">
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconContract className="h-5 w-5 text-primary mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.activeContracts || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">{t.nav.contracts}</p>
-          </div>
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconClock className="h-5 w-5 text-secondary mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.totalHours || 0}h</p>
-            <p className="text-xs text-muted-foreground mt-1">Horas</p>
-          </div>
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconStar className="h-5 w-5 text-amber-500 mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.rating?.toFixed(1) || '-'}</p>
-            <p className="text-xs text-muted-foreground mt-1">Nota</p>
-          </div>
-          <div className="bg-surface rounded-xl p-4 border border-border/50 text-center">
-            <IconEuro className="h-5 w-5 text-success mx-auto" />
-            <p className="text-xl font-bold mt-2">{stats?.totalReviews || 0}</p>
-            <p className="text-xs text-muted-foreground mt-1">Reviews</p>
-          </div>
+        {/* Stats - 4 columns using BloomStatBlock */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
+          <BloomStatBlock
+            icon={<IconContract className="h-6 w-6" />}
+            label="Contratos Ativos"
+            value={stats?.activeContracts || 0}
+            colorClass="text-primary"
+            iconBg="bg-primary/10"
+          />
+          <BloomStatBlock
+            icon={<IconClock className="h-6 w-6" />}
+            label="Horas Totais"
+            value={`${stats?.totalHours || 0}h`}
+            colorClass="text-warning"
+            iconBg="bg-warning/10"
+          />
+          <BloomStatBlock
+            icon={<IconStar className="h-6 w-6" />}
+            label="Avaliação"
+            value={stats?.rating?.toFixed(1) || "-"}
+            colorClass="text-info"
+            iconBg="bg-info/10"
+          />
+          <BloomStatBlock
+            icon={<IconEuro className="h-6 w-6" />}
+            label="Avaliações"
+            value={stats?.totalReviews || 0}
+            colorClass="text-success"
+            iconBg="bg-success/10"
+          />
         </div>
 
-        {/* Quick Actions - horizontal row */}
-        <div className="flex gap-3">
-          {isFamily && (
-            <Link href="/app/search" className="flex-1">
-              <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-primary/30 transition-all flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <IconSearch className="h-5 w-5 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">{t.nav.searchCaregivers}</p>
-                  <p className="text-xs text-muted-foreground">Encontrar</p>
-                </div>
-              </div>
-            </Link>
-          )}
-          {isCaregiver && (
-            <Link href="/app/proposals" className="flex-1">
-              <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-secondary/30 transition-all flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0">
-                  <IconInbox className="h-5 w-5 text-secondary" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">Propostas</p>
-                  <p className="text-xs text-muted-foreground">Solicitacoes</p>
-                </div>
-              </div>
-            </Link>
-          )}
-          <Link href="/app/contracts" className="flex-1">
-            <div className="bg-surface rounded-xl p-4 border border-border/50 hover:border-accent/30 transition-all flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
-                <IconContract className="h-5 w-5 text-accent-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold truncate">{t.contracts.title}</p>
-                <p className="text-xs text-muted-foreground">{t.dashboard.viewAll}</p>
-              </div>
+        {/* Quick Actions */}
+        <div className="space-y-4">
+          <div className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
+            Ações Rápidas
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {isFamily && (
+              <Link href="/app/search">
+                <BloomCard className="hover:shadow-elevated transition-all cursor-pointer h-full">
+                  <div className="flex items-center gap-3 p-5 sm:p-6">
+                    <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                      <IconSearch className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-display font-black text-foreground text-sm uppercase">Procurar Cuidadores</p>
+                      <p className="text-[10px] text-muted-foreground font-medium">Encontrar profissional</p>
+                    </div>
+                  </div>
+                </BloomCard>
+              </Link>
+            )}
+            {isCaregiver && (
+              <Link href="/app/proposals">
+                <BloomCard className="hover:shadow-elevated transition-all cursor-pointer h-full">
+                  <div className="flex items-center gap-3 p-5 sm:p-6">
+                    <div className="h-10 w-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+                      <IconInbox className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-display font-black text-foreground text-sm uppercase">Propostas</p>
+                      <p className="text-[10px] text-muted-foreground font-medium">Solicitações recebidas</p>
+                    </div>
+                  </div>
+                </BloomCard>
+              </Link>
+            )}
+            <Link href="/app/contracts">
+              <BloomCard className="hover:shadow-elevated transition-all cursor-pointer h-full">
+                <div className="flex items-center gap-3 p-5 sm:p-6">
+                  <div className="h-10 w-10 rounded-2xl bg-success/10 flex items-center justify-center text-success group-hover:scale-110 transition-transform">
+                    <IconContract className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-display font-black text-foreground text-sm uppercase">Contratos</p>
+                    <p className="text-[10px] text-muted-foreground font-medium">Ver todos os contratos</p>
+                  </div>
+                </BloomCard>
+              </Link>
             </div>
-          </Link>
         </div>
 
         {/* Next Steps - compact list */}
