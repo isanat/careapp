@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
+import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -272,7 +273,8 @@ export default function ProposalsPage() {
   );
 
   return (
-    <div className={tokens.layout.sectionSpacing}>
+    <AppShell>
+      <div className={tokens.layout.sectionSpacing}>
         <BloomSectionHeader
           title="As Minhas Propostas"
           description="Acompanhe o estado das propostas enviadas e recebidas."
@@ -671,6 +673,7 @@ export default function ProposalsPage() {
           </DialogContent>
         </Dialog>
       </div>
+    </AppShell>
   );
 }
 

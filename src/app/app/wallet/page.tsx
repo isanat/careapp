@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
+import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomCard,
   BloomStatBlock,
@@ -145,7 +146,8 @@ export default function WalletPage() {
   }
 
   return (
-    <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
+    <AppShell>
+      <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
       <div className="space-y-2 mb-8">
         <div className="flex items-center gap-2">
           <IconWallet className="h-8 w-8 text-primary" />
@@ -306,5 +308,6 @@ export default function WalletPage() {
         </BloomCard>
       )}
     </div>
+    </AppShell>
   );
 }
