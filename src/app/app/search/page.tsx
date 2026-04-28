@@ -203,11 +203,11 @@ export default function SearchPage() {
     <>
       <div className="space-y-8">
         {/* Page Header */}
-        <div className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-display font-black uppercase mb-2 text-foreground">
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
             {isCaregiver ? "Famílias em Busca" : "Explorar Cuidadores"}
-          </h1>
-          <p className="text-base text-muted-foreground font-medium">
+          </h2>
+          <p className="text-sm text-muted-foreground font-medium">
             {isCaregiver
               ? "Encontre famílias que precisam de seus serviços"
               : "Descubra os melhores cuidadores disponíveis"}
@@ -215,7 +215,7 @@ export default function SearchPage() {
         </div>
 
         {/* Search/Filter Bar */}
-        <div className="bg-card rounded-3xl p-4 sm:p-6 border border-border shadow-card space-y-4">
+        <div className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card space-y-4">
           <div className="flex gap-3">
             <div className="relative flex-1">
               <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -320,7 +320,7 @@ export default function SearchPage() {
 
         {/* Loading Skeletons */}
         {isLoading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {[1, 2, 3, 4].map((i) => (
               <Skeleton key={i} className="h-48 rounded-3xl" />
             ))}
@@ -329,7 +329,7 @@ export default function SearchPage() {
 
         {/* Caregiver Grid */}
         {!isLoading && !isCaregiver && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {filteredCaregivers.map((caregiver) => (
               <Link
                 key={caregiver.id}
@@ -453,7 +453,7 @@ export default function SearchPage() {
 
         {/* Family Grid */}
         {!isLoading && isCaregiver && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {filteredFamilies.map((family) => (
               <Link
                 key={family.id}

@@ -201,36 +201,32 @@ function DemandsContent() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 md:space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Page Heading */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div className="space-y-1 sm:space-y-2">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
-            Marketplace de Demandas
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-            Explore oportunidades de trabalho disponíveis e envie suas propostas.
-          </p>
-        </div>
-        <span className="px-3 py-1 text-[10px] font-display font-black rounded-lg uppercase tracking-widest bg-primary/10 text-primary">
-          {demands.length} vagas
-        </span>
+      <div className="space-y-1 sm:space-y-2">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
+          Marketplace de Demandas
+        </h2>
+        <p className="text-sm text-muted-foreground font-medium">
+          Explore oportunidades de trabalho disponíveis e envie suas propostas. {demands.length} vagas
+        </p>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-4 p-4 sm:p-5 md:p-7 bg-destructive/10 rounded-2xl sm:rounded-3xl border border-destructive/20">
+        <div className="flex items-center gap-4 p-5 sm:p-7 bg-destructive/10 rounded-3xl border border-destructive/20">
           <IconAlertCircle className="h-5 w-5 text-destructive shrink-0" />
           <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
       )}
 
       {/* Filters */}
-      <BloomCard className="p-4 sm:p-5 md:p-7 rounded-2xl sm:rounded-3xl">
-        <h3 className="text-sm font-display font-black text-foreground uppercase tracking-widest border-l-4 border-primary pl-3">
+      <div className="space-y-4">
+        <h3 className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-[0.4em] border-l-4 border-primary pl-4">
           Filtros
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <BloomCard className="p-5 sm:p-8 rounded-3xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
           <div className="space-y-2">
             <label className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
               Localidade
@@ -274,8 +270,8 @@ function DemandsContent() {
               </SelectContent>
             </Select>
           </div>
-        </div>
-      </BloomCard>
+        </BloomCard>
+      </div>
 
       {/* Demands Grid */}
       {demands.length === 0 ? (
@@ -285,7 +281,7 @@ function DemandsContent() {
           description="Tente ajustar seus filtros para encontrar mais oportunidades"
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {demands.map((demand) => {
             const createdDate = new Date(demand.createdAt);
             const daysAgo = Math.floor(
@@ -314,7 +310,7 @@ function DemandsContent() {
               <BloomCard
                 key={demand.id}
                 variant="interactive"
-                className="p-4 sm:p-5 md:p-7 cursor-pointer group flex flex-col h-full rounded-2xl sm:rounded-3xl"
+                className="p-5 sm:p-7 cursor-pointer group flex flex-col h-full rounded-3xl"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3 mb-4 sm:mb-5">
