@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomSectionHeader,
   BloomStatBlock,
@@ -150,8 +149,7 @@ export default function PaymentsPage() {
   }
 
   return (
-    <AppShell>
-      <div className="space-y-10">
+    <div className="space-y-10">
         <BloomSectionHeader
           title="Finanças & Custódia"
           description="Controlo de fundos em custódia e histórico de pagamentos libertados."
@@ -261,6 +259,5 @@ export default function PaymentsPage() {
           </div>
         )}
       </div>
-    </AppShell>
   );
 }

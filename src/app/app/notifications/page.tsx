@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { apiFetch } from "@/lib/api-client";
-import { AppShell } from "@/components/layout/app-shell";
 import { NotificacoesView } from "@isanat/bloom-elements";
 import { Card, CardContent } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
@@ -90,5 +89,5 @@ function NotificationsPageContent() {
 }
 
 export default function NotificationsPage() {
-  return <AppShell><NotificationsPageContent /></AppShell>;
+  return <NotificationsPageContent />;
 }

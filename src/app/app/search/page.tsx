@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { AppShell } from "@/components/layout/app-shell";
 import { Slider } from "@/components/ui/slider";
 import {
   Select,
@@ -201,8 +200,7 @@ export default function SearchPage() {
   }, [families, searchTerm, selectedService]);
 
   return (
-    <AppShell>
-      <div className="space-y-8">
+    <div className="space-y-8">
         {/* Page Header */}
         <div className="space-y-1 sm:space-y-2">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black text-foreground tracking-tighter leading-none uppercase">
@@ -591,6 +589,5 @@ export default function SearchPage() {
           </div>
         )}
       </div>
-    </AppShell>
   );
 }
