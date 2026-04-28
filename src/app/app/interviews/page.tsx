@@ -5,8 +5,9 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { BloomCard } from "@/components/bloom-custom";
+import { BloomSectionHeader } from "@/components/bloom-custom";
+import { BloomBadge } from "@/components/bloom-custom";
 import { AppShell } from "@/components/layout/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -62,15 +63,15 @@ export default function InterviewsPage() {
   const getStatusBadge = (status: Interview["status"]) => {
     switch (status) {
       case "COMPLETED":
-        return <Badge className="bg-green-500">Concluída</Badge>;
+        return <BloomBadge variant="success">Concluída</BloomBadge>;
       case "SCHEDULED":
-        return <Badge className="bg-blue-500">Agendada</Badge>;
+        return <BloomBadge variant="info">Agendada</BloomBadge>;
       case "CANCELLED":
-        return <Badge variant="destructive">Cancelada</Badge>;
+        return <BloomBadge variant="destructive">Cancelada</BloomBadge>;
       case "NO_SHOW":
-        return <Badge variant="secondary">Não Compareceu</Badge>;
+        return <BloomBadge variant="warning">Não Compareceu</BloomBadge>;
       default:
-        return <Badge>{status}</Badge>;
+        return <BloomBadge>{status}</BloomBadge>;
     }
   };
 
@@ -131,15 +132,11 @@ export default function InterviewsPage() {
     <AppShell>
       <div className="space-y-6 max-w-4xl">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <IconVideo className="h-6 w-6 text-primary" />
-            Entrevistas
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Gerencie suas entrevistas agendadas
-          </p>
-        </div>
+        <BloomSectionHeader
+          title="Entrevistas"
+          description="Gerencie suas entrevistas agendadas"
+          icon={<IconVideo className="h-6 w-6" />}
+        />
 
         {error && (
           <Alert variant="destructive">
@@ -151,48 +148,46 @@ export default function InterviewsPage() {
         {/* Upcoming Interviews */}
         {upcomingInterviews.length > 0 && (
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold">Próximas Entrevistas</h2>
+            <h2 className="text-lg font-display font-black">Próximas Entrevistas</h2>
             <div className="grid gap-3">
               {upcomingInterviews.map((interview) => (
-                <Card key={interview.id} className="border-primary/20 bg-primary/5">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-base">
-                              {interview.otherPartyRole === "family"
-                                ? "Entrevista com Família"
-                                : "Entrevista com Cuidador"}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {interview.otherPartyName}
-                            </p>
-                          </div>
-                          {getStatusBadge(interview.status)}
+                <BloomCard key={interview.id} className="border-primary/20 bg-primary/5 hover:shadow-elevated">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-base">
+                            {interview.otherPartyRole === "family"
+                              ? "Entrevista com Família"
+                              : "Entrevista com Cuidador"}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {interview.otherPartyName}
+                          </p>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div className="flex items-center gap-2">
-                            <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                            <span>{formatDateTime(interview.scheduledAt)}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <IconClock className="h-4 w-4 text-muted-foreground" />
-                            <span>Duração: {formatTime(interview.durationMinutes)}</span>
-                          </div>
-                        </div>
+                        {getStatusBadge(interview.status)}
                       </div>
 
-                      <Link href={`/app/interview/${interview.id}`}>
-                        <Button className="whitespace-nowrap">
-                          <IconVideo className="h-4 w-4 mr-2" />
-                          Entrar
-                        </Button>
-                      </Link>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <IconCalendar className="h-4 w-4 text-muted-foreground" />
+                          <span>{formatDateTime(interview.scheduledAt)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <IconClock className="h-4 w-4 text-muted-foreground" />
+                          <span>Duração: {formatTime(interview.durationMinutes)}</span>
+                        </div>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+
+                    <Link href={`/app/interview/${interview.id}`}>
+                      <Button className="whitespace-nowrap">
+                        <IconVideo className="h-4 w-4 mr-2" />
+                        Entrar
+                      </Button>
+                    </Link>
+                  </div>
+                </BloomCard>
               ))}
             </div>
           </div>
@@ -201,47 +196,45 @@ export default function InterviewsPage() {
         {/* Past Interviews */}
         {pastInterviews.length > 0 && (
           <div className="space-y-3">
-            <h2 className="text-lg font-semibold">Histórico de Entrevistas</h2>
+            <h2 className="text-lg font-display font-black">Histórico de Entrevistas</h2>
             <div className="grid gap-3">
               {pastInterviews.map((interview) => (
-                <Card key={interview.id} className="opacity-75">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-3">
-                          {getStatusIcon(interview.status)}
-                          <div>
-                            <h3 className="font-semibold text-base">
-                              {interview.otherPartyRole === "family"
-                                ? "Entrevista com Família"
-                                : "Entrevista com Cuidador"}
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              {interview.otherPartyName}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-2">
-                            <IconCalendar className="h-4 w-4" />
-                            <span>{formatDateTime(interview.scheduledAt)}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <IconClock className="h-4 w-4" />
-                            <span>Duração: {formatTime(interview.durationMinutes)}</span>
-                          </div>
+                <BloomCard key={interview.id} className="opacity-75 hover:shadow-elevated">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-3">
+                        {getStatusIcon(interview.status)}
+                        <div>
+                          <h3 className="font-semibold text-base">
+                            {interview.otherPartyRole === "family"
+                              ? "Entrevista com Família"
+                              : "Entrevista com Cuidador"}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {interview.otherPartyName}
+                          </p>
                         </div>
                       </div>
 
-                      <Link href={`/app/interview/${interview.id}`}>
-                        <Button variant="outline" size="sm">
-                          Ver Detalhes
-                        </Button>
-                      </Link>
+                      <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <IconCalendar className="h-4 w-4" />
+                          <span>{formatDateTime(interview.scheduledAt)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <IconClock className="h-4 w-4" />
+                          <span>Duração: {formatTime(interview.durationMinutes)}</span>
+                        </div>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+
+                    <Link href={`/app/interview/${interview.id}`}>
+                      <Button variant="outline" size="sm">
+                        Ver Detalhes
+                      </Button>
+                    </Link>
+                  </div>
+                </BloomCard>
               ))}
             </div>
           </div>
@@ -249,46 +242,46 @@ export default function InterviewsPage() {
 
         {/* Empty State */}
         {interviews.length === 0 && (
-          <Card>
-            <CardContent className="pt-12 pb-12 text-center">
+          <BloomCard className="shadow-card">
+            <div className="pt-12 pb-12 text-center">
               <IconVideo className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="font-semibold text-lg mb-2">Nenhuma entrevista agendada</h3>
               <p className="text-muted-foreground">
                 Quando familiares agendem entrevistas com você, elas aparecerão aqui
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </BloomCard>
         )}
 
         {/* Stats */}
         {interviews.length > 0 && (
           <div className="grid grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="pt-6 text-center">
+            <BloomCard className="shadow-card hover:shadow-elevated">
+              <div className="pt-6 text-center">
                 <div className="text-2xl font-bold text-blue-600">
                   {upcomingInterviews.length}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
                   {upcomingInterviews.length === 1 ? "Próxima" : "Próximas"}
                 </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
+              </div>
+            </BloomCard>
+            <BloomCard className="shadow-card hover:shadow-elevated">
+              <div className="pt-6 text-center">
                 <div className="text-2xl font-bold text-green-600">
                   {interviews.filter((i) => i.status === "COMPLETED").length}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">Concluídas</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
+              </div>
+            </BloomCard>
+            <BloomCard className="shadow-card hover:shadow-elevated">
+              <div className="pt-6 text-center">
                 <div className="text-2xl font-bold text-destructive">
                   {interviews.filter((i) => i.status === "CANCELLED").length}
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">Canceladas</p>
-              </CardContent>
-            </Card>
+              </div>
+            </BloomCard>
           </div>
         )}
       </div>

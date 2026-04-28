@@ -5,10 +5,14 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppShell } from "@/components/layout/app-shell";
+import {
+  BloomCard,
+  BloomSectionHeader,
+  BloomBadge,
+} from "@/components/bloom-custom";
 import {
   IconContract,
   IconPlus,
@@ -94,7 +98,7 @@ export default function ContractsPage() {
       <div className="space-y-3">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold">{t.contracts.title}</h1>
+          <BloomSectionHeader title={t.contracts.title} />
           <div className="flex gap-1.5">
             <Button variant="outline" onClick={fetchContracts} disabled={isLoading} size="icon" className="h-8 w-8">
               <IconRefresh className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -112,19 +116,19 @@ export default function ContractsPage() {
 
         {/* Error */}
         {error && (
-          <div className="bg-error/5 border border-error/20 rounded-xl p-3">
+          <BloomCard variant="warning" className="p-3">
             <p className="text-xs text-error">{error}</p>
             <Button variant="outline" onClick={fetchContracts} size="sm" className="mt-1.5 h-7 text-xs">
               {t.submit}
             </Button>
-          </div>
+          </BloomCard>
         )}
 
         {/* Loading */}
         {isLoading && (
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-16 rounded-xl" />
+              <Skeleton key={i} className="h-16 rounded-2xl" />
             ))}
           </div>
         )}
@@ -154,10 +158,10 @@ export default function ContractsPage() {
                     <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
                   ))}
                   {items.length === 0 && (
-                    <div className="text-center py-8 bg-surface rounded-xl border border-border/30">
+                    <BloomCard className="text-center py-8">
                       <EmptyIcon className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
                       <p className="text-xs text-muted-foreground">{t.contracts.noContracts}</p>
-                    </div>
+                    </BloomCard>
                   )}
                 </TabsContent>
               );
@@ -176,13 +180,13 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
 
   return (
     <Link href={`/app/contracts/${contract.id}`} className="block">
-      <div className={`bg-surface rounded-xl py-2.5 px-3 border border-border/30 border-l-[3px] ${config.border} hover:bg-muted/30 transition-all flex items-center gap-3`}>
+      <BloomCard variant="interactive" className={`py-2.5 px-3 border border-border border-l-[3px] ${config.border} flex items-center gap-3`}>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-semibold truncate">{contract.title || t.contracts.title}</h3>
-            <Badge className={`${config.bg} ${config.color} border-0 text-[9px] px-1.5 py-0 h-4`}>
+            <BloomBadge variant="default" className={`${config.bg} ${config.color} border-0 text-[9px] px-1.5 py-0 h-4`}>
               {statusLabel}
-            </Badge>
+            </BloomBadge>
           </div>
           <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
             <span className="flex items-center gap-0.5">
@@ -196,12 +200,12 @@ function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily:
               </span>
             )}
             {hourlyRate > 0 && (
-              <span className="font-medium text-foreground">{"\u20AC"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
+              <span className="font-medium text-foreground">{"€"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
             )}
           </div>
         </div>
         <IconChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-      </div>
+      </BloomCard>
     </Link>
   );
 }
