@@ -2,46 +2,33 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api-client";
-import {
-  BloomCard,
-  BloomSectionHeader,
-  BloomBadge,
-  BloomSectionDivider,
-  BloomEmpty,
-} from "@/components/bloom-custom";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AppShell } from "@/components/layout/app-shell";
 import {
-  IconFileText,
-  IconUser,
+  IconContract,
+  IconPlus,
   IconClock,
-  IconCalendar,
-  IconArrowLeft,
-  IconChat,
-  IconEuro,
-  IconChevronRight,
   IconCheck,
+  IconEuro,
+  IconCalendar,
+  IconUser,
+  IconRefresh,
+  IconChevronRight,
 } from "@/components/icons";
-
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type ContractStatus = "ACTIVE" | "PENDING" | "COMPLETED" | "DRAFT";
-
-interface OtherParty {
-  id: string;
-  name: string;
-  title: string;
-  city: string;
-}
+import { CONTRACT_STATUS } from "@/lib/constants";
+import { useI18n } from "@/lib/i18n";
 
 interface Contract {
   id: string;
-  status: ContractStatus;
+  status: string;
   title: string;
   description: string;
-  hourlyRateEur: number; // cents
+  hourlyRateEur: number;
   totalHours: number;
   totalEurCents: number;
   startDate: string;
@@ -49,546 +36,172 @@ interface Contract {
   createdAt: string;
   serviceTypes: string[];
   hoursPerWeek: number;
-  caregiverId: string;
-  familyId: string;
-  otherParty?: OtherParty;
+  otherParty: {
+    name: string;
+    title?: string;
+    city?: string;
+  };
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-const UUID_PATTERN = /[0-9a-f]{8}-/i;
-
-function resolveTitle(contract: Contract): string {
-  if (UUID_PATTERN.test(contract.title)) {
-    return `Contrato com ${contract.otherParty?.name ?? "Cuidador"}`;
-  }
-  return contract.title;
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0].toUpperCase())
-    .join("");
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString("pt-PT", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  } catch {
-    return dateStr;
-  }
-}
-
-type TabKey = "ALL" | "ACTIVE" | "PENDING" | "COMPLETED";
-
-const TABS: { key: TabKey; label: string }[] = [
-  { key: "ALL", label: "Todos" },
-  { key: "ACTIVE", label: "Activos" },
-  { key: "PENDING", label: "Pendentes" },
-  { key: "COMPLETED", label: "Concluídos" },
-];
-
-interface StatusConfig {
-  label: string;
-  className: string;
-}
-
-const STATUS_MAP: Record<ContractStatus, StatusConfig> = {
-  ACTIVE: { label: "Activo", className: "text-success" },
-  PENDING: { label: "Pendente", className: "text-warning" },
-  COMPLETED: { label: "Concluído", className: "text-info" },
-  DRAFT: { label: "Rascunho", className: "text-muted-foreground" },
+const statusConfig: Record<string, { color: string; bg: string; border: string }> = {
+  DRAFT: { color: "text-muted-foreground", bg: "bg-muted", border: "border-l-muted-foreground" },
+  PENDING_ACCEPTANCE: { color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-950/30", border: "border-l-amber-500" },
+  PENDING_PAYMENT: { color: "text-orange-600", bg: "bg-orange-50 dark:bg-orange-950/30", border: "border-l-orange-500" },
+  ACTIVE: { color: "text-success", bg: "bg-success/5", border: "border-l-success" },
+  COMPLETED: { color: "text-primary", bg: "bg-primary/5", border: "border-l-primary" },
+  CANCELLED: { color: "text-error", bg: "bg-error/5", border: "border-l-error" },
+  DISPUTED: { color: "text-secondary", bg: "bg-secondary/5", border: "border-l-secondary" },
 };
 
-// ─── Loading Skeleton ─────────────────────────────────────────────────────────
-
-function ContractsSkeleton() {
-  return (
-    <div className="space-y-4">
-      {[1, 2, 3].map((i) => (
-        <div
-          key={i}
-          className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-6 space-y-4"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div className="space-y-2 flex-1">
-              <Skeleton className="h-5 w-2/3 rounded-xl" />
-              <Skeleton className="h-4 w-1/3 rounded-xl" />
-            </div>
-            <Skeleton className="h-6 w-20 rounded-full" />
-          </div>
-          <div className="flex gap-6 pt-2 border-t border-border/30">
-            <Skeleton className="h-4 w-20 rounded-xl" />
-            <Skeleton className="h-4 w-20 rounded-xl" />
-            <Skeleton className="h-4 w-24 rounded-xl" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ─── Contract List Item ───────────────────────────────────────────────────────
-
-interface ContractListItemProps {
-  contract: Contract;
-  onClick: () => void;
-}
-
-function ContractListItem({ contract, onClick }: ContractListItemProps) {
-  const title = resolveTitle(contract);
-  const statusConfig = STATUS_MAP[contract.status] ?? STATUS_MAP.DRAFT;
-  const hourlyRate = (contract.hourlyRateEur / 100).toFixed(2);
-  const totalHours = Math.floor(contract.totalHours);
-
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
-      className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-6 hover:shadow-elevated transition-all cursor-pointer group"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0 flex-1">
-          <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-            <IconFileText className="h-5 w-5 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-display font-black text-foreground group-hover:text-primary transition-colors uppercase tracking-tight truncate">
-              {title}
-            </p>
-            {contract.otherParty?.name && (
-              <p className="text-xs text-muted-foreground font-medium mt-0.5 flex items-center gap-1">
-                <IconUser className="h-3 w-3 shrink-0" />
-                {contract.otherParty.name}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span
-            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-display font-black uppercase tracking-widest ${
-              contract.status === "ACTIVE"
-                ? "bg-success/10 text-success"
-                : contract.status === "PENDING"
-                  ? "bg-warning/10 text-warning"
-                  : contract.status === "COMPLETED"
-                    ? "bg-info/10 text-info"
-                    : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {statusConfig.label}
-          </span>
-          <IconChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-4 pt-4 border-t border-border/30">
-        <div className="flex items-center gap-1.5">
-          <IconEuro className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {hourlyRate}€/h
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <IconClock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {totalHours}h total
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5 ml-auto">
-          <IconCalendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {formatDate(contract.createdAt)}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Contract Detail View ─────────────────────────────────────────────────────
-
-interface ContractDetailProps {
-  contract: Contract;
-  onBack: () => void;
-}
-
-function ContractDetail({ contract, onBack }: ContractDetailProps) {
-  const router = useRouter();
-  const title = resolveTitle(contract);
-  const statusConfig = STATUS_MAP[contract.status] ?? STATUS_MAP.DRAFT;
-  const hourlyRate = (contract.hourlyRateEur / 100).toFixed(2);
-  const totalHours = Math.floor(contract.totalHours);
-  const totalValue = (contract.totalEurCents / 100).toFixed(2);
-  const initials = contract.otherParty?.name
-    ? getInitials(contract.otherParty.name)
-    : "CG";
-
-  return (
-    <div className="space-y-5">
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <IconArrowLeft className="h-4 w-4" />
-        Voltar aos contratos
-      </button>
-
-      {/* Header card */}
-      <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-6 space-y-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-              <IconFileText className="h-6 w-6 text-primary" />
-            </div>
-            <div className="min-w-0">
-              <h2 className="text-lg font-display font-black text-foreground uppercase tracking-tight leading-tight">
-                {title}
-              </h2>
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mt-1">
-                Criado em {formatDate(contract.createdAt)}
-              </p>
-            </div>
-          </div>
-          <span
-            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-display font-black uppercase tracking-widest shrink-0 ${
-              contract.status === "ACTIVE"
-                ? "bg-success/10 text-success"
-                : contract.status === "PENDING"
-                  ? "bg-warning/10 text-warning"
-                  : contract.status === "COMPLETED"
-                    ? "bg-info/10 text-info"
-                    : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {contract.status === "ACTIVE" && (
-              <IconCheck className="h-3 w-3" />
-            )}
-            {statusConfig.label}
-          </span>
-        </div>
-
-        {contract.description && (
-          <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-            {contract.description}
-          </p>
-        )}
-
-        {/* Dates */}
-        <div className="flex flex-wrap gap-4 pt-4 border-t border-border/30">
-          {contract.startDate && (
-            <div>
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
-                Início
-              </p>
-              <p className="text-sm font-medium text-foreground">
-                {formatDate(contract.startDate)}
-              </p>
-            </div>
-          )}
-          {contract.endDate && (
-            <div>
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest mb-1">
-                Fim
-              </p>
-              <p className="text-sm font-medium text-foreground">
-                {formatDate(contract.endDate)}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Caregiver info card */}
-      {contract.otherParty && (
-        <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-6 space-y-4">
-          <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-            Cuidador
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span className="text-base font-display font-black text-primary">
-                {initials}
-              </span>
-            </div>
-            <div>
-              <p className="text-base font-display font-black text-foreground uppercase tracking-tight">
-                {contract.otherParty.name}
-              </p>
-              {contract.otherParty.title && (
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
-                  {contract.otherParty.title}
-                </p>
-              )}
-              {contract.otherParty.city && (
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
-                  {contract.otherParty.city}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Financial details card */}
-      <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-6 space-y-4">
-        <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-          Detalhes financeiros
-        </p>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 mb-2">
-              <IconEuro className="h-4 w-4 text-muted-foreground" />
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                Hora
-              </p>
-            </div>
-            <p className="text-2xl font-display font-black text-foreground tracking-tighter leading-none">
-              {hourlyRate}€
-            </p>
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 mb-2">
-              <IconClock className="h-4 w-4 text-muted-foreground" />
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                Horas
-              </p>
-            </div>
-            <p className="text-2xl font-display font-black text-foreground tracking-tighter leading-none">
-              {totalHours}h
-            </p>
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 mb-2">
-              <IconEuro className="h-4 w-4 text-muted-foreground" />
-              <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                Total
-              </p>
-            </div>
-            <p className="text-2xl font-display font-black text-foreground tracking-tighter leading-none">
-              {totalValue}€
-            </p>
-          </div>
-        </div>
-
-        {contract.hoursPerWeek > 0 && (
-          <div className="pt-4 border-t border-border/30 flex items-center gap-2">
-            <IconClock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">
-              {contract.hoursPerWeek}h por semana
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Service types */}
-      {contract.serviceTypes && contract.serviceTypes.length > 0 && (
-        <div className="bg-card rounded-3xl border border-border shadow-card p-5 sm:p-6 space-y-3">
-          <p className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-            Tipos de serviço
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {contract.serviceTypes.map((svc) => (
-              <span
-                key={svc}
-                className="text-[10px] font-display font-black text-muted-foreground bg-secondary rounded-2xl px-2.5 py-1.5 border border-border/50 uppercase tracking-widest"
-              >
-                {svc.replace(/_/g, " ")}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button
-          onClick={() => router.push("/app/chat")}
-          size="lg"
-          className="flex-1 sm:flex-none"
-        >
-          <IconChat className="h-4 w-4 mr-2" />
-          Fazer Pergunta
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={onBack}
-          className="flex-1 sm:flex-none"
-        >
-          <IconArrowLeft className="h-4 w-4 mr-2" />
-          Voltar
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Page Component ──────────────────────────────────────────────────────
-
-function ContractsPageContent() {
-  const { data: session, status: sessionStatus } = useSession();
+export default function ContractsPage() {
+  const { data: session, status } = useSession();
+  const { t } = useI18n();
   const [contracts, setContracts] = useState<Contract[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabKey>("ALL");
-  const [selectedContract, setSelectedContract] = useState<Contract | null>(
-    null,
-  );
 
   useEffect(() => {
-    if (sessionStatus === "loading") return;
-    if (sessionStatus === "unauthenticated") return;
+    if (status === "authenticated") fetchContracts();
+  }, [status]);
 
-    const fetchContracts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await apiFetch("/api/contracts");
-        if (!res.ok) {
-          throw new Error(`Erro ao carregar contratos (${res.status})`);
-        }
-        const data = await res.json();
-        setContracts(data.contracts ?? []);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Erro inesperado. Tenta novamente.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchContracts = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await apiFetch('/api/contracts');
+      if (!response.ok) throw new Error(t.error);
+      const data = await response.json();
+      setContracts(data.contracts || []);
+    } catch (err: any) {
+      setError(err.message || t.error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    fetchContracts();
-  }, [sessionStatus]);
+  const isFamily = session?.user?.role === "FAMILY";
 
-  // If viewing a contract detail, render that instead
-  if (selectedContract) {
-    return (
-      <ContractDetail
-        contract={selectedContract}
-        onBack={() => setSelectedContract(null)}
-      />
-    );
-  }
-
-  // Filter contracts by active tab
-  const filteredContracts =
-    activeTab === "ALL"
-      ? contracts
-      : contracts.filter((c) => c.status === activeTab);
+  const activeContracts = contracts.filter((c) => c.status === "ACTIVE");
+  const pendingContracts = contracts.filter(
+    (c) => c.status === "PENDING_ACCEPTANCE" || c.status === "PENDING_PAYMENT" || c.status === "DRAFT"
+  );
+  const completedContracts = contracts.filter(
+    (c) => c.status === "COMPLETED" || c.status === "CANCELLED"
+  );
 
   return (
-    <div className="space-y-5 sm:space-y-6">
-      {/* Page Header */}
-      <BloomSectionHeader
-        title="Contratos"
-        description="Consulta e gere todos os teus contratos de cuidados."
-      />
-
-      {/* Tabs */}
-      <div className="border-b border-border">
-        <div className="flex gap-0 overflow-x-auto scrollbar-none -mb-px">
-          {TABS.map((tab) => {
-            const count =
-              tab.key === "ALL"
-                ? contracts.length
-                : contracts.filter((c) => c.status === tab.key).length;
-            const isActive = activeTab === tab.key;
-
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-display font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${
-                  isActive
-                    ? "border-primary text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {tab.label}
-                {count > 0 && (
-                  <span
-                    className={`text-[10px] rounded-full px-1.5 py-0.5 font-black ${
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+    <AppShell>
+      <div className="space-y-3">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-bold">{t.contracts.title}</h1>
+          <div className="flex gap-1.5">
+            <Button variant="outline" onClick={fetchContracts} disabled={isLoading} size="icon" className="h-8 w-8">
+              <IconRefresh className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            </Button>
+            {isFamily && (
+              <Button asChild size="sm">
+                <Link href="/app/search">
+                  <IconPlus className="h-3.5 w-3.5 mr-1" />
+                  {t.contracts.new}
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="bg-error/5 border border-error/20 rounded-xl p-3">
+            <p className="text-xs text-error">{error}</p>
+            <Button variant="outline" onClick={fetchContracts} size="sm" className="mt-1.5 h-7 text-xs">
+              {t.submit}
+            </Button>
+          </div>
+        )}
+
+        {/* Loading */}
+        {isLoading && (
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-16 rounded-xl" />
+            ))}
+          </div>
+        )}
+
+        {/* Tabs */}
+        {!isLoading && !error && (
+          <Tabs defaultValue="active">
+            <TabsList className="w-full grid grid-cols-3 h-9 rounded-lg bg-muted p-0.5">
+              <TabsTrigger value="active" className="rounded-md text-xs data-[state=active]:shadow-sm">
+                {t.contracts.active} ({activeContracts.length})
+              </TabsTrigger>
+              <TabsTrigger value="pending" className="rounded-md text-xs data-[state=active]:shadow-sm">
+                {t.contracts.pending} ({pendingContracts.length})
+              </TabsTrigger>
+              <TabsTrigger value="completed" className="rounded-md text-xs data-[state=active]:shadow-sm">
+                {t.contracts.completed} ({completedContracts.length})
+              </TabsTrigger>
+            </TabsList>
+
+            {["active", "pending", "completed"].map((tab) => {
+              const items = tab === "active" ? activeContracts : tab === "pending" ? pendingContracts : completedContracts;
+              const EmptyIcon = tab === "active" ? IconContract : tab === "pending" ? IconClock : IconCheck;
+
+              return (
+                <TabsContent key={tab} value={tab} className="mt-3 space-y-1.5">
+                  {items.map((contract) => (
+                    <ContractCard key={contract.id} contract={contract} isFamily={isFamily} t={t} />
+                  ))}
+                  {items.length === 0 && (
+                    <div className="text-center py-8 bg-surface rounded-xl border border-border/30">
+                      <EmptyIcon className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
+                      <p className="text-xs text-muted-foreground">{t.contracts.noContracts}</p>
+                    </div>
+                  )}
+                </TabsContent>
+              );
+            })}
+          </Tabs>
+        )}
       </div>
-
-      {/* Loading */}
-      {loading && <ContractsSkeleton />}
-
-      {/* Error */}
-      {!loading && error && (
-        <div className="bg-destructive/10 border border-destructive/20 rounded-3xl p-5 sm:p-6">
-          <p className="text-sm font-medium text-destructive">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-2 text-xs font-display font-black text-destructive underline underline-offset-2 uppercase tracking-widest"
-          >
-            Tentar novamente
-          </button>
-        </div>
-      )}
-
-      {/* Empty state */}
-      {!loading && !error && filteredContracts.length === 0 && (
-        <BloomEmpty
-          icon={<IconFileText className="h-8 w-8" />}
-          title={
-            activeTab === "ALL"
-              ? "Nenhum contrato encontrado"
-              : `Nenhum contrato ${TABS.find((t) => t.key === activeTab)?.label.toLowerCase()}`
-          }
-          description={
-            activeTab === "ALL"
-              ? "Os teus contratos aparecerão aqui quando forem criados."
-              : "Altera o filtro para ver outros contratos."
-          }
-        />
-      )}
-
-      {/* Contracts list */}
-      {!loading && !error && filteredContracts.length > 0 && (
-        <div className="space-y-3">
-          {filteredContracts.map((contract) => (
-            <ContractListItem
-              key={contract.id}
-              contract={contract}
-              onClick={() => setSelectedContract(contract)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </AppShell>
   );
 }
 
-export default function ContractsPage() {
+function ContractCard({ contract, isFamily, t }: { contract: Contract; isFamily: boolean; t: any }) {
+  const statusLabel = CONTRACT_STATUS[contract.status as keyof typeof CONTRACT_STATUS] || contract.status;
+  const hourlyRate = contract.hourlyRateEur ? contract.hourlyRateEur / 100 : 0;
+  const config = statusConfig[contract.status] || statusConfig.DRAFT;
+
   return (
-    <div suppressHydrationWarning>
-      <ContractsPageContent />
-    </div>
+    <Link href={`/app/contracts/${contract.id}`} className="block">
+      <div className={`bg-surface rounded-xl py-2.5 px-3 border border-border/30 border-l-[3px] ${config.border} hover:bg-muted/30 transition-all flex items-center gap-3`}>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold truncate">{contract.title || t.contracts.title}</h3>
+            <Badge className={`${config.bg} ${config.color} border-0 text-[9px] px-1.5 py-0 h-4`}>
+              {statusLabel}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+            <span className="flex items-center gap-0.5">
+              <IconUser className="h-3 w-3" />
+              {contract.otherParty?.name || t.none}
+            </span>
+            {contract.startDate && (
+              <span className="flex items-center gap-0.5">
+                <IconCalendar className="h-3 w-3" />
+                {new Date(contract.startDate).toLocaleDateString('pt-PT')}
+              </span>
+            )}
+            {hourlyRate > 0 && (
+              <span className="font-medium text-foreground">{"\u20AC"}{hourlyRate.toFixed(0)}{t.search.perHour}</span>
+            )}
+          </div>
+        </div>
+        <IconChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+      </div>
+    </Link>
   );
 }
