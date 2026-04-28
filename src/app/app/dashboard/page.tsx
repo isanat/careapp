@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   BloomCard,
   BloomStatBlock,
@@ -94,26 +93,23 @@ export default function DashboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <AppShell>
-        <div className="space-y-3 animate-pulse">
-          <Skeleton className="h-6 w-40" />
-          <Skeleton className="h-16 w-full rounded-xl" />
-          <div className="grid grid-cols-4 gap-2">
-            <Skeleton className="h-14 rounded-xl" />
-            <Skeleton className="h-14 rounded-xl" />
-            <Skeleton className="h-14 rounded-xl" />
-            <Skeleton className="h-14 rounded-xl" />
-          </div>
+      <div className="space-y-3 animate-pulse">
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-16 w-full rounded-xl" />
+        <div className="grid grid-cols-4 gap-2">
+          <Skeleton className="h-14 rounded-xl" />
+          <Skeleton className="h-14 rounded-xl" />
+          <Skeleton className="h-14 rounded-xl" />
+          <Skeleton className="h-14 rounded-xl" />
         </div>
-      </AppShell>
+      </div>
     );
   }
 
   const firstName = session?.user?.name?.split(" ")[0] || "";
 
   return (
-    <AppShell>
-      <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 sm:space-y-8">
         {/* Header */}
         <BloomSectionHeader
           title={`Olá, ${firstName}`}
@@ -314,6 +310,5 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
-    </AppShell>
-  );
+    );
 }
