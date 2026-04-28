@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -348,7 +347,7 @@ function BoostContent() {
 
 export default function BoostPage() {
   return (
-    <AppShell>
+    
       <Suspense
         fallback={
           <div className="max-w-lg mx-auto space-y-4 py-8">
@@ -361,6 +360,6 @@ export default function BoostPage() {
       >
         <BoostContent />
       </Suspense>
-    </AppShell>
+    
   );
 }

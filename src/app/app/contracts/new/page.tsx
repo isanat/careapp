@@ -35,7 +35,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AppShell } from "@/components/layout/app-shell";
 import {
   IconContract,
   IconCheck,
@@ -1068,10 +1067,8 @@ function LoadingFallback() {
 
 export default function NewContractPage() {
   return (
-    <AppShell>
-      <Suspense fallback={<LoadingFallback />}>
-        <NewContractContent />
-      </Suspense>
-    </AppShell>
+    <Suspense fallback={<LoadingFallback />}>
+      <NewContractContent />
+    </Suspense>
   );
 }

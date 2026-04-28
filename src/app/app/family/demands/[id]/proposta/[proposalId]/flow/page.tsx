@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -763,7 +762,7 @@ function ProposalFlowContent() {
 
 export default function ProposalFlowPage() {
   return (
-    <AppShell>
+    
       <Suspense
         fallback={
           <div className="max-w-2xl mx-auto space-y-4 py-8">
@@ -776,6 +775,6 @@ export default function ProposalFlowPage() {
       >
         <ProposalFlowContent />
       </Suspense>
-    </AppShell>
+    
   );
 }

@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -1252,19 +1251,17 @@ function NewDemandContent() {
 
 export default function NewDemandPage() {
   return (
-    <AppShell>
-      <Suspense
-        fallback={
-          <div className="max-w-lg mx-auto space-y-4 py-8">
-            <div className="animate-pulse space-y-4">
-              <div className="h-24 bg-muted rounded-2xl" />
-              <div className="h-64 bg-muted rounded-2xl" />
-            </div>
+    <Suspense
+      fallback={
+        <div className="max-w-lg mx-auto space-y-4 py-8">
+          <div className="animate-pulse space-y-4">
+            <div className="h-24 bg-muted rounded-2xl" />
+            <div className="h-64 bg-muted rounded-2xl" />
           </div>
-        }
-      >
-        <NewDemandContent />
-      </Suspense>
-    </AppShell>
+        </div>
+      }
+    >
+      <NewDemandContent />
+    </Suspense>
   );
 }
