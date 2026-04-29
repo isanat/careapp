@@ -73,6 +73,12 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
 import { ProfileHeader } from "./components/shared/ProfileHeader";
 import { CaregiverStats } from "./components/caregiver/CaregiverStats";
+import { AboutTab } from "./components/shared/AboutTab";
+import { DocumentsTab } from "./components/shared/DocumentsTab";
+import { ServicesTab } from "./components/caregiver/ServicesTab";
+import { ElderTab } from "./components/family/ElderTab";
+import { ContactTab } from "./components/shared/ContactTab";
+import { SettingsTab } from "./components/shared/SettingsTab";
 import { parseElderNeeds, validateNIF, formatPhonePT } from "./utils";
 
 interface ProfileData {
@@ -568,719 +574,64 @@ export default function ProfilePage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Info Tab */}
-          <TabsContent value="about" className="space-y-6">
-            <section className="space-y-4">
-              <h3 className={getHeadingClasses("sectionTitle")}>
-                Informações Pessoais
-              </h3>
-              <div className={cn(getCardClasses(), "space-y-4")}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className={getLabelClasses()}>
-                      {t.auth.name}
-                    </Label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      disabled={!isEditing}
-                      className={getFormInputClasses()}
-                    />
-                  </div>
-                  <div>
-                    <Label className={getLabelClasses()}>
-                      Cidade
-                    </Label>
-                    <Input
-                      value={formData.city || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, city: e.target.value })
-                      }
-                      disabled={!isEditing}
-                      className={getFormInputClasses()}
-                      placeholder="Cidade"
-                    />
-                  </div>
-                </div>
-
-                {isCaregiver && (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className={getLabelClasses()}>
-                          Titulo Profissional
-                        </Label>
-                        <Input
-                          value={formData.title || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, title: e.target.value })
-                          }
-                          disabled={!isEditing}
-                          className={getFormInputClasses()}
-                          placeholder="Ex: Enfermeira"
-                        />
-                      </div>
-                      <div>
-                        <Label className={getLabelClasses()}>
-                          Anos de Experiencia
-                        </Label>
-                        <Input
-                          type="number"
-                          value={formData.experienceYears || 0}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              experienceYears: parseInt(e.target.value) || 0,
-                            })
-                          }
-                          disabled={!isEditing}
-                          className={getFormInputClasses()}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className={getLabelClasses()}>
-                        Bio / Sobre voce
-                      </Label>
-                      <Textarea
-                        value={formData.bio || ""}
-                        onChange={(e) =>
-                          setFormData({ ...formData, bio: e.target.value })
-                        }
-                        rows={3}
-                        disabled={!isEditing}
-                        className={getFormInputClasses()}
-                        placeholder="Descreva sua experiencia..."
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            </section>
-          </TabsContent>
+          {/* About Tab */}
+          <AboutTab
+            isEditing={isEditing}
+            isCaregiver={isCaregiver}
+            formData={formData}
+            setFormData={setFormData}
+          />
 
           {/* Documents Tab */}
-          <TabsContent value="documents" className="space-y-6">
-            {/* Personal Documents Section */}
-            <section className="space-y-4">
-              <h3 className={getHeadingClasses("sectionTitle")}>
-                Documentos Pessoais
-              </h3>
-              <div className={cn(getCardClasses(), "space-y-4")}>
-                <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                    NIF
-                  </Label>
-                  <Input
-                    value={formData.nif || ""}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "").slice(0, 9);
-                      setFormData({ ...formData, nif: val });
-                    }}
-                    disabled={!isEditing}
-                    className={`mt-2 rounded-2xl ${formData.nif && formData.nif.length === 9 && !validateNIF(formData.nif) ? "border-destructive" : ""}`}
-                    placeholder="123456789"
-                    maxLength={9}
-                    inputMode="numeric"
-                  />
-                  {formData.nif &&
-                    formData.nif.length === 9 &&
-                    !validateNIF(formData.nif) && (
-                      <p className="text-xs text-destructive mt-2 flex items-center gap-1">
-                        <IconAlertCircle className="h-3 w-3" />
-                        NIF invalido
-                      </p>
-                    )}
-                  {formData.nif &&
-                    formData.nif.length === 9 &&
-                    validateNIF(formData.nif) && (
-                      <p className="text-xs text-success mt-2 flex items-center gap-1">
-                        <IconCheck className="h-3 w-3" />
-                        NIF valido
-                      </p>
-                    )}
-                </div>
-
-                <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                    Tipo de Documento
-                  </Label>
-                  <Select
-                    value={formData.documentType || ""}
-                    onValueChange={(value) =>
-                      setFormData({
-                        ...formData,
-                        documentType: value,
-                        documentNumber: "",
-                      })
-                    }
-                    disabled={!isEditing}
-                  >
-                    <SelectTrigger className="mt-2 rounded-2xl">
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border shadow-card z-50">
-                      {DOCUMENT_TYPES.map((doc) => (
-                        <SelectItem key={doc.id} value={doc.id}>
-                          {doc.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {formData.documentType && (
-                  <div>
-                    <Label className={getLabelClasses()}>
-                      Numero do{" "}
-                      {DOCUMENT_TYPES.find(
-                        (d) => d.id === formData.documentType,
-                      )?.label || "Documento"}
-                    </Label>
-                    <Input
-                      value={formData.documentNumber || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          documentNumber: e.target.value,
-                        })
-                      }
-                      disabled={!isEditing}
-                      className={getFormInputClasses()}
-                      placeholder={
-                        DOCUMENT_TYPES.find(
-                          (d) => d.id === formData.documentType,
-                        )?.placeholder || ""
-                      }
-                      maxLength={
-                        DOCUMENT_TYPES.find(
-                          (d) => d.id === formData.documentType,
-                        )?.maxLength || 20
-                      }
-                    />
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Background Check - Caregivers only */}
-            {isCaregiver && (
-              <section className="space-y-4">
-                <h3 className={getHeadingClasses("sectionTitle")}>
-                  Verificacao de Antecedentes
-                </h3>
-                <div className={cn(getCardClasses(), "space-y-4")}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center">
-                        <IconShield className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-display font-bold text-sm">
-                          Antecedentes Criminais
-                        </p>
-                        <p className="text-xs text-muted-foreground font-medium">
-                          Status da verificacao
-                        </p>
-                      </div>
-                    </div>
-                    {getBackgroundCheckBadge()}
-                  </div>
-                  <p className="text-sm text-muted-foreground font-medium">
-                    Para trabalhar como cuidador, e necessario apresentar o
-                    registo criminal.
-                  </p>
-                  <Button
-                    variant={
-                      formData.backgroundCheckUrl ? "outline" : "default"
-                    }
-                    size="sm"
-                    onClick={() =>
-                      document.getElementById("backgroundCheckInput")?.click()
-                    }
-                    disabled={uploadingPhoto}
-                    className="w-full rounded-2xl h-10 font-display font-bold uppercase"
-                  >
-                    {uploadingPhoto ? (
-                      <>
-                        <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <IconUpload className="h-4 w-4 mr-2" />
-                        {formData.backgroundCheckUrl
-                          ? "Atualizar Comprovativo"
-                          : "Enviar Comprovativo"}
-                      </>
-                    )}
-                  </Button>
-                  <input
-                    id="backgroundCheckInput"
-                    type="file"
-                    accept="image/*,.pdf"
-                    className="hidden"
-                    onChange={handleBackgroundCheckUpload}
-                  />
-                  {formData.backgroundCheckUrl && (
-                    <p className="text-xs text-success flex items-center gap-1">
-                      <IconCheck className="h-3 w-3" />
-                      Documento enviado com sucesso
-                    </p>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {/* Security Info */}
-            <div className="flex items-start gap-4 p-5 bg-info/5 border border-info/20 rounded-2xl">
-              <IconShield className="h-5 w-5 text-info shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm font-display font-bold text-foreground">
-                  Segurança dos dados
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Os seus documentos são armazenados de forma segura e
-                  encriptados em conformidade com o RGPD.
-                </p>
-              </div>
-            </div>
-          </TabsContent>
+          <DocumentsTab
+            isEditing={isEditing}
+            isCaregiver={isCaregiver}
+            uploadingPhoto={uploadingPhoto}
+            formData={formData}
+            setFormData={setFormData}
+            onBackgroundCheckUpload={handleBackgroundCheckUpload}
+            getBackgroundCheckBadge={getBackgroundCheckBadge}
+          />
 
           {/* Services Tab */}
           {isCaregiver && (
-            <TabsContent value="services" className={tokens.layout.sectionSpacing}>
-              <section className="space-y-4">
-                <h3 className={getHeadingClasses("sectionTitle")}>
-                  Serviços Oferecidos
-                </h3>
-                <div className={cn(getCardClasses(), "space-y-6")}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {SERVICE_TYPES.map((service) => (
-                      <label
-                        key={service.id}
-                        className={`flex items-center gap-3 p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all cursor-pointer ${
-                          formData.services?.includes(service.id)
-                            ? "border-primary bg-primary/10"
-                            : ""
-                        } ${!isEditing ? "pointer-events-none opacity-60" : ""}`}
-                      >
-                        <Checkbox
-                          checked={formData.services?.includes(service.id)}
-                          onCheckedChange={() =>
-                            handleServiceToggle(service.id)
-                          }
-                          disabled={!isEditing}
-                          className="h-5 w-5"
-                        />
-                        <span className="text-sm font-display font-bold text-foreground">
-                          {service.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-border/30 pt-6 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className={getLabelClasses()}>
-                          Taxa Horaria ({"\u20AC"}/hora)
-                        </Label>
-                        <div className="relative mt-2">
-                          <IconEuro className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="text"
-                            inputMode="decimal"
-                            value={formData.hourlyRateEur?.toString() || ""}
-                            onChange={(e) => {
-                              const normalized = e.target.value.replace(
-                                ",",
-                                ".",
-                              );
-                              const value = parseFloat(normalized) || 0;
-                              setFormData({
-                                ...formData,
-                                hourlyRateEur: value,
-                              });
-                            }}
-                            className="pl-11 rounded-2xl"
-                            disabled={!isEditing}
-                            placeholder="15.50"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <Label className={getLabelClasses()}>
-                          Idiomas
-                        </Label>
-                        <Input
-                          value={formData.languages || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              languages: e.target.value,
-                            })
-                          }
-                          disabled={!isEditing}
-                          className={getFormInputClasses()}
-                          placeholder="PT, EN, ES..."
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className={getLabelClasses()}>
-                        Certificações
-                      </Label>
-                      <Input
-                        value={formData.certifications || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            certifications: e.target.value,
-                          })
-                        }
-                        disabled={!isEditing}
-                        className={getFormInputClasses()}
-                        placeholder="Curso de Cuidador, Primeiros Socorros..."
-                      />
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </TabsContent>
+            <ServicesTab
+              isEditing={isEditing}
+              formData={formData}
+              setFormData={setFormData}
+              onServiceToggle={handleServiceToggle}
+            />
           )}
 
           {/* Elder Tab */}
           {isFamily && (
-            <TabsContent value="elder" className={tokens.layout.sectionSpacing}>
-              <section className="space-y-4">
-                <h3 className={getHeadingClasses("sectionTitle")}>
-                  Informações do Familiar
-                </h3>
-                <div className={cn(getCardClasses(), "space-y-4")}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label className={getLabelClasses()}>
-                        Nome do Idoso
-                      </Label>
-                      <Input
-                        value={formData.elderName || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            elderName: e.target.value,
-                          })
-                        }
-                        disabled={!isEditing}
-                        className={getFormInputClasses()}
-                      />
-                    </div>
-                    <div>
-                      <Label className={getLabelClasses()}>
-                        Idade
-                      </Label>
-                      <Input
-                        type="number"
-                        value={formData.elderAge || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            elderAge: parseInt(e.target.value) || 0,
-                          })
-                        }
-                        disabled={!isEditing}
-                        className={getFormInputClasses()}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label className={getLabelClasses()}>
-                      Necessidades Específicas
-                    </Label>
-                    <Textarea
-                      value={formData.elderNeeds || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, elderNeeds: e.target.value })
-                      }
-                      rows={4}
-                      disabled={!isEditing}
-                      className={getFormInputClasses()}
-                      placeholder="Descreva as necessidades especificas de saude e cuidado..."
-                    />
-                  </div>
-                </div>
-              </section>
-            </TabsContent>
+            <ElderTab
+              isEditing={isEditing}
+              formData={formData}
+              setFormData={setFormData}
+            />
           )}
 
           {/* Contact Tab */}
-          <TabsContent value="contact" className={tokens.layout.sectionSpacing}>
-            <section className="space-y-4">
-              <h3 className={getHeadingClasses("sectionTitle")}>
-                Informações de Contacto
-              </h3>
-              <div className={cn(getCardClasses(), "space-y-4")}>
-                <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                    {t.auth.email}
-                  </Label>
-                  <Input
-                    type="email"
-                    value={formData.email}
-                    disabled
-                    className="mt-2 rounded-2xl bg-secondary/50 cursor-not-allowed opacity-60"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                    Telemovel
-                  </Label>
-                  <Input
-                    type="tel"
-                    value={formData.phone || ""}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        phone: formatPhonePT(e.target.value),
-                      })
-                    }
-                    disabled={!isEditing}
-                    className="mt-2 rounded-2xl"
-                    placeholder="+351 912 345 678"
-                    inputMode="tel"
-                  />
-                </div>
-
-                {isFamily && (
-                  <>
-                    <div className="border-t border-border/30 pt-6 space-y-4">
-                      <h4 className="text-sm font-display font-bold uppercase text-foreground">
-                        Contacto de Emergência
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label className={getLabelClasses()}>
-                            Nome
-                          </Label>
-                          <Input
-                            value={formData.emergencyContactName || ""}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                emergencyContactName: e.target.value,
-                              })
-                            }
-                            disabled={!isEditing}
-                            className={getFormInputClasses()}
-                            placeholder="Nome completo"
-                          />
-                        </div>
-                        <div>
-                          <Label className={getLabelClasses()}>
-                            Telefone
-                          </Label>
-                          <Input
-                            type="tel"
-                            value={formData.emergencyContactPhone || ""}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                emergencyContactPhone: formatPhonePT(
-                                  e.target.value,
-                                ),
-                              })
-                            }
-                            disabled={!isEditing}
-                            className={getFormInputClasses()}
-                            placeholder="+351 912 345 678"
-                            inputMode="tel"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </section>
-          </TabsContent>
+          <ContactTab
+            isEditing={isEditing}
+            isFamily={isFamily}
+            formData={formData}
+            setFormData={setFormData}
+          />
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className={tokens.layout.sectionSpacing}>
-            {/* Settings Section */}
-            <section className="space-y-4">
-              <h3 className={getHeadingClasses("sectionTitle")}>
-                Preferências e Configurações
-              </h3>
-
-              {/* Push Notifications */}
-              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <IconBell className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-display font-bold text-foreground">
-                      Notificações Push
-                    </p>
-                    <p className="text-xs text-muted-foreground font-medium">
-                      Alertas em tempo real
-                    </p>
-                  </div>
-                </div>
-                {isPushSupported ? (
-                  isPushEnabled ? (
-                    <span className={cn(getBadgeClasses("success"), "px-3 py-1 rounded-full")}>
-                      Ativo
-                    </span>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="default"
-                      onClick={handleEnablePush}
-                      className="rounded-lg h-9 text-xs font-display font-bold uppercase"
-                      disabled={pushLoading}
-                    >
-                      {pushLoading && (
-                        <IconLoader2 className="h-3 w-3 animate-spin mr-2" />
-                      )}
-                      Ativar
-                    </Button>
-                  )
-                ) : (
-                  <span className="text-xs text-muted-foreground">N/A</span>
-                )}
-              </div>
-              {pushError && !isPushEnabled && (
-                <p className="text-xs text-destructive font-medium">
-                  {pushError}
-                </p>
-              )}
-
-              {/* Theme */}
-              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-secondary/50 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <IconShield className="h-5 w-5 text-primary" />
-                  </div>
-                  <p className="text-sm font-display font-bold text-foreground">
-                    Tema
-                  </p>
-                </div>
-                <ThemeToggle />
-              </div>
-
-              {/* Language */}
-              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
-                <p className="text-sm font-display font-bold text-foreground">
-                  Idioma
-                </p>
-                <LanguageSelector />
-              </div>
-
-              {/* Legal Links */}
-              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-2xl border border-border/50 hover:bg-secondary/40 transition-all group">
-                <p className="text-sm font-display font-bold text-foreground">
-                  Legal
-                </p>
-                <div className="flex items-center gap-4">
-                  <a
-                    href="/termos"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors"
-                  >
-                    Termos
-                  </a>
-                  <span className="text-border/50">/</span>
-                  <a
-                    href="/privacidade"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80 font-medium text-xs font-display font-bold uppercase tracking-widest transition-colors"
-                  >
-                    Privacidade
-                  </a>
-                </div>
-              </div>
-            </section>
-
-            {/* Account Actions */}
-            <section className="space-y-3 pt-6 border-t border-border/30 mt-8">
-              {/* Logout */}
-              <Button
-                variant="outline"
-                className="w-full h-11 rounded-2xl font-display font-bold uppercase text-sm"
-                onClick={() => signOut({ callbackUrl: "/" })}
-              >
-                <IconLogout className="h-4 w-4 mr-2" />
-                {t.auth.logout}
-              </Button>
-
-              {/* Delete Account */}
-              <Dialog
-                open={deleteDialogOpen}
-                onOpenChange={setDeleteDialogOpen}
-              >
-                <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="w-full h-11 text-destructive hover:text-destructive hover:bg-destructive/5 rounded-2xl font-display font-bold uppercase text-sm"
-                  >
-                    <IconTrash className="h-4 w-4 mr-2" />
-                    Apagar conta
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-card border border-border shadow-elevated rounded-3xl">
-                  <DialogHeader>
-                    <DialogTitle className="text-xl font-display font-black uppercase tracking-tighter">
-                      Apagar conta?
-                    </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      Esta ação é irreversível. Todos os seus dados serão
-                      apagados permanentemente.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter className="flex gap-3 mt-6">
-                    <Button
-                      variant="outline"
-                      onClick={() => setDeleteDialogOpen(false)}
-                      disabled={isDeleting}
-                      className="rounded-2xl font-display font-bold uppercase"
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={handleDeleteAccount}
-                      disabled={isDeleting}
-                      className="rounded-2xl font-display font-bold uppercase"
-                    >
-                      {isDeleting ? (
-                        <>
-                          <IconLoader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Apagando...
-                        </>
-                      ) : (
-                        <>
-                          <IconTrash className="h-4 w-4 mr-2" />
-                          Apagar permanentemente
-                        </>
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </section>
-
-            {/* Footer */}
-            <div className="text-center pt-8">
-              <p className="text-xs text-muted-foreground font-display font-bold uppercase tracking-widest">
-                {APP_NAME} v1.0.0
-              </p>
-            </div>
-          </TabsContent>
+          <SettingsTab
+            deleteDialogOpen={deleteDialogOpen}
+            setDeleteDialogOpen={setDeleteDialogOpen}
+            pushLoading={pushLoading}
+            pushError={pushError}
+            isPushSupported={isPushSupported}
+            isPushEnabled={isPushEnabled}
+            isDeleting={isDeleting}
+            handleEnablePush={handleEnablePush}
+            handleDeleteAccount={handleDeleteAccount}
+          />
         </Tabs>
       </div>
   );
