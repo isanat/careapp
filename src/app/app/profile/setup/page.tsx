@@ -46,70 +46,31 @@ import {
 } from "@/components/icons";
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
+import { SERVICE_TYPES as BASE_SERVICE_TYPES } from "@/lib/profile-constants";
 
-// Service types available for caregivers
-const SERVICE_TYPES = [
-  {
-    id: "PERSONAL_CARE",
-    label: "Cuidados Pessoais",
-    description: "Higiene, banho, alimentação",
-  },
-  {
-    id: "MEDICATION",
-    label: "Administração de Medicação",
-    description: "Controlo e aplicação de medicamentos",
-  },
-  {
-    id: "MOBILITY",
-    label: "Mobilidade",
-    description: "Ajuda com locomoção e exercícios",
-  },
-  {
-    id: "COMPANIONSHIP",
-    label: "Companhia",
-    description: "Conversa, passeios, actividades",
-  },
-  {
-    id: "MEAL_PREPARATION",
-    label: "Preparação de Refeições",
-    description: "Cozinha e nutrição",
-  },
-  {
-    id: "LIGHT_HOUSEWORK",
-    label: "Tarefas Domésticas",
-    description: "Limpeza leve, organização",
-  },
-  {
-    id: "TRANSPORTATION",
-    label: "Transporte",
-    description: "Consultas, compras, passeios",
-  },
-  {
-    id: "COGNITIVE_SUPPORT",
-    label: "Estimulação Cognitiva",
-    description: "Actividades mentais, memória",
-  },
-  {
-    id: "NIGHT_CARE",
-    label: "Cuidados Noturnos",
-    description: "Acompanhamento durante a noite",
-  },
-  {
-    id: "PALLIATIVE_CARE",
-    label: "Cuidados Paliativos",
-    description: "Suporte e conforto",
-  },
-  {
-    id: "PHYSIOTHERAPY",
-    label: "Fisioterapia",
-    description: "Exercícios e reabilitação",
-  },
-  {
-    id: "NURSING_CARE",
-    label: "Enfermagem",
-    description: "Procedimentos técnicos",
-  },
-];
+// Service types with descriptions for setup wizard
+const SERVICE_TYPES = BASE_SERVICE_TYPES.map((service) => ({
+  ...service,
+  description: getServiceDescription(service.id),
+}));
+
+function getServiceDescription(id: string): string {
+  const descriptions: Record<string, string> = {
+    PERSONAL_CARE: "Higiene, banho, alimentação",
+    MEDICATION: "Controlo e aplicação de medicamentos",
+    MOBILITY: "Ajuda com locomoção e exercícios",
+    COMPANIONSHIP: "Conversa, passeios, actividades",
+    MEAL_PREPARATION: "Cozinha e nutrição",
+    LIGHT_HOUSEWORK: "Limpeza leve, organização",
+    TRANSPORTATION: "Consultas, compras, passeios",
+    COGNITIVE_SUPPORT: "Actividades mentais, memória",
+    NIGHT_CARE: "Acompanhamento durante a noite",
+    PALLIATIVE_CARE: "Suporte e conforto",
+    PHYSIOTHERAPY: "Exercícios e reabilitação",
+    NURSING_CARE: "Procedimentos técnicos",
+  };
+  return descriptions[id] || "";
+}
 
 const EXPERIENCE_LEVELS = [
   { value: "0", label: "Sem experiência formal" },

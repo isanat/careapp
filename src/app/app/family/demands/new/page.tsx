@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SERVICE_TYPES as BASE_SERVICE_TYPES } from "@/lib/profile-constants";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,20 +28,8 @@ import {
   IconTrendingUp,
 } from "@/components/icons";
 
-const SERVICE_TYPES = [
-  "PERSONAL_CARE",
-  "MEDICATION",
-  "MOBILITY",
-  "COMPANIONSHIP",
-  "MEAL_PREPARATION",
-  "LIGHT_HOUSEWORK",
-  "TRANSPORTATION",
-  "COGNITIVE_SUPPORT",
-  "NIGHT_CARE",
-  "PALLIATIVE_CARE",
-  "PHYSIOTHERAPY",
-  "NURSING_CARE",
-];
+// Service types from centralized constants
+const SERVICE_TYPE_IDS = BASE_SERVICE_TYPES.map((s) => s.id);
 
 const SERVICE_LABELS: Record<string, string> = {
   PERSONAL_CARE: "Cuidados Pessoais",
@@ -460,7 +449,7 @@ function NewDemandContent() {
                   Tipos de Serviço
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {SERVICE_TYPES.map((type) => (
+                  {SERVICE_TYPE_IDS.map((type) => (
                     <button
                       key={type}
                       onClick={() => handleServiceTypeChange(type)}

@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tokens, cn, getCardClasses, getHeadingClasses } from "@/lib/design-tokens";
+import { SERVICE_TYPES, DOCUMENT_TYPES } from "@/lib/profile-constants";
 import {
   Dialog,
   DialogContent,
@@ -59,41 +60,6 @@ import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
 
-const SERVICE_TYPES = [
-  { id: "PERSONAL_CARE", label: "Cuidados Pessoais" },
-  { id: "MEDICATION", label: "Medicação" },
-  { id: "MOBILITY", label: "Mobilidade" },
-  { id: "COMPANIONSHIP", label: "Companhia" },
-  { id: "MEAL_PREPARATION", label: "Refeições" },
-  { id: "LIGHT_HOUSEWORK", label: "Tarefas Domésticas" },
-  { id: "TRANSPORTATION", label: "Transporte" },
-  { id: "COGNITIVE_SUPPORT", label: "Estimulação Cognitiva" },
-  { id: "NIGHT_CARE", label: "Cuidados Noturnos" },
-  { id: "PALLIATIVE_CARE", label: "Cuidados Paliativos" },
-  { id: "PHYSIOTHERAPY", label: "Fisioterapia" },
-  { id: "NURSING_CARE", label: "Enfermagem" },
-];
-
-const DOCUMENT_TYPES = [
-  {
-    id: "CC",
-    label: "Cartão de Cidadão",
-    placeholder: "12345678 1 ZZ2",
-    maxLength: 15,
-  },
-  {
-    id: "PASSPORT",
-    label: "Passaporte",
-    placeholder: "AA123456",
-    maxLength: 9,
-  },
-  {
-    id: "RESIDENCE",
-    label: "Título de Residência",
-    placeholder: "Numero do titulo",
-    maxLength: 20,
-  },
-];
 
 function parseElderNeeds(raw: string): string {
   if (!raw) return "";
