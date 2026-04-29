@@ -32,7 +32,7 @@ interface ProfileHeaderProps {
   formData: ProfileData;
   session: any;
   uploadingPhoto: boolean;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   isCaregiver: boolean;
   onEditToggle: () => void;
   onPhotoClick: () => void;
