@@ -31,6 +31,33 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-turso";
 import { db } from "@/lib/db-turso";
 
+// Field validation helpers
+function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function validatePhonePT(phone: string): boolean {
+  // PT phone format: +351 9xx xxx xxx or 9xx xxx xxx
+  const phoneRegex = /^(\+351|00351)?9\d{2}\s?\d{3}\s?\d{3}$|^\+351\s?9\d{2}\s?\d{3}\s?\d{3}$/;
+  const cleaned = phone.replace(/\s/g, "");
+  return phoneRegex.test(cleaned);
+}
+
+function validateAge(age: number): boolean {
+  // Age should be 1-120
+  return age >= 1 && age <= 120 && Number.isInteger(age);
+}
+
+function validatePositiveNumber(value: number): boolean {
+  return value >= 0 && !isNaN(value);
+}
+
+function validateExperience(years: number): boolean {
+  // Experience should be 0-80
+  return years >= 0 && years <= 80 && Number.isInteger(years);
+}
+
 // GET: Fetch user profile
 export async function GET(request: NextRequest) {
   try {
@@ -157,6 +184,100 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const now = new Date().toISOString();
 
+    // Define allowed fields per role
+    const caregiverOnlyFields = [
+      "title",
+      "bio",
+      "experienceYears",
+      "education",
+      "certifications",
+      "languages",
+      "services",
+      "hourlyRateEur",
+    ];
+    const familyOnlyFields = [
+      "address",
+      "elderName",
+      "elderAge",
+      "elderNeeds",
+      "emergencyContactName",
+      "emergencyContactPhone",
+      "emergencyContactRelation",
+    ];
+    // Note: city, country are allowed for both roles (caregiver's work location, family's home)
+
+    // Validate role-specific fields
+    const userRole = session.user.role;
+    if (userRole === "FAMILY") {
+      const invalidFields = caregiverOnlyFields.filter(
+        (field) => body[field] !== undefined
+      );
+      if (invalidFields.length > 0) {
+        return NextResponse.json(
+          {
+            error: "Invalid fields for FAMILY role",
+            invalidFields,
+          },
+          { status: 400 }
+        );
+      }
+    } else if (userRole === "CAREGIVER") {
+      const invalidFields = familyOnlyFields.filter(
+        (field) => body[field] !== undefined
+      );
+      if (invalidFields.length > 0) {
+        return NextResponse.json(
+          {
+            error: "Invalid fields for CAREGIVER role",
+            invalidFields,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Validate field values
+    if (body.email !== undefined && !validateEmail(body.email)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      );
+    }
+
+    if (body.phone !== undefined && !validatePhonePT(body.phone)) {
+      return NextResponse.json(
+        { error: "Invalid phone format. Use Portuguese format: +351 9xx xxx xxx" },
+        { status: 400 }
+      );
+    }
+
+    if (body.elderAge !== undefined && !validateAge(body.elderAge)) {
+      return NextResponse.json(
+        { error: "Invalid age. Must be between 1 and 120" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      body.experienceYears !== undefined &&
+      !validateExperience(body.experienceYears)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid experience. Must be between 0 and 80 years" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      body.hourlyRateEur !== undefined &&
+      !validatePositiveNumber(body.hourlyRateEur)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid hourly rate. Must be a positive number" },
+        { status: 400 }
+      );
+    }
+
     // Update user basic fields
     const userUpdates: string[] = [];
     const userValues: any[] = [];
@@ -271,7 +392,7 @@ export async function PUT(request: NextRequest) {
     }
     if (body.languages !== undefined) {
       caregiverUpdates.push("languages = ?");
-      caregiverValues.push(body.languages);
+      caregiverValues.push(JSON.stringify(body.languages));
     }
     if (body.city !== undefined) {
       caregiverUpdates.push("city = ?");
