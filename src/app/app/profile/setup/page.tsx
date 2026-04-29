@@ -47,6 +47,15 @@ import {
 import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { SERVICE_TYPES as BASE_SERVICE_TYPES } from "@/lib/profile-constants";
+import {
+  tokens,
+  cn,
+  getAlertClasses,
+  getLabelClasses,
+  getFormInputClasses,
+  getSetupFormInputClasses,
+  getHeadingClasses,
+} from "@/lib/design-tokens";
 
 // Service types with descriptions for setup wizard
 const SERVICE_TYPES = BASE_SERVICE_TYPES.map((service) => ({
@@ -301,7 +310,7 @@ function ProfileSetupContent() {
         {/* Form Card */}
         <section className="bg-card rounded-3xl p-5 sm:p-7 border border-border shadow-card">
           {error && (
-            <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl mb-6">
+            <div className={cn(getAlertClasses("error"), "mb-6")}>
               <IconAlert className="h-5 w-5 shrink-0 mt-0.5 text-destructive" />
               <p className="text-xs font-medium text-destructive">{error}</p>
             </div>
@@ -338,7 +347,7 @@ function ProfileSetupContent() {
               <div className="space-y-2">
                 <label
                   htmlFor="title"
-                  className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                  className={cn(getLabelClasses("primary"), "mb-2 block")}
                 >
                   Título Profissional *
                 </label>
@@ -348,7 +357,7 @@ function ProfileSetupContent() {
                   placeholder="Ex.: Enfermeira, Cuidadora, Técnica de Enfermagem..."
                   value={profileData.title}
                   onChange={handleInputChange}
-                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+                  className={getSetupFormInputClasses()}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Como se identifica profissionalmente?
@@ -358,7 +367,7 @@ function ProfileSetupContent() {
               <div className="space-y-2">
                 <label
                   htmlFor="experienceYears"
-                  className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                  className={cn(getLabelClasses("primary"), "mb-2 block")}
                 >
                   Anos de Experiência *
                 </label>
@@ -384,7 +393,7 @@ function ProfileSetupContent() {
               <div className="space-y-2">
                 <label
                   htmlFor="bio"
-                  className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                  className={cn(getLabelClasses("primary"), "mb-2 block")}
                 >
                   Sobre si
                 </label>
@@ -395,7 +404,7 @@ function ProfileSetupContent() {
                   value={profileData.bio}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-foreground placeholder:text-muted-foreground"
+                  className={cn(getSetupFormInputClasses(), "resize-none")}
                 />
               </div>
 
@@ -403,7 +412,7 @@ function ProfileSetupContent() {
                 <div className="space-y-2">
                   <label
                     htmlFor="city"
-                    className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                    className={cn(getLabelClasses("primary"), "mb-2 block")}
                   >
                     Cidade
                   </label>
@@ -413,13 +422,13 @@ function ProfileSetupContent() {
                     placeholder="Ex: Lisboa, Porto..."
                     value={profileData.city}
                     onChange={handleInputChange}
-                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+                    className={getSetupFormInputClasses()}
                   />
                 </div>
                 <div className="space-y-2">
                   <label
                     htmlFor="languages"
-                    className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                    className={cn(getLabelClasses("primary"), "mb-2 block")}
                   >
                     Idiomas
                   </label>
@@ -429,7 +438,7 @@ function ProfileSetupContent() {
                     placeholder="Ex: Português, Inglês..."
                     value={profileData.languages}
                     onChange={handleInputChange}
-                    className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+                    className={getSetupFormInputClasses()}
                   />
                 </div>
               </div>
@@ -437,7 +446,7 @@ function ProfileSetupContent() {
               <div className="space-y-2">
                 <label
                   htmlFor="certifications"
-                  className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                  className={cn(getLabelClasses("primary"), "mb-2 block")}
                 >
                   Certificações
                 </label>
@@ -447,7 +456,7 @@ function ProfileSetupContent() {
                   placeholder="Ex.: Curso de Cuidador, Técnico de Enfermagem..."
                   value={profileData.certifications}
                   onChange={handleInputChange}
-                  className="w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+                  className={getSetupFormInputClasses()}
                 />
               </div>
             </div>
@@ -510,7 +519,7 @@ function ProfileSetupContent() {
               <div className="space-y-2">
                 <label
                   htmlFor="hourlyRate"
-                  className="text-xs font-display font-bold text-foreground uppercase tracking-widest mb-2 block"
+                  className={cn(getLabelClasses("primary"), "mb-2 block")}
                 >
                   Valor por Hora (€) *
                 </label>

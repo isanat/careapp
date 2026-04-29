@@ -346,8 +346,13 @@ export function getAlertClasses(
 /**
  * Get form label classes
  */
-export function getLabelClasses(): string {
-  return "text-xs font-display font-bold text-muted-foreground uppercase tracking-widest";
+export function getLabelClasses(variant: "default" | "primary" = "default"): string {
+  const base = "text-xs font-display font-bold uppercase tracking-widest";
+  const colors = {
+    default: "text-muted-foreground",
+    primary: "text-foreground",
+  };
+  return cn(base, colors[variant]);
 }
 
 /**
@@ -381,6 +386,13 @@ export function getIconButtonClasses(size: "sm" | "md" | "lg" = "md"): string {
     lg: "h-5 w-5",
   };
   return sizes[size];
+}
+
+/**
+ * Get form input classes for setup wizard (with foreground text color)
+ */
+export function getSetupFormInputClasses(): string {
+  return "w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground";
 }
 
 /**
