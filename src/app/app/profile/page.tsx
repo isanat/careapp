@@ -73,6 +73,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
 import { ProfileHeader } from "./components/shared/ProfileHeader";
 import { CaregiverStats } from "./components/caregiver/CaregiverStats";
+import { AboutTab } from "./components/shared/AboutTab";
 import { parseElderNeeds, validateNIF, formatPhonePT } from "./utils";
 
 interface ProfileData {
@@ -568,98 +569,13 @@ export default function ProfilePage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Info Tab */}
-          <TabsContent value="about" className="space-y-6">
-            <section className="space-y-4">
-              <h3 className={getHeadingClasses("sectionTitle")}>
-                Informações Pessoais
-              </h3>
-              <div className={cn(getCardClasses(), "space-y-4")}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label className={getLabelClasses()}>
-                      {t.auth.name}
-                    </Label>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      disabled={!isEditing}
-                      className={getFormInputClasses()}
-                    />
-                  </div>
-                  <div>
-                    <Label className={getLabelClasses()}>
-                      Cidade
-                    </Label>
-                    <Input
-                      value={formData.city || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, city: e.target.value })
-                      }
-                      disabled={!isEditing}
-                      className={getFormInputClasses()}
-                      placeholder="Cidade"
-                    />
-                  </div>
-                </div>
-
-                {isCaregiver && (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className={getLabelClasses()}>
-                          Titulo Profissional
-                        </Label>
-                        <Input
-                          value={formData.title || ""}
-                          onChange={(e) =>
-                            setFormData({ ...formData, title: e.target.value })
-                          }
-                          disabled={!isEditing}
-                          className={getFormInputClasses()}
-                          placeholder="Ex: Enfermeira"
-                        />
-                      </div>
-                      <div>
-                        <Label className={getLabelClasses()}>
-                          Anos de Experiencia
-                        </Label>
-                        <Input
-                          type="number"
-                          value={formData.experienceYears || 0}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              experienceYears: parseInt(e.target.value) || 0,
-                            })
-                          }
-                          disabled={!isEditing}
-                          className={getFormInputClasses()}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className={getLabelClasses()}>
-                        Bio / Sobre voce
-                      </Label>
-                      <Textarea
-                        value={formData.bio || ""}
-                        onChange={(e) =>
-                          setFormData({ ...formData, bio: e.target.value })
-                        }
-                        rows={3}
-                        disabled={!isEditing}
-                        className={getFormInputClasses()}
-                        placeholder="Descreva sua experiencia..."
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            </section>
-          </TabsContent>
+          {/* About Tab */}
+          <AboutTab
+            isEditing={isEditing}
+            isCaregiver={isCaregiver}
+            formData={formData}
+            setFormData={setFormData}
+          />
 
           {/* Documents Tab */}
           <TabsContent value="documents" className="space-y-6">
