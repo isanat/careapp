@@ -33,8 +33,6 @@ export { Popover, PopoverTrigger, PopoverContent } from "./BloomPopover";
 
 export { HoverCard, HoverCardTrigger, HoverCardContent } from "./BloomHoverCard";
 
-export { BloomProfileModal } from "./BloomProfileModal";
-
 // Componentes customizados específicos do careapp
 export { BloomEmpty } from "./BloomEmpty";
 export { BloomMotionCard } from "./BloomMotionCard";
