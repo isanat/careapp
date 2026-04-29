@@ -330,6 +330,72 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
 }
 
 /**
+ * Get alert/message classes by type
+ */
+export function getAlertClasses(
+  type: "success" | "error" | "warning" = "error"
+): string {
+  const variants = {
+    success: "flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl",
+    error: "flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl",
+    warning: "flex items-start gap-4 p-5 bg-warning/5 border border-warning/20 rounded-2xl",
+  };
+  return variants[type];
+}
+
+/**
+ * Get form label classes
+ */
+export function getLabelClasses(variant: "default" | "primary" = "default"): string {
+  const base = "text-xs font-display font-bold uppercase tracking-widest";
+  const colors = {
+    default: "text-muted-foreground",
+    primary: "text-foreground",
+  };
+  return cn(base, colors[variant]);
+}
+
+/**
+ * Get avatar container classes
+ */
+export function getAvatarClasses(): string {
+  return "w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-secondary/30 bg-secondary flex items-center justify-center cursor-pointer group";
+}
+
+/**
+ * Get avatar edit button overlay classes
+ */
+export function getAvatarEditButtonClasses(): string {
+  return "absolute -bottom-2 -right-2 h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:shadow-lg transition-all group-hover:scale-110";
+}
+
+/**
+ * Get form input/textarea spacing classes
+ */
+export function getFormInputClasses(): string {
+  return "mt-2 rounded-2xl";
+}
+
+/**
+ * Get icon button classes by size
+ */
+export function getIconButtonClasses(size: "sm" | "md" | "lg" = "md"): string {
+  const sizes = {
+    sm: "h-3 w-3",
+    md: "h-4 w-4",
+    lg: "h-5 w-5",
+  };
+  return sizes[size];
+}
+
+/**
+ * Get form input classes for setup wizard (with foreground text color)
+ */
+export function getSetupFormInputClasses(): string {
+  return "w-full bg-secondary border border-border rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-muted-foreground";
+}
+
+/**
  * Get responsive padding
  */
 export function getResponsivePadding(

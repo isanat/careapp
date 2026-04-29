@@ -14,7 +14,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { tokens, cn, getCardClasses, getHeadingClasses } from "@/lib/design-tokens";
+import {
+  tokens,
+  cn,
+  getCardClasses,
+  getHeadingClasses,
+  getAlertClasses,
+  getLabelClasses,
+  getAvatarClasses,
+  getAvatarEditButtonClasses,
+  getFormInputClasses,
+  getIconButtonClasses,
+  getBadgeClasses,
+} from "@/lib/design-tokens";
 import { SERVICE_TYPES, DOCUMENT_TYPES } from "@/lib/profile-constants";
 import {
   Dialog,
@@ -521,7 +533,7 @@ export default function ProfilePage() {
       case "VERIFIED":
         return (
           <Badge
-            className="bg-success/10 text-success border-success/20"
+            className={getBadgeClasses("success")}
             variant="outline"
           >
             <IconCheckCircle className="h-3 w-3 mr-1" />
@@ -531,7 +543,7 @@ export default function ProfilePage() {
       case "SUBMITTED":
         return (
           <Badge
-            className="bg-warning/10 text-warning border-warning/20"
+            className={getBadgeClasses("warning")}
             variant="outline"
           >
             <IconClock className="h-3 w-3 mr-1" />
@@ -571,7 +583,7 @@ export default function ProfilePage() {
 
         {/* Alerts */}
         {error && (
-          <div className="flex items-start gap-4 p-5 bg-destructive/5 border border-destructive/20 rounded-2xl">
+          <div className={getAlertClasses("error")}>
             <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-display font-bold text-foreground">
@@ -582,7 +594,7 @@ export default function ProfilePage() {
           </div>
         )}
         {success && (
-          <div className="flex items-start gap-4 p-5 bg-success/5 border border-success/20 rounded-2xl">
+          <div className={getAlertClasses("success")}>
             <IconCheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-display font-bold text-foreground">
@@ -601,7 +613,7 @@ export default function ProfilePage() {
                 {/* Avatar */}
                 <div className="relative shrink-0">
                   <div
-                    className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-secondary/30 bg-secondary flex items-center justify-center cursor-pointer group"
+                    className={getAvatarClasses()}
                     onClick={handlePhotoClick}
                   >
                     {formData.profileImage ? (
@@ -620,7 +632,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <button
-                    className="absolute -bottom-2 -right-2 h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:shadow-lg transition-all group-hover:scale-110"
+                    className={getAvatarEditButtonClasses()}
                     onClick={handlePhotoClick}
                     disabled={uploadingPhoto}
                   >
@@ -800,7 +812,7 @@ export default function ProfilePage() {
               <div className={cn(getCardClasses(), "space-y-4")}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    <Label className={getLabelClasses()}>
                       {t.auth.name}
                     </Label>
                     <Input
@@ -809,11 +821,11 @@ export default function ProfilePage() {
                         setFormData({ ...formData, name: e.target.value })
                       }
                       disabled={!isEditing}
-                      className="mt-2 rounded-2xl"
+                      className={getFormInputClasses()}
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    <Label className={getLabelClasses()}>
                       Cidade
                     </Label>
                     <Input
@@ -822,7 +834,7 @@ export default function ProfilePage() {
                         setFormData({ ...formData, city: e.target.value })
                       }
                       disabled={!isEditing}
-                      className="mt-2 rounded-2xl"
+                      className={getFormInputClasses()}
                       placeholder="Cidade"
                     />
                   </div>
@@ -832,7 +844,7 @@ export default function ProfilePage() {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        <Label className={getLabelClasses()}>
                           Titulo Profissional
                         </Label>
                         <Input
@@ -841,12 +853,12 @@ export default function ProfilePage() {
                             setFormData({ ...formData, title: e.target.value })
                           }
                           disabled={!isEditing}
-                          className="mt-2 rounded-2xl"
+                          className={getFormInputClasses()}
                           placeholder="Ex: Enfermeira"
                         />
                       </div>
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        <Label className={getLabelClasses()}>
                           Anos de Experiencia
                         </Label>
                         <Input
@@ -859,12 +871,12 @@ export default function ProfilePage() {
                             })
                           }
                           disabled={!isEditing}
-                          className="mt-2 rounded-2xl"
+                          className={getFormInputClasses()}
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      <Label className={getLabelClasses()}>
                         Bio / Sobre voce
                       </Label>
                       <Textarea
@@ -874,7 +886,7 @@ export default function ProfilePage() {
                         }
                         rows={3}
                         disabled={!isEditing}
-                        className="mt-2 rounded-2xl"
+                        className={getFormInputClasses()}
                         placeholder="Descreva sua experiencia..."
                       />
                     </div>
@@ -956,7 +968,7 @@ export default function ProfilePage() {
 
                 {formData.documentType && (
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    <Label className={getLabelClasses()}>
                       Numero do{" "}
                       {DOCUMENT_TYPES.find(
                         (d) => d.id === formData.documentType,
@@ -971,7 +983,7 @@ export default function ProfilePage() {
                         })
                       }
                       disabled={!isEditing}
-                      className="mt-2 rounded-2xl"
+                      className={getFormInputClasses()}
                       placeholder={
                         DOCUMENT_TYPES.find(
                           (d) => d.id === formData.documentType,
@@ -1108,7 +1120,7 @@ export default function ProfilePage() {
                   <div className="border-t border-border/30 pt-6 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        <Label className={getLabelClasses()}>
                           Taxa Horaria ({"\u20AC"}/hora)
                         </Label>
                         <div className="relative mt-2">
@@ -1135,7 +1147,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                        <Label className={getLabelClasses()}>
                           Idiomas
                         </Label>
                         <Input
@@ -1147,13 +1159,13 @@ export default function ProfilePage() {
                             })
                           }
                           disabled={!isEditing}
-                          className="mt-2 rounded-2xl"
+                          className={getFormInputClasses()}
                           placeholder="PT, EN, ES..."
                         />
                       </div>
                     </div>
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      <Label className={getLabelClasses()}>
                         Certificações
                       </Label>
                       <Input
@@ -1165,7 +1177,7 @@ export default function ProfilePage() {
                           })
                         }
                         disabled={!isEditing}
-                        className="mt-2 rounded-2xl"
+                        className={getFormInputClasses()}
                         placeholder="Curso de Cuidador, Primeiros Socorros..."
                       />
                     </div>
@@ -1185,7 +1197,7 @@ export default function ProfilePage() {
                 <div className={cn(getCardClasses(), "space-y-4")}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      <Label className={getLabelClasses()}>
                         Nome do Idoso
                       </Label>
                       <Input
@@ -1197,11 +1209,11 @@ export default function ProfilePage() {
                           })
                         }
                         disabled={!isEditing}
-                        className="mt-2 rounded-2xl"
+                        className={getFormInputClasses()}
                       />
                     </div>
                     <div>
-                      <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                      <Label className={getLabelClasses()}>
                         Idade
                       </Label>
                       <Input
@@ -1214,12 +1226,12 @@ export default function ProfilePage() {
                           })
                         }
                         disabled={!isEditing}
-                        className="mt-2 rounded-2xl"
+                        className={getFormInputClasses()}
                       />
                     </div>
                   </div>
                   <div>
-                    <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                    <Label className={getLabelClasses()}>
                       Necessidades Específicas
                     </Label>
                     <Textarea
@@ -1229,7 +1241,7 @@ export default function ProfilePage() {
                       }
                       rows={4}
                       disabled={!isEditing}
-                      className="mt-2 rounded-2xl"
+                      className={getFormInputClasses()}
                       placeholder="Descreva as necessidades especificas de saude e cuidado..."
                     />
                   </div>
@@ -1284,7 +1296,7 @@ export default function ProfilePage() {
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          <Label className={getLabelClasses()}>
                             Nome
                           </Label>
                           <Input
@@ -1296,12 +1308,12 @@ export default function ProfilePage() {
                               })
                             }
                             disabled={!isEditing}
-                            className="mt-2 rounded-2xl"
+                            className={getFormInputClasses()}
                             placeholder="Nome completo"
                           />
                         </div>
                         <div>
-                          <Label className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
+                          <Label className={getLabelClasses()}>
                             Telefone
                           </Label>
                           <Input
@@ -1316,7 +1328,7 @@ export default function ProfilePage() {
                               })
                             }
                             disabled={!isEditing}
-                            className="mt-2 rounded-2xl"
+                            className={getFormInputClasses()}
                             placeholder="+351 912 345 678"
                             inputMode="tel"
                           />
@@ -1354,7 +1366,7 @@ export default function ProfilePage() {
                 </div>
                 {isPushSupported ? (
                   isPushEnabled ? (
-                    <span className="px-3 py-1 text-[10px] font-display font-bold rounded-full uppercase tracking-widest bg-success/10 text-success border border-success/20">
+                    <span className={cn(getBadgeClasses("success"), "px-3 py-1 rounded-full")}>
                       Ativo
                     </span>
                   ) : (
