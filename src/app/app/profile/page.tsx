@@ -71,80 +71,9 @@ import { APP_NAME } from "@/lib/constants";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/hooks/useNotifications";
 import { apiFetch } from "@/lib/api-client";
-
-
-function parseElderNeeds(raw: string): string {
-  if (!raw) return "";
-  try {
-    const data = JSON.parse(raw);
-    const parts: string[] = [];
-    const mobilityLabels: Record<string, string> = {
-      total: "Sem mobilidade",
-      parcial: "Mobilidade parcial",
-      boa: "Boa mobilidade",
-    };
-    if (data.mobilityLevel)
-      parts.push(`Mobilidade: ${mobilityLabels[data.mobilityLevel] || data.mobilityLevel}`);
-    const condLabels: Record<string, string> = {
-      cancer: "Cancro",
-      artrite: "Artrite",
-      avc: "AVC",
-      diabetes: "Diabetes",
-      demencia: "Demência",
-      alzheimer: "Alzheimer",
-      parkinson: "Parkinson",
-      insuficiencia_cardiaca: "Insuficiência cardíaca",
-    };
-    if (Array.isArray(data.medicalConditions) && data.medicalConditions.length > 0)
-      parts.push(`Condições médicas: ${data.medicalConditions.map((c: string) => condLabels[c] || c).join(", ")}`);
-    if (data.medicalConditionsNotes)
-      parts.push(`Notas médicas: ${data.medicalConditionsNotes}`);
-    if (Array.isArray(data.dietaryRestrictions) && data.dietaryRestrictions.length > 0)
-      parts.push(`Restrições alimentares: ${data.dietaryRestrictions.join(", ")}`);
-    if (Array.isArray(data.servicesNeeded) && data.servicesNeeded.length > 0) {
-      const svcLabels: Record<string, string> = {
-        personal_care: "Cuidados pessoais",
-        medication: "Medicação",
-        meal_preparation: "Preparação de refeições",
-        mobility: "Mobilidade",
-        companionship: "Companhia",
-        cognitive_support: "Estimulação cognitiva",
-        night_care: "Cuidados noturnos",
-        transportation: "Transporte",
-      };
-      parts.push(`Serviços necessários: ${data.servicesNeeded.map((s: string) => svcLabels[s] || s).join(", ")}`);
-    }
-    if (data.additionalNotes) parts.push(`Notas adicionais: ${data.additionalNotes}`);
-    return parts.length > 0 ? parts.join("\n") : raw;
-  } catch {
-    return raw;
-  }
-}
-
-function validateNIF(nif: string): boolean {
-  if (!/^\d{9}$/.test(nif)) return false;
-  const digits = nif.split("").map(Number);
-  const checkSum = digits
-    .slice(0, 8)
-    .reduce((sum, d, i) => sum + d * (9 - i), 0);
-  const remainder = checkSum % 11;
-  const checkDigit = remainder < 2 ? 0 : 11 - remainder;
-  return checkDigit === digits[8];
-}
-
-function formatPhonePT(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.startsWith("351")) {
-    const num = digits.slice(3);
-    if (num.length <= 3) return `+351 ${num}`;
-    if (num.length <= 6) return `+351 ${num.slice(0, 3)} ${num.slice(3)}`;
-    return `+351 ${num.slice(0, 3)} ${num.slice(3, 6)} ${num.slice(6, 9)}`;
-  }
-  if (digits.length <= 3) return `+351 ${digits}`;
-  if (digits.length <= 6)
-    return `+351 ${digits.slice(0, 3)} ${digits.slice(3)}`;
-  return `+351 ${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6, 9)}`;
-}
+import { ProfileHeader } from "./components/shared/ProfileHeader";
+import { CaregiverStats } from "./components/caregiver/CaregiverStats";
+import { parseElderNeeds, validateNIF, formatPhonePT } from "./utils";
 
 interface ProfileData {
   name: string;
@@ -569,191 +498,27 @@ export default function ProfilePage() {
 
   return (
     <div className={cn(tokens.layout.sectionSpacing, tokens.layout.maxWidth, tokens.spacing.paddingX.responsive)}>
-        {/* Page Header */}
-        <div className="space-y-2">
-          <h1 className={getHeadingClasses("pageTitle")}>
-            Meu Perfil
-          </h1>
-          <p className="text-base text-muted-foreground font-medium">
-            {isCaregiver
-              ? "Gira as suas informações profissionais e preferências"
-              : "Gerencie as informações do seu familiar"}
-          </p>
-        </div>
-
-        {/* Alerts */}
-        {error && (
-          <div className={getAlertClasses("error")}>
-            <IconAlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm font-display font-bold text-foreground">
-                Erro
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">{error}</p>
-            </div>
-          </div>
-        )}
-        {success && (
-          <div className={getAlertClasses("success")}>
-            <IconCheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm font-display font-bold text-foreground">
-                Sucesso
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">{success}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Profile Header Section */}
-        <section className="space-y-4">
-          <div className={cn(getCardClasses(true), "space-y-4")}>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-5">
-                {/* Avatar */}
-                <div className="relative shrink-0">
-                  <div
-                    className={getAvatarClasses()}
-                    onClick={handlePhotoClick}
-                  >
-                    {formData.profileImage ? (
-                      <img
-                        src={formData.profileImage}
-                        alt={formData.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="text-2xl font-display font-black text-muted-foreground">
-                        {session?.user?.name
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("") || "U"}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    className={getAvatarEditButtonClasses()}
-                    onClick={handlePhotoClick}
-                    disabled={uploadingPhoto}
-                  >
-                    {uploadingPhoto ? (
-                      <IconLoader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <IconCamera className="h-3.5 w-3.5" />
-                    )}
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handlePhotoChange}
-                  />
-                </div>
-
-                {/* Profile Info */}
-                <div className="flex-1 min-w-0 pt-1 space-y-2">
-                  <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tighter">
-                    {session?.user?.name}
-                  </h2>
-                  {isCaregiver && formData.title && (
-                    <p className="text-sm text-muted-foreground font-medium">
-                      {formData.title}
-                      {formData.city ? ` • ${formData.city}` : ""}
-                    </p>
-                  )}
-                  <div className="space-y-1">
-                    <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                      Email
-                    </p>
-                    <p className="text-sm font-medium text-foreground">
-                      {formData.email}
-                    </p>
-                  </div>
-                  {formData.phone && (
-                    <div className="space-y-1">
-                      <p className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest">
-                        Telefone
-                      </p>
-                      <p className="text-sm font-medium text-foreground">
-                        {formData.phone}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Edit Button */}
-              <Button
-                onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-                disabled={isSaving}
-                className="rounded-2xl px-4 h-10 text-sm font-display font-bold uppercase"
-                variant={isEditing ? "default" : "outline"}
-              >
-                {isSaving ? (
-                  <>
-                    <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
-                    Guardando
-                  </>
-                ) : isEditing ? (
-                  <>
-                    <IconCheck className="h-4 w-4 mr-2" />
-                    {t.save}
-                  </>
-                ) : (
-                  <>
-                    <IconEdit className="h-4 w-4 mr-2" />
-                    Editar
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </section>
+        {/* Profile Header with Alerts */}
+        <ProfileHeader
+          isLoading={isLoading}
+          isEditing={isEditing}
+          isSaving={isSaving}
+          error={error}
+          success={success}
+          profile={profile}
+          formData={formData}
+          session={session}
+          uploadingPhoto={uploadingPhoto}
+          fileInputRef={fileInputRef}
+          isCaregiver={isCaregiver}
+          onEditToggle={() => (isEditing ? handleSave() : setIsEditing(true))}
+          onPhotoClick={handlePhotoClick}
+          onPhotoChange={handlePhotoChange}
+        />
 
         {/* Stats for caregiver */}
         {isCaregiver && (
-          <div className={cn(tokens.layout.grid.responsive4)}>
-            {[
-              {
-                value: profile?.totalContracts || 0,
-                label: "Contratos",
-                icon: IconFamily,
-              },
-              {
-                value: profile?.totalReviews || 0,
-                label: "Avaliações",
-                icon: IconStar,
-              },
-              {
-                value: (profile?.averageRating || 0).toFixed(1),
-                label: "Nota",
-                icon: IconStar,
-              },
-              {
-                value: `€${(formData.hourlyRateEur || 0).toFixed(2)}`,
-                label: "/hora",
-                icon: IconEuro,
-              },
-            ].map((stat, i) => (
-              <div
-                key={i}
-                className={cn(getCardClasses(true), "space-y-4")}
-              >
-                <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <stat.icon className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-display font-black text-muted-foreground uppercase tracking-widest">
-                    {stat.label}
-                  </div>
-                  <div className="text-3xl font-display font-black text-foreground tracking-tighter leading-none mt-1">
-                    {stat.value}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <CaregiverStats profile={profile} formData={formData} />
         )}
 
         {/* Tabs */}
